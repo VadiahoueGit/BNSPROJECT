@@ -4,7 +4,7 @@ import { LogoutComponent } from "./logout/logout.component";
 import { NgModule } from "@angular/core";
 
 const routes: Routes = [
-    { path: 'connexion', component: LoginComponent },
+    { path: '', component: LoginComponent },
     { path: 'deconnexion', component: LogoutComponent }
   ];
   
