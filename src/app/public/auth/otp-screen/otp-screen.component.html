@@ -1,0 +1,35 @@
+<div class="container-fluid">
+    <div class="row h-100">
+      <!-- Partie gauche : formulaire de connexion --> 
+      <div class="col-lg-6 d-flex align-items-center justify-content-center login-right">
+        <div class="text-center text-white">
+          <h1>Bienvenue</h1>
+          <p>Accédez à votre espace personnel en toute simplicité.</p>
+        </div>
+      </div>
+      <!-- Partie droite : image ou texte de bienvenue -->
+      <div class="col-lg-6 d-flex align-items-center justify-content-center bg-light">
+        <div class="login-form w-100 p-4" style="max-width: 400px;">
+          <h3 class="text-center mb-3 fw-bold">Entrer le code OTP </h3>
+          <p class="mb-3 text-black-50 text-center fs-7">Veuillez vérifier votre courriel</p>
+          <form>
+            <div class="mb-4 d-flex justify-content-center">
+                <ng-otp-input allowNumbersOnly="true" (onInputChange)="onOtpChange($event)"  [config]="{length:5,inputStyles: {'border': 'none', 'border-bottom': '2px solid black'}}"></ng-otp-input>
+            </div>
+            <button type="submit" class="btn btn-primary w-100" (click)="ToOtpVerify()">Vérifier</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  
+
+
+
+
+
+
+
+
+

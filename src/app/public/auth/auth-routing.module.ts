@@ -2,12 +2,16 @@ import { RouterModule, Routes } from "@angular/router";
 import { LoginComponent } from "./login/login.component";
 import { LogoutComponent } from "./logout/logout.component";
 import { NgModule } from "@angular/core";
-import { ForgotPasswordComponent } from "./forgot-password/forgot-password.component";
+import { ForgetPasswordComponent } from "./forget-password/forget-password.component";
+import { OtpScreenComponent } from "./otp-screen/otp-screen.component";
+import { NewPasswordComponent } from "./new-password/new-password.component";
 
 const routes: Routes = [
     { path: '', component: LoginComponent },
-    { path: 'deconnexion', component: LogoutComponent },
-    { path: 'forgot-password', component: ForgotPasswordComponent}
+    { path: 'forget-password', component: ForgetPasswordComponent },
+    { path: 'otp-screen', component: OtpScreenComponent },
+    { path: 'new-password', component: NewPasswordComponent },
+    { path: 'deconnexion', component: LogoutComponent }
   ];
   
   @NgModule({

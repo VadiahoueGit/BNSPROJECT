@@ -9,7 +9,12 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit {
   constructor(private _router: Router) {}
   ngOnInit(): void {}
+
   ToConnect() {
     this._router.navigate(['dashboard'])
+  }
+
+  ToForgetPassword() {
+    this._router.navigate(['forget-password'])
   }
 }
