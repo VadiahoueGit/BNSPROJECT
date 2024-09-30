@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { AuthModule } from './public/auth/auth.module';
 import { GestionClientsModule } from './Features/gestion-clients/gestion-clients.module';
 import { SharedComponentModule } from './Features/shared-component/shared-component.module';
+import { DashboardModule } from './Features/dashboard/dashboard.module';
 
 @NgModule({
   declarations: [
@@ -13,6 +14,7 @@ import { SharedComponentModule } from './Features/shared-component/shared-compon
   ],
   imports: [
     AuthModule,
+    DashboardModule,
     SharedComponentModule,
     GestionClientsModule,
     BrowserModule,
