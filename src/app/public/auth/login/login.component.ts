@@ -10,31 +10,48 @@ import { CoreServiceService } from 'src/app/core/core-service.service';
 })
 export class LoginComponent implements OnInit {
   public loginForm!: FormGroup;
-  constructor(private _router: Router,
-    private _auth : CoreServiceService
-  ) {}
+  constructor(private _router: Router, private _auth: CoreServiceService) {}
   ngOnInit(): void {
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [
         Validators.required,
-        Validators.minLength(5),
-      ]), 
+        Validators.minLength(6),
+      ]),
     });
   }
 
-  ToConnect() {
+  async ToConnect() {
     if (this.loginForm.valid) {
-      this._auth.ToConnect(this.loginForm.value).then((res: any) => {
-        console.log('res login = ');
-        console.log(res);
-        if (res) {
-          console.log(res)
-          console.log(this.loginForm.value);
-          this._router.navigate(['dashboard']);
-        }
-      })
+      // this._auth.ToConnect(this.loginForm.value).then((res: any) => {
+      //   console.log(res);
+      //   if (res) {
+      //     this._router.navigate(['dashboard']);
+      //   }
+      // })
 
+      try {
+        await this._auth.ToConnect(this.loginForm.value).then((res: any) => {
+          console.log(res);
+          if (res) {
+            this._router.navigate(['dashboard']);
+          }
+        });
+      } catch (error) {
+        this.handleError(error);
+      }
+    }
+  }
+
+  handleError(error: any) {
+    if (error.status === 404) {
+      console.log('Adresse non trouvée');
+    } else if (error.status === 500) {
+      console.log('Erreur interne du serveur');
+    } else if (error.status === 401) {
+      console.log('Utilisateur pas autorisé');
+    } else {
+      console.log('Une erreur est survenue');
     }
   }
 
