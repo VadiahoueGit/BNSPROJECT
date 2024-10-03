@@ -17,14 +17,25 @@ apiUrl: string;
       this._http.post(`${this.apiUrl}/v1/auth/login`, data)
         .subscribe((res: any) => {
           console.log(res)
-          resolve(res)
-        })})
+          resolve(res);
+        }
+          , err => {
+            console.log(err);
+            reject(err);
+          });
+        })
   }
   ToVerifyPassword(data:any){
     return new Promise((resolve: any, reject: any) => {
       this._http.post(`${this.apiUrl}/v1/auth/forgot-password`, data)
         .subscribe((res: any) => {
           console.log(res)
-        })})
+          resolve(res);
+        }
+          , err => {
+            console.log(err);
+            reject(err);
+        })
+      })
   }
 }

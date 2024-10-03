@@ -14,12 +14,27 @@ export class ForgetPasswordComponent {
   constructor(private _router: Router, private _auth: CoreServiceService) {}
   ngOnInit(): void {}
 
-  ToOtpVerify() {
-    this._auth.ToVerifyPassword(this.forgetData).then((res) => {
-      console.log(res);
-      if (res) {
-        this._router.navigate(['otp-screen']);
-      }
-    });
+  async ToOtpVerify() {
+    try {
+      await this._auth.ToVerifyPassword(this.forgetData).then((res: any) => {
+        console.log(res);
+        if (res.statusCode == 200 || res.statusCode == 201) {
+          this._router.navigate(['otp-screen']);
+        }
+      });
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+  handleError(error: any) {
+    if (error.status === 404) {
+      console.log('Adresse non trouvée');
+    } else if (error.status === 500) {
+      console.log('Erreur interne du serveur');
+    } else if (error.status === 401) {
+      console.log('Utilisateur pas autorisé');
+    } else {
+      console.log('Une erreur est survenue');
+    }
   }
 }
