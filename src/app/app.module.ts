@@ -11,10 +11,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { ConfigService } from './core/config-service.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-export function initializeApp(configService: ConfigService) {
-  return () => configService.loadConfig().toPromise().then((config) => {
-    configService.setConfig(config);
-  });
+export function initConfig(configService: ConfigService) {
+  return () => configService.loadConfig();
 }
 @NgModule({
   declarations: [
@@ -35,7 +33,7 @@ export function initializeApp(configService: ConfigService) {
   providers: [
     {
       provide: APP_INITIALIZER,
-      useFactory: initializeApp,
+      useFactory: initConfig,
       deps: [ConfigService],
       multi: true
     }

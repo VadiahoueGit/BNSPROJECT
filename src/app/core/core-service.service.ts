@@ -10,18 +10,18 @@ apiUrl: string;
   constructor(
     private _http: HttpClient,
     private configService: ConfigService
-  ) {     this.apiUrl = this.configService.getApiUrl();}
+  ) {     this.apiUrl = this.configService.apiUrl;}
 
   ToConnect(data:any){
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(this.apiUrl+ '/v1/auth/login', data)
+      this._http.post(`${this.apiUrl}/v1/auth/login`, data)
         .subscribe((res: any) => {
           console.log(res)
         })})
   }
   ToVerifyPassword(data:any){
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(this.apiUrl+ '/v1/auth/forgot-password', data)
+      this._http.post(`${this.apiUrl}/v1/auth/forgot-password`, data)
         .subscribe((res: any) => {
           console.log(res)
         })})
