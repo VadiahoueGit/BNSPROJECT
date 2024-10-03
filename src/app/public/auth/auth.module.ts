@@ -8,6 +8,7 @@ import { ForgetPasswordComponent } from './forget-password/forget-password.compo
 import { OtpScreenComponent } from './otp-screen/otp-screen.component';
 import { NgOtpInputModule } from 'ng-otp-input';
 import { NewPasswordComponent } from './new-password/new-password.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,8 @@ import { NewPasswordComponent } from './new-password/new-password.component';
     NgOtpInputModule,
     AuthRoutingModule,
     SharedComponentModule,
+    ReactiveFormsModule,
+    FormsModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

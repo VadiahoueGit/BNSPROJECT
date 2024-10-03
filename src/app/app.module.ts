@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -7,7 +7,15 @@ import { AuthModule } from './public/auth/auth.module';
 import { GestionClientsModule } from './Features/gestion-clients/gestion-clients.module';
 import { SharedComponentModule } from './Features/shared-component/shared-component.module';
 import { DashboardModule } from './Features/dashboard/dashboard.module';
+import { HttpClientModule } from '@angular/common/http';
+import { ConfigService } from './core/config-service.service';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+export function initializeApp(configService: ConfigService) {
+  return () => configService.loadConfig().toPromise().then((config) => {
+    configService.setConfig(config);
+  });
+}
 @NgModule({
   declarations: [
     AppComponent,
@@ -17,11 +25,21 @@ import { DashboardModule } from './Features/dashboard/dashboard.module';
     DashboardModule,
     SharedComponentModule,
     GestionClientsModule,
+    HttpClientModule ,
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ReactiveFormsModule,
+    FormsModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [ConfigService],
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
