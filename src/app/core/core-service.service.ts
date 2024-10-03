@@ -17,6 +17,7 @@ apiUrl: string;
       this._http.post(`${this.apiUrl}/v1/auth/login`, data)
         .subscribe((res: any) => {
           console.log(res)
+          resolve(res)
         })})
   }
   ToVerifyPassword(data:any){

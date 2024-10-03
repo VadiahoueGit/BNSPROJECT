@@ -10,6 +10,8 @@ import { DashboardModule } from './Features/dashboard/dashboard.module';
 import { HttpClientModule } from '@angular/common/http';
 import { ConfigService } from './core/config-service.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 export function initConfig(configService: ConfigService) {
   return () => configService.loadConfig();
@@ -27,7 +29,9 @@ export function initConfig(configService: ConfigService) {
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    BrowserAnimationsModule,
+    NgxSpinnerModule.forRoot ( {  type : 'ball-scale-multiple'  } )
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

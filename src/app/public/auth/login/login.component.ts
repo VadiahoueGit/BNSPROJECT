@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { CoreServiceService } from 'src/app/core/core-service.service';
 
 @Component({
@@ -10,8 +11,10 @@ import { CoreServiceService } from 'src/app/core/core-service.service';
 })
 export class LoginComponent implements OnInit {
   public loginForm!: FormGroup;
+  isLoading:Boolean = false;
   constructor(private _router: Router,
-    private _auth : CoreServiceService
+    private _auth : CoreServiceService,
+    private _spinner :NgxSpinnerService
   ) {}
   ngOnInit(): void {
     this.loginForm = new FormGroup({
@@ -24,9 +27,13 @@ export class LoginComponent implements OnInit {
   }
 
   ToConnect() {
+    //  this._spinner.show()
+    this.isLoading = true
     if (this.loginForm.valid) {
       this._auth.ToConnect(this.loginForm.value).then((res: any) => {
+        this.isLoading = false
         console.log('res login = ');
+        console.log(this.isLoading );
         console.log(res);
         if (res) {
           console.log(res)

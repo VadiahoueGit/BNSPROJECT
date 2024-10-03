@@ -22,3 +22,7 @@
 .form-label{
     color:#696F79 !important;
 }
+.btn:disabled{
+    border-color: transparent;
+    background-color:rgb(103, 192, 130) !important;
+}
