@@ -21,6 +21,7 @@
             <div class="mb-3">
               <label for="password" class="form-label">Mot de passe</label>
               <input type="password" formControlName="password" class="form-control" id="password" placeholder="Entrez votre mot de passe">
+              <label class="error my-3" *ngIf="submitError">Email ou mot de passe incorrect</label>
             </div>
             <div class="mb-3 form-check">
               <input type="checkbox" class="form-check-input" id="remember">

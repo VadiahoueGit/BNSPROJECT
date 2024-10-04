@@ -12,6 +12,7 @@ import { CoreServiceService } from 'src/app/core/core-service.service';
 export class LoginComponent implements OnInit {
   public loginForm!: FormGroup;
   isLoading:Boolean = false;
+  submitError:Boolean = false;
   constructor(private _router: Router,
     private _auth : CoreServiceService,
     private _spinner :NgxSpinnerService
@@ -27,22 +28,19 @@ export class LoginComponent implements OnInit {
   }
 
   async ToConnect() {
+    this.isLoading = true;
+    this.submitError = true;
     if (this.loginForm.valid) {
-      // this._auth.ToConnect(this.loginForm.value).then((res: any) => {
-      //   console.log(res);
-      //   if (res) {
-      //     this._router.navigate(['dashboard']);
-      //   }
-      // })
-
       try {
         await this._auth.ToConnect(this.loginForm.value).then((res: any) => {
+          this.isLoading = false
           console.log(res);
-          if (res) {
+          if (res.access_token) {
             this._router.navigate(['dashboard']);
           }
         });
       } catch (error) {
+        this.isLoading = false
         this.handleError(error);
       }
     }
@@ -54,7 +52,7 @@ export class LoginComponent implements OnInit {
     } else if (error.status === 500) {
       console.log('Erreur interne du serveur');
     } else if (error.status === 401) {
-      console.log('Utilisateur pas autorisé');
+      this.submitError = true
     } else {
       console.log('Une erreur est survenue');
     }
