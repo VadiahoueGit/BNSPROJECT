@@ -33,6 +33,7 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/ngx-spinner/animations/ball-scale-multiple.css",
               "src/styles.scss",
+              "src/assets/font-awesome-v6/css/all.css",
               "src/app/GlobalStyle.scss"
             ],
             "scripts": []

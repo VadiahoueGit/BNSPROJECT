@@ -6,12 +6,12 @@ import { AppComponent } from './app.component';
 import { AuthModule } from './public/auth/auth.module';
 import { GestionClientsModule } from './Features/gestion-clients/gestion-clients.module';
 import { SharedComponentModule } from './Features/shared-component/shared-component.module';
-import { DashboardModule } from './Features/dashboard/dashboard.module';
 import { HttpClientModule } from '@angular/common/http';
 import { ConfigService } from './core/config-service.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { FeaturesModule } from './Features/features.module';
 
 export function initConfig(configService: ConfigService) {
   return () => configService.loadConfig();
@@ -21,10 +21,9 @@ export function initConfig(configService: ConfigService) {
     AppComponent,
   ],
   imports: [
+    FeaturesModule,
     AuthModule,
-    DashboardModule,
     SharedComponentModule,
-    GestionClientsModule,
     HttpClientModule ,
     BrowserModule,
     AppRoutingModule,

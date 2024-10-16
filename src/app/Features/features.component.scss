@@ -1,0 +1,40 @@
+/* Styles pour la mise en page */
+#sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: white;
+    -webkit-box-shadow: 0px 0px 17px -7px rgba(204,204,204,0.72);
+    -moz-box-shadow: 0px 0px 17px -7px rgba(204,204,204,0.72);
+    box-shadow: 0px 0px 17px -7px rgba(204,204,204,0.72);
+}
+
+.btn {
+    width: 200px;
+}
+
+a,
+label {
+    cursor: pointer;
+}
+
+a:hover{
+    cursor: pointer;
+    background-color: rgb(220, 255, 220);
+}
+.flex-grow-1 {
+    min-height: 100vh;
+}
+
+i {
+    font-size: 18px;
+    color: rgb(154, 154, 154);
+}
+
+.navbar {
+    height: 60px;
+}
+
+.active {
+    background-color: var(--primary-color) !important;
+    color: white;
+}

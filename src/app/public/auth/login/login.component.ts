@@ -29,14 +29,13 @@ export class LoginComponent implements OnInit {
 
   async ToConnect() {
     this.isLoading = true;
-    this.submitError = true;
     if (this.loginForm.valid) {
       try {
         await this._auth.ToConnect(this.loginForm.value).then((res: any) => {
           this.isLoading = false
           console.log(res);
           if (res.access_token) {
-            this._router.navigate(['dashboard']);
+            this._router.navigate(['feature']);
           }
         });
       } catch (error) {
