@@ -1,19 +1,31 @@
 <div class="card">
     <div class=" d-flex justify-content-end py-3">
-        <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Ajouter un groupe de produit</button>
+        <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Ajouter un article</button>
     </div>
     <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
-        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" [globalFilterFields]="['code', 'libelle']">
+        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" >
 
         <ng-template pTemplate="header">
             <tr>
-                <th class="text-center" style="width:30%;color: var(--secondary-color);">Code</th>
-                <th class="text-center" style="width:50%;color: var(--secondary-color);">Gropue produit</th>
-                <th class="text-center" style="width:20%;color: var(--secondary-color);">Actions</th>
+                <th  style="color: var(--secondary-color);">Libelle</th>
+                <th  style="color: var(--secondary-color);">Format (Cl)</th>
+                <th  style="color: var(--secondary-color);">Conditionnement</th>
+                <th  style="color: var(--secondary-color);">Type article</th>
+                <th  style="color: var(--secondary-color);">Libelle sous famille</th>
+                <th  style="color: var(--secondary-color);">Actions</th>
             </tr>
             <tr>
                 <th>
-                    <p-columnFilter  type="text" field="code" placeholder="Code groupe" />
+                    <p-columnFilter type="text" field="libelle" placeholder="Libellé du produit" />
+                </th>
+                <th>
+                    <p-columnFilter type="text" field="code" placeholder="Code groupe" />
+                </th>
+                <th>
+                    <p-columnFilter type="text" field="libelle" placeholder="Libellé du produit" />
+                </th>
+                <th>
+                    <p-columnFilter type="text" field="code" placeholder="Code groupe" />
                 </th>
                 <th>
                     <p-columnFilter type="text" field="libelle" placeholder="Libellé du produit" />
@@ -25,10 +37,23 @@
         </ng-template>
         <ng-template pTemplate="body" let-dataList>
             <tr>
-                <td class="text-center">
+                <td >
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.libelle }}
+                    </span>
+                </td>
+                <td >
                     <!-- {{ dataList.name }} -->
                 </td>
-                <td class="text-center">
+                <td >
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.libelle }}
+                    </span>
+                </td>
+                <td >
+                    <!-- {{ dataList.name }} -->
+                </td>
+                <td >
                     <span class="ml-1 vertical-align-middle">
                         {{ dataList.libelle }}
                     </span>
@@ -44,7 +69,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
             <tr>
-                <td colspan="5">Aucun groupe produit trouvé.</td>
+                <td colspan="5">Aucun article trouvé.</td>
             </tr>
         </ng-template>
     </p-table>

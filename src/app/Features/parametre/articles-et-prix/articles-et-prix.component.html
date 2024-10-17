@@ -1,5 +1,5 @@
 <!-- Navigation -->
-<nav class="nav nav-pills flex-column flex-sm-row gap-2 border-bottom">
+<nav class="nav nav-pills flex-column flex-sm-row gap-1 border-bottom">
   <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'typeArticle'"
     (click)="activeElement('typeArticle')">Types d'articles</a>
 
@@ -8,47 +8,32 @@
 
   <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'articles'"
     (click)="activeElement('articles')">Articles</a>
+
+  <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'listPrix'"
+    (click)="activeElement('listPrix')">Liste des prix</a>
+
+  <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'creatPrix'"
+    (click)="activeElement('creatPrix')">Création des prix</a>
 </nav>
 
 <div class="tab-content mt-3">
   <div *ngIf="activeTab === 'typeArticle'" class="tab-pane fade show active">
-    <p>Type d'article</p>
-    <ngx-datatable
-    class="bootstrap"
-    [rows]="rows"
-    [columns]="[]"
-    [headerHeight]="50"
-    [footerHeight]="50"
-    [rowHeight]="'auto'">
-    
-    <ngx-datatable-column name="Name">
-      <ng-template let-row="row" ngx-datatable-cell-template>
-        <strong>{{ row.name }}</strong>
-      </ng-template>
-    </ngx-datatable-column>
-  
-    <ngx-datatable-column name="Age">
-      <ng-template let-row="row" ngx-datatable-cell-template>
-        {{ row.age }} years
-      </ng-template>
-    </ngx-datatable-column>
-  
-    <ngx-datatable-column name="Job">
-      <ng-template let-row="row" ngx-datatable-cell-template>
-        {{ row.job }}
-      </ng-template>
-    </ngx-datatable-column>
-    
-  </ngx-datatable>
-  
-
+    <app-type-article></app-type-article>
   </div>
 
   <div *ngIf="activeTab === 'groupeProduits'" class="tab-pane fade show active">
-    <!-- <app-groupe-produit></app-groupe-produit> -->
+    <app-groupe-produit></app-groupe-produit>
   </div>
 
   <div *ngIf="activeTab === 'articles'" class="tab-pane fade show active">
-    <p>Contenu pour l'onglet "Link".</p>
+    <app-article></app-article>
+  </div>
+
+  <div *ngIf="activeTab === 'listPrix'" class="tab-pane fade show active">
+    <p>Contenu pour l'onglet "listPrix".</p>
+  </div>
+
+  <div *ngIf="activeTab === 'creatPrix'" class="tab-pane fade show active">
+    <p>Contenu pour l'onglet "creatPrix".</p>
   </div>
 </div>

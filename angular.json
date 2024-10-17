@@ -39,7 +39,9 @@
               "src/assets/font-awesome-v6/css/all.css",
               "src/app/GlobalStyle.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+            ]
           },
           "configurations": {
             "production": {

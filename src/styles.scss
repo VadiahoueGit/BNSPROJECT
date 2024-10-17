@@ -1,6 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 body {
     background-color: #f7fcff;
+    font-family: 'Poppins', sans-serif !important;
+                                            
 }
 
 .btn-primary {
@@ -11,8 +13,21 @@ body {
     box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
 }
 
+.btn-secondary {
+    background-color:var(--secondary-color) !important;
+    border-color: transparent;
+    color: white !important;
+    -webkit-box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
+    -moz-box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
+    box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
+}
+
 .text-primary {
     color: var(--primary-color) !important;
+}
+
+.text-secondary {
+    color: var(--secondary-color) !important;
 }
 
 .btn-primary:hover {
@@ -21,14 +36,18 @@ body {
 }
 
 .form-control {
-    height: 50px;
-    -webkit-box-shadow: 0px 3px 20px -11px rgba(0, 0, 0, 0.45);
-    -moz-box-shadow: 0px 3px 20px -11px rgba(0, 0, 0, 0.45);
-    box-shadow: 0px 3px 20px -11px rgba(0, 0, 0, 0.45);
-}
+    width: 300px!important;
+    height: 45px;
+    border:var(--bs-border-width) solid gray;
+ }
 
+ .form-control:focus, textarea:focus, select:focus {
+    outline: none; /* Supprime l'effet d'outline bleu */
+    box-shadow: none; /* Supprime la bordure bleue générée par Bootstrap */
+  }
+  
 .form-label {
-    color: #696F79 !important;
+    color: #959799 !important;
 }
 
 .btn:disabled {
@@ -75,4 +94,40 @@ body {
 .p-datatable .p-datatable-tbody > tr
 {
     border-bottom: 0.5px solid #cfcfcf;
+}
+
+// sweet alert style
+.swal2-popup{
+    width:23em;
+}
+div:where(.swal2-icon){
+    margin: 1.5em auto .6em !important;
+}
+.swal2-title{
+    font-size: 20px!important;
+}
+.swal2-html-container{
+    font-size: 16px!important;
+}
+
+// Modal style
+.modal-footer{
+    border-top: none;
+}
+.btn-secondary{
+    background-color: transparent;
+    border: 0.5px solid gray;
+    color: grey;
+}
+.btn-secondary:hover{
+    background-color: transparent;
+    border: 0.5px solid gray;
+    color: grey;
+}
+.modal-header{
+    border-bottom: 0.5px solid gray;
+}
+.p-column-filter-row .p-column-filter-menu-button{
+    display: none;
+    padding: 0 !important;
 }

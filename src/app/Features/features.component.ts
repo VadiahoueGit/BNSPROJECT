@@ -22,15 +22,16 @@ export class FeaturesComponent {
   }
   ngOnInit(): void {
     console.log(this.currentUrl)
-    if (this.currentUrl == '/dashboard') {
+    // if (this.currentUrl.includes('parametre')) {
+    if (this.currentUrl.includes('/dashboard') ){
       this.setActive(0)
-    } else if (this.currentUrl == '/feature/activite') {
+    } else if (this.currentUrl.includes('/feature/activite')) {
       this.setActive(1)
-    } else if (this.currentUrl == '/feature/carte') {
+    } else if (this.currentUrl.includes('/feature/carte')) {
       this.setActive(2)
-    } else if (this.currentUrl == '/feature/rapport') {
+    } else if (this.currentUrl.includes('/feature/rapport')) {
       this.setActive(3)
-    } else if (this.currentUrl == '/feature/parametre') {
+    } else if (this.currentUrl.includes('/feature/parametre')) {
       this.setActive(4)
     }
   }

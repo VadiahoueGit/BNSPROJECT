@@ -1,24 +1,16 @@
 import { Component, ViewChild } from '@angular/core';
+import { ALERT_QUESTION } from '../../shared-component/utils';
 import { Table } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { HttpClientModule } from '@angular/common/http';
-import { InputTextModule } from 'primeng/inputtext';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { DropdownModule } from 'primeng/dropdown';
-import { CommonModule } from '@angular/common';
-import { CustomerService } from 'src/service/customerservice';
-import { Customer, Representative } from 'src/domain/customer';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ALERT_QUESTION } from '../../shared-component/utils';
 
 @Component({
-  selector: 'app-groupe-produit',
-  templateUrl: './groupe-produit.component.html',
-  styleUrls: ['./groupe-produit.component.scss']
+  selector: 'app-article',
+  templateUrl: './article.component.html',
+  styleUrls: ['./article.component.scss']
 })
-export class GroupeProduitComponent {
-  
+export class ArticleComponent {
+
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!:any[];
@@ -31,7 +23,12 @@ export class GroupeProduitComponent {
   ngOnInit() {
     this.GetGroupeProduitList()
   }
-
+  onFilterGlobal(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    const value = inputElement.value;
+    this.dt2.filterGlobal(value, 'contains');
+  }
+  
   clear(table: Table) {
     table.clear();
   }

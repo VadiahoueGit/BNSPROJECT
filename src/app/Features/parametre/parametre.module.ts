@@ -104,10 +104,11 @@ import { AccordionModule } from 'primeng/accordion';
     import { HttpClientModule } from '@angular/common/http';
     import { CustomerService } from 'src/service/customerservice';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { ArticleComponent } from './article/article.component';
 
 
 @NgModule({
-  declarations: [ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent],
+  declarations: [ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent],
   imports: [
     ParametreRoutingModule,
     CommonModule,
