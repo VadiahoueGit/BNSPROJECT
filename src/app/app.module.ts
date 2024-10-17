@@ -12,6 +12,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FeaturesModule } from './Features/features.module';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 export function initConfig(configService: ConfigService) {
   return () => configService.loadConfig();
@@ -29,6 +30,7 @@ export function initConfig(configService: ConfigService) {
     AppRoutingModule,
     ReactiveFormsModule,
     FormsModule,
+    NgxDatatableModule,
     BrowserAnimationsModule,
     NgxSpinnerModule.forRoot ( {  type : 'ball-scale-multiple'  } )
   ],

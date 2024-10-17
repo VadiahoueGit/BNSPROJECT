@@ -7,6 +7,7 @@ import { FeaturesRoutingModule } from './features-routing.module';
 import { ParametreComponent } from './parametre/parametre.component';
 import { ParametreModule } from './parametre/parametre.module';
 import { CustomerService } from 'src/service/customerservice';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,8 @@ import { CustomerService } from 'src/service/customerservice';
     FeaturesRoutingModule,
     DashboardModule,
     CommonModule,
+    NgxDatatableModule
+
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [CustomerService]

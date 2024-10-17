@@ -103,6 +103,7 @@ import { AccordionModule } from 'primeng/accordion';
     import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     import { HttpClientModule } from '@angular/common/http';
     import { CustomerService } from 'src/service/customerservice';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 
 @NgModule({
@@ -306,7 +307,8 @@ import { AccordionModule } from 'primeng/accordion';
     CardModule,
     RippleModule,
     StyleClassModule,
-    AutoFocusModule
+    AutoFocusModule,
+    NgxDatatableModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
