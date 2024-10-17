@@ -32,9 +32,12 @@
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/ngx-spinner/animations/ball-scale-multiple.css",
+              "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
+              "node_modules/primeng/resources/primeng.min.css",
               "src/styles.scss",
               "src/assets/font-awesome-v6/css/all.css",
               "src/app/GlobalStyle.scss"
+          
             ],
             "scripts": []
           },

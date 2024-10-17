@@ -45,9 +45,34 @@ body {
     border-radius: 10px;
     background-color: white;
     width: 100%;
-    height: 500px;
+    height: auto;
     border: none;
     -webkit-box-shadow: 0px 0px 17px -7px rgba(204,204,204,0.72);
     -moz-box-shadow: 0px 0px 17px -7px rgba(204,204,204,0.72);
     box-shadow: 0px 0px 17px -7px rgba(204,204,204,0.72);
+}
+
+.hover-scale {
+    transition: transform 0.3s ease-in-out; /* Transition fluide */
+}
+
+.hover-scale:hover {
+    transform: scale(1.05); /* Grossissement léger au survol */
+}
+
+.hover-scale-image {
+    transition: transform 0.3s ease-in-out; /* Transition fluide sur l'image */
+}
+
+.hover-scale-image:hover {
+    transform: scale(1.1); /* Grossissement plus important de l'image au survol */
+}
+
+.p-datatable .p-datatable-thead > tr > th
+{
+    background: none;
+}
+.p-datatable .p-datatable-tbody > tr
+{
+    border-bottom: 0.5px solid #cfcfcf;
 }

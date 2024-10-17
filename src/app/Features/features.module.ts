@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FeaturesRoutingModule } from './features-routing.module';
 import { ParametreComponent } from './parametre/parametre.component';
 import { ParametreModule } from './parametre/parametre.module';
+import { CustomerService } from 'src/service/customerservice';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,6 @@ import { ParametreModule } from './parametre/parametre.module';
     CommonModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  providers: []
+  providers: [CustomerService]
 })
 export class FeaturesModule { }
