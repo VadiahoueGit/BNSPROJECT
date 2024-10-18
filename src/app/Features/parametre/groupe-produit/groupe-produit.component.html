@@ -1,15 +1,20 @@
 <div class="card">
-    <div class=" d-flex justify-content-end py-3">
-        <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Ajouter un groupe de produit</button>
-    </div>
     <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
         [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" [globalFilterFields]="['code', 'libelle']">
-
+        <ng-template pTemplate="caption">
+            <div class=" d-flex justify-content-between py-3">
+                <span class="p-input-icon-left ml-auto d-flex align-items-center">
+                    <i class="fas fa-search"></i>
+                    <input pInputText type="text" (input)="filterGlobal($event)" placeholder="Search keyword" />
+                </span>
+                <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Ajouter un groupe de produit</button>
+            </div>
+        </ng-template>
         <ng-template pTemplate="header">
             <tr>
-                <th class="text-center" style="width:30%;color: var(--secondary-color);">Code</th>
-                <th class="text-center" style="width:50%;color: var(--secondary-color);">Gropue produit</th>
-                <th class="text-center" style="width:20%;color: var(--secondary-color);">Actions</th>
+                <th style="width:30%;color: var(--secondary-color);">Code</th>
+                <th style="width:50%;color: var(--secondary-color);">Gropue produit</th>
+                <th style="width:20%;color: var(--secondary-color);">Actions</th>
             </tr>
             <tr>
                 <th>
@@ -25,10 +30,10 @@
         </ng-template>
         <ng-template pTemplate="body" let-dataList>
             <tr>
-                <td class="text-center">
+                <td class="">
                     <!-- {{ dataList.name }} -->
                 </td>
-                <td class="text-center">
+                <td class="">
                     <span class="ml-1 vertical-align-middle">
                         {{ dataList.libelle }}
                     </span>

@@ -132,6 +132,13 @@ div:where(.swal2-icon){
     padding: 0 !important;
 }
 .p-fluid .p-inputtext {
-    width: 100%;
+    width: 10em;
+    height: 2.5rem;
+}
+.p-datatable-header{
+    background-color:transparent;
+    border: none;
+}
+.p-inputtext {
     height: 2.5rem;
 }

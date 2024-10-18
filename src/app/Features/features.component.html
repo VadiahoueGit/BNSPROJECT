@@ -6,7 +6,7 @@
         </div>
         <ul class="list-unstyled ps-0 ">
             <li class="mb-1 d-flex justify-content-center" *ngFor="let item of items; let i = index"  (click)="navigate(item.url,i)">
-                <a class="btn btn-toggle gap-4 d-flex align-items-center rounded my-3"
+                <a class="btn btn-toggle gap-4 d-flex align-items-center rounded my-1"
                     [ngClass]="{'active': selectedItem === i}">
                     <i [class]="item.icon"  [ngClass]="{'active': selectedItem === i}"></i> <!-- Icone ici -->
                     <label>{{ item.label }}</label>

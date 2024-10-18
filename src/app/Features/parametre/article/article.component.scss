@@ -33,3 +33,16 @@
     border: none;
     font-size: 1.5rem;
   }
+  .p-fluid .p-inputtext {
+    width: 8em !important;
+    height: 2.5rem;
+}
+
+.p-column-filter-menu-button {
+    display: none; /* Masquer l'icône de filtre */
+  }
+  
+  /* Ajuster l'espacement si nécessaire après suppression de l'icône */
+  .p-column-filter {
+    padding-right: 0; /* Supprime l'espace réservé à l'icône */
+  }

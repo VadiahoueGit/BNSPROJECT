@@ -35,7 +35,11 @@ export class GroupeProduitComponent {
   clear(table: Table) {
     table.clear();
   }
-
+  filterGlobal(event:any) {
+    const inputElement = event.target as HTMLInputElement;
+    const value = inputElement?.value || ''; // Utilisez une valeur par défaut
+    this.dt2.filterGlobal(value, 'contains');
+  }
   OnCloseModal()
   {
     this.isModalOpen = false;
