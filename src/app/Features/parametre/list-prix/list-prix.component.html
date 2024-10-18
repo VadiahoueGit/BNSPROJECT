@@ -1,0 +1,75 @@
+<div class="card">
+   
+    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" [globalFilterFields]="['code', 'libelle']" [globalFilterFields]="['code', 'libelle']">
+        <ng-template pTemplate="caption">
+            <div class=" d-flex justify-content-between py-3">
+                <span class="p-input-icon-left ml-auto d-flex align-items-center">
+                    <i class="fas fa-search"></i>
+                    <input pInputText type="text" (input)="filterGlobal($event)" placeholder="Recherche" />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width:10%;color: var(--secondary-color);">Nom</th>
+                <th style="width:10%;color: var(--secondary-color);">Quantité</th>
+                <th style="width:10%;color: var(--secondary-color);">Produits</th>
+                <th style="width:10%;color: var(--secondary-color);">Prix liquide</th>
+                <th style="width:20%;color: var(--secondary-color);">Prix consigné</th>
+                <th style="width:20%;color: var(--secondary-color);">Statuts</th>
+                <th style="width:20%;color: var(--secondary-color);">Actions</th>
+            </tr>
+      
+        </ng-template>
+        <ng-template pTemplate="body" let-dataList>
+            <tr>
+                <td class="">
+                    {{ dataList.Code }}
+                </td>
+                <td class="">
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.libelle }}
+                    </span>
+                </td>
+                <td class="">
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.createdAt | date }}
+                    </span>
+                </td>
+                <td>
+                <td class="">
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.createdAt | date }}
+                    </span>
+                </td>
+                <td>
+                <td class="">
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.createdAt | date }}
+                    </span>
+                </td>
+                <td>
+                <td class="">
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.createdAt | date }}
+                    </span>
+                </td>
+                <td>
+            <!-- <tr class="d-flex justify-content-center gap-3">
+                <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
+                <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;" class="fas fa-trash-alt text-danger"></i>
+                </td>
+            </tr> -->
+
+            </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="5">Aucun article trouvé!</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+

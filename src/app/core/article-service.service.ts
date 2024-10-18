@@ -30,6 +30,24 @@ export class ArticleServiceService {
         );
     });
   }
+  GetListPrix(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http
+        .get(
+          `${this.apiUrl}/v1/prix?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
   GetGroupeArticleList(data: any) {
     return new Promise((resolve: any, reject: any) => {
       this._http
@@ -78,7 +96,22 @@ export class ArticleServiceService {
       );
     });
   }
-
+  DeletePrix(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http
+        .delete(`${this.apiUrl}/v1/prix/${id}`)
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
   createArticle(article: any) {
     return new Promise((resolve: any, reject: any) => {
       this._http.post(`${this.apiUrl}/v1/categorie-product`, article).subscribe(
