@@ -48,12 +48,10 @@ export class ArticleServiceService {
         );
     });
   }
-  DeleteArticle(ids: number[]) {
+  DeleteArticle(id: number) {
     return new Promise((resolve: any, reject: any) => {
       this._http
-        .delete(`${this.apiUrl}/v1/group-article/bulk-delete`, {
-          body: { ids: ids },
-        })
+        .delete(`${this.apiUrl}/v1/categorie-product/${id}`)
         .subscribe(
           (res: any) => {
             console.log(res);
