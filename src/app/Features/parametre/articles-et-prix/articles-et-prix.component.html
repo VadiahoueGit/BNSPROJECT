@@ -1,11 +1,12 @@
 <!-- Navigation -->
 <nav class="nav nav-pills flex-column flex-sm-row gap-1 border-bottom">
-  <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'typeArticle'"
-    (click)="activeElement('typeArticle')">Types d'articles</a>
 
   <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'groupeProduits'"
-    (click)="activeElement('groupeProduits')">Groupe de produits</a>
+    (click)="activeElement('groupeProduits')">Groupe d'articles</a>
 
+    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'typeArticle'"
+    (click)="activeElement('typeArticle')">Types d'articles</a>
+    
   <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'articles'"
     (click)="activeElement('articles')">Articles</a>
 
