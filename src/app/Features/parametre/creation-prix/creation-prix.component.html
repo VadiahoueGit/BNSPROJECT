@@ -6,29 +6,22 @@
             <div class=" d-flex justify-content-between py-3">
                 <span class="p-input-icon-left ml-auto d-flex align-items-center">
                     <i class="fas fa-search"></i>
-                    <input pInputText type="text" (input)="filterGlobal($event)" placeholder="Search keyword" />
+                    <input pInputText type="text" (input)="filterGlobal($event)" placeholder="Recherche" />
                 </span>
-                <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Ajouter un article</button>
+                <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer un prix</button>
             </div>
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
-                <th style="width:30%;color: var(--secondary-color);">Code article</th>
-                <th style="width:50%;color: var(--secondary-color);">Libelle</th>
-                <th style="width:40%;color: var(--secondary-color);">Date création</th>
-                <th style="width:30%;color: var(--secondary-color);">Actions</th>
+                <th style="width:10%;color: var(--secondary-color);">Nom</th>
+                <th style="width:10%;color: var(--secondary-color);">Quantité</th>
+                <th style="width:10%;color: var(--secondary-color);">Produits</th>
+                <th style="width:10%;color: var(--secondary-color);">Prix liquide</th>
+                <th style="width:20%;color: var(--secondary-color);">Prix consigné</th>
+                <th style="width:20%;color: var(--secondary-color);">Statuts</th>
+                <th style="width:20%;color: var(--secondary-color);">Actions</th>
             </tr>
-            <tr>
-                <th>
-                    <p-columnFilter type="text" field="code" placeholder="Code groupe" />
-                </th>
-                <th>
-                    <p-columnFilter type="text" field="libelle" placeholder="Libellé " />
-                </th>
-                <th>
-
-                </th>
-            </tr>
+      
         </ng-template>
         <ng-template pTemplate="body" let-dataList>
             <tr>
@@ -40,6 +33,24 @@
                         {{ dataList.libelle }}
                     </span>
                 </td>
+                <td class="">
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.createdAt | date }}
+                    </span>
+                </td>
+                <td>
+                <td class="">
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.createdAt | date }}
+                    </span>
+                </td>
+                <td>
+                <td class="">
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.createdAt | date }}
+                    </span>
+                </td>
+                <td>
                 <td class="">
                     <span class="ml-1 vertical-align-middle">
                         {{ dataList.createdAt | date }}
@@ -63,7 +74,6 @@
     </p-table>
 </div>
 
-
 <!-- Modal creation -->
 <!-- Modal -->
 <div *ngIf="isModalOpen" class="custom-modal">
@@ -75,28 +85,20 @@
                     <i class="fas fa-box-check text-primary fs-3"></i>
                 </div>
                 <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création d'un
-                    article</h1>
-                <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification de
-                    l'article</h1>
+                    prix</h1>
+                <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification du
+                    prix</h1>
             </div>
 
             <div class="modal-body">
-                <form [formGroup]="articleForm">
+                <form [formGroup]="prixForm">
                     <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
                         <div class="d-flex align-items-center">
-                            <label for="code" class="form-label me-1">Code</label>
+                            <label for="code" class="form-label me-1">Nom</label>
                             <p class="text-danger mb-0">*</p>
                         </div>
-                        <input type="text" class="form-control" formControlName="code" id="code"
-                            placeholder="Entrez le code de l'article">
-                    </div>
-                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
-                        <div class="d-flex align-items-center">
-                            <label for="nom" class="form-label me-1">Nom de l'article</label>
-                            <p class="text-danger mb-0">*</p>
-                        </div>
-                        <input type="text" class="form-control" formControlName="libelle" id="nom"
-                            placeholder="Entrez le nom de l'article">
+                        <input type="text" class="form-control" formControlName="libelle" id="code"
+                            placeholder="Entrez le nom ">
                     </div>
                 </form>
             </div>

@@ -105,10 +105,12 @@ import { AccordionModule } from 'primeng/accordion';
     import { CustomerService } from 'src/service/customerservice';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ArticleComponent } from './article/article.component';
+import { ListPrixComponent } from './list-prix/list-prix.component';
+import { CreationPrixComponent } from './creation-prix/creation-prix.component';
 
 
 @NgModule({
-  declarations: [ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent],
+  declarations: [ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent, ListPrixComponent, CreationPrixComponent],
   imports: [
     ParametreRoutingModule,
     CommonModule,

@@ -31,6 +31,7 @@ export class TypeArticleComponent {
   ngOnInit() {
     this.articleForm = this.fb.group({
       libelle: ['', Validators.required],
+      code: ['', Validators.required],
     });
     this.GetTypesArticlesList();
   }
