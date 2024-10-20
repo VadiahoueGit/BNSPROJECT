@@ -9,17 +9,17 @@ import { Route, Router } from '@angular/router';
 export class ParametreComponent implements OnInit {
   ListItems = [
     {
-      image: 'assets/image/image.jpeg',
+      image: 'assets/icon/article.png',
       title: 'Articles & prix',
       url:'feature/parametre/articles'
     },
     {
-      image: 'assets/image/image.jpeg',
+      image: 'assets/icon/vehicule.png',
       title: 'Vehicules',
       url:''
     },
     {
-      image: 'assets/image/image.jpeg',
+      image: 'assets/icon/users.png',
       title: 'Utilisateurs',
       url:''
     }

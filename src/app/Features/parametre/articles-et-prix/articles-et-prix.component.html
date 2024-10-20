@@ -6,15 +6,18 @@
 
     <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'typeArticle'"
     (click)="activeElement('typeArticle')">Types d'articles</a>
-    
+
+    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'liquide'"
+    (click)="activeElement('liquide')">Liquides</a>
+
+    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'emballage'"
+    (click)="activeElement('emballage')">Emballages</a>
+
   <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'articles'"
     (click)="activeElement('articles')">Articles</a>
 
-  <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'listPrix'"
-    (click)="activeElement('listPrix')">Liste des prix</a>
-
   <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'creatPrix'"
-    (click)="activeElement('creatPrix')">Création des prix</a>
+    (click)="activeElement('creatPrix')">Liste des prix</a>
 </nav>
 
 <div class="tab-content mt-3">
@@ -25,6 +28,15 @@
   <div *ngIf="activeTab === 'groupeProduits'" class="tab-pane fade show active">
     <app-groupe-produit></app-groupe-produit>
   </div>
+
+  <div *ngIf="activeTab === 'liquide'" class="tab-pane fade show active">
+    <p>liquide</p>
+   </div> 
+
+   
+  <div *ngIf="activeTab === 'emballage'" class="tab-pane fade show active">
+   <p>emballage</p>
+  </div> 
 
   <div *ngIf="activeTab === 'articles'" class="tab-pane fade show active">
     <app-article></app-article>

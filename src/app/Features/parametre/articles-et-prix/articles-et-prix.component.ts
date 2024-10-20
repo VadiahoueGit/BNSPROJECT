@@ -7,27 +7,16 @@ import { Customer } from 'src/domain/customer';
   styleUrls: ['./articles-et-prix.component.scss'],
 })
 export class ArticlesEtPrixComponent implements OnInit {
-  public activeTab: string = 'typeArticle';
+  public activeTab: string = 'groupeProduits';
   customers!: Customer[];
   loading: boolean = true;
   selected = [];
   rows: any = [];
 
-  columns = [
-    { prop: 'name', name: 'Name' },
-    { prop: 'age', name: 'Age' },
-    { prop: 'job', name: 'Job' },
-  ];
+  
   constructor(private cd: ChangeDetectorRef) {}
   ngOnInit(): void {
-    setTimeout(() => {
-      this.rows = [
-        { name: 'John', age: 25, job: 'Engineer' },
-        { name: 'Jane', age: 30, job: 'Designer' },
-        { name: 'Paul', age: 28, job: 'Developer' },
-      ];
-      this.cd.detectChanges(); 
-    }, 1000);
+
   }
   activeElement(elt: string) {
     this.activeTab = elt;

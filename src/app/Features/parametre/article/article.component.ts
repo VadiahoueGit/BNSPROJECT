@@ -21,7 +21,7 @@ export class ArticleComponent {
   constructor(private articleService: ArticleServiceService, private _spinner:NgxSpinnerService) { }
 
   ngOnInit() {
-    this.GetGroupeProduitList()
+    this.GetProduitList()
   }
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
@@ -63,7 +63,7 @@ export class ArticleComponent {
     })
   }
 
-  GetGroupeProduitList()
+  GetProduitList()
   {
     let data = {
       paginate: true,
@@ -71,7 +71,7 @@ export class ArticleComponent {
       limit:8
     }
     this._spinner.show()
-    this.articleService.GetGroupeArticleList(data).then((res:any)=>{
+    this.articleService.GetArticleList(data).then((res:any)=>{
       console.log('DATA:::>',res)
       this.dataList = res.data
       this._spinner.hide()
