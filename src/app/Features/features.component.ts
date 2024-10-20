@@ -28,7 +28,7 @@ export class FeaturesComponent {
   ngOnInit(): void {
     console.log(this.currentUrl)
     // if (this.currentUrl.includes('parametre')) {
-    if (this.currentUrl.includes('/feature') ){
+    if (this.currentUrl.includes('/feature/dashboard') ){
       this.setActive(0)
     } else if (this.currentUrl.includes('/feature/activite')) {
       this.setActive(1)

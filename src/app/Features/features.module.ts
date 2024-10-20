@@ -8,10 +8,18 @@ import { ParametreComponent } from './parametre/parametre.component';
 import { ParametreModule } from './parametre/parametre.module';
 import { CustomerService } from 'src/service/customerservice';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { CartographieComponent } from './cartographie/cartographie.component';
+import { RapportComponent } from './rapport/rapport.component';
+import { AchatsComponent } from './achats/achats.component';
+import { PartenairesComponent } from './partenaires/partenaires.component';
 
 @NgModule({
   declarations: [
-   FeaturesComponent
+   FeaturesComponent,
+   CartographieComponent,
+   RapportComponent,
+   AchatsComponent,
+   PartenairesComponent
   ],
   imports: [
     // ParametreModule,
