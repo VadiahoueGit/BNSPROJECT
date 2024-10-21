@@ -49,24 +49,7 @@ export class ArticleServiceService {
 
   DeleteTypesArticlesList(id: number) {
     return new Promise((resolve: any, reject: any) => {
-      this._http
-        .delete(`${this.apiUrl}/v1/categorie-product/${id}`)
-        .subscribe(
-          (res: any) => {
-            console.log(res);
-            resolve(res);
-          },
-          (err) => {
-            console.log(err);
-            reject(err);
-          }
-        );
-    });
-  }
-
-  UpdateTypesArticlesList(id: number, data: any) {
-    return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/categorie-product/${id}`, data).subscribe(
+      this._http.delete(`${this.apiUrl}/v1/categorie-product/${id}`).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -79,6 +62,22 @@ export class ArticleServiceService {
     });
   }
 
+  UpdateTypesArticlesList(id: number, data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http
+        .put(`${this.apiUrl}/v1/categorie-product/${id}`, data)
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
 
   // PRIX
   CreatePrix(data: any) {
@@ -114,11 +113,12 @@ export class ArticleServiceService {
         );
     });
   }
-
-  DeletePrix(id: number) {
+  GetListProduits(data: any) {
     return new Promise((resolve: any, reject: any) => {
       this._http
-        .delete(`${this.apiUrl}/v1/prix/${id}`)
+        .get(
+          `${this.apiUrl}/v1/product?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+        )
         .subscribe(
           (res: any) => {
             console.log(res);
@@ -129,6 +129,39 @@ export class ArticleServiceService {
             reject(err);
           }
         );
+    });
+  }
+  GetListTypePrix(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http
+        .get(
+          `${this.apiUrl}/v1/type-prix?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+  DeletePrix(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http.delete(`${this.apiUrl}/v1/prix/${id}`).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
     });
   }
 
@@ -146,7 +179,6 @@ export class ArticleServiceService {
       );
     });
   }
-
 
   // GROUPE ARTICLE
   CreateGroupeArticle(data: any) {
@@ -200,18 +232,16 @@ export class ArticleServiceService {
 
   DeleteGroupeArticle(id: number) {
     return new Promise((resolve: any, reject: any) => {
-      this._http
-        .delete(`${this.apiUrl}/v1/group-article/${id}`)
-        .subscribe(
-          (res: any) => {
-            console.log(res);
-            resolve(res);
-          },
-          (err) => {
-            console.log(err);
-            reject(err);
-          }
-        );
+      this._http.delete(`${this.apiUrl}/v1/group-article/${id}`).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
     });
   }
 
@@ -282,7 +312,6 @@ export class ArticleServiceService {
   //   });
   // }
 
-
   // EMBALLAGE
   CreateEmballage(data: any) {
     return new Promise((resolve: any, reject: any) => {
@@ -335,21 +364,18 @@ export class ArticleServiceService {
 
   DeleteEmballage(id: number) {
     return new Promise((resolve: any, reject: any) => {
-      this._http
-        .delete(`${this.apiUrl}/v1/emballage/${id}`)
-        .subscribe(
-          (res: any) => {
-            console.log(res);
-            resolve(res);
-          },
-          (err) => {
-            console.log(err);
-            reject(err);
-          }
-        );
+      this._http.delete(`${this.apiUrl}/v1/emballage/${id}`).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
     });
   }
-
 
   // ARTICLE
   GetArticleList(data: any) {
@@ -373,8 +399,24 @@ export class ArticleServiceService {
 
   DeleteArticle(id: number) {
     return new Promise((resolve: any, reject: any) => {
+      this._http.delete(`${this.apiUrl}/v1/categorie-product/${id}`).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+  
+
+  updateArticle(id: number, article: any) {
+    return new Promise((resolve: any, reject: any) => {
       this._http
-        .delete(`${this.apiUrl}/v1/categorie-product/${id}`)
+        .put(`${this.apiUrl}/v1/categorie-product/${id}`, article)
         .subscribe(
           (res: any) => {
             console.log(res);
@@ -387,21 +429,7 @@ export class ArticleServiceService {
         );
     });
   }
-
-  updateArticle(id: number, article: any) {
-    return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/categorie-product/${id}`, article).subscribe(
-        (res: any) => {
-          console.log(res);
-          resolve(res);
-        },
-        (err) => {
-          console.log(err);
-          reject(err);
-        }
-      );
-    });
-  }
+  
 
   createArticle(article: any) {
     return new Promise((resolve: any, reject: any) => {
@@ -417,4 +445,6 @@ export class ArticleServiceService {
       );
     });
   }
+ 
+ 
 }
