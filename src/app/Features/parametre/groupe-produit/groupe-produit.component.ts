@@ -83,6 +83,7 @@ export class GroupeProduitComponent {
           (response: any) => {
             this.OnCloseModal();
             this.GetGroupeProduitList();
+            this.groupeProduitForm.reset()
             console.log('Nouvel article créé avec succès', response);
           },
           (error: any) => {

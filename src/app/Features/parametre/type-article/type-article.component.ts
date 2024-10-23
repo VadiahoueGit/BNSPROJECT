@@ -86,6 +86,7 @@ export class TypeArticleComponent {
           (response: any) => {
             this.OnCloseModal();
             this.GetTypesArticlesList();
+            this.articleForm.reset()
             console.log('Nouvel article créé avec succès', response);
           },
           (error: any) => {

@@ -34,8 +34,12 @@ export class CreationPrixComponent {
       PrixId: [0,  Validators.required],
       ProduitId: [0,  Validators.required],
     });
+    this.articleService.ListTypeArticles.subscribe((res: any) => {
+      this.dataListProduits = res;
+      console.log(this.dataListProduits ,"this.dataListProduits ")
+    });
     this.GetListTypesPrix();
-    this.GetListProduits();
+    // this.GetListProduits();
     this.GetListPrix();
   }
   GetListPrix() {
@@ -64,19 +68,19 @@ export class CreationPrixComponent {
       this._spinner.hide();
     });
   }
-  GetListProduits() {
-    let data = {
-      paginate: true,
-      page: 1,
-      limit: 8,
-    };
-    this._spinner.show();
-    this.articleService.GetListProduits(data).then((res: any) => {
-      console.log('DATATYPEPRIX:::>', res);
-      this.dataListProduits = res.data;
-      this._spinner.hide();
-    });
-  }
+  // GetListProduits() {
+  //   let data = {
+  //     paginate: true,
+  //     page: 1,
+  //     limit: 8,
+  //   };
+  //   this._spinner.show();
+  //   this.articleService.GetArticleList(data).then((res: any) => {
+  //     console.log('DATATYPEPRIX:::>', res);
+  //     this.dataListProduits = res.data;
+  //     this._spinner.hide();
+  //   });
+  // }
   filterGlobal(event: any) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement?.value || '';
@@ -89,7 +93,13 @@ export class CreationPrixComponent {
   onSubmit(): void {
     console.log(this.prixForm.value);
     if (this.prixForm.valid) {
-      const formValues = this.prixForm.value;
+      // const formValues = this.prixForm.value;
+      const formValues = {
+        ...this.prixForm.value,
+        PrixId: +this.prixForm.value.PrixId,
+        ProduitId: +this.prixForm.value.ProduitId,
+       
+      };
       this.prixForm.patchValue(this.updateData);
       if (this.isEditMode) {
         this.articleService.UpdatePrix(this.prixId, formValues).then(
@@ -107,6 +117,7 @@ export class CreationPrixComponent {
           (response: any) => {
             this.OnCloseModal();
             this.GetListPrix();
+            this.prixForm.reset()
             console.log('Nouveau prix créé avec succès', response);
           },
           (error: any) => {
