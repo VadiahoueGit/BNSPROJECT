@@ -40,19 +40,16 @@
                         {{ dataListEmballage.condition }}
                     </span>
                 </td>
-                <td>
                 <td class="">
                     <span class="ml-1 vertical-align-middle">
                         {{ dataListEmballage.plastiquenu.libelle }}
                     </span>
                 </td>
-                <td>
                 <td class="">
                     <span class="ml-1 vertical-align-middle">
                         {{ dataListEmballage.bouteillevide.libelle }}
                     </span>
                 </td>
-                <td>
                 <td class="">
                     <span class="ml-1 vertical-align-middle">
                         {{ dataListEmballage.categorieproduit.libelle }}
@@ -64,14 +61,14 @@
                     </span>
                 </td>
                 <td>
-            <tr class="d-flex justify-content-center gap-3">
-                <td><i (click)="OnEdit(dataListEmballage)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
-                <td><i (click)="OnDelete(dataListEmballage.id)" style="cursor: pointer;"
-                        class="fas fa-trash-alt text-danger"></i>
+                    <tr class="d-flex justify-content-center gap-3">
+                        <td><i (click)="OnEdit(dataListEmballage)" style="cursor: pointer;"
+                                class="fas fa-edit text-secondary"></i></td>
+                        <td><i (click)="OnDelete(dataListEmballage.id)" style="cursor: pointer;"
+                                class="fas fa-trash-alt text-danger"></i>
+                        </td>
+                    </tr>
                 </td>
-            </tr>
-
-            </td>
             </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
@@ -106,7 +103,7 @@
                             <p class="text-danger mb-0">*</p>
                         </div>
                         <input type="text" class="form-control" formControlName="libelle" id="libelle"
-                            placeholder="Entrez prix liquide ">
+                            placeholder="Entrez le libelle">
                     </div>
                     <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
                         <div class="d-flex align-items-center">
@@ -114,7 +111,7 @@
                             <p class="text-danger mb-0">*</p>
                         </div>
                         <input type="text" class="form-control" formControlName="format" id="format"
-                            placeholder="Entrez prix de la consigne ">
+                            placeholder="Entrez format de l'emballage ">
                     </div>
                     <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
                         <div class="d-flex align-items-center">
@@ -132,9 +129,9 @@
 
                         <select class=" form-control form-select form-select-sm" formControlName="plastiquenuId"
                             aria-label=".form-select-sm example">
-                            <option value="" disabled selected >Choisir le plastique nu</option>
+                            <option value="" disabled selected>Choisir le plastique nu</option>
                             <option [value]="item.id" *ngFor="let item of dataListPlastiqueNu">{{item.libelle}}</option>
-                          
+
                         </select>
                     </div>
                     <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
@@ -144,8 +141,9 @@
                         </div>
                         <select class="form-control form-select form-select-sm" formControlName="bouteillevideId"
                             aria-label=".form-select-sm example">
-                            <option value="" disabled selected >Choisir la bouteille</option>
-                            <option [value]="item.id" *ngFor="let item of dataListBouteilleVide">{{item.libelle}}</option>
+                            <option value="" disabled selected>Choisir la bouteille</option>
+                            <option [value]="item.id" *ngFor="let item of dataListBouteilleVide">{{item.libelle}}
+                            </option>
                         </select>
 
                     </div>
@@ -156,7 +154,7 @@
                         </div>
                         <select class="form-control form-select form-select-sm" formControlName="categorieProduitId"
                             aria-label=".form-select-sm example">
-                            <option value="" disabled selected >Choisir le produit</option>
+                            <option value="" disabled selected>Choisir le produit</option>
                             <option [value]="item.id" *ngFor="let item of dataListProduits">{{item.libelle}}</option>
                         </select>
 
@@ -168,8 +166,9 @@
                         </div>
                         <select class="form-control form-select form-select-sm" formControlName="groupeArticleId"
                             aria-label=".form-select-sm example">
-                            <option value="" disabled selected >Choisir l'article</option>
-                            <option [value]="item.id" *ngFor="let item of dataListGroupeArticles">{{item.libelle}}</option>
+                            <option value="" disabled selected>Choisir l'article</option>
+                            <option [value]="item.id" *ngFor="let item of dataListGroupeArticles">{{item.libelle}}
+                            </option>
                         </select>
 
                     </div>

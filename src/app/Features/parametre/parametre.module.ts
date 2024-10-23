@@ -114,7 +114,7 @@ import { LiquideComponent } from './liquide/liquide.component';
 
 
 @NgModule({
-    declarations: [ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent, ListPrixComponent, CreationPrixComponent, EmballageComponent, LiquideComponent],
+    declarations: [TransporteurComponent,LogistiqueComponent,ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent, ListPrixComponent, CreationPrixComponent, EmballageComponent, LiquideComponent],
     imports: [
       ParametreRoutingModule,
       CommonModule,
