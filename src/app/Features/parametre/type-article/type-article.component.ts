@@ -31,7 +31,6 @@ export class TypeArticleComponent {
   ngOnInit() {
     this.articleForm = this.fb.group({
       libelle: ['', Validators.required],
-      code: ['', Validators.required],
     });
     this.GetTypesArticlesList();
   }
@@ -87,6 +86,7 @@ export class TypeArticleComponent {
           (response: any) => {
             this.OnCloseModal();
             this.GetTypesArticlesList();
+            this.articleForm.reset()
             console.log('Nouvel article créé avec succès', response);
           },
           (error: any) => {

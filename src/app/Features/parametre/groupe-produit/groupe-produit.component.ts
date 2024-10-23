@@ -11,6 +11,7 @@ import { Customer, Representative } from 'src/domain/customer';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ALERT_QUESTION } from '../../shared-component/utils';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-groupe-produit',
@@ -18,17 +19,27 @@ import { ALERT_QUESTION } from '../../shared-component/utils';
   styleUrls: ['./groupe-produit.component.scss']
 })
 export class GroupeProduitComponent {
-  
+  groupeProduitForm!: FormGroup
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
-  dataList!:any[];
+  dataList:any =[];
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
   operation:string = ''
-  constructor(private articleService: ArticleServiceService, private _spinner:NgxSpinnerService) { }
+  updateData: any = {};
+  groupeId : number = 0
+  isEditMode: boolean = false;
+  constructor(private articleService: ArticleServiceService, private _spinner:NgxSpinnerService,
+    private fb: FormBuilder
+
+  ) { }
 
   ngOnInit() {
+    this.groupeProduitForm = this.fb.group({
+      libelle: ['', Validators.required],
+      code: ['', Validators.required],
+    });
     this.GetGroupeProduitList()
   }
 
@@ -51,25 +62,62 @@ export class GroupeProduitComponent {
     this.operation = 'create';
     console.log(this.isModalOpen)
   }
-
-  OnEdit()
-  {
+  onSubmit(): void {
+    console.log(this.groupeProduitForm.value);
+    if (this.groupeProduitForm.valid) {
+      const formValues = this.groupeProduitForm.value;
+      this.groupeProduitForm.patchValue(this.updateData);
+      if (this.isEditMode) {
+        this.articleService.UpdateGroupeArticle(this.groupeId, formValues).then(
+          (response: any) => {
+            console.log('Article mis à jour avec succès', response);
+            this.OnCloseModal();
+            this.GetGroupeProduitList();
+          },
+          (error: any) => {
+            console.error('Erreur lors de la mise à jour', error);
+          }
+        );
+      } else {
+        this.articleService.CreateGroupeArticle(formValues).then(
+          (response: any) => {
+            this.OnCloseModal();
+            this.GetGroupeProduitList();
+            this.groupeProduitForm.reset()
+            console.log('Nouvel article créé avec succès', response);
+          },
+          (error: any) => {
+            console.error('Erreur lors de la création', error);
+          }
+        );
+      }
+    }
+  }
+  OnEdit(data: any) {
+    this.isEditMode = true;
+    console.log(data);
+    this.updateData = data;
+    this.groupeId = data.id;
+    this.groupeProduitForm.patchValue(data);
     this.isModalOpen = true;
     this.operation = 'edit';
-    console.log(this.isModalOpen)
+    console.log(this.isModalOpen);
   }
-
-  OnDelete()
-  {
-    ALERT_QUESTION('warning','Attention !','Voulez-vous supprimer?').then((res)=>{
-      if (res.isConfirmed == true) {
-
-      }else{
-        
+  OnDelete(Id: any) {
+    ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
+      (res) => {
+        if (res.isConfirmed == true) {
+          this._spinner.show();
+          this.articleService.DeleteGroupeArticle(Id).then((res: any) => {
+            console.log('DATA:::>', res);
+            // this.dataList = res.data;
+            this._spinner.hide();
+          });
+        } else {
+        }
       }
-    })
+    );
   }
-
   GetGroupeProduitList()
   {
     let data = {

@@ -8,16 +8,18 @@ import { ALERT_QUESTION } from '../../shared-component/utils';
 @Component({
   selector: 'app-creation-prix',
   templateUrl: './creation-prix.component.html',
-  styleUrls: ['./creation-prix.component.scss']
+  styleUrls: ['./creation-prix.component.scss'],
 })
 export class CreationPrixComponent {
   dataList = [];
+  dataListTypesPrix: any = [];
+  dataListProduits: any = [];
   @ViewChild('dt2') dt2!: Table;
   isEditMode: boolean = false;
   isModalOpen: boolean = false;
   operation: string = '';
   updateData: any;
-  articleId: any;
+  prixId: any;
   prixForm!: FormGroup;
   constructor(
     private articleService: ArticleServiceService,
@@ -26,9 +28,18 @@ export class CreationPrixComponent {
   ) {}
   ngOnInit() {
     this.prixForm = this.fb.group({
-      libelle: ['', Validators.required],
-      code: ['', Validators.required],
+      PrixLiquide: [null, Validators.required],
+      PrixConsigne: [null,  Validators.required],
+      Quantite: [null,  Validators.required],
+      PrixId: [0,  Validators.required],
+      ProduitId: [0,  Validators.required],
     });
+    this.articleService.ListTypeArticles.subscribe((res: any) => {
+      this.dataListProduits = res;
+      console.log(this.dataListProduits ,"this.dataListProduits ")
+    });
+    this.GetListTypesPrix();
+    // this.GetListProduits();
     this.GetListPrix();
   }
   GetListPrix() {
@@ -44,6 +55,32 @@ export class CreationPrixComponent {
       this._spinner.hide();
     });
   }
+  GetListTypesPrix() {
+    let data = {
+      paginate: true,
+      page: 1,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.articleService.GetListTypePrix(data).then((res: any) => {
+      console.log('DATATYPEPRIX:::>', res);
+      this.dataListTypesPrix = res.data;
+      this._spinner.hide();
+    });
+  }
+  // GetListProduits() {
+  //   let data = {
+  //     paginate: true,
+  //     page: 1,
+  //     limit: 8,
+  //   };
+  //   this._spinner.show();
+  //   this.articleService.GetArticleList(data).then((res: any) => {
+  //     console.log('DATATYPEPRIX:::>', res);
+  //     this.dataListProduits = res.data;
+  //     this._spinner.hide();
+  //   });
+  // }
   filterGlobal(event: any) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement?.value || '';
@@ -53,8 +90,44 @@ export class CreationPrixComponent {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
   }
-  onSubmit(){}
-  
+  onSubmit(): void {
+    console.log(this.prixForm.value);
+    if (this.prixForm.valid) {
+      // const formValues = this.prixForm.value;
+      const formValues = {
+        ...this.prixForm.value,
+        PrixId: +this.prixForm.value.PrixId,
+        ProduitId: +this.prixForm.value.ProduitId,
+       
+      };
+      this.prixForm.patchValue(this.updateData);
+      if (this.isEditMode) {
+        this.articleService.UpdatePrix(this.prixId, formValues).then(
+          (response: any) => {
+            console.log('prix mis à jour avec succès', response);
+            this.OnCloseModal();
+            this.GetListPrix();
+          },
+          (error: any) => {
+            console.error('Erreur lors de la mise à jour', error);
+          }
+        );
+      } else {
+        this.articleService.CreatePrix(formValues).then(
+          (response: any) => {
+            this.OnCloseModal();
+            this.GetListPrix();
+            this.prixForm.reset()
+            console.log('Nouveau prix créé avec succès', response);
+          },
+          (error: any) => {
+            console.error('Erreur lors de la création', error);
+          }
+        );
+      }
+    }
+  }
+
   OnCreate() {
     this.isEditMode = false;
     this.isModalOpen = true;
@@ -65,7 +138,7 @@ export class CreationPrixComponent {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
-    this.articleId = data.id;
+    this.prixId = data.id;
     this.prixForm.patchValue(data);
     this.isModalOpen = true;
     this.operation = 'edit';

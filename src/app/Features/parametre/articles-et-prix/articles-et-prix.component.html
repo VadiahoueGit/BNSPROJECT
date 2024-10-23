@@ -35,15 +35,11 @@
 
    
   <div *ngIf="activeTab === 'emballage'" class="tab-pane fade show active">
-   <p>emballage</p>
+    <app-emballage></app-emballage>
   </div> 
 
   <div *ngIf="activeTab === 'articles'" class="tab-pane fade show active">
     <app-article></app-article>
-  </div>
-
-  <div *ngIf="activeTab === 'listPrix'" class="tab-pane fade show active">
-    <app-list-prix></app-list-prix>
   </div>
 
   <div *ngIf="activeTab === 'creatPrix'" class="tab-pane fade show active">
