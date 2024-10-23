@@ -16,12 +16,12 @@ export class ParametreComponent implements OnInit {
     {
       image: 'assets/icon/vehicule.png',
       title: 'Vehicules',
-      url:''
+      url:'feature/parametre/logistique',
     },
     {
       image: 'assets/icon/users.png',
       title: 'Utilisateurs',
-      url:''
+      // url:'feature/parametre/logistique',
     }
   ]
 constructor(private _router: Router){}

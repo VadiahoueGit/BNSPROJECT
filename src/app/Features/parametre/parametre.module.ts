@@ -107,10 +107,12 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ArticleComponent } from './article/article.component';
 import { ListPrixComponent } from './list-prix/list-prix.component';
 import { CreationPrixComponent } from './creation-prix/creation-prix.component';
+import { TransporteurComponent } from './transporteur/transporteur.component';
+import { LogistiqueComponent } from './logistique/logistique.component';
 
 
 @NgModule({
-  declarations: [ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent, ListPrixComponent, CreationPrixComponent],
+  declarations: [ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent, ListPrixComponent, CreationPrixComponent, TransporteurComponent,LogistiqueComponent],
   imports: [
     ParametreRoutingModule,
     CommonModule,

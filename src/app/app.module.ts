@@ -20,6 +20,7 @@ export function initConfig(configService: ConfigService) {
 @NgModule({
   declarations: [
     AppComponent,
+    
   ],
   imports: [
     FeaturesModule,
