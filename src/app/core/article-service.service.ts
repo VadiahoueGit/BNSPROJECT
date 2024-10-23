@@ -288,7 +288,7 @@ export class ArticleServiceService {
   //LIQUIDE
   CreateLiquide(data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/emballage`, data).subscribe(
+      this._http.post(`${this.apiUrl}/v1/liquide`, data).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -305,7 +305,7 @@ export class ArticleServiceService {
     return new Promise((resolve: any, reject: any) => {
       this._http
         .get(
-          `${this.apiUrl}/v1/emballage?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/liquide?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
         )
         .subscribe(
           (res: any) => {
@@ -325,7 +325,7 @@ export class ArticleServiceService {
 
   UpdateLiquide(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/emballage/${id}`, data).subscribe(
+      this._http.put(`${this.apiUrl}/v1/liquide/${id}`, data).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -340,7 +340,7 @@ export class ArticleServiceService {
 
   DeleteLiquide(id: number) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.delete(`${this.apiUrl}/v1/emballage/${id}`).subscribe(
+      this._http.delete(`${this.apiUrl}/v1/liquide/${id}`).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);

@@ -1,1 +1,202 @@
-<p>liquide works!</p>
+<div class="card">
+
+    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataListLiquides" dataKey="id" [rows]="8"
+        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" [globalFilterFields]="['plastiquenu.libelle', 'libelle']"
+        [globalFilterFields]="['plastiquenu.libelle', 'libelle']">
+        <ng-template pTemplate="caption">
+            <div class=" d-flex justify-content-between py-3">
+                <span class="p-input-icon-left ml-auto d-flex align-items-center">
+                    <i class="fas fa-search"></i>
+                    <input pInputText type="text" (input)="filterGlobal($event)" placeholder="Recherche" />
+                </span>
+                <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer un liquide</button>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="color: var(--secondary-color);">Nom</th>
+                <th style="color: var(--secondary-color);">Format</th>
+                <th style="color: var(--secondary-color);">Condition</th>
+                <th style="color: var(--secondary-color);">Plastique Nu</th>
+                <th style="color: var(--secondary-color);">Bouteille vide</th>
+                <th style="color: var(--secondary-color);">Catégorie</th>
+                <th style="color: var(--secondary-color);">Groupe article</th>
+                <th style="color: var(--secondary-color);">Emballage</th>
+                <th style="color: var(--secondary-color);">Actions</th>
+            </tr>
+
+        </ng-template>
+        <ng-template pTemplate="body" let-dataListLiquides>
+            <tr>
+                <td class="">
+                    {{ dataListLiquides?.libelle }}
+                </td>
+                <td class="">
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataListLiquides?.format }}
+                    </span>
+                </td>
+                <td class="">
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataListLiquides?.condition }}
+                    </span>
+                </td>
+                <td class="">
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataListLiquides?.plastiquenu.libelle }}
+                    </span>
+                </td>
+                <td class="">
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataListLiquides?.bouteillevide.libelle }}
+                    </span>
+                </td>
+                <td class="">
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataListLiquides?.categorieproduit.libelle }}
+                    </span>
+                </td>
+                <td class="">
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataListLiquides?.groupearticle.libelle }}
+                    </span>
+                </td>
+                <td class="">
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataListLiquides?.emballage.libelle }}
+                    </span>
+                </td>
+                <td>
+                    <tr class="d-flex justify-content-center gap-3">
+                        <td><i (click)="OnEdit(dataListLiquides)" style="cursor: pointer;"
+                                class="fas fa-edit text-secondary"></i></td>
+                        <td><i (click)="OnDelete(dataListLiquides.id)" style="cursor: pointer;"
+                                class="fas fa-trash-alt text-danger"></i>
+                        </td>
+                    </tr>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="5">Aucun liquide trouvé!</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<!-- Modal creation -->
+<!-- Modal -->
+<div *ngIf="isModalOpen" class="custom-modal">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center">
+                <div class="d-flex justify-content-center align-items-center"
+                    style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
+                    <i class="fas fa-box-check text-primary fs-3"></i>
+                </div>
+                <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création d'un
+                    liquide</h1>
+                <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification du
+                    liquide</h1>
+            </div>
+
+            <div class="modal-body">
+                <form [formGroup]="liquideForm">
+                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
+                        <div class="d-flex align-items-center">
+                            <label for="libelle" class="form-label me-1 label-fixed-width">Libelle</label>
+                            <p class="text-danger mb-0">*</p>
+                        </div>
+                        <input type="text" class="form-control" formControlName="libelle" id="libelle"
+                            placeholder="Entrez le libelle">
+                    </div>
+                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
+                        <div class="d-flex align-items-center">
+                            <label for="format" class="form-label me-1 label-fixed-width">Format</label>
+                            <p class="text-danger mb-0">*</p>
+                        </div>
+                        <input type="text" class="form-control" formControlName="format" id="format"
+                            placeholder="Entrez format de l'emballage ">
+                    </div>
+                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
+                        <div class="d-flex align-items-center">
+                            <label for="condition" class="form-label me-1 label-fixed-width">Condition</label>
+                            <p class="text-danger mb-0">*</p>
+                        </div>
+                        <input type="test" class="form-control" formControlName="condition" id="condition"
+                            placeholder="Entrez la condition ">
+                    </div>
+                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
+                        <div class="d-flex align-items-center">
+                            <label for="plastiquenuId" class="form-label me-1 label-fixed-width">Plastique nu</label>
+                            <p class="text-danger mb-0">*</p>
+                        </div>
+
+                        <select class=" form-control form-select form-select-sm" formControlName="plastiquenuId"
+                            aria-label=".form-select-sm example">
+                            <option value="" disabled selected>Choisir le plastique nu</option>
+                            <option [value]="item.id" *ngFor="let item of dataListPlastiqueNu">{{item.libelle}}</option>
+
+                        </select>
+                    </div>
+                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
+                        <div class="d-flex align-items-center">
+                            <label for="bouteillevideId" class="form-label me-1 label-fixed-width">Bouteille vide</label>
+                            <p class="text-danger mb-0">*</p>
+                        </div>
+                        <select class="form-control form-select form-select-sm" formControlName="bouteillevideId"
+                            aria-label=".form-select-sm example">
+                            <option value="" disabled selected>Choisir la bouteille</option>
+                            <option [value]="item.id" *ngFor="let item of dataListBouteilleVide">{{item.libelle}}
+                            </option>
+                        </select>
+
+                    </div>
+                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
+                        <div class="d-flex align-items-center">
+                            <label for="categorieProduitId" class="form-label me-1 label-fixed-width">Catégorie produit</label>
+                            <p class="text-danger mb-0">*</p>
+                        </div>
+                        <select class="form-control form-select form-select-sm" formControlName="categorieProduitId"
+                            aria-label=".form-select-sm example">
+                            <option value="" disabled selected>Choisir le produit</option>
+                            <option [value]="item.id" *ngFor="let item of dataListProduits">{{item.libelle}}</option>
+                        </select>
+
+                    </div>
+                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
+                        <div class="d-flex align-items-center">
+                            <label for="groupeArticleId" class="form-label me-1 label-fixed-width">Groupe article</label>
+                            <p class="text-danger mb-0">*</p>
+                        </div>
+                        <select class="form-control form-select form-select-sm" formControlName="groupeArticleId"
+                            aria-label=".form-select-sm example">
+                            <option value="" disabled selected>Choisir l'article</option>
+                            <option [value]="item.id" *ngFor="let item of dataListGroupeArticles">{{item.libelle}}
+                            </option>
+                        </select>
+
+                    </div>
+                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
+                        <div class="d-flex align-items-center">
+                            <label for="emballageId" class="form-label me-1 label-fixed-width">Emballage</label>
+                            <p class="text-danger mb-0">*</p>
+                        </div>
+                        <select class="form-control form-select form-select-sm" formControlName="emballageId"
+                            aria-label=".form-select-sm example">
+                            <option value="" disabled selected>Choisir l'article</option>
+                            <option [value]="item.id" *ngFor="let item of dataListEmballage">{{item.libelle}}
+                            </option>
+                        </select>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer gap-3 px-4">
+                <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
+                <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
+            </div>
+        </div>
+    </div>
+</div>
