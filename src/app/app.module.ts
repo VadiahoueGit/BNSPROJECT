@@ -13,6 +13,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FeaturesModule } from './Features/features.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 export function initConfig(configService: ConfigService) {
   return () => configService.loadConfig();
@@ -23,6 +24,7 @@ export function initConfig(configService: ConfigService) {
     
   ],
   imports: [
+
     FeaturesModule,
     AuthModule,
     SharedComponentModule,

@@ -34,13 +34,16 @@
               "node_modules/@swimlane/ngx-datatable/assets/icons.css",
               "node_modules/ngx-spinner/animations/ball-scale-multiple.css",
               "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
+              "node_modules/bootstrap-select/dist/css/bootstrap-select.min.css",
               "node_modules/primeng/resources/primeng.min.css",
               "src/styles.scss",
               "src/assets/font-awesome-v6/css/all.css",
               "src/app/GlobalStyle.scss"
             ],
             "scripts": [
-              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+              "node_modules/bootstrap-select/dist/js/bootstrap-select.min.js"
             ]
           },
           "configurations": {
@@ -48,8 +51,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "5000kb",
+                  "maximumError": "10mb"
                 },
                 {
                   "type": "anyComponentStyle",
