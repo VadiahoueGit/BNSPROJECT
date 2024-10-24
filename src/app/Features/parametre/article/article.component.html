@@ -60,8 +60,8 @@
                 </td>
                 <td>
             <tr class="d-flex justify-content-center gap-3">
-                <td><i (click)="OnEdit()" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
-                <td><i (click)="OnDelete()" style="cursor: pointer;" class="fas fa-trash-alt text-danger"></i></td>
+                <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
+                <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;" class="fas fa-trash-alt text-danger"></i></td>
             </tr>
 
             </td>
@@ -86,25 +86,60 @@
                     style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
                     <i class="fas fa-box-check text-primary fs-3"></i>
                 </div>
-                <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création de groupe de produit</h1>
-                <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification du groupe de produit</h1>
+                <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création d'article'</h1>
+                <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification de l'article</h1>
             </div>
 
             <div class="modal-body">
                 <form>
                     <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
                         <div class="d-flex align-items-center">
-                            <label for="code" class="form-label me-1">Code du groupe</label>
+                            <label for="code" class="form-label me-1 label-fixed-width">Type article</label>
                             <p class="text-danger mb-0">*</p>
                         </div>
                         <input type="text" class="form-control" id="code" placeholder="Entrez le code du groupe produit" >
                     </div>
                     <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
                         <div class="d-flex align-items-center">
-                            <label for="code" class="form-label me-1">Groupe de produit</label>
+                            <label for="code" class="form-label me-1 label-fixed-width">Reférence</label>
                             <p class="text-danger mb-0">*</p>
                         </div>
                         <input type="text" class="form-control" id="code" placeholder="Entrez le libellé du groupe produit" >
+                    </div>
+                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
+                        <div class="d-flex align-items-center">
+                            <label for="code" class="form-label me-1 label-fixed-width">Libelle</label>
+                            <p class="text-danger mb-0">*</p>
+                        </div>
+                        <input type="text" class="form-control" id="code" placeholder="Entrez le libellé" >
+                    </div>
+                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
+                        <div class="d-flex align-items-center">
+                            <label for="code" class="form-label me-1 label-fixed-width">Format</label>
+                            <p class="text-danger mb-0">*</p>
+                        </div>
+                        <input type="text" class="form-control" id="code" placeholder="Entrez le format" >
+                    </div>
+                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
+                        <div class="d-flex align-items-center">
+                            <label for="code" class="form-label me-1 label-fixed-width">Conditionnement</label>
+                            <p class="text-danger mb-0">*</p>
+                        </div>
+                        <input type="text" class="form-control" id="code" placeholder="Entrez le conditionnement" >
+                    </div>
+                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
+                        <div class="d-flex align-items-center">
+                            <label for="code" class="form-label me-1 label-fixed-width">Sous famille</label>
+                            <p class="text-danger mb-0">*</p>
+                        </div>
+                        <input type="text" class="form-control" id="code" placeholder="Entrez le sous famille" >
+                    </div>
+                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
+                        <div class="d-flex align-items-center">
+                            <label for="code" class="form-label me-1 label-fixed-width">Groupe produit</label>
+                            <p class="text-danger mb-0">*</p>
+                        </div>
+                        <input type="text" class="form-control" id="code" placeholder="Entrez le du groupe produit" >
                     </div>
                 </form>
             </div>

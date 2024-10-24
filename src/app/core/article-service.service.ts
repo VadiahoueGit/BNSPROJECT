@@ -10,11 +10,15 @@ import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 export class ArticleServiceService {
   apiUrl: string;
   ListTypeArticles: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
+  ListTypePrix: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
+  ListArticles: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListGroupesArticles: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListLiquides: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListPlastiquesNu: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListEmballages: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListBouteilleVide: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
+  ListFormats: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
+  ListConditionnements: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
 
   constructor(private _http: HttpClient, private configService: ConfigService) {
     this.apiUrl = this.configService.apiUrl;
@@ -25,14 +29,30 @@ export class ArticleServiceService {
   ): Observable<any> | Promise<any> | any {
     return new Promise<void>((resolve, reject) => {
       this.ListTypeArticles.next([]);
+      this.ListTypePrix.next([]);
+      this.ListArticles.next([]);
       this.ListGroupesArticles.next([]);
       this.ListLiquides.next([]);
       this.ListPlastiquesNu.next([]);
       this.ListEmballages.next([]);
       this.ListBouteilleVide.next([]);
+      this.ListFormats.next([]);
+      this.ListConditionnements.next([]);
 
       let data = {};
       Promise.all([
+        this.ListFormats.getValue().length === 0
+          ? this.GetFormatList()
+          : this.Nothing(),
+        this.ListConditionnements.getValue().length === 0
+          ? this.GetConditionnementList()
+          : this.Nothing(),
+        this.ListArticles.getValue().length === 0
+          ? this.GetArticleList(data)
+          : this.Nothing(),
+        this.ListTypePrix.getValue().length === 0
+          ? this.GetListTypePrix(data)
+          : this.Nothing(),
         this.ListTypeArticles.getValue().length === 0
           ? this.GetTypesArticlesList(data)
           : this.Nothing(),
@@ -86,7 +106,7 @@ export class ArticleServiceService {
     });
   }
 
-  CreateTypesArticlesList(data: any) {
+  CreateTypesArticles(data: any) {
     return new Promise((resolve: any, reject: any) => {
       this._http.post(`${this.apiUrl}/v1/categorie-product`, data).subscribe(
         (res: any) => {
@@ -101,7 +121,7 @@ export class ArticleServiceService {
     });
   }
 
-  DeleteTypesArticlesList(id: number) {
+  DeleteTypesArticles(id: number) {
     return new Promise((resolve: any, reject: any) => {
       this._http.delete(`${this.apiUrl}/v1/categorie-product/${id}`).subscribe(
         (res: any) => {
@@ -116,7 +136,7 @@ export class ArticleServiceService {
     });
   }
 
-  UpdateTypesArticlesList(id: number, data: any) {
+  UpdateTypesArticles(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
       this._http
         .put(`${this.apiUrl}/v1/categorie-product/${id}`, data)
@@ -176,6 +196,9 @@ export class ArticleServiceService {
         )
         .subscribe(
           (res: any) => {
+            if (res.statusCode === 200) {
+              this.ListTypePrix.next(res.data);
+            }
             console.log(res);
             resolve(res);
           },
@@ -288,7 +311,7 @@ export class ArticleServiceService {
   //LIQUIDE
   CreateLiquide(data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/emballage`, data).subscribe(
+      this._http.post(`${this.apiUrl}/v1/liquide`, data).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -305,7 +328,7 @@ export class ArticleServiceService {
     return new Promise((resolve: any, reject: any) => {
       this._http
         .get(
-          `${this.apiUrl}/v1/emballage?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/liquide?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
         )
         .subscribe(
           (res: any) => {
@@ -325,7 +348,7 @@ export class ArticleServiceService {
 
   UpdateLiquide(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/emballage/${id}`, data).subscribe(
+      this._http.put(`${this.apiUrl}/v1/liquide/${id}`, data).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -340,7 +363,7 @@ export class ArticleServiceService {
 
   DeleteLiquide(id: number) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.delete(`${this.apiUrl}/v1/emballage/${id}`).subscribe(
+      this._http.delete(`${this.apiUrl}/v1/liquide/${id}`).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -430,6 +453,9 @@ export class ArticleServiceService {
         )
         .subscribe(
           (res: any) => {
+            if (res.statusCode == 200) {
+              this.ListArticles.next(res.data);
+            }
             console.log(res);
             resolve(res);
           },
@@ -441,9 +467,9 @@ export class ArticleServiceService {
     });
   }
 
-  DeleteArticle(id: number) {
+  DeletedArticle(id: number) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.delete(`${this.apiUrl}/v1/categorie-product/${id}`).subscribe(
+      this._http.delete(`${this.apiUrl}/v1/product/${id}`).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -459,7 +485,7 @@ export class ArticleServiceService {
   updateArticle(id: number, article: any) {
     return new Promise((resolve: any, reject: any) => {
       this._http
-        .put(`${this.apiUrl}/v1/categorie-product/${id}`, article)
+        .put(`${this.apiUrl}/v1/product/${id}`, article)
         .subscribe(
           (res: any) => {
             console.log(res);
@@ -475,8 +501,42 @@ export class ArticleServiceService {
 
   createArticle(article: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/categorie-product`, article).subscribe(
+      this._http.post(`${this.apiUrl}/v1/product`, article).subscribe(
         (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+  GetFormatList() {
+    return new Promise((resolve: any, reject: any) => {
+      this._http.get(`${this.apiUrl}/v1/product/formats`).subscribe(
+        (res: any) => {
+          if (res.statusCode == 200) {
+            this.ListFormats.next(res.data);
+          }
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+  GetConditionnementList() {
+    return new Promise((resolve: any, reject: any) => {
+      this._http.get(`${this.apiUrl}/v1/product/conditionnements`).subscribe(
+        (res: any) => {
+          if (res.statusCode == 200) {
+            this.ListConditionnements.next(res.data);
+          }
           console.log(res);
           resolve(res);
         },

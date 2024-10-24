@@ -38,8 +38,10 @@ export class CreationPrixComponent {
       this.dataListProduits = res;
       console.log(this.dataListProduits ,"this.dataListProduits ")
     });
-    this.GetListTypesPrix();
-    // this.GetListProduits();
+    this.articleService.ListTypePrix.subscribe((res: any) => {
+      this.dataListTypesPrix = res;
+      console.log(this.dataListTypesPrix ,"this.dataListTypesPrix ")
+    });
     this.GetListPrix();
   }
   GetListPrix() {
@@ -55,32 +57,6 @@ export class CreationPrixComponent {
       this._spinner.hide();
     });
   }
-  GetListTypesPrix() {
-    let data = {
-      paginate: true,
-      page: 1,
-      limit: 8,
-    };
-    this._spinner.show();
-    this.articleService.GetListTypePrix(data).then((res: any) => {
-      console.log('DATATYPEPRIX:::>', res);
-      this.dataListTypesPrix = res.data;
-      this._spinner.hide();
-    });
-  }
-  // GetListProduits() {
-  //   let data = {
-  //     paginate: true,
-  //     page: 1,
-  //     limit: 8,
-  //   };
-  //   this._spinner.show();
-  //   this.articleService.GetArticleList(data).then((res: any) => {
-  //     console.log('DATATYPEPRIX:::>', res);
-  //     this.dataListProduits = res.data;
-  //     this._spinner.hide();
-  //   });
-  // }
   filterGlobal(event: any) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement?.value || '';

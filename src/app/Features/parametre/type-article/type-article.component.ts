@@ -71,7 +71,7 @@ export class TypeArticleComponent {
       const formValues = this.articleForm.value;
       this.articleForm.patchValue(this.updateData);
       if (this.isEditMode) {
-        this.articleService.updateArticle(this.articleId, formValues).then(
+        this.articleService.UpdateTypesArticles(this.articleId, formValues).then(
           (response: any) => {
             console.log('Article mis à jour avec succès', response);
             this.OnCloseModal();
@@ -82,7 +82,7 @@ export class TypeArticleComponent {
           }
         );
       } else {
-        this.articleService.createArticle(formValues).then(
+        this.articleService.CreateTypesArticles(formValues).then(
           (response: any) => {
             this.OnCloseModal();
             this.GetTypesArticlesList();
@@ -101,7 +101,7 @@ export class TypeArticleComponent {
       (res) => {
         if (res.isConfirmed == true) {
           this._spinner.show();
-          this.articleService.DeleteArticle(articleId).then((res: any) => {
+          this.articleService.DeleteTypesArticles(articleId).then((res: any) => {
             console.log('DATA:::>', res);
             // this.dataList = res.data;
             this._spinner.hide();
