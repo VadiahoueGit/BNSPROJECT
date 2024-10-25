@@ -111,11 +111,14 @@ import { TransporteurComponent } from './transporteur/transporteur.component';
 import { LogistiqueComponent } from './logistique/logistique.component';
 import { EmballageComponent } from './emballage/emballage.component';
 import { LiquideComponent } from './liquide/liquide.component';
+import { VehiculesComponent } from './vehicules/vehicules.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 
 @NgModule({
-    declarations: [TransporteurComponent,LogistiqueComponent,ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent, ListPrixComponent, CreationPrixComponent, EmballageComponent, LiquideComponent],
+    declarations: [TransporteurComponent,LogistiqueComponent,ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent, ListPrixComponent, CreationPrixComponent, EmballageComponent, LiquideComponent, VehiculesComponent],
     imports: [
+      NgSelectModule,
       ParametreRoutingModule,
       CommonModule,
       AvatarModule,

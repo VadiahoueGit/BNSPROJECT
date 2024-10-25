@@ -6,7 +6,7 @@ import { ChangeDetectorRef, Component } from '@angular/core';
   styleUrls: ['./logistique.component.scss']
 })
 export class LogistiqueComponent {
-  public activeTab: string = 'transporteurs';
+  public activeTab: string = 'vehicules';
   loading: boolean = true;
   selected = [];
   rows: any = [];
