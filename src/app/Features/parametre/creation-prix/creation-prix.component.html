@@ -14,58 +14,42 @@
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
-                <th style="color: var(--secondary-color);">Nom</th>
                 <th style="color: var(--secondary-color);">Quantité</th>
-                <th style="color: var(--secondary-color);">Produits</th>
                 <th style="color: var(--secondary-color);">Prix liquide</th>
                 <th style="color: var(--secondary-color);">Prix consigné</th>
                 <th style="color: var(--secondary-color);">Statuts</th>
                 <th style="color: var(--secondary-color);">Actions</th>
             </tr>
-
         </ng-template>
         <ng-template pTemplate="body" let-dataList>
             <tr>
                 <td class="">
-                    {{ dataList.Code }}
+                    {{ dataList.Quantite }}
                 </td>
                 <td class="">
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.libelle }}
+                        {{ dataList.PrixLiquide }}
                     </span>
                 </td>
                 <td class="">
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.createdAt | date }}
+                        {{ dataList.PrixConsigne }}
                     </span>
                 </td>
-                <td>
                 <td class="">
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.createdAt | date }}
-                    </span>
-                </td>
-                <td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.createdAt | date }}
+                        {{ dataList.statut }}
                     </span>
                 </td>
                 <td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.createdAt | date }}
-                    </span>
+                    <tr class="d-flex gap-3">
+                        <td><i (click)="OnEdit(dataList)" style="cursor: pointer;"
+                                class="fas fa-edit text-secondary"></i></td>
+                        <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
+                                class="fas fa-trash-alt text-danger"></i>
+                        </td>
+                    </tr>
                 </td>
-                <td>
-            <tr class="d-flex justify-content-center gap-3">
-                <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
-                <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
-                        class="fas fa-trash-alt text-danger"></i>
-                </td>
-            </tr>
-
-            </td>
             </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
@@ -126,9 +110,9 @@
 
                         <select class=" form-control form-select form-select-sm" formControlName="PrixId"
                             aria-label=".form-select-sm example">
-                            <option value="" disabled selected >Choisir le type prix</option>
+                            <option value="" disabled selected>Choisir le type prix</option>
                             <option [value]="item.id" *ngFor="let item of dataListTypesPrix">{{item.libelle}}</option>
-                          
+
                         </select>
                     </div>
                     <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
@@ -138,7 +122,7 @@
                         </div>
                         <select class="form-control form-select form-select-sm" formControlName="ProduitId"
                             aria-label=".form-select-sm example">
-                            <option value="" disabled selected >Choisir le produit</option>
+                            <option value="" disabled selected>Choisir le produit</option>
                             <option [value]="item.id" *ngFor="let item of dataListProduits">{{item.libelle}}</option>
                         </select>
 

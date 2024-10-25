@@ -25,6 +25,8 @@ export class EmballageComponent {
   dataListPlastiqueNu: any = [];
   dataListEmballage: any = [];
   dataListBouteilleVide: any = [];
+  dataListFormats: any= [];
+  dataListConditionnements: any= [];
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -58,7 +60,15 @@ export class EmballageComponent {
     this.articleService.ListBouteilleVide.subscribe((res: any) => {
       this.dataListBouteilleVide = res;
     });
-    
+    this.articleService.ListFormats.subscribe((res: any) => {
+      this.dataListFormats = res;
+      console.log('dataListFormats:::>', this.dataListFormats);
+    });
+    this.articleService.ListConditionnements.subscribe((res: any) => {
+      this.dataListConditionnements = res;
+      console.log('dataListConditionnements:::>', this.dataListConditionnements);
+    });
+    this.GetEmballageList()
   }
 
   GetEmballageList() {

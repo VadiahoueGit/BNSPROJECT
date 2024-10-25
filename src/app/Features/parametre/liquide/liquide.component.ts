@@ -26,6 +26,8 @@ export class LiquideComponent {
   dataListEmballage: any = [];
   dataListBouteilleVide: any = [];
   dataListLiquides: any = [];
+  dataListFormats: any= [];
+  dataListConditionnements: any= [];
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -62,6 +64,14 @@ export class LiquideComponent {
     this.articleService.ListLiquides.subscribe((res: any) => {
       this.dataListLiquides = res ?? [];
       console.log('dataListLiquides:::>', this.dataListLiquides);
+    });
+    this.articleService.ListFormats.subscribe((res: any) => {
+      this.dataListFormats = res;
+      console.log('dataListFormats:::>', this.dataListFormats);
+    });
+    this.articleService.ListConditionnements.subscribe((res: any) => {
+      this.dataListConditionnements = res;
+      console.log('dataListConditionnements:::>', this.dataListConditionnements);
     });
     this.GetLiquideList()
   }
