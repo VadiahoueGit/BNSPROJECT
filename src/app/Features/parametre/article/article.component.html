@@ -148,7 +148,7 @@
                         <label for="Conditionnement" class="form-label">Conditionnement <span class="text-danger">*</span></label>
                         <select class="form-control form-select form-select-sm" formControlName="Conditionnement" aria-label=".form-select-sm example">
                           <option value="" disabled selected>Choisir le conditionnement</option>
-                          <option [value]="item.id" *ngFor="let item of dataListConditionnements">{{item}}</option>
+                          <option [value]="item" *ngFor="let item of dataListConditionnements">{{item}}</option>
                         </select>
                       </div>
               
@@ -177,7 +177,7 @@
               
             <div class="modal-footer gap-3 px-4">
                 <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-                <button type="button" class="btn btn-primary px-2">Valider</button>
+                <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
             </div>
         </div>
     </div>

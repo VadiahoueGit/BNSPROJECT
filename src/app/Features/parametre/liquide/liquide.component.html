@@ -128,7 +128,7 @@
                         </div>
                         <select class="form-control form-select form-select-sm" formControlName="condition" aria-label=".form-select-sm example">
                             <option value="" disabled selected>Choisir le conditionnement</option>
-                            <option [value]="item.id" *ngFor="let item of dataListConditionnements">{{item}}</option>
+                            <option [value]="item" *ngFor="let item of dataListConditionnements">{{item}}</option>
                           </select>
                     </div>
                     <div class="mb-3 d-flex justify-content-around align-items-center gap-3">

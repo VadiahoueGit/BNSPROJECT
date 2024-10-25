@@ -62,11 +62,12 @@ export class ArticleComponent {
       this.dataList = res;
       console.log('dataList:::>', this.dataList);
     });
-    this.articleService.ListFormats.subscribe((res: any) => {
+    this.articleService.GetFormatList().then((res: any) => {
       this.dataListFormats = res;
       console.log('dataListFormats:::>', this.dataListFormats);
     });
-    this.articleService.ListConditionnements.subscribe((res: any) => {
+
+    this.articleService.GetConditionnementList().then((res: any) => {
       this.dataListConditionnements = res;
       console.log('dataListConditionnements:::>', this.dataListConditionnements);
     });
@@ -170,6 +171,7 @@ export class ArticleComponent {
     this.ArticleForm.patchValue({
       photo: this.updateData.photo,
       libelle: this.updateData.libelle,
+      format: this.updateData.format,
       Conditionnement: this.updateData.Conditionnement,
       categorieId: this.updateData.categorieId,
       groupeId: this.updateData.groupeId,

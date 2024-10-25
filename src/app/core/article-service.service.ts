@@ -518,7 +518,7 @@ export class ArticleServiceService {
       this._http.get(`${this.apiUrl}/v1/product/formats`).subscribe(
         (res: any) => {
           if (res.statusCode == 200) {
-            this.ListFormats.next(res.data);
+            this.ListFormats.next(res);
           }
           console.log(res);
           resolve(res);
@@ -535,7 +535,7 @@ export class ArticleServiceService {
       this._http.get(`${this.apiUrl}/v1/product/conditionnements`).subscribe(
         (res: any) => {
           if (res.statusCode == 200) {
-            this.ListConditionnements.next(res.data);
+            this.ListConditionnements.next(res);
           }
           console.log(res);
           resolve(res);

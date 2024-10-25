@@ -65,11 +65,12 @@ export class LiquideComponent {
       this.dataListLiquides = res ?? [];
       console.log('dataListLiquides:::>', this.dataListLiquides);
     });
-    this.articleService.ListFormats.subscribe((res: any) => {
+    this.articleService.GetFormatList().then((res: any) => {
       this.dataListFormats = res;
       console.log('dataListFormats:::>', this.dataListFormats);
     });
-    this.articleService.ListConditionnements.subscribe((res: any) => {
+
+    this.articleService.GetConditionnementList().then((res: any) => {
       this.dataListConditionnements = res;
       console.log('dataListConditionnements:::>', this.dataListConditionnements);
     });
