@@ -482,7 +482,7 @@ export class ArticleServiceService {
     });
   }
 
-  updateArticle(id: number, article: any) {
+  UpdateArticle(id: number, article: any) {
     return new Promise((resolve: any, reject: any) => {
       this._http
         .put(`${this.apiUrl}/v1/product/${id}`, article)
@@ -499,7 +499,7 @@ export class ArticleServiceService {
     });
   }
 
-  createArticle(article: any) {
+  CreateArticle(article: any) {
     return new Promise((resolve: any, reject: any) => {
       this._http.post(`${this.apiUrl}/v1/product`, article).subscribe(
         (res: any) => {

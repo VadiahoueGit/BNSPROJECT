@@ -141,7 +141,7 @@ export class ArticleComponent {
       if (this.isEditMode) {
         this.loadArticleDetails();
 
-        this.articleService.UpdateEmballage(this.articleId, formValues).then(
+        this.articleService.UpdateArticle(this.articleId, formValues).then(
           (response: any) => {
             console.log('emballage mis à jour avec succès', response);
             this.OnCloseModal();
@@ -152,7 +152,7 @@ export class ArticleComponent {
           }
         );
       } else {
-        this.articleService.CreateEmballage(formValues).then(
+        this.articleService.CreateArticle(formValues).then(
           (response: any) => {
             this.OnCloseModal();
             this.GetArticleList();
