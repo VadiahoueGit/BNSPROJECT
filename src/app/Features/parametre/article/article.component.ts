@@ -140,11 +140,9 @@ export class ArticleComponent {
       console.log('formValues', formValues);
 
       if (this.isEditMode) {
-        this.loadArticleDetails();
-
         this.articleService.UpdateArticle(this.articleId, formValues).then(
           (response: any) => {
-            console.log('emballage mis à jour avec succès', response);
+            console.log('article mis à jour avec succès', response);
             this.OnCloseModal();
             this.GetArticleList();
           },
@@ -158,7 +156,7 @@ export class ArticleComponent {
             this.OnCloseModal();
             this.GetArticleList();
             this.ArticleForm.reset();
-            console.log('Nouveau emballage créé avec succès', response);
+            console.log('Nouvel article créé avec succès', response);
           },
           (error: any) => {
             console.error('Erreur lors de la création', error);
@@ -169,15 +167,15 @@ export class ArticleComponent {
   }
   loadArticleDetails(): void {
     this.ArticleForm.patchValue({
-      photo: this.updateData.photo,
+      photo: this.updateData.photo??"",
       libelle: this.updateData.libelle,
       format: this.updateData.format,
       Conditionnement: this.updateData.Conditionnement,
-      categorieId: this.updateData.categorieId,
-      groupeId: this.updateData.groupeId,
-      plastiquenuId: this.updateData.plastiquenuId,
-      bouteillevideId: this.updateData.bouteillevideId,
-      liquideId: this.updateData.liquideId,
+      categorieId: this.updateData.categorieproduit.id,
+      groupeId: this.updateData.groupearticle.id,
+      plastiquenuId: this.updateData.plastiquenu.id,
+      bouteillevideId: this.updateData.bouteillevide.id,
+      liquideId: 1,
     });
   }
   OnDelete(Id: any) {
