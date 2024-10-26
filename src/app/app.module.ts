@@ -14,6 +14,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FeaturesModule } from './Features/features.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { MessageService } from 'primeng/api';
 
 export function initConfig(configService: ConfigService) {
   return () => configService.loadConfig();
@@ -21,10 +22,8 @@ export function initConfig(configService: ConfigService) {
 @NgModule({
   declarations: [
     AppComponent,
-    
   ],
   imports: [
-
     FeaturesModule,
     AuthModule,
     SharedComponentModule,
@@ -39,6 +38,7 @@ export function initConfig(configService: ConfigService) {
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
+    MessageService,
     {
       provide: APP_INITIALIZER,
       useFactory: initConfig,

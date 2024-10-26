@@ -111,6 +111,7 @@ export class GroupeProduitComponent {
           this.articleService.DeleteGroupeArticle(Id).then((res: any) => {
             console.log('DATA:::>', res);
             // this.dataList = res.data;
+            this.GetGroupeProduitList();
             this._spinner.hide();
           });
         } else {

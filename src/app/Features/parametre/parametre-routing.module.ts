@@ -4,6 +4,7 @@ import { ParametreComponent } from './parametre.component';
 import { ArticlesEtPrixComponent } from './articles-et-prix/articles-et-prix.component';
 import { LogistiqueComponent } from './logistique/logistique.component';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
+import { LogistiqueService } from 'src/app/core/logistique.service';
 const routes: Routes = [
     { path: '', component: ParametreComponent },
     {
@@ -11,7 +12,9 @@ const routes: Routes = [
             ArticleServiceService
         }
     },
-    { path: 'logistique', component: LogistiqueComponent },
+    { path: 'logistique', component: LogistiqueComponent, resolve: {
+        LogistiqueService
+    } },
 
 
 ];

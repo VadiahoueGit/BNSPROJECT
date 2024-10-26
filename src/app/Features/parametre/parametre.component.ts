@@ -16,7 +16,7 @@ export class ParametreComponent implements OnInit {
     {
       image: 'assets/icon/vehicule.png',
       title: 'Vehicules',
-      url:'feature/parametre/logistique',
+      url: 'feature/parametre/logistique',
     },
     {
       image: 'assets/icon/users.png',
@@ -27,19 +27,14 @@ export class ParametreComponent implements OnInit {
       image: 'assets/icon/seller.png',
       title: 'Commerciaux',
       // url:'feature/parametre/logistique',
-    },
-    {
-      image: 'assets/icon/client.png',
-      title: 'Clients',
-      // url:'feature/parametre/logistique',
     }
   ]
-constructor(private _router: Router){}
+  constructor(private _router: Router) { }
   ngOnInit(): void {
     
   }
-  displayItem(elt:any){
-console.log(elt)
-this._router.navigate([elt.url])
+  displayItem(elt: any) {
+    console.log(elt)
+    this._router.navigate([elt.url])
   }
 }

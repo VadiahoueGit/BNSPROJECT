@@ -1,0 +1,10 @@
+<div class="card">
+    <div class="d-flex gap-4 flex-row flex-wrap">
+        <div class="d-flex flex-column align-items-center onglet m-3 hover-scale" *ngFor="let item of ListItems"
+            (click)="displayItem(item)">
+            <img [src]="item.image" style="width: 60px; height: 60px; border-radius: 10px;">
+            <p class="text-center mt-3 fw-bold" style="font-size: 14px;">{{item.title}}</p>
+        </div>
+    </div>
+
+</div>

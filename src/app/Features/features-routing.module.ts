@@ -8,8 +8,10 @@ const routes: Routes = [
     {
         path: 'feature', component: FeaturesComponent,
         children: [
-            { path: '', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
-            { path: 'parametre', loadChildren: () => import('./parametre/parametre.module').then(m => m.ParametreModule) }
+            { path: '', redirectTo: 'dashboard', pathMatch: 'full' },  // Redirection par défaut vers dashboard
+            { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
+            { path: 'parametre', loadChildren: () => import('./parametre/parametre.module').then(m => m.ParametreModule) },
+            { path: 'activites', loadChildren: () => import('./activites/activites.module').then(m => m.ActivitesModule) }
         ]
     },
     //   { path: 'parametre', loadChildren: () => import('./parametre/parametre.module').then(m => m.ParametreModule) },

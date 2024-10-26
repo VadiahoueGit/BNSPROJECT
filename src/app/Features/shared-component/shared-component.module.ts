@@ -1,16 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardComponent } from './card/card.component';
+import { ToastModule } from 'primeng/toast';
 
 
 
 @NgModule({
   declarations: [
-  
-    CardComponent
+    CardComponent,
+
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    ToastModule
   ],
   exports: []
 })

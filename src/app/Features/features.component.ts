@@ -11,7 +11,7 @@ export class FeaturesComponent {
   currentUrl: string;
   items = [
     { label: 'Dashboard', icon: 'fas fa-chart-line', url: 'feature/dashboard' },
-    { label: 'Activités', icon: 'fas fa-truck-container', url: 'feature/activite' },
+    { label: 'Activités', icon: 'fas fa-truck-container', url: 'feature/activites' },
     { label: 'Cartographie', icon: 'fas fa-map', url: 'carte' },
     { label: 'Rapports', icon: 'fas fa-file-chart-line', url: 'feature/rapport' },
     { label: 'Paramètres', icon: 'fas fa-cogs', url: 'feature/parametre' },
