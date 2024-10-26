@@ -40,8 +40,8 @@ export class LiquideComponent {
       condition: [null, Validators.required],
       plastiquenuId: [0, Validators.required],
       bouteillevideId: [0, Validators.required],
-      categorieProduitId: [0, Validators.required],
-      groupeArticleId: [0, Validators.required],
+      categorieproduitId: [0, Validators.required],
+      groupearticleId: [0, Validators.required],
       emballageId: [0, Validators.required],
     });
     this.articleService.ListTypeArticles.subscribe((res: any) => {
@@ -108,18 +108,19 @@ export class LiquideComponent {
         ...this.liquideForm.value,
         plastiquenuId: +this.liquideForm.value.plastiquenuId,
         bouteillevideId: +this.liquideForm.value.bouteillevideId,
-        categorieproduitId: +this.liquideForm.value.categorieProduitId,
-        groupearticleId: +this.liquideForm.value.groupeArticleId,
+        categorieproduitId: +this.liquideForm.value.categorieproduitId,
+        groupearticleId: +this.liquideForm.value.groupearticleId,
         emballageId: +this.liquideForm.value.emballageId,
+        
       };
       console.log('formValues', formValues);
 
       if (this.isEditMode) {
-        this.loadLiquideDetails();
 
         this.articleService.UpdateLiquide(this.emballageId, formValues).then(
           (response: any) => {
             console.log('liquide mis à jour avec succès', response);
+            this.liquideForm.reset()
             this.OnCloseModal();
             this.GetLiquideList();
           },
@@ -164,11 +165,11 @@ export class LiquideComponent {
       libelle: this.updateData.libelle,
       format: this.updateData.format,
       condition: this.updateData.condition,
-      plastiquenuId: this.updateData.plastiquenuId,
-      bouteillevideId: this.updateData.bouteillevideId,
-      categorieProduitId: this.updateData.categorieProduitId,
-      groupeArticleId: this.updateData.groupeArticleId,
-      emballageId: this.updateData.emballageId,
+      plastiquenuId: this.updateData.plastiquenu?.id,
+      bouteillevideId: this.updateData.bouteillevide?.id,
+      categorieproduitId: this.updateData.categorieproduit?.id,
+      groupearticleId: this.updateData.groupearticle?.id,
+      emballageId: this.updateData.emballage?.id,
     });
   }
   OnDelete(Id: any) {

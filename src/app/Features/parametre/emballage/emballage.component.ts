@@ -40,8 +40,8 @@ export class EmballageComponent {
       condition: [null, Validators.required],
       plastiquenuId: [0, Validators.required],
       bouteillevideId: [0, Validators.required],
-      categorieProduitId: [0, Validators.required],
-      groupeArticleId: [0, Validators.required],
+      categorieproduitId: [0, Validators.required],
+      groupearticleId: [0, Validators.required],
     });
     this.articleService.ListTypeArticles.subscribe((res: any) => {
       this.dataListProduits = res;
@@ -60,11 +60,12 @@ export class EmballageComponent {
     this.articleService.ListBouteilleVide.subscribe((res: any) => {
       this.dataListBouteilleVide = res;
     });
-    this.articleService.ListFormats.subscribe((res: any) => {
+    this.articleService.GetFormatList().then((res: any) => {
       this.dataListFormats = res;
       console.log('dataListFormats:::>', this.dataListFormats);
     });
-    this.articleService.ListConditionnements.subscribe((res: any) => {
+
+    this.articleService.GetConditionnementList().then((res: any) => {
       this.dataListConditionnements = res;
       console.log('dataListConditionnements:::>', this.dataListConditionnements);
     });
@@ -102,17 +103,17 @@ export class EmballageComponent {
         ...this.emballageForm.value,
         plastiquenuId: +this.emballageForm.value.plastiquenuId,
         bouteillevideId: +this.emballageForm.value.bouteillevideId,
-        categorieProduitId: +this.emballageForm.value.categorieProduitId,
-        groupeArticleId: +this.emballageForm.value.groupeArticleId,
+        categorieproduitId: +this.emballageForm.value.categorieproduitId,
+        groupearticleId: +this.emballageForm.value.groupearticleId,
       };
       console.log('formValues', formValues);
 
       if (this.isEditMode) {
-        this.loadEmballageDetails();
 
         this.articleService.UpdateEmballage(this.emballageId, formValues).then(
           (response: any) => {
             console.log('emballage mis à jour avec succès', response);
+            this.emballageForm.reset()
             this.OnCloseModal();
             this.GetEmballageList();
           },
@@ -157,10 +158,10 @@ export class EmballageComponent {
       libelle: this.updateData.libelle,
       format: this.updateData.format,
       condition: this.updateData.condition,
-      plastiquenuId: this.updateData.plastiquenuId,
-      bouteillevideId: this.updateData.bouteillevideId,
-      categorieProduitId: this.updateData.categorieProduitId,
-      groupeArticleId: this.updateData.groupeArticleId,
+      plastiquenuId: this.updateData.plastiquenu.id,
+      bouteillevideId: this.updateData.bouteillevide.id,
+      categorieproduitId: this.updateData.categorieproduit.id,
+      groupearticleId: this.updateData.groupearticle.id,
     });
   }
   OnDelete(Id: any) {

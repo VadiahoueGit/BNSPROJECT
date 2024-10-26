@@ -76,11 +76,12 @@ export class CreationPrixComponent {
         ProduitId: +this.prixForm.value.ProduitId,
        
       };
-      this.prixForm.patchValue(this.updateData);
+    
       if (this.isEditMode) {
         this.articleService.UpdatePrix(this.prixId, formValues).then(
           (response: any) => {
             console.log('prix mis à jour avec succès', response);
+            this.prixForm.reset()
             this.OnCloseModal();
             this.GetListPrix();
           },
@@ -115,7 +116,14 @@ export class CreationPrixComponent {
     console.log(data);
     this.updateData = data;
     this.prixId = data.id;
-    this.prixForm.patchValue(data);
+    this.prixForm.patchValue({
+      Quantite: this.updateData.Quantite,
+      PrixLiquide: this.updateData.PrixLiquide,
+      PrixConsigne: this.updateData.PrixConsigne,
+      PrixId: this.updateData.typePrix.id,
+      // P roduitId: this.updateData.produit.id,
+    }
+    );
     this.isModalOpen = true;
     this.operation = 'edit';
     console.log(this.isModalOpen);
