@@ -1,8 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardComponent } from './card/card.component';
-import { ToastModule } from 'primeng/toast';
-
+import { ToastrModule } from 'ngx-toastr';
 
 
 @NgModule({
@@ -12,7 +11,7 @@ import { ToastModule } from 'primeng/toast';
   ],
   imports: [
     CommonModule,
-    ToastModule
+    ToastrModule.forRoot(),
   ],
   exports: []
 })
