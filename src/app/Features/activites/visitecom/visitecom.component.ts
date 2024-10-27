@@ -7,7 +7,7 @@ import { Customer } from 'src/domain/customer';
   styleUrls: ['./visitecom.component.scss']
 })
 export class VisitecomComponent {
-  public activeTab: string = 'gestvisit';
+  public activeTab: string = 'svisite';
   customers!: Customer[];
   loading: boolean = true;
   selected = [];

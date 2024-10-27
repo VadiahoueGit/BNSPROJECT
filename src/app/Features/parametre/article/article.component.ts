@@ -4,6 +4,7 @@ import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-article',
@@ -33,8 +34,8 @@ export class ArticleComponent {
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
-    private fb: FormBuilder
-
+    private fb: FormBuilder,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit() {
@@ -143,10 +144,12 @@ export class ArticleComponent {
         this.articleService.UpdateArticle(this.articleId, formValues).then(
           (response: any) => {
             console.log('article mis à jour avec succès', response);
+            this.toastr.success('Succès!', 'Article mis à jour avec succès.');
             this.OnCloseModal();
             this.GetArticleList();
           },
           (error: any) => {
+            this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
             console.error('Erreur lors de la mise à jour', error);
           }
         );
@@ -156,9 +159,11 @@ export class ArticleComponent {
             this.OnCloseModal();
             this.GetArticleList();
             this.ArticleForm.reset();
+            this.toastr.success('Succès!', 'Article créé avec succès.');
             console.log('Nouvel article créé avec succès', response);
           },
           (error: any) => {
+            this.toastr.error('Erreur!', 'Erreur lors de la création.');
             console.error('Erreur lors de la création', error);
           }
         );
@@ -185,6 +190,7 @@ export class ArticleComponent {
           this._spinner.show();
           this.articleService.DeletedArticle(Id).then((res: any) => {
             console.log('DATA:::>', res);
+            this.toastr.success('Succès!', 'Article supprimé avec succès.');
             // this.dataList = res.data;
             this._spinner.hide();
           });

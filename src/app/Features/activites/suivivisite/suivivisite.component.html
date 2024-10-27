@@ -1,0 +1,76 @@
+<div class="card">
+    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true">
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="color: var(--secondary-color);">Photo</th>
+                <th style="color: var(--secondary-color);">Nom</th>
+                <th style="color: var(--secondary-color);">Format (Cl)</th>
+                <th style="color: var(--secondary-color);">Categorie</th>
+                <th style="color: var(--secondary-color);">Groupe article</th>
+                <th style="color: var(--secondary-color);">Conditionnement</th>
+                <th style="color: var(--secondary-color);">Plastique nu</th>
+                <th style="color: var(--secondary-color);">Bouteille vide</th>
+                <th style="color: var(--secondary-color);">Liquide</th>
+                <th style="color: var(--secondary-color);">Actions</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-dataList>
+           <tr>
+               <!--   <td>
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.image }}
+                    </span>
+                </td>
+                <td>
+                    {{ dataList.libelle }}
+                </td>
+                <td>
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.format }}
+                    </span>
+                </td>
+                <td>
+                    {{ dataList.categorieproduit.libelle }}
+                </td>
+                <td>
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.groupearticle.libelle }}
+                    </span>
+                </td>
+                <td>
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.Conditionnement }}
+                    </span>
+                </td>
+                <td>
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.plastiquenu.libelle }}
+                    </span>
+                </td>
+                <td>
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.bouteillevide.libelle }}
+                    </span>
+                </td>
+                <td>
+                   
+                </td>
+                <td>
+            <tr class="d-flex justify-content-center gap-3">
+                <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
+                <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
+                        class="fas fa-trash-alt text-danger"></i></td>
+            </tr>
+
+            </td>-->
+            </tr> 
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="5">Aucun article trouvé.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
