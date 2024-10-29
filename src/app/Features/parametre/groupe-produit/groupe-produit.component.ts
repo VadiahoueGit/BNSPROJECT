@@ -12,6 +12,7 @@ import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ALERT_QUESTION } from '../../shared-component/utils';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-groupe-produit',
@@ -31,7 +32,8 @@ export class GroupeProduitComponent {
   groupeId : number = 0
   isEditMode: boolean = false;
   constructor(private articleService: ArticleServiceService, private _spinner:NgxSpinnerService,
-    private fb: FormBuilder
+    private toastr: ToastrService,
+    private fb: FormBuilder,
 
   ) { }
 
@@ -73,9 +75,14 @@ export class GroupeProduitComponent {
             console.log('Article mis à jour avec succès', response);
             this.OnCloseModal();
             this.GetGroupeProduitList();
+            this.toastr.success('Succès!', 'Groupe article mis à jour avec succès.');
+            console.log('Groupe article mis à jour avec succès', response);
+
+
           },
           (error: any) => {
-            console.error('Erreur lors de la mise à jour', error);
+            this.toastr.error('Erreur!', 'Erreur lors de la création.');
+            console.error('Erreur lors de la création', error);
           }
         );
       } else {
@@ -84,9 +91,12 @@ export class GroupeProduitComponent {
             this.OnCloseModal();
             this.GetGroupeProduitList();
             this.groupeProduitForm.reset()
-            console.log('Nouvel article créé avec succès', response);
+            this.toastr.success('Succès!', 'Groupe article créé avec succès.');
+            console.log('emballage crée avec succès', response);
+
           },
           (error: any) => {
+            this.toastr.error('Erreur!', 'Erreur lors de la création.');
             console.error('Erreur lors de la création', error);
           }
         );

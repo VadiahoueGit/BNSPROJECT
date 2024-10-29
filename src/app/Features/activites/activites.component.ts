@@ -17,7 +17,7 @@ export class ActivitesComponent implements OnInit{
     {
       image: 'assets/icon/commande.png',
       title: 'Commandes clients',
-      // url:'feature/activites/logistique',
+       url:'feature/activites/commandes-clients',
     },
     {
       image: 'assets/icon/commandefree.png',

@@ -4,6 +4,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { ALERT_QUESTION } from '../../shared-component/utils';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-creation-prix',
@@ -24,7 +25,9 @@ export class CreationPrixComponent {
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastr: ToastrService
+
   ) {}
   ngOnInit() {
     this.prixForm = this.fb.group({
@@ -80,13 +83,16 @@ export class CreationPrixComponent {
       if (this.isEditMode) {
         this.articleService.UpdatePrix(this.prixId, formValues).then(
           (response: any) => {
-            console.log('prix mis à jour avec succès', response);
             this.prixForm.reset()
             this.OnCloseModal();
             this.GetListPrix();
+            this.toastr.success('Succès!', 'Prix mis à jour avec succès.');
+            console.log('prix mis à jour avec succès', response);
+
           },
           (error: any) => {
-            console.error('Erreur lors de la mise à jour', error);
+            this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
+            console.error('Erreur lors de la création', error);
           }
         );
       } else {
@@ -95,9 +101,12 @@ export class CreationPrixComponent {
             this.OnCloseModal();
             this.GetListPrix();
             this.prixForm.reset()
-            console.log('Nouveau prix créé avec succès', response);
+            this.toastr.success('Succès!', 'Prix créé avec succès.');
+            console.log('prix crée avec succès', response);
+
           },
           (error: any) => {
+            this.toastr.error('Erreur!', 'Erreur lors de la création.');
             console.error('Erreur lors de la création', error);
           }
         );

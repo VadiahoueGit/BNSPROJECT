@@ -4,6 +4,7 @@ import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-type-article',
@@ -25,7 +26,9 @@ export class TypeArticleComponent {
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastr: ToastrService,
+
   ) {}
 
   ngOnInit() {
@@ -76,9 +79,14 @@ export class TypeArticleComponent {
             console.log('Article mis à jour avec succès', response);
             this.OnCloseModal();
             this.GetTypesArticlesList();
+            this.toastr.success('Succès!', 'Liquide mis à jour avec succès.');
+            console.log('Groupe article mis à jour avec succès', response);
+
+
           },
           (error: any) => {
-            console.error('Erreur lors de la mise à jour', error);
+            this.toastr.error('Erreur!', 'Erreur lors de la création.');
+            console.error('Erreur lors de la création', error);
           }
         );
       } else {
@@ -87,9 +95,10 @@ export class TypeArticleComponent {
             this.OnCloseModal();
             this.GetTypesArticlesList();
             this.articleForm.reset()
-            console.log('Nouvel article créé avec succès', response);
+            this.toastr.success('Succès!', 'Liquide crée avec succès.');
           },
           (error: any) => {
+            this.toastr.error('Erreur!', 'Erreur lors de la création.');
             console.error('Erreur lors de la création', error);
           }
         );

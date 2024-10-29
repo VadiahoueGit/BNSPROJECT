@@ -12,9 +12,8 @@ const routes: Routes = [
             ArticleServiceService
         }
     },
-    { path: 'logistique', component: LogistiqueComponent, resolve: {
-        LogistiqueService
-    } },
+    { path: 'logistique', component: LogistiqueComponent
+     },
 
 
 ];

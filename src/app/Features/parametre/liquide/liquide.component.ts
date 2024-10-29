@@ -4,6 +4,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { ALERT_QUESTION } from '../../shared-component/utils';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-liquide',
@@ -31,7 +32,9 @@ export class LiquideComponent {
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastr: ToastrService,
+
   ) {}
   ngOnInit() {
     this.liquideForm = this.fb.group({
@@ -123,9 +126,14 @@ export class LiquideComponent {
             this.liquideForm.reset()
             this.OnCloseModal();
             this.GetLiquideList();
+            this.toastr.success('Succès!', 'Liquide mis à jour avec succès.');
+            console.log('Groupe article mis à jour avec succès', response);
+
+
           },
           (error: any) => {
-            console.error('Erreur lors de la mise à jour', error);
+            this.toastr.error('Erreur!', 'Erreur lors de la création.');
+            console.error('Erreur lors de la création', error);
           }
         );
       } else {
@@ -134,9 +142,10 @@ export class LiquideComponent {
             this.OnCloseModal();
             this.GetLiquideList();
             this.liquideForm.reset();
-            console.log('Nouveau liquide créé avec succès', response);
+            this.toastr.success('Succès!', 'Liquide crée avec succès.');
           },
           (error: any) => {
+            this.toastr.error('Erreur!', 'Erreur lors de la création.');
             console.error('Erreur lors de la création', error);
           }
         );

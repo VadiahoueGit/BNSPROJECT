@@ -3,11 +3,13 @@ import { RouterModule, Routes } from '@angular/router';
 import { ActivitesComponent } from './activites.component';
 import { VisitecomComponent } from './visitecom/visitecom.component';
 import { VentechineComponent } from './ventechine/ventechine.component';
+import { CommandesClientsComponent } from './commandes-clients/commandes-clients.component';
 
 const routes: Routes = [
     { path: '', component:ActivitesComponent },
     { path: 'visitecom', component: VisitecomComponent },
     { path: 'ventechine', component: VentechineComponent },
+    { path: 'commandes-clients', component: CommandesClientsComponent },
     //   { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
 
 ];

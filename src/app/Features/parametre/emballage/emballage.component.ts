@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-emballage',
@@ -30,7 +31,9 @@ export class EmballageComponent {
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastr: ToastrService
+
   ) {}
   ngOnInit() {
     
@@ -112,13 +115,15 @@ export class EmballageComponent {
 
         this.articleService.UpdateEmballage(this.emballageId, formValues).then(
           (response: any) => {
-            console.log('emballage mis à jour avec succès', response);
             this.emballageForm.reset()
             this.OnCloseModal();
             this.GetEmballageList();
+            this.toastr.success('Succès!', 'Emballage mise à jour avec succès.');
+            console.log('emballage mis à jour avec succès', response);
           },
           (error: any) => {
-            console.error('Erreur lors de la mise à jour', error);
+            this.toastr.error('Erreur!', 'Erreur lors de la création.');
+            console.error('Erreur lors de la création', error);
           }
         );
       } else {
@@ -127,9 +132,12 @@ export class EmballageComponent {
             this.OnCloseModal();
             this.GetEmballageList();
             this.emballageForm.reset();
-            console.log('Nouveau emballage créé avec succès', response);
+            this.toastr.success('Succès!', 'Emballage créé avec succès.');
+            console.log('emballage crée avec succès', response);
+
           },
           (error: any) => {
+            this.toastr.error('Erreur!', 'Erreur lors de la création.');
             console.error('Erreur lors de la création', error);
           }
         );
