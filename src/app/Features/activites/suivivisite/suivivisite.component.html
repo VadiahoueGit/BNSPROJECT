@@ -1,24 +1,23 @@
 <div class="card">
+    <div class=" d-flex justify-content-end py-3">
+        <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Ajouter un article</button>
+    </div>
     <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
         [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true">
 
         <ng-template pTemplate="header">
             <tr>
-                <th style="color: var(--secondary-color);">Photo</th>
-                <th style="color: var(--secondary-color);">Nom</th>
-                <th style="color: var(--secondary-color);">Format (Cl)</th>
-                <th style="color: var(--secondary-color);">Categorie</th>
-                <th style="color: var(--secondary-color);">Groupe article</th>
-                <th style="color: var(--secondary-color);">Conditionnement</th>
-                <th style="color: var(--secondary-color);">Plastique nu</th>
-                <th style="color: var(--secondary-color);">Bouteille vide</th>
-                <th style="color: var(--secondary-color);">Liquide</th>
+                <th style="color: var(--secondary-color);">Type</th>
+                <th style="color: var(--secondary-color);">Zone</th>
+                <th style="color: var(--secondary-color);">Commercial</th>
+                <th style="color: var(--secondary-color);">Ventes</th>
+                <th style="color: var(--secondary-color);">Date de la visite</th>
                 <th style="color: var(--secondary-color);">Actions</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-dataList>
-           <tr>
-               <!--   <td>
+            <tr>
+                <!--   <td>
                     <span class="ml-1 vertical-align-middle">
                         {{ dataList.image }}
                     </span>
@@ -65,7 +64,7 @@
             </tr>
 
             </td>-->
-            </tr> 
+            </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
             <tr>
@@ -73,4 +72,78 @@
             </tr>
         </ng-template>
     </p-table>
+</div>
+
+<!-- Modal detail -->
+<!-- Modal -->
+<div *ngIf="isModalOpen" class="custom-modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center">
+                <div class="d-flex justify-content-center align-items-center"
+                     style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
+                    <i class="fas fa-box-check text-primary fs-3"></i>
+                </div>
+                <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">Détails de la visite</h1>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-6">
+                        <div><strong>Client :</strong> </div>
+                        <div><strong>Zone :</strong> </div>
+                        <div><strong>Commercial :</strong> </div>
+                    </div>
+                    
+                    <div class="col-6">
+                        <div><strong>Heure debut :</strong> </div>
+                        <div><strong>Heure fin :</strong> </div>
+                        <div><strong>Durée :</strong> </div>
+                    </div>
+                </div>
+                <fieldset class="row border my-2">
+                    <legend class="fs-6 text-primary">Questionnaire</legend>
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Questions</th>
+                            <th scope="col">Reponses</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <th scope="row">1</th>
+                            <td>Avez vous vendu?</td>
+                            <td>Oui</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                </fieldset>
+                <fieldset class="row border my-2">
+                    <legend class="fs-6 text-primary">Ventes</legend>
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Articles</th>
+                            <th scope="col">Quantités</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <th scope="row">1</th>
+                            <td>FANTA 33CL</td>
+                            <td>10</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                </fieldset>
+                
+            </div>
+
+            <div class="modal-footer gap-3 px-4">
+                <button (click)="OnCloseModal()" class="btn btn-primary px-2">Fermer</button>
+            </div>
+        </div>
+    </div>
 </div>

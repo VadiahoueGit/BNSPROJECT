@@ -40,13 +40,19 @@
                                     formControlName="commercialId" [searchable]="true">
                                 </ng-select>
                             </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                    id="flexSwitchCheckDefault">
+                                <label class="form-check-label" for="flexSwitchCheckDefault">Répétitif</label>
+                            </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="format" class="form-label">Point de vente <span
                                         class="text-danger">*</span></label>
-                                <ng-select class="form-control" [multiple]="true" [checkbox]="true" [items]="typeVisite" bindLabel="name" bindValue="id"
-                                    formControlName="pointDeVenteId" [searchable]="true">
+                                <ng-select class="form-control" [multiple]="true" [checkbox]="true" [items]="typeVisite"
+                                    bindLabel="name" bindValue="id" formControlName="pointDeVenteId"
+                                    [searchable]="true">
                                 </ng-select>
                             </div>
                             <div class="mb-3">
@@ -54,6 +60,7 @@
                                         class="text-danger">*</span></label>
                                 <input type="date" class="form-control" formControlName="dateVisite" />
                             </div>
+
                         </div>
                     </div>
                 </form>

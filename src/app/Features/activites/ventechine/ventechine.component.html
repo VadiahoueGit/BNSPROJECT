@@ -1,0 +1,21 @@
+<!-- Navigation -->
+<nav class="nav nav-pills flex-column flex-sm-row gap-1 border-bottom">
+
+      <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'ventechine'"
+      (click)="activeElement('ventechine')">Vente chine</a>
+
+      <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'suivivente'"
+      (click)="activeElement('suivivente')">Suivi des ventes</a>
+  
+  </nav>
+  
+  <div class="tab-content mt-3">
+    <div *ngIf="activeTab === 'ventechine'" class="tab-pane fade show active">
+      <app-ventechinepage></app-ventechinepage>
+    </div>
+  
+    <div *ngIf="activeTab === 'suivivente'" class="tab-pane fade show active">
+      <app-suiviventechine></app-suiviventechine>
+    </div>
+     
+  </div>

@@ -8,5 +8,15 @@ import { Table } from 'primeng/table';
 })
 export class SuivivisiteComponent {
   @ViewChild('dt2') dt2!: Table;
-  dataList: any[]=[{},{}];
+  dataList!: any[];
+  isModalOpen:boolean = false;
+
+  OnCreate() {
+    this.isModalOpen = true;
+    console.log(this.isModalOpen);
+  }
+  OnCloseModal() {
+    this.isModalOpen = false;
+    console.log(this.isModalOpen);
+  }
 }

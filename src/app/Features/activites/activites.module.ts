@@ -10,15 +10,23 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SuivivisiteComponent } from './suivivisite/suivivisite.component';
+import { TableModule } from 'primeng/table';
+import { VentechineComponent } from './ventechine/ventechine.component';
+import { VentechinepageComponent } from './ventechinepage/ventechinepage.component';
+import { SuiviventechineComponent } from './suiviventechine/suiviventechine.component';
 
 @NgModule({
   declarations: [
     ActivitesComponent,
     VisitecomComponent,
     GestionvisiteComponent,
-    SuivivisiteComponent
+    SuivivisiteComponent,
+    VentechineComponent,
+    VentechinepageComponent,
+    SuiviventechineComponent
   ],
   imports: [
+    TableModule,
     NgSelectModule,
     CommonModule,
     ActivitesRoutingModule,

@@ -17,32 +17,32 @@ export class ActivitesComponent implements OnInit{
     {
       image: 'assets/icon/commande.png',
       title: 'Commandes clients',
-      // url:'feature/parametre/logistique',
+      // url:'feature/activites/logistique',
     },
     {
       image: 'assets/icon/commandefree.png',
       title: 'Commandes gratuite',
-      // url:'feature/parametre/logistique',
+      // url:'feature/activites/logistique',
     },
     {
       image: 'assets/icon/delivery.png',
       title: 'Livraisons',
-      url: 'feature/parametre/logistique',
+      url: 'feature/activites/logistique',
     },
     {
       image: 'assets/icon/retour.png',
       title: 'Gestion des retours',
-      // url:'feature/parametre/logistique',
+      // url:'feature/activites/logistique',
     } ,
     {
       image: 'assets/icon/facture.png',
       title: 'Facturation',
-      // url:'feature/parametre/logistique',
+      // url:'feature/activites/logistique',
     },
     {
       image: 'assets/icon/vente.png',
       title: 'Ventes chine',
-      // url:'feature/parametre/logistique',
+      url:'feature/activites/ventechine',
     },
     {
       image: 'assets/icon/visitecom.png',
