@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-ventechinepage',
@@ -9,23 +7,17 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./ventechinepage.component.scss']
 })
 export class VentechinepageComponent {
-  groupeProduitForm!: FormGroup
-  dataList:[]
   VenteForm:FormGroup
-  loading: boolean = true;
-  isModalOpen = false;
-  operation:string = ''
-  constructor(private _spinner:NgxSpinnerService,
-    private toastr: ToastrService,
-    private fb: FormBuilder,
-
-  ) { }
-
+  dataList:[]
+  commercial:[]
+  zone:[]
+  camion:[]
+  produit:[]
+  isEditMode: boolean = false;
+  isModalOpen: boolean = false;
+  operation: string = '';
+  private fb: FormBuilder
   ngOnInit() {
-    this.groupeProduitForm = this.fb.group({
-      libelle: ['', Validators.required],
-      code: ['', Validators.required],
-    });
     this.VenteForm = this.fb.group({
       commercial: [null, Validators.required],
       zone: [null,  Validators.required],
@@ -35,18 +27,15 @@ export class VentechinepageComponent {
       quantite: [0,  Validators.required],
     });
   }
-
-  OnCloseModal()
-  {
-    this.isModalOpen = false;
-    console.log(this.isModalOpen)
-  }
-  OnCreate()
-  {
+  OnEdit(data:any){}
+  OnCreate() {
+    this.isEditMode = false;
     this.isModalOpen = true;
     this.operation = 'create';
-    console.log(this.isModalOpen)
+    console.log(this.isModalOpen);
   }
-  onSubmit()
-  {}
+  OnCloseModal() {
+    this.isModalOpen = false;
+    console.log(this.isModalOpen);
+  }
 }

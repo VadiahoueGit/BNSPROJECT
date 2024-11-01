@@ -1,25 +1,4 @@
-.nav-pills .nav-link.active, .nav-pills .show>.nav-link{
-    background-color: var(--primary-color) !important;
-    color:white;
-}
-
-.nav-link{
-    background-color: #fafafa;
-    border: 0.2px solid rgb(221, 219, 219);
-    color:  black;
-}
-
-.nav-link:hover{
-    cursor: pointer;
-    background-color: rgb(220, 255, 220);
-}
-.label-fixed-width {
-    min-width: 150px; 
-  }
-
-
-  //modal
-  .modal-dialog{
+.modal-dialog{
     max-width: 45em;
     min-width: auto;
 }
@@ -54,5 +33,20 @@
     border: none;
     font-size: 1.5rem;
   }
+  .p-fluid .p-inputtext {
+    width: 8em !important;
+    height: 2.5rem;
+}
 
+.p-column-filter-menu-button {
+    display: none; /* Masquer l'icône de filtre */
+  }
+  
+  /* Ajuster l'espacement si nécessaire après suppression de l'icône */
+  .p-column-filter {
+    padding-right: 0; /* Supprime l'espace réservé à l'icône */
+  }
+  .label-fixed-width {
+    min-width: 10px; 
+  }
   

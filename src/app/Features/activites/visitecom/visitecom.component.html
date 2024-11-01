@@ -7,9 +7,6 @@
       <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'svisite'"
       (click)="activeElement('svisite')">Suivi des visites</a>
   
-      <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'ventechine'"
-      (click)="activeElement('ventechine')">Vente chine</a>
-  
   </nav>
   
   <div class="tab-content mt-3">
@@ -20,10 +17,6 @@
     <div *ngIf="activeTab === 'svisite'" class="tab-pane fade show active">
       <app-suivivisite></app-suivivisite>
     </div>
-  
-    <div *ngIf="activeTab === 'ventechine'" class="tab-pane fade show active">
-      
-     </div> 
   
      
   </div>

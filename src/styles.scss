@@ -40,7 +40,7 @@ a{
 .form-control {
     width: 300px!important;
     height: 45px;
-    border:var(--bs-border-width) solid gray;
+    border:var(--bs-border-width) solid rgb(187, 187, 187);
  }
 
  .form-control:focus, textarea:focus, select:focus {
