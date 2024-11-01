@@ -97,7 +97,6 @@ export class TypeArticleComponent {
             this.articleForm.reset()
             this.toastr.success(response.message);
 
-            // this.toastr.success('Succès!', 'Liquide crée avec succès.');
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la création.');
@@ -115,7 +114,7 @@ export class TypeArticleComponent {
           this.articleService.DeleteTypesArticles(articleId).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            // this.dataList = res.data;
+           this.GetTypesArticlesList()
             this._spinner.hide();
           });
         } else {

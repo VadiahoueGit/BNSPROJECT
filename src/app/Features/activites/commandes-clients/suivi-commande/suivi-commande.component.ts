@@ -144,7 +144,8 @@ export class SuiviCommandeComponent {
         this.articleService.UpdateArticle(this.articleId, formValues).then(
           (response: any) => {
             console.log('article mis à jour avec succès', response);
-            this.toastr.success('Succès!', 'Article mis à jour avec succès.');
+            this.toastr.success(response.message);
+
             this.OnCloseModal();
             this.GetArticleList();
           },
@@ -159,7 +160,8 @@ export class SuiviCommandeComponent {
             this.OnCloseModal();
             this.GetArticleList();
             this.ArticleForm.reset();
-            this.toastr.success('Succès!', 'Article créé avec succès.');
+            this.toastr.success(response.message);
+
             console.log('Nouvel article créé avec succès', response);
           },
           (error: any) => {
@@ -190,8 +192,8 @@ export class SuiviCommandeComponent {
           this._spinner.show();
           this.articleService.DeletedArticle(Id).then((res: any) => {
             console.log('DATA:::>', res);
-            this.toastr.success('Succès!', 'Article supprimé avec succès.');
-            // this.dataList = res.data;
+            this.toastr.success(res.message);
+            this.GetArticleList();
             this._spinner.hide();
           });
         } else {

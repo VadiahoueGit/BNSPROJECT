@@ -190,8 +190,8 @@ export class SaisieCommandeComponent {
           this._spinner.show();
           this.articleService.DeletedArticle(Id).then((res: any) => {
             console.log('DATA:::>', res);
-            this.toastr.success('Succès!', 'Article supprimé avec succès.');
-            // this.dataList = res.data;
+            this.toastr.success(res.message);
+            this.GetArticleList();
             this._spinner.hide();
           });
         } else {

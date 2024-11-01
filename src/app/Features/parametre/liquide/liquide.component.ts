@@ -126,7 +126,7 @@ export class LiquideComponent {
             this.liquideForm.reset()
             this.OnCloseModal();
             this.GetLiquideList();
-            this.toastr.success('Succès!', 'Liquide mis à jour avec succès.');
+            this.toastr.success(response.message);
             console.log('Groupe article mis à jour avec succès', response);
 
 
@@ -142,7 +142,8 @@ export class LiquideComponent {
             this.OnCloseModal();
             this.GetLiquideList();
             this.liquideForm.reset();
-            this.toastr.success('Succès!', 'Liquide crée avec succès.');
+            this.toastr.success(response.message);
+            // this.toastr.success('Succès!', 'Liquide crée avec succès.');
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la création.');
@@ -188,7 +189,8 @@ export class LiquideComponent {
           this._spinner.show();
           this.articleService.DeleteLiquide(Id).then((res: any) => {
             console.log('DATA:::>', res);
-            // this.dataList = res.data;
+            this.toastr.success(res.message);
+            this.GetLiquideList()
             this._spinner.hide();
           });
         } else {

@@ -152,7 +152,7 @@ export class ProfilUtilisateurComponent {
             .then((res: any) => {
               console.log('DATA:::>', res);
               this.toastr.success(res.message);
-
+              this.GetProfilList()
               this._spinner.hide();
             })
             .catch((err) => {

@@ -181,7 +181,8 @@ export class EmballageComponent {
           this._spinner.show();
           this.articleService.DeleteEmballage(Id).then((res: any) => {
             console.log('DATA:::>', res);
-            // this.dataList = res.data;
+            this.toastr.success(res.message);
+            this.GetEmballageList()
             this._spinner.hide();
           });
         } else {

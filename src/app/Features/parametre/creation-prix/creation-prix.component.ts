@@ -132,7 +132,7 @@ export class CreationPrixComponent {
       PrixLiquide: this.updateData.PrixLiquide,
       PrixConsigne: this.updateData.PrixConsigne,
       PrixId: this.updateData.typePrix.id,
-      // P roduitId: this.updateData.produit.id,
+      // ProduitId: this.updateData.produit.id,
     }
     );
     this.isModalOpen = true;
@@ -146,7 +146,8 @@ export class CreationPrixComponent {
           this._spinner.show();
           this.articleService.DeletePrix(Id).then((res: any) => {
             console.log('DATA:::>', res);
-            // this.dataList = res.data;
+            this.toastr.success(res.message);
+            this.GetListPrix();
             this._spinner.hide();
           });
         } else {

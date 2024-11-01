@@ -10,13 +10,13 @@ import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
 @Component({
   selector: 'app-utilisateur',
   templateUrl: './utilisateur.component.html',
-  styleUrls: ['./utilisateur.component.scss']
+  styleUrls: ['./utilisateur.component.scss'],
 })
-export class UtilisateurComponent implements AfterViewInit{
+export class UtilisateurComponent implements AfterViewInit {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
-  UserForm!:FormGroup
+  UserForm!: FormGroup;
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
@@ -26,12 +26,12 @@ export class UtilisateurComponent implements AfterViewInit{
   isEditMode: boolean = false;
   dataListFormats: any = [];
   dataListConditionnements: any = [];
-  dataListProduits: any= [];
-  dataListGroupeArticles: any =[];
-  dataListBouteilleVide: any=[];
-  dataListPlastiqueNu: any=[];
-  dataListLiquides: any=[];
-  dataListArticlesProduits: any=[];
+  dataListProduits: any = [];
+  dataListGroupeArticles: any = [];
+  dataListBouteilleVide: any = [];
+  dataListPlastiqueNu: any = [];
+  dataListLiquides: any = [];
+  dataListArticlesProduits: any = [];
   dataListProfil: any;
   dataListUsers: any;
   constructor(
@@ -63,7 +63,7 @@ export class UtilisateurComponent implements AfterViewInit{
 
     this.GetUserList();
   }
-  
+
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -79,14 +79,14 @@ export class UtilisateurComponent implements AfterViewInit{
     console.log(this.isModalOpen);
   }
   OnCreate() {
-    this.UserForm.reset()
+    this.UserForm.reset();
     this.isEditMode = false;
     this.isModalOpen = true;
     this.operation = 'create';
     console.log(this.isModalOpen);
   }
 
-  OnEdit(data:any) {
+  OnEdit(data: any) {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
@@ -115,7 +115,7 @@ export class UtilisateurComponent implements AfterViewInit{
       // const formValues = this.UserForm.value;
       const formValues = {
         ...this.UserForm.value,
-       roleId: +this.UserForm.value.roleId,
+        roleId: +this.UserForm.value.roleId,
       };
       console.log('formValues', formValues);
 
@@ -156,7 +156,7 @@ export class UtilisateurComponent implements AfterViewInit{
   }
   loadArticleDetails(): void {
     this.UserForm.patchValue({
-      photo: this.updateData.photo??"",
+      photo: this.updateData.photo ?? '',
       email: this.updateData.email,
       fonction: this.updateData.fonction,
       matricule: this.updateData.matricule,
@@ -175,10 +175,8 @@ export class UtilisateurComponent implements AfterViewInit{
           this._spinner.show();
           this._userService.DeleteUsers(Id).then((res: any) => {
             console.log('DATA:::>', res);
-            // this.toastr.success('Succès!', 'Utilisateur supprimé avec succès.');
-            // this.dataList = res.data;
             this.toastr.success(res.message);
-
+            this.GetUserList();
             this._spinner.hide();
           });
         } else {
