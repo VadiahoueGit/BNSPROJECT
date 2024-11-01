@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Table } from 'primeng/table';
 import { LogistiqueService } from 'src/app/core/logistique.service';
+import { ToastrService } from 'ngx-toastr';
 
 declare var $: any;
 @Component({
@@ -18,16 +19,17 @@ export class VehiculesComponent implements AfterViewInit {
   isModalOpen: boolean = false;
   operation: string = '';
   updateData: any;
-  transporteurId: any;
-  chauffeurs=[{ id: 1, name: 'Volvo' },
+  vehiculeId: any;
+  chauffeurs = [{ id: 1, name: 'Koffi Serge Ulrich' },
   { id: 2, name: 'Saab' },
   { id: 3, name: 'Opel' },
   { id: 4, name: 'Audi' },]
   vehicleForm!: FormGroup;
   constructor(
-    private _logistiqueService:LogistiqueService,
+    private _logistiqueService: LogistiqueService,
     private _spinner: NgxSpinnerService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastr: ToastrService
   ) {
     this.vehicleForm = this.fb.group({
       numero: [null, Validators.required],
@@ -41,8 +43,12 @@ export class VehiculesComponent implements AfterViewInit {
       capacite: [0, Validators.required],
       chauffeurId: [0, Validators.required]
     });
-    
+
   }
+  ngOnInit() {
+    this.GetVehiculeList()
+  }
+
   ngAfterViewInit(): void {
     // Initialisation de Bootstrap Select
     $('.selectpicker').selectpicker('refresh');
@@ -58,12 +64,51 @@ export class VehiculesComponent implements AfterViewInit {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
   }
-  onSubmit(){
-    this._logistiqueService.CreateVehicule(this.vehicleForm.value).then((res)=>{
+  onSubmit() {
+    if (this.isEditMode) {
+      this._spinner.show();
+      this._logistiqueService.UpdateVehicule(this.vehiculeId, this.vehicleForm.value).then((res) => {
+        this._spinner.hide();
+        this.isModalOpen = false;
+        this.toastr.success('Succès!', 'Véhicule mis à jour avec succès.');
+        this.GetVehiculeList()
+        console.log(res)
+      },
+        (error: any) => {
+          this.isModalOpen = false;
+          this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
+          console.error('Erreur lors de la création', error);
+        })
+    } else {
+      this._spinner.show();
+      this._logistiqueService.CreateVehicule(this.vehicleForm.value).then((res) => {
+        this.GetVehiculeList()
+        this.isModalOpen = false;
+        this._spinner.hide();
+        console.log(res)
+      },
+      (error: any) => {
+        this.isModalOpen = false;
+        this.toastr.error('Erreur!', "Erreur lors de l'enregistrement.");
+        console.error('Erreur lors de la création', error);
+      })
+    }
+
+  }
+  GetVehiculeList() {
+    let data = {
+      paginate: true,
+      page: 1,
+      limit: 8,
+    };
+    this._spinner.show();
+    this._logistiqueService.GetVehiculeList(data).then((res: any) => {
+      this.dataList = res.data
+      this._spinner.hide();
       console.log(res)
     })
   }
-  
+
   OnCreate() {
     this.isEditMode = false;
     this.isModalOpen = true;
@@ -74,8 +119,19 @@ export class VehiculesComponent implements AfterViewInit {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
-    this.transporteurId = data.id;
-    this.vehicleForm.patchValue(data);
+    this.vehiculeId = data.id;
+    this.vehicleForm.patchValue({
+      numero: data.numero,
+      marque: data.marque,
+      energie: data.energie,
+      immatriculation: data.immatriculation,
+      dateDeVisite: data.dateDeVisite ? data.dateDeVisite.split('T')[0] : null,
+      dateAcqui: data.dateAcqui ? data.dateAcqui.split('T')[0] : null,
+      NumeroTelBalise: data.NumeroTelBalise,
+      NumeroBalise: data.NumeroBalise,
+      capacite: data.capacite,
+      chauffeurId: data.chauffeur.id
+    });
     this.isModalOpen = true;
     this.operation = 'edit';
     console.log(this.isModalOpen);
@@ -85,11 +141,13 @@ export class VehiculesComponent implements AfterViewInit {
       (res) => {
         if (res.isConfirmed == true) {
           this._spinner.show();
-          // this.articleService.DeletePrix(Id).then((res: any) => {
-          //   console.log('DATA:::>', res);
-          //   // this.dataList = res.data;
-          //   this._spinner.hide();
-          // });
+          this._logistiqueService.DeleteVehicule(Id).then((res: any) => {
+            console.log('DATA:::>', res);
+            this.GetVehiculeList()
+            this.toastr.success('Succès!', 'Véhicule retiré de flotte.');
+            // this.dataList = res.data;
+            this._spinner.hide();
+          });
         } else {
         }
       }

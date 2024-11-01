@@ -26,33 +26,30 @@
         <ng-template pTemplate="body" let-dataList>
             <tr>
                 <td class="">
-                    {{ dataList.Code }}
+                    {{ dataList.immatriculation }}
                 </td>
                 <td class="">
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.libelle }}
+                        {{ dataList.marque }}
                     </span>
                 </td>
                 <td class="">
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.createdAt | date }}
+                        {{ dataList.energie}}
                     </span>
                 </td>
-                <td>
                 <td class="">
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.createdAt | date }}
+                        {{ dataList.capacite}}
                     </span>
                 </td>
-                <td>
-                <td>
                 <td class="">
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.createdAt | date }}
+                        {{ dataList.dateDeVisite | date }}
                     </span>
                 </td>
                 <td>
-            <tr class="d-flex justify-content-center gap-3">
+            <tr class="d-flex  gap-3">
                 <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
                 <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
                         class="fas fa-trash-alt text-danger"></i>
@@ -92,7 +89,7 @@
                     <div class="col-md-6">
                         <!-- Numero -->
                         <div class="mb-3">
-                            <label for="numero" class="form-label">Numéro <span class="text-danger">*</span></label>
+                            <label for="numero" class="form-label">No Balise <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" formControlName="numero" id="numero"
                                 placeholder="Entrez le numéro">
                         </div>
@@ -128,8 +125,7 @@
                             <label for="chauffeurId" class="form-label">Chauffeur <span
                                     class="text-danger">*</span></label>
                             <ng-select class="form-control" [items]="chauffeurs" bindLabel="name" bindValue="id"
-                                formControlName="chauffeurId"
-                                [searchable]="true">
+                                formControlName="chauffeurId" [searchable]="true">
                             </ng-select>
 
                         </div>
@@ -143,14 +139,14 @@
                         <div class="mb-3">
                             <label for="dateAcqui" class="form-label">Date d'acquisition <span
                                     class="text-danger">*</span></label>
-                            <input type="datetime-local" class="form-control" formControlName="dateAcqui"
+                            <input type="date" class="form-control" formControlName="dateAcqui"
                                 id="dateAcqui">
                         </div>
                         <!-- Date de visite -->
                         <div class="mb-3">
                             <label for="dateDeVisite" class="form-label">Date de visite <span
                                     class="text-danger">*</span></label>
-                            <input type="datetime-local" class="form-control" formControlName="dateDeVisite"
+                            <input type="date" class="form-control" formControlName="dateDeVisite"
                                 id="dateDeVisite">
                         </div>
                     </div>
