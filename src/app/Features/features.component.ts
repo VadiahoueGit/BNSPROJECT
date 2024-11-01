@@ -12,7 +12,7 @@ export class FeaturesComponent {
   items = [
     { label: 'Dashboard', icon: 'fas fa-chart-line', url: 'feature/dashboard' },
     { label: 'Activités', icon: 'fas fa-truck-container', url: 'feature/activites' },
-    { label: 'Cartographie', icon: 'fas fa-map', url: 'carte' },
+    { label: 'Cartographie', icon: 'fas fa-map', url: '/feature/cartographie' },
     { label: 'Rapports', icon: 'fas fa-file-chart-line', url: 'feature/rapport' },
     { label: 'Paramètres', icon: 'fas fa-cogs', url: 'feature/parametre' },
     { label: 'Achats', icon: 'fas fa-sack-dollar', url: 'feature/achat' },
@@ -32,7 +32,7 @@ export class FeaturesComponent {
       this.setActive(0)
     } else if (this.currentUrl.includes('/feature/activite')) {
       this.setActive(1)
-    } else if (this.currentUrl.includes('/feature/carte')) {
+    } else if (this.currentUrl.includes('/feature/cartographie')) {
       this.setActive(2)
     } else if (this.currentUrl.includes('/feature/rapport')) {
       this.setActive(3)
