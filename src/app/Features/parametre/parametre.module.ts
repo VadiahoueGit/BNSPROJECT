@@ -116,12 +116,15 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { UtilisateursComponent } from './utilisateurs/utilisateurs.component';
 import { UtilisateurComponent } from './utilisateurs/utilisateur/utilisateur.component';
 import { ProfilUtilisateurComponent } from './utilisateurs/profil-utilisateur/profil-utilisateur.component';
+import { TruncatePipe } from '../shared-component/Pipe/truncate.pipe';
+import { SharedComponentModule } from '../shared-component/shared-component.module';
 
 
 @NgModule({
     declarations: [TransporteurComponent,LogistiqueComponent,ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent, ListPrixComponent, CreationPrixComponent, EmballageComponent, LiquideComponent, VehiculesComponent, UtilisateursComponent, UtilisateurComponent, ProfilUtilisateurComponent],
     imports: [
       NgSelectModule,
+      SharedComponentModule,
       ParametreRoutingModule,
       CommonModule,
       AvatarModule,

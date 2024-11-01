@@ -1,17 +1,18 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component ,AfterViewInit} from '@angular/core';
 
 @Component({
   selector: 'app-utilisateurs',
   templateUrl: './utilisateurs.component.html',
   styleUrls: ['./utilisateurs.component.scss']
 })
-export class UtilisateursComponent {
+export class UtilisateursComponent  {
   public activeTab: string = 'profilutilisateur';
   loading: boolean = true;
   selected = [];
   rows: any = [];
-
+  
   constructor(private cd: ChangeDetectorRef) {}
+
   ngOnInit(): void {
 
   }
