@@ -1,0 +1,18 @@
+<!-- Navigation -->
+<nav class="nav nav-pills flex-column flex-sm-row gap-1 border-bottom">
+    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'profilutilisateur'"
+        (click)="activeElement('profilutilisateur')">Profils utilisateurs</a>
+
+    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'utilisateur'"
+        (click)="activeElement('utilisateur')">Utilisateurs</a>
+</nav>
+
+<div class="tab-content mt-3">
+    <div *ngIf="activeTab === 'profilutilisateur'" class="tab-pane fade show active">
+        <app-profil-utilisateur></app-profil-utilisateur>
+    </div>
+
+    <div *ngIf="activeTab === 'utilisateur'" class="tab-pane fade show active">
+        <app-utilisateur></app-utilisateur>
+    </div>
+</div>

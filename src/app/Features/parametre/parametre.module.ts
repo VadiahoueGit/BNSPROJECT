@@ -113,10 +113,13 @@ import { EmballageComponent } from './emballage/emballage.component';
 import { LiquideComponent } from './liquide/liquide.component';
 import { VehiculesComponent } from './vehicules/vehicules.component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { UtilisateursComponent } from './utilisateurs/utilisateurs.component';
+import { UtilisateurComponent } from './utilisateurs/utilisateur/utilisateur.component';
+import { ProfilUtilisateurComponent } from './utilisateurs/profil-utilisateur/profil-utilisateur.component';
 
 
 @NgModule({
-    declarations: [TransporteurComponent,LogistiqueComponent,ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent, ListPrixComponent, CreationPrixComponent, EmballageComponent, LiquideComponent, VehiculesComponent],
+    declarations: [TransporteurComponent,LogistiqueComponent,ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent, ListPrixComponent, CreationPrixComponent, EmballageComponent, LiquideComponent, VehiculesComponent, UtilisateursComponent, UtilisateurComponent, ProfilUtilisateurComponent],
     imports: [
       NgSelectModule,
       ParametreRoutingModule,

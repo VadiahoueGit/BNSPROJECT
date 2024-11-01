@@ -5,6 +5,7 @@ import { ArticlesEtPrixComponent } from './articles-et-prix/articles-et-prix.com
 import { LogistiqueComponent } from './logistique/logistique.component';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { LogistiqueService } from 'src/app/core/logistique.service';
+import { UtilisateursComponent } from './utilisateurs/utilisateurs.component';
 const routes: Routes = [
     { path: '', component: ParametreComponent },
     {
@@ -13,6 +14,8 @@ const routes: Routes = [
         }
     },
     { path: 'logistique', component: LogistiqueComponent
+     },
+    { path: 'users', component: UtilisateursComponent
      },
 
 
