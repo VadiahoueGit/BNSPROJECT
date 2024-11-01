@@ -186,7 +186,7 @@ export class LiquideComponent {
       (res) => {
         if (res.isConfirmed == true) {
           this._spinner.show();
-          this.articleService.DeleteEmballage(Id).then((res: any) => {
+          this.articleService.DeleteLiquide(Id).then((res: any) => {
             console.log('DATA:::>', res);
             // this.dataList = res.data;
             this._spinner.hide();

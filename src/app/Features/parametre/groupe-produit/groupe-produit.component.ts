@@ -72,10 +72,10 @@ export class GroupeProduitComponent {
       if (this.isEditMode) {
         this.articleService.UpdateGroupeArticle(this.groupeId, formValues).then(
           (response: any) => {
-            console.log('Article mis à jour avec succès', response);
             this.OnCloseModal();
             this.GetGroupeProduitList();
-            this.toastr.success('Succès!', 'Groupe article mis à jour avec succès.');
+            // this.toastr.success('Succès!', 'Groupe article mis à jour avec succès.');
+            this.toastr.success(response.message);
             console.log('Groupe article mis à jour avec succès', response);
 
 
@@ -91,7 +91,7 @@ export class GroupeProduitComponent {
             this.OnCloseModal();
             this.GetGroupeProduitList();
             this.groupeProduitForm.reset()
-            this.toastr.success('Succès!', 'Groupe article créé avec succès.');
+            this.toastr.success(response.message);
             console.log('emballage crée avec succès', response);
 
           },

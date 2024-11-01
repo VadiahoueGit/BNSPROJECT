@@ -144,9 +144,12 @@ export class ArticleComponent {
         this.articleService.UpdateArticle(this.articleId, formValues).then(
           (response: any) => {
             console.log('article mis à jour avec succès', response);
-            this.toastr.success('Succès!', 'Article mis à jour avec succès.');
+       
+
             this.OnCloseModal();
             this.GetArticleList();
+                 // this.toastr.success('Succès!', 'Article mis à jour avec succès.');
+                 this.toastr.success(response.message);
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -159,10 +162,13 @@ export class ArticleComponent {
             this.OnCloseModal();
             this.GetArticleList();
             this.ArticleForm.reset();
-            this.toastr.success('Succès!', 'Article créé avec succès.');
+            this.toastr.success(response.message);
+
+            // this.toastr.success('Succès!', 'Article créé avec succès.');
             console.log('Nouvel article créé avec succès', response);
           },
           (error: any) => {
+            
             this.toastr.error('Erreur!', 'Erreur lors de la création.');
             console.error('Erreur lors de la création', error);
           }
@@ -190,7 +196,9 @@ export class ArticleComponent {
           this._spinner.show();
           this.articleService.DeletedArticle(Id).then((res: any) => {
             console.log('DATA:::>', res);
-            this.toastr.success('Succès!', 'Article supprimé avec succès.');
+            this.toastr.success(res.message);
+
+            // this.toastr.success('Succès!', 'Article supprimé avec succès.');
             // this.dataList = res.data;
             this._spinner.hide();
           });

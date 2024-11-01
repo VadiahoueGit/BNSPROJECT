@@ -10,13 +10,13 @@ import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
 @Component({
   selector: 'app-profil-utilisateur',
   templateUrl: './profil-utilisateur.component.html',
-  styleUrls: ['./profil-utilisateur.component.scss']
+  styleUrls: ['./profil-utilisateur.component.scss'],
 })
 export class ProfilUtilisateurComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
-  ProfilForm!:FormGroup
+  ProfilForm!: FormGroup;
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
@@ -26,12 +26,12 @@ export class ProfilUtilisateurComponent {
   isEditMode: boolean = false;
   dataListFormats: any = [];
   dataListConditionnements: any = [];
-  dataListProduits: any= [];
-  dataListGroupeArticles: any =[];
-  dataListBouteilleVide: any=[];
-  dataListPlastiqueNu: any=[];
-  dataListLiquides: any=[];
-  dataListArticlesProduits: any=[];
+  dataListProduits: any = [];
+  dataListGroupeArticles: any = [];
+  dataListBouteilleVide: any = [];
+  dataListPlastiqueNu: any = [];
+  dataListLiquides: any = [];
+  dataListArticlesProduits: any = [];
   constructor(
     private _userService: UtilisateurResolveService,
     private _spinner: NgxSpinnerService,
@@ -47,10 +47,10 @@ export class ProfilUtilisateurComponent {
     this._userService.ListProfils.subscribe((res: any) => {
       this.dataListProduits = res;
     });
-    
+
     this.GetProfilList();
   }
-  
+
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -66,14 +66,14 @@ export class ProfilUtilisateurComponent {
     console.log(this.isModalOpen);
   }
   OnCreate() {
-    this.ProfilForm.reset()
+    this.ProfilForm.reset();
     this.isEditMode = false;
     this.isModalOpen = true;
     this.operation = 'create';
     console.log(this.isModalOpen);
   }
 
-  OnEdit(data:any) {
+  OnEdit(data: any) {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
@@ -109,9 +109,9 @@ export class ProfilUtilisateurComponent {
         this._userService.UpdateProfil(this.articleId, formValues).then(
           (response: any) => {
             console.log('article mis à jour avec succès', response);
-            this.toastr.success('Succès!', 'Article mis à jour avec succès.');
             this.OnCloseModal();
             this.GetProfilList();
+            this.toastr.success(response.message);
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -124,7 +124,8 @@ export class ProfilUtilisateurComponent {
             this.OnCloseModal();
             this.GetProfilList();
             this.ProfilForm.reset();
-            this.toastr.success('Succès!', 'Article créé avec succès.');
+            this.toastr.success(response.message);
+            // this.toastr.success('Succès!', 'Article créé avec succès.');
             console.log('Nouvel article créé avec succès', response);
           },
           (error: any) => {
@@ -139,26 +140,31 @@ export class ProfilUtilisateurComponent {
     this.ProfilForm.patchValue({
       name: this.updateData.name,
       description: this.updateData.description,
-
     });
   }
   OnDelete(ids: number[]) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
-        (res) => {
-            if (res.isConfirmed) {
-                this._spinner.show();
-                this._userService.DeleteProfilBulk(ids).then((res: any) => {
-                    console.log('DATA:::>', res);
-                    this.toastr.success('Succès!', 'Article supprimé avec succès.');
-                    // this.dataList = res.data; // Assurez-vous que cette ligne correspond à votre logique
-                    this._spinner.hide();
-                }).catch(err => {
-                    console.error(err);
-                    this.toastr.error('Erreur!', 'Une erreur est survenue lors de la suppression.');
-                    this._spinner.hide();
-                });
-            }
+      (res) => {
+        if (res.isConfirmed) {
+          this._spinner.show();
+          this._userService
+            .DeleteProfilBulk(ids)
+            .then((res: any) => {
+              console.log('DATA:::>', res);
+              this.toastr.success(res.message);
+
+              this._spinner.hide();
+            })
+            .catch((err) => {
+              console.error(err);
+              this.toastr.error(
+                'Erreur!',
+                'Une erreur est survenue lors de la suppression.'
+              );
+              this._spinner.hide();
+            });
         }
+      }
     );
-}
+  }
 }

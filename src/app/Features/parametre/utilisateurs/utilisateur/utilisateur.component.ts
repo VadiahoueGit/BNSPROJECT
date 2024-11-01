@@ -123,7 +123,9 @@ export class UtilisateurComponent implements AfterViewInit{
         this._userService.UpdateUsers(this.userId, formValues).then(
           (response: any) => {
             console.log('Utilisateur mis à jour avec succès', response);
-            this.toastr.success('Succès!', 'Utilisateur  mis à jour avec succès.');
+            // this.toastr.success('Succès!', 'Utilisateur  mis à jour avec succès.');
+            this.toastr.success(response.message);
+
             this.OnCloseModal();
             this.UserForm.reset();
             this.GetUserList();
@@ -139,7 +141,9 @@ export class UtilisateurComponent implements AfterViewInit{
             this.OnCloseModal();
             this.GetUserList();
             this.UserForm.reset();
-            this.toastr.success('Succès!', 'Utilisateur créé avec succès.');
+            // this.toastr.success('Succès!', 'Utilisateur créé avec succès.');
+            this.toastr.success(response.message);
+
             console.log('Nouvel Utilisateur créé avec succès', response);
           },
           (error: any) => {
@@ -171,8 +175,10 @@ export class UtilisateurComponent implements AfterViewInit{
           this._spinner.show();
           this._userService.DeleteUsers(Id).then((res: any) => {
             console.log('DATA:::>', res);
-            this.toastr.success('Succès!', 'Utilisateur supprimé avec succès.');
+            // this.toastr.success('Succès!', 'Utilisateur supprimé avec succès.');
             // this.dataList = res.data;
+            this.toastr.success(res.message);
+
             this._spinner.hide();
           });
         } else {

@@ -86,7 +86,8 @@ export class CreationPrixComponent {
             this.prixForm.reset()
             this.OnCloseModal();
             this.GetListPrix();
-            this.toastr.success('Succès!', 'Prix mis à jour avec succès.');
+            this.toastr.success(response.message);
+            // this.toastr.success('Succès!', 'Prix mis à jour avec succès.');
             console.log('prix mis à jour avec succès', response);
 
           },
@@ -101,7 +102,8 @@ export class CreationPrixComponent {
             this.OnCloseModal();
             this.GetListPrix();
             this.prixForm.reset()
-            this.toastr.success('Succès!', 'Prix créé avec succès.');
+            this.toastr.success(response.message);
+            // this.toastr.success('Succès!', 'Prix créé avec succès.');
             console.log('prix crée avec succès', response);
 
           },
