@@ -6,23 +6,28 @@ import { LogistiqueComponent } from './logistique/logistique.component';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { LogistiqueService } from 'src/app/core/logistique.service';
 import { UtilisateursComponent } from './utilisateurs/utilisateurs.component';
+import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 const routes: Routes = [
-    { path: '', component: ParametreComponent },
-    {
-        path: 'articles', component: ArticlesEtPrixComponent, resolve: {
-            ArticleServiceService
-        }
+  { path: '', component: ParametreComponent },
+  {
+    path: 'articles',
+    component: ArticlesEtPrixComponent,
+    resolve: {
+      ArticleServiceService,
     },
-    { path: 'logistique', component: LogistiqueComponent
-     },
-    { path: 'users', component: UtilisateursComponent
-     },
-
-
+  },
+  { path: 'logistique', component: LogistiqueComponent },
+  {
+    path: 'users',
+    component: UtilisateursComponent,
+    resolve: {
+      UtilisateurResolveService,
+    },
+  },
 ];
 
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule],
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class ParametreRoutingModule { }
+export class ParametreRoutingModule {}

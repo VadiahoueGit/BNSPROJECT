@@ -1789,6 +1789,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/bootstrap-select@^1.13.7":
+  version "1.13.7"
+  resolved "https://registry.yarnpkg.com/@types/bootstrap-select/-/bootstrap-select-1.13.7.tgz#9d350654087f1c57c82a38e72399ddbfd1d97af8"
+  integrity sha512-74WBUQQOoyQnxbxAzzv+zgFtsKzJtoKW74KuY9hovGcRUggZh3hEYQoaTHjqEs/Q0MwsnGe07uB6WpSV8NX1wQ==
+  dependencies:
+    "@types/jquery" "*"
+
 "@types/connect-history-api-fallback@^1.3.5":
   version "1.5.4"
   resolved "https://registry.yarnpkg.com/@types/connect-history-api-fallback/-/connect-history-api-fallback-1.5.4.tgz#7de71645a103056b48ac3ce07b3520b819c1d5b3"
@@ -1878,6 +1885,13 @@
   resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-4.3.6.tgz#d9855fa9f808138488784610f888046bb9a59aff"
   integrity sha512-3N0FpQTeiWjm+Oo1WUYWguUS7E6JLceiGTriFrG8k5PU7zRLJCzLcWURU3wjMbZGS//a2/LgjsnO3QxIlwxt9g==
 
+"@types/jquery@*", "@types/jquery@^3.5.32":
+  version "3.5.32"
+  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.5.32.tgz#3eb0da20611b92c7c49ebed6163b52a4fdc57def"
+  integrity sha512-b9Xbf4CkMqS02YH8zACqN1xzdxc3cO735Qe5AbSUFmyOiaWAbcpqh9Wna+Uk0vgACvoQHpWDg2rGdHkYPLmCiQ==
+  dependencies:
+    "@types/sizzle" "*"
+
 "@types/json-schema@^7.0.8", "@types/json-schema@^7.0.9":
   version "7.0.15"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.15.tgz#596a1747233694d50f6ad8a7869fcb6f56cf5841"
@@ -1940,6 +1954,11 @@
     "@types/http-errors" "*"
     "@types/node" "*"
     "@types/send" "*"
+
+"@types/sizzle@*":
+  version "2.3.9"
+  resolved "https://registry.yarnpkg.com/@types/sizzle/-/sizzle-2.3.9.tgz#d4597dbd4618264c414d7429363e3f50acb66ea2"
+  integrity sha512-xzLEyKB50yqCUPUJkIsrVvoWNfFUbIZI+RspLWt8u+tIW/BetMBZtgV2LY/2o+tYH8dRvQ+eoPf3NdhQCcLE2w==
 
 "@types/sockjs@^0.3.33":
   version "0.3.36"

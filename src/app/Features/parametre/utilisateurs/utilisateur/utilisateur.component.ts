@@ -1,9 +1,10 @@
-import { Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
+import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
 
 @Component({
@@ -11,17 +12,17 @@ import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
   templateUrl: './utilisateur.component.html',
   styleUrls: ['./utilisateur.component.scss']
 })
-export class UtilisateurComponent {
+export class UtilisateurComponent implements AfterViewInit{
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
-  ArticleForm!:FormGroup
+  UserForm!:FormGroup
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
   operation: string = '';
   updateData: any = {};
-  articleId: any = 0;
+  userId: any = 0;
   isEditMode: boolean = false;
   dataListFormats: any = [];
   dataListConditionnements: any = [];
@@ -31,55 +32,36 @@ export class UtilisateurComponent {
   dataListPlastiqueNu: any=[];
   dataListLiquides: any=[];
   dataListArticlesProduits: any=[];
+  dataListProfil: any;
+  dataListUsers: any;
   constructor(
-    private articleService: ArticleServiceService,
+    private _userService: UtilisateurResolveService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
   ) {}
-
+  ngAfterViewInit(): void {
+    // Initialisation de Bootstrap Select
+    // $('.selectpicker').selectpicker('refresh');
+  }
   ngOnInit() {
-    this.ArticleForm = this.fb.group({
-      photo: [null, Validators.required],
-      libelle: [null, Validators.required],
-      format: [null, Validators.required],
-      Conditionnement: [null, Validators.required],
-      categorieId: [0, Validators.required],
-      groupeId: [0, Validators.required],
-      plastiquenuId: [0, Validators.required],
-      bouteillevideId: [0, Validators.required],
-      liquideId: [0, Validators.required],
+    this.UserForm = this.fb.group({
+      photo: [null],
+      nom: [null, Validators.required],
+      prenom: [null, Validators.required],
+      email: [null, Validators.required],
+      telephone_one: [null, Validators.required],
+      telephone_two: [null, Validators.required],
+      password: [null, Validators.required],
+      matricule: [null, Validators.required],
+      fonction: [null, Validators.required],
+      roleId: [0, Validators.required],
     });
-    this.articleService.ListPlastiquesNu.subscribe((res: any) => {
-      this.dataListPlastiqueNu = res;
-    });
-    this.articleService.ListLiquides.subscribe((res: any) => {
-      this.dataListLiquides = res;
-    });
-    this.articleService.ListBouteilleVide.subscribe((res: any) => {
-      this.dataListBouteilleVide = res;
-    });
-    this.articleService.ListArticles.subscribe((res: any) => {
-      this.dataList = res;
-      console.log('dataList:::>', this.dataList);
-    });
-    this.articleService.GetFormatList().then((res: any) => {
-      this.dataListFormats = res;
-      console.log('dataListFormats:::>', this.dataListFormats);
+    this._userService.ListProfils.subscribe((res: any) => {
+      this.dataListProfil = res;
     });
 
-    this.articleService.GetConditionnementList().then((res: any) => {
-      this.dataListConditionnements = res;
-      console.log('dataListConditionnements:::>', this.dataListConditionnements);
-    });
-    this.articleService.ListTypeArticles.subscribe((res: any) => {
-      this.dataListProduits = res;
-      console.log(this.dataListProduits, 'this.dataListProduits ');
-    });
-    this.articleService.ListGroupesArticles.subscribe((res: any) => {
-      this.dataListGroupeArticles = res;
-    });
-    this.GetArticleList();
+    this.GetUserList();
   }
   
   onFilterGlobal(event: Event) {
@@ -97,6 +79,7 @@ export class UtilisateurComponent {
     console.log(this.isModalOpen);
   }
   OnCreate() {
+    this.UserForm.reset()
     this.isEditMode = false;
     this.isModalOpen = true;
     this.operation = 'create';
@@ -107,46 +90,43 @@ export class UtilisateurComponent {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
-    this.articleId = data.id;
+    this.userId = data.id;
     this.isModalOpen = true;
     this.loadArticleDetails();
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetArticleList() {
+  GetUserList() {
     let data = {
       paginate: true,
       page: 1,
       limit: 8,
     };
     this._spinner.show();
-    this.articleService.GetArticleList(data).then((res: any) => {
+    this._userService.GetUsersList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.dataList = res.data;
       this._spinner.hide();
     });
   }
   onSubmit(): void {
-    console.log(this.ArticleForm.value);
-    if (this.ArticleForm.valid) {
-      // const formValues = this.ArticleForm.value;
+    console.log(this.UserForm.value);
+    if (this.UserForm.valid) {
+      // const formValues = this.UserForm.value;
       const formValues = {
-        ...this.ArticleForm.value,
-        categorieId: +this.ArticleForm.value.categorieId,
-        groupeId: +this.ArticleForm.value.groupeId,
-        plastiquenuId: +this.ArticleForm.value.plastiquenuId,
-        bouteillevideId: +this.ArticleForm.value.bouteillevideId,
-        liquideId: +this.ArticleForm.value.liquideId,
+        ...this.UserForm.value,
+       roleId: +this.UserForm.value.roleId,
       };
       console.log('formValues', formValues);
 
       if (this.isEditMode) {
-        this.articleService.UpdateArticle(this.articleId, formValues).then(
+        this._userService.UpdateUsers(this.userId, formValues).then(
           (response: any) => {
-            console.log('article mis à jour avec succès', response);
-            this.toastr.success('Succès!', 'Article mis à jour avec succès.');
+            console.log('Utilisateur mis à jour avec succès', response);
+            this.toastr.success('Succès!', 'Utilisateur  mis à jour avec succès.');
             this.OnCloseModal();
-            this.GetArticleList();
+            this.UserForm.reset();
+            this.GetUserList();
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -154,13 +134,13 @@ export class UtilisateurComponent {
           }
         );
       } else {
-        this.articleService.CreateArticle(formValues).then(
+        this._userService.CreateUsers(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetArticleList();
-            this.ArticleForm.reset();
-            this.toastr.success('Succès!', 'Article créé avec succès.');
-            console.log('Nouvel article créé avec succès', response);
+            this.GetUserList();
+            this.UserForm.reset();
+            this.toastr.success('Succès!', 'Utilisateur créé avec succès.');
+            console.log('Nouvel Utilisateur créé avec succès', response);
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la création.');
@@ -171,16 +151,17 @@ export class UtilisateurComponent {
     }
   }
   loadArticleDetails(): void {
-    this.ArticleForm.patchValue({
+    this.UserForm.patchValue({
       photo: this.updateData.photo??"",
-      libelle: this.updateData.libelle,
-      format: this.updateData.format,
-      Conditionnement: this.updateData.Conditionnement,
-      categorieId: this.updateData.categorieproduit.id,
-      groupeId: this.updateData.groupearticle.id,
-      plastiquenuId: this.updateData.plastiquenu.id,
-      bouteillevideId: this.updateData.bouteillevide.id,
-      liquideId: 1,
+      email: this.updateData.email,
+      fonction: this.updateData.fonction,
+      matricule: this.updateData.matricule,
+      nom: this.updateData.nom,
+      password: this.updateData.password,
+      prenom: this.updateData.prenom,
+      telephone_one: this.updateData.telephone_one,
+      telephone_two: this.updateData.telephone_two,
+      roleId: this.updateData.role.id,
     });
   }
   OnDelete(Id: any) {
@@ -188,9 +169,9 @@ export class UtilisateurComponent {
       (res) => {
         if (res.isConfirmed == true) {
           this._spinner.show();
-          this.articleService.DeletedArticle(Id).then((res: any) => {
+          this._userService.DeleteUsers(Id).then((res: any) => {
             console.log('DATA:::>', res);
-            this.toastr.success('Succès!', 'Article supprimé avec succès.');
+            this.toastr.success('Succès!', 'Utilisateur supprimé avec succès.');
             // this.dataList = res.data;
             this._spinner.hide();
           });
