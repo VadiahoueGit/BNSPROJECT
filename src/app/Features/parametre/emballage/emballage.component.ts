@@ -118,7 +118,8 @@ export class EmballageComponent {
             this.emballageForm.reset()
             this.OnCloseModal();
             this.GetEmballageList();
-            this.toastr.success('Succès!', 'Emballage mise à jour avec succès.');
+            this.toastr.success(response.message);
+            // this.toastr.success('Succès!', 'Emballage mise à jour avec succès.');
             console.log('emballage mis à jour avec succès', response);
           },
           (error: any) => {
@@ -132,7 +133,8 @@ export class EmballageComponent {
             this.OnCloseModal();
             this.GetEmballageList();
             this.emballageForm.reset();
-            this.toastr.success('Succès!', 'Emballage créé avec succès.');
+            this.toastr.success(response.message);
+            // this.toastr.success('Succès!', 'Emballage créé avec succès.');
             console.log('emballage crée avec succès', response);
 
           },
@@ -179,7 +181,8 @@ export class EmballageComponent {
           this._spinner.show();
           this.articleService.DeleteEmballage(Id).then((res: any) => {
             console.log('DATA:::>', res);
-            // this.dataList = res.data;
+            this.toastr.success(res.message);
+            this.GetEmballageList()
             this._spinner.hide();
           });
         } else {

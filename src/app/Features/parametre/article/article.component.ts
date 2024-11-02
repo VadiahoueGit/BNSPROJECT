@@ -15,7 +15,7 @@ export class ArticleComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
-  ArticleForm!:FormGroup
+  ArticleForm!: FormGroup;
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
@@ -25,12 +25,12 @@ export class ArticleComponent {
   isEditMode: boolean = false;
   dataListFormats: any = [];
   dataListConditionnements: any = [];
-  dataListProduits: any= [];
-  dataListGroupeArticles: any =[];
-  dataListBouteilleVide: any=[];
-  dataListPlastiqueNu: any=[];
-  dataListLiquides: any=[];
-  dataListArticlesProduits: any=[];
+  dataListProduits: any = [];
+  dataListGroupeArticles: any = [];
+  dataListBouteilleVide: any = [];
+  dataListPlastiqueNu: any = [];
+  dataListLiquides: any = [];
+  dataListArticlesProduits: any = [];
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -70,7 +70,10 @@ export class ArticleComponent {
 
     this.articleService.GetConditionnementList().then((res: any) => {
       this.dataListConditionnements = res;
-      console.log('dataListConditionnements:::>', this.dataListConditionnements);
+      console.log(
+        'dataListConditionnements:::>',
+        this.dataListConditionnements
+      );
     });
     this.articleService.ListTypeArticles.subscribe((res: any) => {
       this.dataListProduits = res;
@@ -81,7 +84,7 @@ export class ArticleComponent {
     });
     this.GetArticleList();
   }
-  
+
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -103,7 +106,7 @@ export class ArticleComponent {
     console.log(this.isModalOpen);
   }
 
-  OnEdit(data:any) {
+  OnEdit(data: any) {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
@@ -144,9 +147,10 @@ export class ArticleComponent {
         this.articleService.UpdateArticle(this.articleId, formValues).then(
           (response: any) => {
             console.log('article mis à jour avec succès', response);
-            this.toastr.success('Succès!', 'Article mis à jour avec succès.');
+
             this.OnCloseModal();
             this.GetArticleList();
+            this.toastr.success(response.message);
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -159,7 +163,8 @@ export class ArticleComponent {
             this.OnCloseModal();
             this.GetArticleList();
             this.ArticleForm.reset();
-            this.toastr.success('Succès!', 'Article créé avec succès.');
+            this.toastr.success(response.message);
+
             console.log('Nouvel article créé avec succès', response);
           },
           (error: any) => {
@@ -172,7 +177,7 @@ export class ArticleComponent {
   }
   loadArticleDetails(): void {
     this.ArticleForm.patchValue({
-      photo: this.updateData.photo??"",
+      photo: this.updateData.photo ?? '',
       libelle: this.updateData.libelle,
       format: this.updateData.format,
       Conditionnement: this.updateData.Conditionnement,
@@ -190,8 +195,8 @@ export class ArticleComponent {
           this._spinner.show();
           this.articleService.DeletedArticle(Id).then((res: any) => {
             console.log('DATA:::>', res);
-            this.toastr.success('Succès!', 'Article supprimé avec succès.');
-            // this.dataList = res.data;
+            this.toastr.success(res.message);
+            this.GetArticleList();
             this._spinner.hide();
           });
         } else {

@@ -86,7 +86,8 @@ export class CreationPrixComponent {
             this.prixForm.reset()
             this.OnCloseModal();
             this.GetListPrix();
-            this.toastr.success('Succès!', 'Prix mis à jour avec succès.');
+            this.toastr.success(response.message);
+            // this.toastr.success('Succès!', 'Prix mis à jour avec succès.');
             console.log('prix mis à jour avec succès', response);
 
           },
@@ -101,7 +102,8 @@ export class CreationPrixComponent {
             this.OnCloseModal();
             this.GetListPrix();
             this.prixForm.reset()
-            this.toastr.success('Succès!', 'Prix créé avec succès.');
+            this.toastr.success(response.message);
+            // this.toastr.success('Succès!', 'Prix créé avec succès.');
             console.log('prix crée avec succès', response);
 
           },
@@ -130,7 +132,7 @@ export class CreationPrixComponent {
       PrixLiquide: this.updateData.PrixLiquide,
       PrixConsigne: this.updateData.PrixConsigne,
       PrixId: this.updateData.typePrix.id,
-      // P roduitId: this.updateData.produit.id,
+      // ProduitId: this.updateData.produit.id,
     }
     );
     this.isModalOpen = true;
@@ -144,7 +146,8 @@ export class CreationPrixComponent {
           this._spinner.show();
           this.articleService.DeletePrix(Id).then((res: any) => {
             console.log('DATA:::>', res);
-            // this.dataList = res.data;
+            this.toastr.success(res.message);
+            this.GetListPrix();
             this._spinner.hide();
           });
         } else {

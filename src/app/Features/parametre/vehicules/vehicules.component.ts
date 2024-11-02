@@ -67,10 +67,10 @@ export class VehiculesComponent implements AfterViewInit {
   onSubmit() {
     if (this.isEditMode) {
       this._spinner.show();
-      this._logistiqueService.UpdateVehicule(this.vehiculeId, this.vehicleForm.value).then((res) => {
+      this._logistiqueService.UpdateVehicule(this.vehiculeId, this.vehicleForm.value).then((res:any) => {
         this._spinner.hide();
         this.isModalOpen = false;
-        this.toastr.success('Succès!', 'Véhicule mis à jour avec succès.');
+        this.toastr.success(res.message);
         this.GetVehiculeList()
         console.log(res)
       },
@@ -144,8 +144,7 @@ export class VehiculesComponent implements AfterViewInit {
           this._logistiqueService.DeleteVehicule(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.GetVehiculeList()
-            this.toastr.success('Succès!', 'Véhicule retiré de flotte.');
-            // this.dataList = res.data;
+            this.toastr.success(res.message);
             this._spinner.hide();
           });
         } else {
