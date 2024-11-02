@@ -157,7 +157,7 @@
                             <label for="categorieProduitId" class="form-label me-1 label-fixed-width">Catégorie produit</label>
                             <p class="text-danger mb-0">*</p>
                         </div>
-                        <select class="form-control form-select form-select-sm" formControlName="categorieproduitId"
+                        <select class="form-control form-select form-select-sm" formControlName="categorieProduitId"
                             aria-label=".form-select-sm example">
                             <option value="" disabled selected>Choisir le produit</option>
                             <option [value]="item.id" *ngFor="let item of dataListProduits">{{item.libelle}}</option>
@@ -169,7 +169,7 @@
                             <label for="groupeArticleId" class="form-label me-1 label-fixed-width">Groupe article</label>
                             <p class="text-danger mb-0">*</p>
                         </div>
-                        <select class="form-control form-select form-select-sm" formControlName="groupearticleId"
+                        <select class="form-control form-select form-select-sm" formControlName="groupeArticleId"
                             aria-label=".form-select-sm example">
                             <option value="" disabled selected>Choisir l'article</option>
                             <option [value]="item.id" *ngFor="let item of dataListGroupeArticles">{{item.libelle}}
