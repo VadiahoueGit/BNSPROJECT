@@ -3,6 +3,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { CoreServiceService } from 'src/app/core/core-service.service';
+import { LocalStorageService } from 'src/app/core/local-storage.service';
+import { storage_keys } from 'src/app/Features/shared-component/utils';
 
 @Component({
   selector: 'app-login',
@@ -14,19 +16,21 @@ export class LoginComponent implements OnInit {
   isLoading:Boolean = false;
   submitError:Boolean = false;
   constructor(private _router: Router,
+    private localstorage:LocalStorageService,
     private _auth : CoreServiceService,
     private _spinner :NgxSpinnerService
   ) {}
   ngOnInit(): void {
     this.loginForm = new FormGroup({
-      email: new FormControl('', [Validators.required, Validators.email]),
+      login: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [
         Validators.required,
         Validators.minLength(6),
       ]),
+      appType: new FormControl('BO'),
     });
   }
-
+  
   async ToConnect() {
     this.isLoading = true;
     if (this.loginForm.valid) {
@@ -35,6 +39,8 @@ export class LoginComponent implements OnInit {
           this.isLoading = false
           console.log(res);
           if (res.access_token) {
+            this.localstorage.setItem(storage_keys.STOREToken,res.access_token)
+            this.localstorage.setItem(storage_keys.STOREToken,res.user)
             this._router.navigate(['feature']);
           }
         });
