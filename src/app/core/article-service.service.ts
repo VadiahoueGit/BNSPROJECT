@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { ConfigService } from './config-service.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { LocalStorageService } from './local-storage.service';
+import { storage_keys } from '../Features/shared-component/utils';
 
 @Injectable({
   providedIn: 'root',
@@ -20,8 +22,10 @@ export class ArticleServiceService {
   ListFormats: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListConditionnements: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
 
-  constructor(private _http: HttpClient, private configService: ConfigService) {
+  token:string;
+  constructor(private localstorage:LocalStorageService,private _http: HttpClient, private configService: ConfigService) {
     this.apiUrl = this.configService.apiUrl;
+    this.token = this.localstorage.getItem(storage_keys.STOREToken) || '';
   }
   resolve(
     route: ActivatedRouteSnapshot,

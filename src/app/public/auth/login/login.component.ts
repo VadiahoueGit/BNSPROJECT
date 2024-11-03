@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
           console.log(res);
           if (res.access_token) {
             this.localstorage.setItem(storage_keys.STOREToken,res.access_token)
-            this.localstorage.setItem(storage_keys.STOREToken,res.user)
+            this.localstorage.setItem(storage_keys.STOREUser,res.user)
             this._router.navigate(['feature']);
           }
         });

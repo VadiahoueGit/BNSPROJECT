@@ -1,23 +1,29 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from './config-service.service';
+import { LocalStorageService } from './local-storage.service';
+import { storage_keys } from '../Features/shared-component/utils';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ActiviteService {
-
+  token:string;
   apiUrl: string;
-  constructor(private _http: HttpClient, private configService: ConfigService) {
+  constructor(private localstorage:LocalStorageService,private _http: HttpClient, private configService: ConfigService) {
     this.apiUrl = this.configService.apiUrl;
+    this.token = this.localstorage.getItem(storage_keys.STOREToken) || '';
   }
 
  
 
   DeletePointDeVente(id: number) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
-        .delete(`${this.apiUrl}/v1/point-de-vente/${id}`)
+        .delete(`${this.apiUrl}/v1/point-de-vente/${id}`,{headers})
         .subscribe(
           (res: any) => {
             console.log(res);
@@ -34,7 +40,10 @@ export class ActiviteService {
   //TYPE VISITE 
   CreateTypeVisite(data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/type-visite`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/type-visite`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -49,9 +58,12 @@ export class ActiviteService {
 
   GetTypeVisiteList(data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
         .get(
-          `${this.apiUrl}/v1/type-visite?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/type-visite?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -67,7 +79,10 @@ export class ActiviteService {
   }
   UpdateTypeVisite(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/type-visite/${id}`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/type-visite/${id}`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -82,8 +97,11 @@ export class ActiviteService {
 
   DeleteTypeVisite(id: number) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
-        .delete(`${this.apiUrl}/v1/type-visite/${id}`)
+        .delete(`${this.apiUrl}/v1/type-visite/${id}`,{headers})
         .subscribe(
           (res: any) => {
             console.log(res);
@@ -100,7 +118,10 @@ export class ActiviteService {
   // VISITE
   CreateVisite(data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/visites`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/visites`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -115,9 +136,12 @@ export class ActiviteService {
 
   GetVisiteList(data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
         .get(
-          `${this.apiUrl}/v1/visites?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/visites?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -133,8 +157,12 @@ export class ActiviteService {
   }
 
   UpdateVisite(id: number, data: any) {
+    
     return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/visites/${id}`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/visites/${id}`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -149,8 +177,11 @@ export class ActiviteService {
 
   DeleteVisite(id: number) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
-        .delete(`${this.apiUrl}/v1/visites/${id}`)
+        .delete(`${this.apiUrl}/v1/visites/${id}`,{headers})
         .subscribe(
           (res: any) => {
             console.log(res);

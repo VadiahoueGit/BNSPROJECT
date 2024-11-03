@@ -1,15 +1,19 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from './config-service.service';
+import { LocalStorageService } from './local-storage.service';
+import { storage_keys } from '../Features/shared-component/utils';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LogistiqueService {
 
+  token:string;
   apiUrl: string;
-  constructor(private _http: HttpClient, private configService: ConfigService) {
+  constructor(private localstorage:LocalStorageService,private _http: HttpClient, private configService: ConfigService) {
     this.apiUrl = this.configService.apiUrl;
+    this.token = this.localstorage.getItem(storage_keys.STOREToken) || '';
   }
 
    // TRANSPORTEUR

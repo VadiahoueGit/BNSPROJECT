@@ -32,8 +32,10 @@ export class SuivivisiteComponent {
       page: 1,
       limit: 8,
     };
+    this._spinner.show()
     this.activiteService.GetVisiteList(data).then((res:any)=>{
       this.dataList = res.data;
+      this._spinner.hide()
       console.log('Visite',res)
     })
   }

@@ -84,6 +84,7 @@ export class GestionvisiteComponent {
   }
 
   onSubmit(): void {
+    this._spinner.show()
     console.log(this.VisiteForm.value);
     if (this.VisiteForm.valid) {
       // const formValues = this.ArticleForm.value;
@@ -100,7 +101,7 @@ export class GestionvisiteComponent {
         this.activiteService.UpdateVisite(this.articleId, formValues).then(
           (response: any) => {
             console.log('visite mis à jour avec succès', response);
-
+            this._spinner.hide()
             this.OnCloseModal();
             this.toastr.success(response.message);
           },
@@ -113,6 +114,7 @@ export class GestionvisiteComponent {
         this.activiteService.CreateVisite(formValues).then(
           (response: any) => {
             this.OnCloseModal();
+            this._spinner.hide()
             this.VisiteForm.reset();
             this.toastr.success(response.message);
 

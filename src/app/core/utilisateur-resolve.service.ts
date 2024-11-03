@@ -1,8 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from './config-service.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { LocalStorageService } from './local-storage.service';
+import { storage_keys } from '../Features/shared-component/utils';
 
 @Injectable({
   providedIn: 'root',
@@ -12,9 +14,10 @@ export class UtilisateurResolveService {
   ListUsers: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListPermissions: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListProfils: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
-
-  constructor(private _http: HttpClient, private configService: ConfigService) {
+  token:string;
+  constructor(private localstorage:LocalStorageService,private _http: HttpClient, private configService: ConfigService) {
     this.apiUrl = this.configService.apiUrl;
+    this.token = this.localstorage.getItem(storage_keys.STOREToken) || '';
   }
   resolve(
     route: ActivatedRouteSnapshot,
@@ -136,9 +139,12 @@ export class UtilisateurResolveService {
 
   GetPointDeVenteList(data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
         .get(
-          `${this.apiUrl}/v1/point-de-vente?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/point-de-vente?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{ headers }
         )
         .subscribe(
           (res: any) => {
@@ -166,13 +172,16 @@ export class UtilisateurResolveService {
       );
     });
   }
-  
+
   // COMMERCIAL
   GetCommercialList(data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
         .get(
-          `${this.apiUrl}/v1/commercial?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/commercial?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {

@@ -42,6 +42,7 @@ export async function ALERT_QUESTION(_icon:'warning',_title:string,_text:string)
  export const storage_keys = {
     production:true,
     STOREToken:"BNS-Token",
+    STOREUser:"BNS-User",
     STORERefreshToken:"BNS-RefreshToken",
     STORETimer:"BNS-Timer"
   }
