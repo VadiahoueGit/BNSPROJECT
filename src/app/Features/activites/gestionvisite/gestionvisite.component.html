@@ -29,19 +29,19 @@
                             <div class="mb-3">
                                 <label for="format" class="form-label">Type visite <span
                                         class="text-danger">*</span></label>
-                                <ng-select class="form-control" [items]="typeVisite" bindLabel="name" bindValue="id"
+                                <ng-select class="form-control" [items]="typeVisite" bindLabel="libelle" bindValue="id"
                                     formControlName="typeVisite" [searchable]="true">
                                 </ng-select>
                             </div>
                             <div class="mb-3">
                                 <label for="format" class="form-label">Commercial <span
                                         class="text-danger">*</span></label>
-                                <ng-select class="form-control" [items]="typeVisite" bindLabel="name" bindValue="id"
+                                <ng-select class="form-control" [items]="commerciaux" bindLabel="nom" bindValue="id"
                                     formControlName="commercialId" [searchable]="true">
                                 </ng-select>
                             </div>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch"
+                                <input class="form-check-input" type="checkbox" role="switch" formControlName="IsRepetitive"
                                     id="flexSwitchCheckDefault">
                                 <label class="form-check-label" for="flexSwitchCheckDefault">Répétitif</label>
                             </div>
@@ -50,8 +50,8 @@
                             <div class="mb-3">
                                 <label for="format" class="form-label">Point de vente <span
                                         class="text-danger">*</span></label>
-                                <ng-select class="form-control" [multiple]="true" [checkbox]="true" [items]="typeVisite"
-                                    bindLabel="name" bindValue="id" formControlName="pointDeVenteId"
+                                <ng-select class="form-control" [multiple]="true" [checkbox]="true" [items]="pointDeVente"
+                                    bindLabel="nom" bindValue="id" formControlName="pointDeVenteIds"
                                     [searchable]="true">
                                 </ng-select>
                             </div>
@@ -69,7 +69,7 @@
 
             <div class="modal-footer gap-3 px-4">
                 <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-                <button type="submit" (click)="addEvent()" class="btn btn-primary px-2">Valider</button>
+                <button type="submit" (click)="addEvent()" class="btn btn-primary px-2" (click)="onSubmit()">Valider</button>
             </div>
         </div>
     </div>

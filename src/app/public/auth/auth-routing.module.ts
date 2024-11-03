@@ -7,7 +7,8 @@ import { OtpScreenComponent } from "./otp-screen/otp-screen.component";
 import { NewPasswordComponent } from "./new-password/new-password.component";
 
 const routes: Routes = [
-    { path: '', component: LoginComponent },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+    { path: 'login', component: LoginComponent },
     { path: 'forget-password', component: ForgetPasswordComponent },
     { path: 'otp-screen', component: OtpScreenComponent },
     { path: 'new-password', component: NewPasswordComponent },

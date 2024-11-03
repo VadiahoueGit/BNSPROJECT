@@ -118,6 +118,123 @@ export class UtilisateurResolveService {
     });
   }
 
+   //POINT DE VENTE 
+   CreatePointDeVente(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http.post(`${this.apiUrl}/v1/point-de-vente`, data).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  GetPointDeVenteList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http
+        .get(
+          `${this.apiUrl}/v1/point-de-vente?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+  UpdatePointDeVente(id: number, data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http.put(`${this.apiUrl}/v1/point-de-vente/${id}`, data).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+  
+  // COMMERCIAL
+  GetCommercialList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http
+        .get(
+          `${this.apiUrl}/v1/commercial?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+        )
+        .subscribe(
+          (res: any) => {
+            if (res.statusCode === 200) {
+              this.ListUsers.next(res.data);
+            }
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+  CreateCommercial(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http.post(`${this.apiUrl}/v1/commercial`, data).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  DeleteCommercial(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http.delete(`${this.apiUrl}/v1/commercial/${id}`).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  UpdateCommercial(id: number, data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http.put(`${this.apiUrl}/v1/commercial/${id}`, data).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
   // PROFIL
   CreateProfil(data: any) {
     return new Promise((resolve: any, reject: any) => {

@@ -39,13 +39,9 @@ export async function ALERT_QUESTION(_icon:'warning',_title:string,_text:string)
        })
  }
 
-export async function TOAST(_Message:string, _Color:string, _Duration = 2500) {
-    // const toast = await new ToastController().create({
-    //     message: _Message,
-    //     duration: _Duration,
-    //     keyboardClose: true,
-    //     color: _Color
-    // });
-
-    // return await toast;
-}
+ export const storage_keys = {
+    production:true,
+    STOREToken:"BNS-Token",
+    STORERefreshToken:"BNS-RefreshToken",
+    STORETimer:"BNS-Timer"
+  }
