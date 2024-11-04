@@ -5,6 +5,9 @@
 
     <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'utilisateur'"
         (click)="activeElement('utilisateur')">Utilisateurs</a>
+
+    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'permission'"
+        (click)="activeElement('permission')">Permissions</a>
 </nav>
 
 <div class="tab-content mt-3">
@@ -13,6 +16,9 @@
     </div>
 
     <div *ngIf="activeTab === 'utilisateur'" class="tab-pane fade show active">
+        <app-utilisateur></app-utilisateur>
+    </div>
+    <div *ngIf="activeTab === 'permission'" class="tab-pane fade show active">
         <app-utilisateur></app-utilisateur>
     </div>
 </div>

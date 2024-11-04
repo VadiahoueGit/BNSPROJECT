@@ -184,4 +184,7 @@ export class UtilisateurComponent implements AfterViewInit {
       }
     );
   }
+  OnDisabled(data:any){
+    console.log(data,'data')
+  }
 }

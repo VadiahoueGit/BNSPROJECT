@@ -7,27 +7,18 @@
 
         <ng-template pTemplate="header">
           <tr>
-              <th style="color: var(--secondary-color);">Code </th>
                 <th style="color: var(--secondary-color);">Photo</th>
                 <th style="color: var(--secondary-color);">Nom</th>
                 <th style="color: var(--secondary-color);">Prénoms</th>
                 <th style="color: var(--secondary-color);">Email</th>
                 <th style="color: var(--secondary-color);">Tél principal</th>
-                <th style="color: var(--secondary-color);">Tél sécondaire</th>
-                <th style="color: var(--secondary-color);">Mot de passe</th>
-                <th style="color: var(--secondary-color);">Matricule</th>
                 <th style="color: var(--secondary-color);">Role</th>
-                <th style="color: var(--secondary-color);">Fonction</th>
                 <th style="color: var(--secondary-color);">Actions</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-dataList>
             <tr>
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.codeApplication ?? null }}
-                    </span>
-                </td>
+               
                 <td>
                     <span class="ml-1 vertical-align-middle">
                         {{ dataList.profilePhoto ?? null }}
@@ -49,36 +40,19 @@
                         {{ dataList.telephone_one }}
                     </span>
                 </td>
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.telephone_two }}
-                    </span>
-                </td>
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.password | truncate :10}}
-                    </span>
-                </td>
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.matricule }}
-                    </span>
-                </td>
+             
                 <td>
                     <span class="ml-1 vertical-align-middle">
                         {{ dataList.role.description }}
                     </span>
                 </td>
                 <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.fonction }}
-                    </span>
-                </td>
-                <td>
             <tr class="d-flex justify-content-center gap-3">
                 <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
+              
                 <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
-                        class="fas fa-trash-alt text-danger"></i></td>
+                        class="fas fa-trash-alt text-danger"></i>
+                    </td>
             </tr>
 
             </td>
