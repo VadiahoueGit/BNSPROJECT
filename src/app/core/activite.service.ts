@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from './config-service.service';
 import { LocalStorageService } from './local-storage.service';
@@ -7,8 +7,7 @@ import { storage_keys } from '../Features/shared-component/utils';
 @Injectable({
   providedIn: 'root'
 })
-export class LogistiqueService {
-
+export class ActiviteService {
   token:string;
   apiUrl: string;
   constructor(private localstorage:LocalStorageService,private _http: HttpClient, private configService: ConfigService) {
@@ -16,10 +15,35 @@ export class LogistiqueService {
     this.token = this.localstorage.getItem(storage_keys.STOREToken) || '';
   }
 
-   // TRANSPORTEUR
-   CreateTransporteur(data: any) {
+ 
+
+  DeletePointDeVente(id: number) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/group-article`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .delete(`${this.apiUrl}/v1/point-de-vente/${id}`,{headers})
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+  //TYPE VISITE 
+  CreateTypeVisite(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/type-visite`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -32,11 +56,92 @@ export class LogistiqueService {
     });
   }
 
-  GetTransporteurList(data: any) {
+  GetTypeVisiteList(data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
         .get(
-          `${this.apiUrl}/v1/group-article?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/type-visite?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+  UpdateTypeVisite(id: number, data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/type-visite/${id}`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  DeleteTypeVisite(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .delete(`${this.apiUrl}/v1/type-visite/${id}`,{headers})
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+  // VISITE
+  CreateVisite(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/visites`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  GetVisiteList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/visites?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -51,9 +156,13 @@ export class LogistiqueService {
     });
   }
 
-  UpdateTransporteur(id: number, data: any) {
+  UpdateVisite(id: number, data: any) {
+    
     return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/group-article/${id}`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/visites/${id}`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -66,77 +175,13 @@ export class LogistiqueService {
     });
   }
 
-  DeleteTransporteur(id: number) {
+  DeleteVisite(id: number) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
-        .delete(`${this.apiUrl}/v1/group-article/${id}`)
-        .subscribe(
-          (res: any) => {
-            console.log(res);
-            resolve(res);
-          },
-          (err) => {
-            console.log(err);
-            reject(err);
-          }
-        );
-    });
-  }
-
-   // VEHICULE
-   CreateVehicule(data: any) {
-    return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/vehicule`, data).subscribe(
-        (res: any) => {
-          console.log(res);
-          resolve(res);
-        },
-        (err) => {
-          console.log(err);
-          reject(err);
-        }
-      );
-    });
-  }
-
-  GetVehiculeList(data: any) {
-    return new Promise((resolve: any, reject: any) => {
-      this._http
-        .get(
-          `${this.apiUrl}/v1/vehicule?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
-        )
-        .subscribe(
-          (res: any) => {
-            console.log(res);
-            resolve(res);
-          },
-          (err) => {
-            console.log(err);
-            reject(err);
-          }
-        );
-    });
-  }
-
-  UpdateVehicule(id: number, data: any) {
-    return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/vehicule/${id}`, data).subscribe(
-        (res: any) => {
-          console.log(res);
-          resolve(res);
-        },
-        (err) => {
-          console.log(err);
-          reject(err);
-        }
-      );
-    });
-  }
-
-  DeleteVehicule(id: number) {
-    return new Promise((resolve: any, reject: any) => {
-      this._http
-        .delete(`${this.apiUrl}/v1/vehicule/${id}`)
+        .delete(`${this.apiUrl}/v1/visites/${id}`,{headers})
         .subscribe(
           (res: any) => {
             console.log(res);

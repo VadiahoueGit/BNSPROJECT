@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { LocalStorageService } from '../core/local-storage.service';
+import { storage_keys } from './shared-component/utils';
 
 @Component({
   selector: 'app-features',
@@ -20,13 +22,14 @@ export class FeaturesComponent {
     { label: 'Finances', icon: 'fas fa-sack-dollar', url: 'feature/finance' },
     { label: 'Stocks', icon: 'fas fa-warehouse-alt', url: 'feature/stocks' }
   ];
-  
+  UserInfo:any
   selectedItem: number | null = null;
-  constructor(private router: Router) {
+  constructor(private router: Router,private localstorage:LocalStorageService,) {
     this.currentUrl = this.router.url; // URL courante
   }
   ngOnInit(): void {
-    console.log(this.currentUrl)
+    this.UserInfo = this.localstorage.getItem(storage_keys.STOREUser);
+    console.log(this.UserInfo)
     // if (this.currentUrl.includes('parametre')) {
     if (this.currentUrl.includes('/feature/dashboard') ){
       this.setActive(0)

@@ -1,7 +1,5 @@
 <div class="card">
-    <div class=" d-flex justify-content-end py-3">
-        <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Ajouter un article</button>
-    </div>
+ 
     <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
         [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true">
 
@@ -10,65 +8,51 @@
                 <th style="color: var(--secondary-color);">Type</th>
                 <th style="color: var(--secondary-color);">Zone</th>
                 <th style="color: var(--secondary-color);">Commercial</th>
-                <th style="color: var(--secondary-color);">Ventes</th>
+                <th style="color: var(--secondary-color);">Nombre de visites</th>
                 <th style="color: var(--secondary-color);">Date de la visite</th>
+                <th style="color: var(--secondary-color);">Statut</th>
                 <th style="color: var(--secondary-color);">Actions</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-dataList>
             <tr>
-                <!--   <td>
+                  <td>
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.image }}
+                        {{ dataList.typeVisite.libelle }}
                     </span>
                 </td>
                 <td>
-                    {{ dataList.libelle }}
+                    <!-- {{ dataList.libelle }} -->
                 </td>
                 <td>
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.format }}
+                        {{ dataList.commercial.nom }} {{ dataList.commercial.prenom }}
                     </span>
                 </td>
                 <td>
-                    {{ dataList.categorieproduit.libelle }}
+                    {{ dataList.pointDeVentes.length }}
                 </td>
                 <td>
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.groupearticle.libelle }}
-                    </span>
-                </td>
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.Conditionnement }}
+                        {{ dataList.dateVisite | date}}
                     </span>
                 </td>
                 <td>
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.plastiquenu.libelle }}
+                        {{ dataList.statut }}
                     </span>
-                </td>
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.bouteillevide.libelle }}
-                    </span>
-                </td>
-                <td>
-                   
                 </td>
                 <td>
             <tr class="d-flex justify-content-center gap-3">
-                <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
-                <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
-                        class="fas fa-trash-alt text-danger"></i></td>
+                <td><i style="cursor: pointer;" *ngIf="dataList.visiteEffectuee == true" (click)="ViewDetails(dataList)" class="fas fa-search text-secondary"></i></td>
             </tr>
 
-            </td>-->
+            </td>
             </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
             <tr>
-                <td colspan="5">Aucun article trouvé.</td>
+                <td  colspan="5">Aucun article trouvé.</td>
             </tr>
         </ng-template>
     </p-table>

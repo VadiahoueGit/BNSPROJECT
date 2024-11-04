@@ -5,10 +5,11 @@
             <img src="assets/image/logoBestNegoce.png" style="width: 100px;height: 100px;">
         </div>
         <ul class="list-unstyled ps-0 ">
-            <li class="mb-1 d-flex justify-content-center" *ngFor="let item of items; let i = index"  (click)="navigate(item.url,i)">
+            <li class="mb-1 d-flex justify-content-center" *ngFor="let item of items; let i = index"
+                (click)="navigate(item.url,i)">
                 <a class="btn btn-toggle gap-4 d-flex align-items-center rounded my-1"
                     [ngClass]="{'active': selectedItem === i}">
-                    <i [class]="item.icon"  [ngClass]="{'active': selectedItem === i}"></i> <!-- Icone ici -->
+                    <i [class]="item.icon" [ngClass]="{'active': selectedItem === i}"></i> <!-- Icone ici -->
                     <label>{{ item.label }}</label>
                 </a>
             </li>
@@ -24,7 +25,16 @@
                     data-bs-toggle="dropdown" aria-expanded="false">
                     <!-- Avatar & Nom -->
                     <img src="https://via.placeholder.com/30" class="rounded-circle me-2" alt="Avatar" />
-                    <span>John Doe</span> <!-- Remplacez "John Doe" par le nom réel de l'utilisateur -->
+                    <div class="col">
+                        <div class="row">
+                            <span>{{UserInfo.prenom}} {{UserInfo.nom}}</span>
+                        </div>
+                        <div class="row">
+                            <span style="font-size: 11px; color: gray;">{{UserInfo.role.name}}</span>
+                        </div>
+
+                    </div>
+                    <!-- Remplacez "John Doe" par le nom réel de l'utilisateur -->
                 </a>
             </div>
         </nav>

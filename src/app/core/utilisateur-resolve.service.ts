@@ -1,8 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from './config-service.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { LocalStorageService } from './local-storage.service';
+import { storage_keys } from '../Features/shared-component/utils';
 
 @Injectable({
   providedIn: 'root',
@@ -12,9 +14,10 @@ export class UtilisateurResolveService {
   ListUsers: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListPermissions: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListProfils: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
-
-  constructor(private _http: HttpClient, private configService: ConfigService) {
+  token:string;
+  constructor(private localstorage:LocalStorageService,private _http: HttpClient, private configService: ConfigService) {
     this.apiUrl = this.configService.apiUrl;
+    this.token = this.localstorage.getItem(storage_keys.STOREToken) || '';
   }
   resolve(
     route: ActivatedRouteSnapshot,
@@ -106,6 +109,129 @@ export class UtilisateurResolveService {
   UpdateUsers(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
       this._http.put(`${this.apiUrl}/v1/users/${id}`, data).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+   //POINT DE VENTE 
+   CreatePointDeVente(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http.post(`${this.apiUrl}/v1/point-de-vente`, data).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  GetPointDeVenteList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/point-de-vente?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{ headers }
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+  UpdatePointDeVente(id: number, data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http.put(`${this.apiUrl}/v1/point-de-vente/${id}`, data).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  // COMMERCIAL
+  GetCommercialList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/commercial?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+        )
+        .subscribe(
+          (res: any) => {
+            if (res.statusCode === 200) {
+              this.ListUsers.next(res.data);
+            }
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+  CreateCommercial(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http.post(`${this.apiUrl}/v1/commercial`, data).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  DeleteCommercial(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http.delete(`${this.apiUrl}/v1/commercial/${id}`).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  UpdateCommercial(id: number, data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http.put(`${this.apiUrl}/v1/commercial/${id}`, data).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);

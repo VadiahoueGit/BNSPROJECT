@@ -23,9 +23,10 @@ export function initConfig(configService: ConfigService) {
   declarations: [
     AppComponent,
   ],
-  imports: [
-    FeaturesModule,
+  imports: [ 
     AuthModule,
+    FeaturesModule,
+  
     SharedComponentModule,
     HttpClientModule ,
     BrowserModule,
