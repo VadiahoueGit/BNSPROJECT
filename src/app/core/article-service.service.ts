@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from './config-service.service';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -90,9 +90,12 @@ export class ArticleServiceService {
   // TYPE ARTICLE
   GetTypesArticlesList(data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
         .get(
-          `${this.apiUrl}/v1/categorie-product?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/categorie-product?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -112,7 +115,10 @@ export class ArticleServiceService {
 
   CreateTypesArticles(data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/categorie-product`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/categorie-product`, data, {headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -127,7 +133,10 @@ export class ArticleServiceService {
 
   DeleteTypesArticles(id: number) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.delete(`${this.apiUrl}/v1/categorie-product/${id}`).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/categorie-product/${id}`,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -142,8 +151,11 @@ export class ArticleServiceService {
 
   UpdateTypesArticles(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
-        .put(`${this.apiUrl}/v1/categorie-product/${id}`, data)
+        .put(`${this.apiUrl}/v1/categorie-product/${id}`, data,{headers})
         .subscribe(
           (res: any) => {
             console.log(res);
@@ -160,7 +172,10 @@ export class ArticleServiceService {
   // PRIX
   CreatePrix(data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/prix`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/prix`, data, {headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -175,9 +190,12 @@ export class ArticleServiceService {
 
   GetListPrix(data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
         .get(
-          `${this.apiUrl}/v1/prix?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/prix?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -194,9 +212,12 @@ export class ArticleServiceService {
 
   GetListTypePrix(data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
         .get(
-          `${this.apiUrl}/v1/type-prix?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/type-prix?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -216,7 +237,10 @@ export class ArticleServiceService {
 
   DeletePrix(id: number) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.delete(`${this.apiUrl}/v1/prix/${id}`).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/prix/${id}`,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -231,7 +255,10 @@ export class ArticleServiceService {
 
   UpdatePrix(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/prix/${id}`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/prix/${id}`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -247,7 +274,10 @@ export class ArticleServiceService {
   // GROUPE ARTICLE
   CreateGroupeArticle(data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/group-article`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/group-article`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -262,9 +292,12 @@ export class ArticleServiceService {
 
   GetGroupeArticleList(data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
         .get(
-          `${this.apiUrl}/v1/group-article?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/group-article?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -284,7 +317,10 @@ export class ArticleServiceService {
 
   UpdateGroupeArticle(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/group-article/${id}`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/group-article/${id}`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -299,7 +335,10 @@ export class ArticleServiceService {
 
   DeleteGroupeArticle(id: number) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.delete(`${this.apiUrl}/v1/group-article/${id}`).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/group-article/${id}`,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -315,7 +354,10 @@ export class ArticleServiceService {
   //LIQUIDE
   CreateLiquide(data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/liquide`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/liquide`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -330,9 +372,12 @@ export class ArticleServiceService {
 
   GetLiquideList(data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
         .get(
-          `${this.apiUrl}/v1/liquide?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/liquide?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -352,7 +397,10 @@ export class ArticleServiceService {
 
   UpdateLiquide(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/liquide/${id}`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/liquide/${id}`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -367,7 +415,10 @@ export class ArticleServiceService {
 
   DeleteLiquide(id: number) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.delete(`${this.apiUrl}/v1/liquide/${id}`).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/liquide/${id}`,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -383,7 +434,10 @@ export class ArticleServiceService {
   // EMBALLAGE
   CreateEmballage(data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/emballage`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/emballage`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -398,9 +452,12 @@ export class ArticleServiceService {
 
   GetEmballageList(data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
         .get(
-          `${this.apiUrl}/v1/emballage?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/emballage?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -420,7 +477,10 @@ export class ArticleServiceService {
 
   UpdateEmballage(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/emballage/${id}`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/emballage/${id}`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -435,7 +495,10 @@ export class ArticleServiceService {
 
   DeleteEmballage(id: number) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.delete(`${this.apiUrl}/v1/emballage/${id}`).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/emballage/${id}`,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -451,9 +514,12 @@ export class ArticleServiceService {
   // ARTICLE
   GetArticleList(data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
         .get(
-          `${this.apiUrl}/v1/product?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/product?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -473,7 +539,10 @@ export class ArticleServiceService {
 
   DeletedArticle(id: number) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.delete(`${this.apiUrl}/v1/product/${id}`).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/product/${id}`,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -488,8 +557,11 @@ export class ArticleServiceService {
 
   UpdateArticle(id: number, article: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
-        .put(`${this.apiUrl}/v1/product/${id}`, article)
+        .put(`${this.apiUrl}/v1/product/${id}`, article,{headers})
         .subscribe(
           (res: any) => {
             console.log(res);
@@ -505,7 +577,10 @@ export class ArticleServiceService {
 
   CreateArticle(article: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/product`, article).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/product`, article,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -519,7 +594,10 @@ export class ArticleServiceService {
   }
   GetFormatList() {
     return new Promise((resolve: any, reject: any) => {
-      this._http.get(`${this.apiUrl}/v1/product/formats`).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.get(`${this.apiUrl}/v1/product/formats`,{headers}).subscribe(
         (res: any) => {
           if (res.statusCode == 200) {
             this.ListFormats.next(res);
@@ -536,7 +614,10 @@ export class ArticleServiceService {
   }
   GetConditionnementList() {
     return new Promise((resolve: any, reject: any) => {
-      this._http.get(`${this.apiUrl}/v1/product/conditionnements`).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.get(`${this.apiUrl}/v1/product/conditionnements`,{headers}).subscribe(
         (res: any) => {
           if (res.statusCode == 200) {
             this.ListConditionnements.next(res);
@@ -556,7 +637,10 @@ export class ArticleServiceService {
 
   CreatePlastiqueNu(data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/plastique-nu`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/plastique-nu`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -571,9 +655,12 @@ export class ArticleServiceService {
 
   GetPlastiqueNuList(data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
         .get(
-          `${this.apiUrl}/v1/plastique-nu?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/plastique-nu?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -593,7 +680,10 @@ export class ArticleServiceService {
 
   UpdatePlastiqueNu(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/plastique-nu/${id}`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/plastique-nu/${id}`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -608,7 +698,10 @@ export class ArticleServiceService {
 
   DeletePlastiqueNu(id: number) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.delete(`${this.apiUrl}/v1/plastique-nu/${id}`).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/plastique-nu/${id}`,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -624,7 +717,10 @@ export class ArticleServiceService {
 
   CreateBouteilleVide(data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/Bouteille`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/Bouteille`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -639,9 +735,12 @@ export class ArticleServiceService {
 
   GetBouteilleVideList(data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
         .get(
-          `${this.apiUrl}/v1/Bouteille?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/Bouteille?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -661,7 +760,10 @@ export class ArticleServiceService {
 
   UpdateBouteilleVide(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/Bouteille/${id}`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/Bouteille/${id}`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -676,7 +778,10 @@ export class ArticleServiceService {
 
   DeleteBouteilleVide(id: number) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.delete(`${this.apiUrl}/v1/Bouteille/${id}`).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/Bouteille/${id}`,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);

@@ -56,9 +56,12 @@ export class UtilisateurResolveService {
   // USERS
   GetUsersList(data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
         .get(
-          `${this.apiUrl}/v1/users?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/users?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -78,7 +81,10 @@ export class UtilisateurResolveService {
 
   CreateUsers(data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/users`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/users`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -93,7 +99,10 @@ export class UtilisateurResolveService {
 
   DeleteUsers(id: number) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.delete(`${this.apiUrl}/v1/users/${id}`).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/users/${id}`,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -108,7 +117,10 @@ export class UtilisateurResolveService {
 
   UpdateUsers(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/users/${id}`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/users/${id}`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -124,7 +136,10 @@ export class UtilisateurResolveService {
    //POINT DE VENTE 
    CreatePointDeVente(data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/point-de-vente`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/point-de-vente`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -160,7 +175,10 @@ export class UtilisateurResolveService {
   }
   UpdatePointDeVente(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/point-de-vente/${id}`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/point-de-vente/${id}`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -201,7 +219,10 @@ export class UtilisateurResolveService {
 
   CreateCommercial(data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/commercial`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/commercial`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -216,7 +237,10 @@ export class UtilisateurResolveService {
 
   DeleteCommercial(id: number) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.delete(`${this.apiUrl}/v1/commercial/${id}`).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/commercial/${id}`,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -231,7 +255,10 @@ export class UtilisateurResolveService {
 
   UpdateCommercial(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/commercial/${id}`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/commercial/${id}`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -247,7 +274,10 @@ export class UtilisateurResolveService {
   // PROFIL
   CreateProfil(data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/profil`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/profil`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -262,9 +292,12 @@ export class UtilisateurResolveService {
 
   GetListProfil(data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
         .get(
-          `${this.apiUrl}/v1/profil?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/profil?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -284,7 +317,10 @@ export class UtilisateurResolveService {
 
   DeleteProfilBulk(ids: number[]) {
     return new Promise((resolve: any, reject: any) => {
-        this._http.delete(`${this.apiUrl}/v1/profil/bulk-delete`, { body: { ids } }).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+        this._http.delete(`${this.apiUrl}/v1/profil/bulk-delete`, { body: { ids } },).subscribe(
             (res: any) => {
                 console.log(res);
                 resolve(res);
@@ -299,8 +335,11 @@ export class UtilisateurResolveService {
 
   AssignPermissions(data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
-        .post(`${this.apiUrl}/v1/profil/assign-permissions`, data)
+        .post(`${this.apiUrl}/v1/profil/assign-permissions`, data,{headers})
         .subscribe(
           (res: any) => {
             console.log(res);
@@ -315,7 +354,10 @@ export class UtilisateurResolveService {
   }
   DesassignPermissions(id: number) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.delete(`${this.apiUrl}/v1/profil/bulk-delete${id}`).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/profil/bulk-delete${id}`,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -329,8 +371,11 @@ export class UtilisateurResolveService {
   }
 
   UpdateProfil(id: number, data: any) {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.token}`
+    });
     return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/profil/${id}`, data).subscribe(
+      this._http.put(`${this.apiUrl}/v1/profil/${id}`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -343,10 +388,14 @@ export class UtilisateurResolveService {
     });
   }
 
+
   // PERMISSIONS
   CreatePermissions(data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/permissions`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/permissions`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -361,9 +410,12 @@ export class UtilisateurResolveService {
 
   GetPermissionsList(data: any) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
         .get(
-          `${this.apiUrl}/v1/permissions?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/permissions?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -383,7 +435,10 @@ export class UtilisateurResolveService {
 
   UpdatePermissions(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/permissions/${id}`, data).subscribe(
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/permissions/${id}`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -398,8 +453,11 @@ export class UtilisateurResolveService {
 
   DeletePermissions(id: number) {
     return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
       this._http
-        .delete(`${this.apiUrl}/v1/permissions/bulk-delete${id}`)
+        .delete(`${this.apiUrl}/v1/permissions/bulk-delete${id}`,{headers})
         .subscribe(
           (res: any) => {
             console.log(res);
