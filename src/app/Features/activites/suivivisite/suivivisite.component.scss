@@ -6,10 +6,7 @@ fieldset{
 
 
 
-.modal-dialog{
-    max-width: 45em;
-    min-width: auto;
-}
+
 
 .custom-modal {
     position: fixed;
@@ -27,8 +24,9 @@ fieldset{
   .modal-dialog {
     background-color: white;
     border-radius: 0.3rem;
-    width: 45em;
-    max-width: 45em;
+    // width: auto;
+    max-height: 90%;
+    width: 80%;
     padding: 1rem;
   }
   

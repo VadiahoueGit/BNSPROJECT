@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { AuthModule } from './public/auth/auth.module';
 import { GestionClientsModule } from './Features/gestion-clients/gestion-clients.module';
 import { SharedComponentModule } from './Features/shared-component/shared-component.module';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ConfigService } from './core/config-service.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -15,6 +15,7 @@ import { FeaturesModule } from './Features/features.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MessageService } from 'primeng/api';
+import { AuthInterceptor } from './core/auth.interceptor';
 
 export function initConfig(configService: ConfigService) {
   return () => configService.loadConfig();
@@ -45,7 +46,9 @@ export function initConfig(configService: ConfigService) {
       useFactory: initConfig,
       deps: [ConfigService],
       multi: true
-    }
+    },
+
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
