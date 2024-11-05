@@ -10,15 +10,12 @@ import { storage_keys } from '../Features/shared-component/utils';
 export class CoreServiceService {
   token:string;
   apiUrl: string;
+  isauth: boolean = false
   constructor(private localstorage:LocalStorageService,private _http: HttpClient, private configService: ConfigService) {
     this.apiUrl = this.configService.apiUrl;
     this.token = this.localstorage.getItem(storage_keys.STOREToken) || '';
   }
   
-  isAuthenticated(): boolean {
-    // Vérifie si le token est présent et valide
-    return !!this.token; // Simple vérification, à améliorer si nécessaire
-  }
   ToConnect(data:any){
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
