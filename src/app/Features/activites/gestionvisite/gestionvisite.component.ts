@@ -167,6 +167,8 @@ export class GestionvisiteComponent {
     })
   }
 
+
+
   LoadPdv()
   {
     let data = {
