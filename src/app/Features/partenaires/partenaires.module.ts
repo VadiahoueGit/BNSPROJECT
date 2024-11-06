@@ -7,6 +7,7 @@ import { PartenairesComponent } from './partenaires.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TableModule } from 'primeng/table';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 
 
@@ -18,6 +19,7 @@ import { TableModule } from 'primeng/table';
   ],
   imports: [
    
+    NgSelectModule,
     CommonModule,
     ReactiveFormsModule,
     FormsModule,

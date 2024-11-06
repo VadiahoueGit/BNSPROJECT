@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Location } from '@angular/common';
+import { ChangeDetectorRef, Component } from '@angular/core';
 
 @Component({
   selector: 'app-revendeur',
@@ -6,5 +7,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./revendeur.component.scss']
 })
 export class RevendeurComponent {
+  constructor(private cd: ChangeDetectorRef, private location: Location) {}
 
+  goBack() {
+    this.location.back()
+  }
 }

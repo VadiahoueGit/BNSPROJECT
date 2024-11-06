@@ -5,6 +5,8 @@ import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
 import { ALERT_QUESTION } from '../../shared-component/utils';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
+import { Location } from '@angular/common';
+import { CoreServiceService } from 'src/app/core/core-service.service';
 
 @Component({
   selector: 'app-clientosr',
@@ -21,8 +23,14 @@ export class ClientosrComponent {
   updateData: any = {};
   articleId: any = 0;
   isEditMode: boolean = false;
+  zoneLivraison!: any[];
+  grpClient!: any[];
+  localite!: any[];
+  depots!: any[];
 
   constructor(
+    private location: Location,
+    private coreService:CoreServiceService,
     private utilisateurService:UtilisateurResolveService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
@@ -30,16 +38,27 @@ export class ClientosrComponent {
   ) {}
   ngOnInit() {
     this.clientosrForm = this.fb.group({
-      photo: [null, Validators.required],
-      libelle: [null, Validators.required],
-      format: [null, Validators.required],
-      Conditionnement: [null, Validators.required],
-      categorieId: [0, Validators.required],
-      groupeId: [0, Validators.required],
-      plastiquenuId: [0, Validators.required],
-      bouteillevideId: [0, Validators.required],
-      liquideId: [0, Validators.required],
-    });}
+      nom: ['', Validators.required],
+      prenom: ['', Validators.required],
+      latitude: ['', [Validators.required, Validators.pattern(/^-?\d+(\.\d+)?$/)]],
+      longitude: ['', [Validators.required, Validators.pattern(/^-?\d+(\.\d+)?$/)]],
+      contactGerant: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      telephone: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      localiteId: [null, Validators.required],
+      zoneLivraisonId: [null, Validators.required],
+      groupeClientId: [null, Validators.required],
+      depotId: [null, Validators.required]
+    });
+  
+    this.GetLocaliteList()
+    this.GetDepotList()
+    this.GetZoneList()
+    this.GetGroupeClientList()
+  }
+
+    goBack() {
+      this.location.back()
+    }
 
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
@@ -72,19 +91,7 @@ export class ClientosrComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetArticleList() {
-    let data = {
-      paginate: true,
-      page: 1,
-      limit: 8,
-    };
-    this._spinner.show();
-    this.utilisateurService.GetPointDeVenteList(data).then((res: any) => {
-      console.log('DATATYPEPRIX:::>', res);
-      this.dataList = res.data;
-      this._spinner.hide();
-    });
-  }
+ 
   onSubmit(): void {
     console.log(this.clientosrForm.value);
     if (this.clientosrForm.valid) {
@@ -100,7 +107,7 @@ export class ClientosrComponent {
             console.log('article mis à jour avec succès', response);
 
             this.OnCloseModal();
-            this.GetArticleList();
+            // this.GetArticleList();
             this.toastr.success(response.message);
           },
           (error: any) => {
@@ -112,7 +119,6 @@ export class ClientosrComponent {
         this.utilisateurService.CreatePointDeVente(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetArticleList();
             this.clientosrForm.reset();
             this.toastr.success(response.message);
 
@@ -147,12 +153,82 @@ export class ClientosrComponent {
           this.utilisateurService.DeletedPointDeVente(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetArticleList();
+            // this.GetArticleList();
             this._spinner.hide();
           });
         } else {
         }
       }
     );
+  }
+ 
+  GetClientOSRList() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.utilisateurService.GetPointDeVenteList(data).then((res: any) => {
+      console.log('GetClientOSRList:::>', res);
+      this.dataList = res.data;
+      this._spinner.hide();
+    });
+  }
+
+  GetLocaliteList() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.coreService.GetLocaliteList(data).then((res: any) => {
+      console.log('GetLocaliteList:::>', res);
+      this.localite = res.data;
+      this._spinner.hide();
+    });
+  }
+
+  GetDepotList() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.coreService.GetDepotList(data).then((res: any) => {
+      console.log('GetDepotList:::>', res);
+      this.depots = res.data;
+      this._spinner.hide();
+    });
+  }
+
+  GetZoneList() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.coreService.GetZoneList(data).then((res: any) => {
+      console.log('GetZoneList:::>', res);
+      this.zoneLivraison = res.data;
+      this._spinner.hide();
+    });
+  }
+
+  GetGroupeClientList() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.coreService.GetGroupeClientList(data).then((res: any) => {
+      console.log('GetZoneList:::>', res);
+      this.grpClient = res.data;
+      this._spinner.hide();
+    });
   }
 }
