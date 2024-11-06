@@ -10,7 +10,7 @@ import { storage_keys } from '../Features/shared-component/utils';
   providedIn: 'root',
 })
 export class UtilisateurResolveService {
-  apiUrl: string;
+  apiUrl: any;
   ListUsers: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListPermissions: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListProfils: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
