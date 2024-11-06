@@ -18,7 +18,7 @@ export class FeaturesComponent {
     { label: 'Rapports', icon: 'fas fa-file-chart-line', url: 'feature/rapport' },
     { label: 'Paramètres', icon: 'fas fa-cogs', url: 'feature/parametre' },
     { label: 'Achats', icon: 'fas fa-sack-dollar', url: 'feature/achat' },
-    { label: 'Partenaires', icon: 'fas fa-handshake', url: 'feature/partenaire' },
+    { label: 'Partenaires', icon: 'fas fa-handshake', url:'/feature/partenaire' },
     { label: 'Finances', icon: 'fas fa-sack-dollar', url: 'feature/finance' },
     { label: 'Stocks', icon: 'fas fa-warehouse-alt', url: 'feature/stocks' }
   ];

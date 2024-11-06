@@ -15,11 +15,11 @@ import { PartenairesComponent } from './partenaires/partenaires.component';
 
 @NgModule({
   declarations: [
-   FeaturesComponent,
+  
    CartographieComponent,
    RapportComponent,
    AchatsComponent,
-   PartenairesComponent
+   FeaturesComponent,
   ],
   imports: [
     // ParametreModule,
