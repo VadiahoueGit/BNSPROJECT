@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TransporteurComponent } from '../Features/parametre/transporteur/transporteur.component';
+import { AuthGuardService } from './auth-guard.service';
 
 
 
@@ -9,7 +10,10 @@ import { TransporteurComponent } from '../Features/parametre/transporteur/transp
     TransporteurComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+  ],
+  providers:[
+    AuthGuardService
   ]
 })
 export class CoreModule { }

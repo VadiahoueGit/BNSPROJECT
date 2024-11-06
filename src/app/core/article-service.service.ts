@@ -10,7 +10,7 @@ import { storage_keys } from '../Features/shared-component/utils';
   providedIn: 'root',
 })
 export class ArticleServiceService {
-  apiUrl: string;
+  apiUrl: any;
   ListTypeArticles: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListTypePrix: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListArticles: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);

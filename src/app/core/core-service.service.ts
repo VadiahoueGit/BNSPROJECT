@@ -9,21 +9,29 @@ import { storage_keys } from '../Features/shared-component/utils';
 })
 export class CoreServiceService {
   token:string;
-  apiUrl: string;
+  apiUrl: any;
+  isauth: boolean = false
   constructor(private localstorage:LocalStorageService,private _http: HttpClient, private configService: ConfigService) {
-    this.apiUrl = this.configService.apiUrl;
     this.token = this.localstorage.getItem(storage_keys.STOREToken) || '';
   }
+
   
-  isAuthenticated(): boolean {
-    // Vérifie si le token est présent et valide
-    return !!this.token; // Simple vérification, à améliorer si nécessaire
+  private async initializeApiUrl() {
+    if (!this.apiUrl) {
+      await this.configService.loadConfig();
+      this.apiUrl = this.configService.apiUrl;
+      console.log(this.apiUrl)
+    }
   }
-  ToConnect(data:any){
+
+
+  async ToConnect(data:any){
+    await this.initializeApiUrl();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.token}`
+    });
     return new Promise((resolve: any, reject: any) => {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${this.token}`
-      });
+   
       this._http.post(`${this.apiUrl}/v1/auth/login`, data,{headers})
         .subscribe((res: any) => {
           console.log(res)

@@ -9,7 +9,7 @@ import { storage_keys } from '../Features/shared-component/utils';
 })
 export class ActiviteService {
   token:string;
-  apiUrl: string;
+  apiUrl: any;
   constructor(private localstorage:LocalStorageService,private _http: HttpClient, private configService: ConfigService) {
     this.apiUrl = this.configService.apiUrl;
     this.token = this.localstorage.getItem(storage_keys.STOREToken) || '';
