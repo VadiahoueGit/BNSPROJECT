@@ -24,7 +24,7 @@ export class GestionvisiteComponent {
     {
       start: startOfDay(new Date()), // Début de l'événement
       end: endOfDay(new Date()), // Fin de l'événement
-      title: 'Événement du jour',
+      title: '',
       color: { primary: '#ad2121', secondary: '#FAE3E3' },
     },
   ];
@@ -59,6 +59,31 @@ export class GestionvisiteComponent {
     this.LoadTypeVisite();
     this.LoadCommercial();
     this.LoadPdv();
+    this.LoadVisite()
+  }
+
+  LoadVisite()
+  {
+    let data = {
+      paginate: true,
+      page: 1,
+      limit: 8,
+    };
+    this._spinner.show()
+    this.activiteService.GetVisiteList(data).then((res:any)=>{
+      res.data.forEach((item:any) => {
+        this.events = [
+          ...this.events,
+          {
+            start: startOfDay(new Date(item.dateVisite)),
+            title: item.typeVisite.libelle+' de '+ item.commercial.nom+' '+item.commercial.prenom,
+            color: { primary: '#1e90ff', secondary: '#D1E8FF' },
+          },
+        ];
+      });
+      this._spinner.hide()
+      console.log('Visite',res)
+    })
   }
 
   OnCloseModal() {

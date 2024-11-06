@@ -6,14 +6,11 @@ import { RevendeurComponent } from './revendeur/revendeur.component';
 
 
 const routes: Routes = [
-    { path: '', redirectTo: '/partenaire', pathMatch: 'full' },
     {
-        path: 'partenaire', component: PartenairesComponent,
-        children: [
-            { path: 'clientosr', component: ClientosrComponent },
-            { path: 'revendeur', component: RevendeurComponent }
-        ]
+        path: '', component: PartenairesComponent,
     },
+    { path: 'clientosr', component: ClientosrComponent },
+    { path: 'revendeur', component: RevendeurComponent }
 
 ];
 

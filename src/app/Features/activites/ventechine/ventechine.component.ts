@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Location } from '@angular/common';
+import { ChangeDetectorRef, Component } from '@angular/core';
 
 @Component({
   selector: 'app-ventechine',
@@ -7,8 +8,13 @@ import { Component } from '@angular/core';
 })
 export class VentechineComponent {
   public activeTab: string = 'ventechine';
+  constructor(private cd: ChangeDetectorRef,private location: Location){}
+
   ngOnInit(): void {
 
+  }
+  goBack() {
+    this.location.back()
   }
   activeElement(elt: string) {
     this.activeTab = elt;

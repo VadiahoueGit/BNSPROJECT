@@ -1,4 +1,6 @@
+import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-logistique',
@@ -11,9 +13,12 @@ export class LogistiqueComponent {
   selected = [];
   rows: any = [];
 
-  constructor(private cd: ChangeDetectorRef) {}
+  constructor(private cd: ChangeDetectorRef, private location: Location,private router: Router) { }
   ngOnInit(): void {
 
+  }
+  goBack() {
+    this.location.back()
   }
   activeElement(elt: string) {
     this.activeTab = elt;

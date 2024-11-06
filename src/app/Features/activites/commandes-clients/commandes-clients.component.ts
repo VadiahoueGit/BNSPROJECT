@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { Customer } from 'src/domain/customer';
 
@@ -13,9 +14,12 @@ export class CommandesClientsComponent {
   loading: boolean = true;
   selected = [];
   rows: any = [];
-  constructor(private cd: ChangeDetectorRef){}
+  constructor(private cd: ChangeDetectorRef,private location: Location){}
   ngOnInit(): void {
 
+  }
+  goBack() {
+    this.location.back()
   }
   activeElement(elt: string) {
     this.activeTab = elt;

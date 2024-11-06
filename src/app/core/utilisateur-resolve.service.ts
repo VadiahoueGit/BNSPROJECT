@@ -190,7 +190,24 @@ export class UtilisateurResolveService {
       );
     });
   }
-
+  DeletedPointDeVente(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/point-de-vente/${id}`,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+  
   // COMMERCIAL
   GetCommercialList(data: any) {
     return new Promise((resolve: any, reject: any) => {

@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component ,AfterViewInit} from '@angular/core';
 
 @Component({
@@ -11,10 +12,13 @@ export class UtilisateursComponent  {
   selected = [];
   rows: any = [];
   
-  constructor(private cd: ChangeDetectorRef) {}
+  constructor(private cd: ChangeDetectorRef, private location: Location) {}
 
   ngOnInit(): void {
 
+  }
+  goBack() {
+    this.location.back()
   }
   activeElement(elt: string) {
     this.activeTab = elt;

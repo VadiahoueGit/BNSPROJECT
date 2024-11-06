@@ -12,6 +12,7 @@ import { CartographieComponent } from './cartographie/cartographie.component';
 import { RapportComponent } from './rapport/rapport.component';
 import { AchatsComponent } from './achats/achats.component';
 import { PartenairesComponent } from './partenaires/partenaires.component';
+import { PartenairesModule } from './partenaires/partenaires.module';
 
 @NgModule({
   declarations: [
@@ -22,8 +23,10 @@ import { PartenairesComponent } from './partenaires/partenaires.component';
    FeaturesComponent,
   ],
   imports: [
-    // ParametreModule,
     FeaturesRoutingModule,
+    PartenairesModule,
+    // ParametreModule,
+   
     DashboardModule,
     CommonModule,
     NgxDatatableModule

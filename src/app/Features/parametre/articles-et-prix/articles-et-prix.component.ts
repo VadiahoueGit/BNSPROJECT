@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Customer } from 'src/domain/customer';
 
@@ -14,9 +15,12 @@ export class ArticlesEtPrixComponent implements OnInit {
   rows: any = [];
 
   
-  constructor(private cd: ChangeDetectorRef) {}
+  constructor(private location: Location,private cd: ChangeDetectorRef) {}
   ngOnInit(): void {
 
+  }
+  goBack() {
+    this.location.back()
   }
   activeElement(elt: string) {
     this.activeTab = elt;
