@@ -43,7 +43,8 @@ export class CoreServiceService {
           });
     })
   }
-  ToVerifyPassword(data: any) {
+  async ToVerifyPassword(data: any) {
+    await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
@@ -61,7 +62,8 @@ export class CoreServiceService {
   }
 
   //DEPOT
-  CreateDepot(data: any) {
+  async CreateDepot(data: any) {
+    await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
@@ -79,7 +81,8 @@ export class CoreServiceService {
     });
   }
 
-  GetDepotList(data: any) {
+ async GetDepotList(data: any) {
+  await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
@@ -100,7 +103,8 @@ export class CoreServiceService {
         );
     });
   }
-  UpdateDepot(id: number, data: any) {
+  async UpdateDepot(id: number, data: any) {
+    await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
@@ -118,7 +122,8 @@ export class CoreServiceService {
     });
   }
 
-  DeleteDepot(id: number) {
+  async DeleteDepot(id: number) {
+    await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
@@ -138,8 +143,9 @@ export class CoreServiceService {
     });
   }
 
-  //DEPOT
-  CreateGroupeClient(data: any) {
+  //groupe client
+  async CreateGroupeClient(data: any) {
+    await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
@@ -157,7 +163,8 @@ export class CoreServiceService {
     });
   }
 
-  GetGroupeClientList(data: any) {
+  async GetGroupeClientList(data: any) {
+    await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
@@ -179,7 +186,8 @@ export class CoreServiceService {
     });
   }
   
-  UpdateGroupeClient(id: number, data: any) {
+  async UpdateGroupeClient(id: number, data: any) {
+    await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
@@ -197,7 +205,8 @@ export class CoreServiceService {
     });
   }
 
-  DeleteGroupeClient(id: number) {
+ async DeleteGroupeClient(id: number) {
+  await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
@@ -218,7 +227,8 @@ export class CoreServiceService {
   }
 
   //ZONE DE LIVRAISON
-  CreateZone(data: any) {
+  async CreateZone(data: any) {
+    await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
@@ -236,7 +246,8 @@ export class CoreServiceService {
     });
   }
 
-  GetZoneList(data: any) {
+  async GetZoneList(data: any) {
+    await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
@@ -258,7 +269,8 @@ export class CoreServiceService {
     });
   }
 
-  UpdateZone(id: number, data: any) {
+  async UpdateZone(id: number, data: any) {
+    await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
@@ -276,7 +288,8 @@ export class CoreServiceService {
     });
   }
 
-  DeleteZone(id: number) {
+  async DeleteZone(id: number) {
+    await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
@@ -297,7 +310,8 @@ export class CoreServiceService {
   }
 
   //LOCALITE
-  CreateLocalite(data: any) {
+  async CreateLocalite(data: any) {
+    await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
@@ -315,7 +329,8 @@ export class CoreServiceService {
     });
   }
 
-  GetLocaliteList(data: any) {
+  async GetLocaliteList(data: any) {
+    await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
@@ -336,7 +351,8 @@ export class CoreServiceService {
         );
     });
   }
-  UpdateLocalite(id: number, data: any) {
+  async UpdateLocalite(id: number, data: any) {
+    await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
@@ -354,7 +370,8 @@ export class CoreServiceService {
     });
   }
 
-  DeleteLocalite(id: number) {
+  async DeleteLocalite(id: number) {
+    await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`

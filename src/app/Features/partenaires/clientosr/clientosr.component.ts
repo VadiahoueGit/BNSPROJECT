@@ -54,6 +54,7 @@ export class ClientosrComponent {
     this.GetDepotList()
     this.GetZoneList()
     this.GetGroupeClientList()
+    this.GetClientOSRList()
   }
 
     goBack() {
