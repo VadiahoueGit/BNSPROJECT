@@ -40,10 +40,10 @@ export class ClientosrComponent {
     this.clientosrForm = this.fb.group({
       nom: ['', Validators.required],
       prenom: ['', Validators.required],
-      latitude: ['', [Validators.required, Validators.pattern(/^-?\d+(\.\d+)?$/)]],
-      longitude: ['', [Validators.required, Validators.pattern(/^-?\d+(\.\d+)?$/)]],
-      contactGerant: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      telephone: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      latitude: ['', [Validators.required]],
+      longitude: ['', [Validators.required]],
+      contactGerant: ['', [Validators.required]],
+      telephone: ['', [Validators.required]],
       localiteId: [null, Validators.required],
       zoneLivraisonId: [null, Validators.required],
       groupeClientId: [null, Validators.required],
@@ -74,12 +74,22 @@ export class ClientosrComponent {
   OnCloseModal() {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
+    this.clientosrForm.enable()
   }
   OnCreate() {
+    this.clientosrForm.enable()
     this.isEditMode = false;
     this.isModalOpen = true;
     this.operation = 'create';
     console.log(this.isModalOpen);
+  }
+  OnPreview(data: any) {
+    console.log(data);
+    this.updateData = data;
+    this.articleId = data.id;
+    this.isModalOpen = true;
+    this.loadClientDetails();
+    this.clientosrForm.disable()
   }
 
   OnEdit(data: any) {
@@ -88,12 +98,13 @@ export class ClientosrComponent {
     this.updateData = data;
     this.articleId = data.id;
     this.isModalOpen = true;
-    this.loadArticleDetails();
+    this.loadClientDetails();
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
  
   onSubmit(): void {
+    this._spinner.show();
     console.log(this.clientosrForm.value);
     if (this.clientosrForm.valid) {
       // const formValues = this.ArticleForm.value;
@@ -103,12 +114,13 @@ export class ClientosrComponent {
       console.log('formValues', formValues);
 
       if (this.isEditMode) {
-        this.utilisateurService.UpdatePointDeVente(this.articleId, formValues).then(
+        this.utilisateurService.UpdatePointDeVente(this.articleId, this.clientosrForm.value).then(
           (response: any) => {
             console.log('article mis à jour avec succès', response);
-
+            this._spinner.hide();
+            this.clientosrForm.reset();
             this.OnCloseModal();
-            // this.GetArticleList();
+            this.GetClientOSRList()
             this.toastr.success(response.message);
           },
           (error: any) => {
@@ -117,12 +129,13 @@ export class ClientosrComponent {
           }
         );
       } else {
-        this.utilisateurService.CreatePointDeVente(formValues).then(
+        this.utilisateurService.CreatePointDeVente(this.clientosrForm.value).then(
           (response: any) => {
             this.OnCloseModal();
             this.clientosrForm.reset();
+            this.GetClientOSRList()
             this.toastr.success(response.message);
-
+            this._spinner.hide();
             console.log('Nouvel article créé avec succès', response);
           },
           (error: any) => {
@@ -133,17 +146,18 @@ export class ClientosrComponent {
       }
     }
   }
-  loadArticleDetails(): void {
+  loadClientDetails(): void {
     this.clientosrForm.patchValue({
-      photo: this.updateData.photo ?? '',
-      libelle: this.updateData.libelle,
-      format: this.updateData.format,
-      Conditionnement: this.updateData.Conditionnement,
-      categorieId: this.updateData.categorieproduit.id,
-      groupeId: this.updateData.groupearticle.id,
-      plastiquenuId: this.updateData.plastiquenu.id,
-      bouteillevideId: this.updateData.bouteillevide.id,
-      liquideId: 1,
+      nom: this.updateData.nom,
+      prenom: this.updateData.prenom,
+      latitude: this.updateData.latitude,
+      longitude: this.updateData.longitude,
+      contactGerant: this.updateData.contactGerant,
+      telephone: this.updateData.telephone,
+      localiteId: this.updateData.localite.id,
+      zoneLivraisonId: this.updateData.zoneDeLivraison.id,
+      groupeClientId: this.updateData.GroupeClient.id,
+      depotId: this.updateData.depot.id,
     });
   }
   OnDelete(Id: any) {
@@ -154,7 +168,7 @@ export class ClientosrComponent {
           this.utilisateurService.DeletedPointDeVente(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            // this.GetArticleList();
+            this.GetClientOSRList()
             this._spinner.hide();
           });
         } else {
