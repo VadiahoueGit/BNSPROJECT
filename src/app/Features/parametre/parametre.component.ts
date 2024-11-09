@@ -29,6 +29,26 @@ export class ParametreComponent implements OnInit {
       // url:'feature/parametre/logistique',
     },
     {
+      image: 'assets/icon/vehicule.png',
+      title: 'Localités',
+      url: 'feature/parametre/logistique',
+    },
+    {
+      image: 'assets/icon/users.png',
+      title: 'Depots',
+      url:'feature/parametre/users',
+    },
+    {
+      image: 'assets/icon/seller.png',
+      title: 'Zone de livraison',
+      // url:'feature/parametre/logistique',
+    },
+    {
+      image: 'assets/icon/seller.png',
+      title: 'Groupe client',
+      // url:'feature/parametre/logistique',
+    },
+    {
       image: 'assets/icon/quest.png',
       title: 'Questions visite',
       url:'feature/parametre/questionnairevisite',
