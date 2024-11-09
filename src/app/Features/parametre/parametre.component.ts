@@ -27,6 +27,31 @@ export class ParametreComponent implements OnInit {
       image: 'assets/icon/seller.png',
       title: 'Commerciaux',
       // url:'feature/parametre/logistique',
+    },
+    {
+      image: 'assets/icon/localite.png',
+      title: 'Localités',
+      url: 'feature/parametre/logistique',
+    },
+    {
+      image: 'assets/icon/depot.png',
+      title: 'Depots',
+      url:'feature/parametre/users',
+    },
+    {
+      image: 'assets/icon/zone.png',
+      title: 'Zone de livraison',
+      // url:'feature/parametre/logistique',
+    },
+    {
+      image: 'assets/icon/group.png',
+      title: 'Groupe client',
+      // url:'feature/parametre/logistique',
+    },
+    {
+      image: 'assets/icon/quest.png',
+      title: 'Questions visite',
+      url:'feature/parametre/questionnairevisite',
     }
   ]
   constructor(private _router: Router) { }

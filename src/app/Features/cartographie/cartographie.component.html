@@ -1,5 +1,7 @@
 <div class="card p-2">
-    <gmp-map center="40.12150192260742,-100.45039367675781" zoom="4" map-id="7e8ae1eacad77dce">
-        <gmp-advanced-marker position="40.12150192260742,-100.45039367675781" title="My location"></gmp-advanced-marker>
+    <div *ngIf="currentPosition">
+         <gmp-map [center]="currentPosition" zoom="12" map-id="7e8ae1eacad77dce">
+        <gmp-advanced-marker [position]="currentPosition" title="My location"></gmp-advanced-marker>
     </gmp-map>
+    </div>
 </div>
