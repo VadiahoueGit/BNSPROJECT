@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from './config-service.service';
 import { LocalStorageService } from './local-storage.service';
@@ -9,14 +9,47 @@ import { storage_keys } from '../Features/shared-component/utils';
 })
 export class LogistiqueService {
 
+ accessToken?:string;
   token:string;
   apiUrl: any;
   constructor(private localstorage:LocalStorageService,private _http: HttpClient, private configService: ConfigService) {
     this.apiUrl = this.configService.apiUrl;
     this.token = this.localstorage.getItem(storage_keys.STOREToken) || '';
   }
+   //GOOGLE CLOUD
+  
+  
+   CreateCarOnFleetEngine(data: any) {
+    const token = '';
+    const headers = new HttpHeaders({
+      ContentType: 'application/json',
+      Authorization: `Bearer ${token}`
+    });
+    let project_id = '109789043221879618970'
+    return new Promise((resolve: any, reject: any) => {
+      this._http.post(`https://fleetengine.googleapis.com/v1/projects/${project_id}/vehicles/${data.vehicleId}`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
 
    // TRANSPORTEUR
+   getCurrentPosition(): Promise<GeolocationPosition> {
+    return new Promise((resolve, reject) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      } else {
+        reject(new Error('Geolocation is not supported by this browser.'));
+      }
+    });
+  }
    CreateTransporteur(data: any) {
     return new Promise((resolve: any, reject: any) => {
       this._http.post(`${this.apiUrl}/v1/group-article`, data).subscribe(

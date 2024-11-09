@@ -4,7 +4,7 @@
   "compilerOptions": {
     "strictPropertyInitialization": false,
     "outDir": "./out-tsc/app",
-    "types": []
+    "types": ["google.maps"],
   },
   "files": [
     "src/main.ts"
