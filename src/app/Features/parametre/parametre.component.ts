@@ -29,22 +29,22 @@ export class ParametreComponent implements OnInit {
       // url:'feature/parametre/logistique',
     },
     {
-      image: 'assets/icon/vehicule.png',
+      image: 'assets/icon/localite.png',
       title: 'Localités',
       url: 'feature/parametre/logistique',
     },
     {
-      image: 'assets/icon/users.png',
+      image: 'assets/icon/depot.png',
       title: 'Depots',
       url:'feature/parametre/users',
     },
     {
-      image: 'assets/icon/seller.png',
+      image: 'assets/icon/zone.png',
       title: 'Zone de livraison',
       // url:'feature/parametre/logistique',
     },
     {
-      image: 'assets/icon/seller.png',
+      image: 'assets/icon/group.png',
       title: 'Groupe client',
       // url:'feature/parametre/logistique',
     },

@@ -81,8 +81,9 @@ export class VehiculesComponent implements AfterViewInit {
         })
     } else {
       this._spinner.show();
-      this._logistiqueService.CreateVehicule(this.vehicleForm.value).then((res) => {
+      this._logistiqueService.CreateVehicule(this.vehicleForm.value).then((res:any) => {
         this.GetVehiculeList()
+        this.toastr.success(res.message);
         this.isModalOpen = false;
         this._spinner.hide();
         console.log(res)

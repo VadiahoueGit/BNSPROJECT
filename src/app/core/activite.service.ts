@@ -202,7 +202,7 @@ export class ActiviteService {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
-      this._http.post(`${this.apiUrl}/v1/questionnaire`, data,{headers}).subscribe(
+      this._http.post(`${this.apiUrl}/v1/question`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -222,7 +222,7 @@ export class ActiviteService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/questionnaire?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+          `${this.apiUrl}/v1/question?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -243,7 +243,7 @@ export class ActiviteService {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
-      this._http.put(`${this.apiUrl}/v1/questionnaire/${id}`, data,{headers}).subscribe(
+      this._http.put(`${this.apiUrl}/v1/question/${id}`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -262,7 +262,7 @@ export class ActiviteService {
         Authorization: `Bearer ${this.token}`
       });
       this._http
-        .delete(`${this.apiUrl}/v1/questionnaire/${id}`,{headers})
+        .delete(`${this.apiUrl}/v1/question/${id}`,{headers})
         .subscribe(
           (res: any) => {
             console.log(res);
