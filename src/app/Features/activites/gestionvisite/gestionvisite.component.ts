@@ -127,10 +127,12 @@ export class GestionvisiteComponent {
           (response: any) => {
             console.log('visite mis à jour avec succès', response);
             this._spinner.hide()
+            this.LoadVisite()
             this.OnCloseModal();
             this.toastr.success(response.message);
           },
           (error: any) => {
+            this._spinner.hide()
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
             console.error('Erreur lors de la mise à jour', error);
           }
@@ -138,6 +140,7 @@ export class GestionvisiteComponent {
       } else {
         this.activiteService.CreateVisite(formValues).then(
           (response: any) => {
+            this.LoadVisite()
             this.OnCloseModal();
             this._spinner.hide()
             this.VisiteForm.reset();
@@ -146,7 +149,14 @@ export class GestionvisiteComponent {
             console.log('Nouvelle visite créé avec succès', response);
           },
           (error: any) => {
-            this.toastr.error('Erreur!', 'Erreur lors de la création.');
+            this._spinner.hide()
+            if(error.error.status == 400)
+            {
+              this.toastr.error('Erreur!', error.error.error);
+            }else{
+              this.toastr.error('Erreur!', 'Erreur lors de la création.');
+            }
+            
             console.error('Erreur lors de la création', error);
           }
         );
@@ -154,17 +164,6 @@ export class GestionvisiteComponent {
     }
   }
 
-  addEvent(): void {
-    console.log(this.events,'events')
-    this.events = [
-      ...this.events,
-      {
-        start: startOfDay(new Date()),
-        title: 'Nouvel événement',
-        color: { primary: '#1e90ff', secondary: '#D1E8FF' },
-      },
-    ];
-  }
 
   LoadTypeVisite()
   {

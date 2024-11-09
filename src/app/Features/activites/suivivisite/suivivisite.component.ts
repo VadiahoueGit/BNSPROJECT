@@ -11,6 +11,7 @@ import { ActiviteService } from 'src/app/core/activite.service';
 export class SuivivisiteComponent {
   @ViewChild('dt2') dt2!: Table;
   dataList!: any[];
+  visiteDetail:any
   isModalOpen:boolean = false;
   constructor(
     private _spinner: NgxSpinnerService,
@@ -23,6 +24,7 @@ export class SuivivisiteComponent {
   ViewDetails(data:any) {
     this.isModalOpen = true;
     console.log(this.isModalOpen);
+    this.visiteDetail = data
   }
 
   LoadVisite()
