@@ -13,6 +13,7 @@ const routes: Routes = [
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },  // Redirection par défaut vers dashboard
             { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
             { path: 'parametre', loadChildren: () => import('./parametre/parametre.module').then(m => m.ParametreModule) },
+            { path: 'datareference', loadChildren: () => import('./donnees-de-references/donnees-de-references.module').then(m => m.DonneesDeReferencesModule) },
             { path: 'partenaire', loadChildren: () => import('./partenaires/partenaires.module').then(m => m.PartenairesModule) },
             { path: 'activites', loadChildren: () => import('./activites/activites.module').then(m => m.ActivitesModule) },
             { path: 'cartographie', component:CartographieComponent }
