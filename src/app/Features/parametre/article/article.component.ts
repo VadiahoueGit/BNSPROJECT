@@ -54,6 +54,8 @@ export class ArticleComponent {
       this.dataListPlastiqueNu = res;
     });
     this.articleService.ListLiquides.subscribe((res: any) => {
+      console.log('dataListLiquides:::>', this.dataListLiquides);
+
       this.dataListLiquides = res;
     });
     this.articleService.ListBouteilleVide.subscribe((res: any) => {

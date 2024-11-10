@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { ConfigService } from './config-service.service';
 import { LocalStorageService } from './local-storage.service';
 import { storage_keys } from '../Features/shared-component/utils';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,8 @@ export class CoreServiceService {
   token: string;
   apiUrl: any;
   isauth: boolean = false
+  listLocalite: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
+
   constructor(private localstorage: LocalStorageService, private _http: HttpClient, private configService: ConfigService) {
     this.token = this.localstorage.getItem(storage_keys.STOREToken) || '';
   }
@@ -342,6 +345,7 @@ export class CoreServiceService {
         .subscribe(
           (res: any) => {
             console.log(res);
+            this.listLocalite.next(res.data)
             resolve(res);
           },
           (err) => {

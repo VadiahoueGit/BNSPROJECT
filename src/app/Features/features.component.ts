@@ -21,7 +21,7 @@ export class FeaturesComponent {
     { label: 'Partenaires', icon: 'fas fa-handshake', url:'/feature/partenaire' },
     { label: 'Finances', icon: 'fas fa-sack-dollar', url: 'feature/finance' },
     { label: 'Stocks', icon: 'fas fa-warehouse-alt', url: 'feature/stocks' },
-    { label: 'Données de références', icon: 'fas fa-warehouse-alt', url: 'feature/datareference' }
+    // { label: 'Données de références', icon: 'fas fa-warehouse-alt', url: 'feature/datareference' }
   ];
   UserInfo:any
   selectedItem: number | null = null;
@@ -51,9 +51,9 @@ export class FeaturesComponent {
     } else if (this.currentUrl.includes('/feature/stocks')) {
       this.setActive(8)
     } 
-     else if (this.currentUrl.includes('/feature/datareference')) {
-      this.setActive(9)
-    } 
+    //  else if (this.currentUrl.includes('/feature/datareference')) {
+    //   this.setActive(9)
+    // } 
   }
 
   setActive(index: number) {

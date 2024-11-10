@@ -31,17 +31,17 @@ export class ParametreComponent implements OnInit {
     {
       image: 'assets/icon/localite.png',
       title: 'Localités',
-      url: 'feature/parametre/logistique',
+      url: 'feature/datareference/localite',
     },
     {
       image: 'assets/icon/depot.png',
       title: 'Depots',
-      url:'feature/parametre/users',
+      url:'feature/datareference/depot',
     },
     {
       image: 'assets/icon/zone.png',
       title: 'Zone de livraison',
-      // url:'feature/parametre/logistique',
+      url:'feature/datareference/zone-livraison',
     },
     {
       image: 'assets/icon/group.png',
