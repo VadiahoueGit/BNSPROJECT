@@ -153,7 +153,7 @@ export class CoreServiceService {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
-      this._http.post(`${this.apiUrl}/v1/depot`, data, { headers }).subscribe(
+      this._http.post(`${this.apiUrl}/v1/groupe-revendeur`, data, { headers }).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -174,7 +174,7 @@ export class CoreServiceService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/depot?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`, { headers }
+          `${this.apiUrl}/v1/groupe-revendeur?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`, { headers }
         )
         .subscribe(
           (res: any) => {
@@ -195,7 +195,7 @@ export class CoreServiceService {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
-      this._http.put(`${this.apiUrl}/v1/depot/${id}`, data, { headers }).subscribe(
+      this._http.put(`${this.apiUrl}/v1/groupe-revendeur/${id}`, data, { headers }).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -215,7 +215,7 @@ export class CoreServiceService {
         Authorization: `Bearer ${this.token}`
       });
       this._http
-        .delete(`${this.apiUrl}/v1/depot/${id}`, { headers })
+        .delete(`${this.apiUrl}/v1/groupe-revendeur/${id}`, { headers })
         .subscribe(
           (res: any) => {
             console.log(res);

@@ -48,6 +48,7 @@
                 </td>
                 <td>
             <tr class="d-flex justify-content-center gap-3">
+                <td><i (click)="OnPreview(dataList)" style="cursor: pointer;" class="fas fa-search text-secondary"></i></td>
                 <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
                 <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
                         class="fas fa-trash-alt text-danger"></i></td>
@@ -111,7 +112,7 @@
                             <div class="mb-3">
                                 <label for="groupeClientId" class="form-label">Groupe client <span
                                         class="text-danger">*</span></label>
-                                <ng-select class="form-control" [items]="grpClient" bindLabel="libelle" bindValue="id"
+                                <ng-select class="form-control" [items]="grpClient" bindLabel="nomGroupe" bindValue="id"
                                     formControlName="groupeClientId" [searchable]="true">
                                 </ng-select>
                             </div>
@@ -157,7 +158,7 @@
 
             <div class="modal-footer gap-3 px-4">
                 <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-                <button [disabled]="clientosrForm.invalid" type="submit" (click)="onSubmit()"
+                <button *ngIf="operation == 'create' || operation == 'edit'" [disabled]="clientosrForm.invalid" type="submit" (click)="onSubmit()"
                     class="btn btn-primary px-2">Valider</button>
             </div>
         </div>
