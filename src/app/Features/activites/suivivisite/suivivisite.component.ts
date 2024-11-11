@@ -39,6 +39,8 @@ export class SuivivisiteComponent {
       this.dataList = res.data;
       this._spinner.hide()
       console.log('Visite',res)
+    },(error: any) => {
+      this._spinner.hide()
     })
   }
   

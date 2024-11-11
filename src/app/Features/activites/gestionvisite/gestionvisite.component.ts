@@ -175,6 +175,9 @@ export class GestionvisiteComponent {
     this.activiteService.GetTypeVisiteList(data).then((res:any)=>{
       this.typeVisite = res.data;
       console.log('typeVisite',res)
+    },
+    (error: any) => {
+      this._spinner.hide()
     })
   }
 
@@ -188,6 +191,9 @@ export class GestionvisiteComponent {
     this.utilisateurService.GetCommercialList(data).then((res:any)=>{
       this.commerciaux = res.data
       console.log('commerciaux',res)
+    },
+    (error: any) => {
+      this._spinner.hide()
     })
   }
 
@@ -203,6 +209,8 @@ export class GestionvisiteComponent {
     this.utilisateurService.GetPointDeVenteList(data).then((res:any)=>{
       this.pointDeVente = res.data
       console.log('pointDeVente',res)
+    },(error: any) => {
+      this._spinner.hide()
     })
   }
 }

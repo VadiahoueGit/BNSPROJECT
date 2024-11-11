@@ -49,13 +49,14 @@ export class CartographieComponent {
     this.logisiticService.getCurrentPosition().then(
       (position) => {
         this._spinner.hide();
-        console.log(position);
         this.latitude = position.coords.latitude;
         this.longitude = position.coords.longitude;
         this.currentPosition = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
+        console.log('currentPosition',this.currentPosition);
+
       },
       (error) => {
         console.error('Error getting location', error);

@@ -1,7 +1,9 @@
-<div class="card p-2">
-    <div *ngIf="currentPosition">
-         <gmp-map [center]="currentPosition" zoom="12" map-id="7e8ae1eacad77dce">
-        <gmp-advanced-marker [position]="currentPosition" title="My location"></gmp-advanced-marker>
-    </gmp-map>
+<div style="min-height:700px;overflow-y: auto;">
+    <div class="card p-2">
+        <div *ngIf="currentPosition">
+            <gmp-map [center]="currentPosition" zoom="12" map-id="7e8ae1eacad77dce">
+                <gmp-advanced-marker [position]="currentPosition" title="My location"></gmp-advanced-marker>
+            </gmp-map>
+        </div>
     </div>
 </div>
