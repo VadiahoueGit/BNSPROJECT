@@ -332,12 +332,12 @@ export class UtilisateurResolveService {
     });
   }
 
-  DeleteProfilBulk(ids: number[]) {
+  DeleteProfil(id: number) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
-        this._http.delete(`${this.apiUrl}/v1/profil/bulk-delete`, { body: { ids } },).subscribe(
+        this._http.delete(`${this.apiUrl}/v1/profil${id}`).subscribe(
             (res: any) => {
                 console.log(res);
                 resolve(res);

@@ -65,4 +65,9 @@ export class FeaturesComponent {
     this.setActive(index)
     this.router.navigate([url]);
   }
+  updateProfile(){}
+  logout(){
+    this.localstorage.clear()
+    this.router.navigate(['/login'])
+  }
 }

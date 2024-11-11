@@ -142,13 +142,13 @@ export class ProfilUtilisateurComponent {
       description: this.updateData.description,
     });
   }
-  OnDelete(ids: number[]) {
+  OnDelete(id: number) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
       (res) => {
         if (res.isConfirmed) {
           this._spinner.show();
           this._userService
-            .DeleteProfilBulk(ids)
+            .DeleteProfil(id)
             .then((res: any) => {
               console.log('DATA:::>', res);
               this.toastr.success(res.message);

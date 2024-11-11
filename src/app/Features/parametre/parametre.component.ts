@@ -46,7 +46,7 @@ export class ParametreComponent implements OnInit {
     {
       image: 'assets/icon/group.png',
       title: 'Groupe client',
-      // url:'feature/parametre/logistique',
+       url:'feature/datareference/groupe-client',
     },
     {
       image: 'assets/icon/quest.png',
