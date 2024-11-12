@@ -89,9 +89,9 @@
                     <div class="col-md-6">
                         <!-- Numero -->
                         <div class="mb-3">
-                            <label for="numero" class="form-label">No Balise <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" formControlName="numero" id="numero"
-                                placeholder="Entrez le numéro">
+                            <label for="NumeroBalise" class="form-label">No Balise</label>
+                            <input type="text" class="form-control" formControlName="NumeroBalise" id="NumeroBalise"
+                                placeholder="Entrez le numéro de balise">
                         </div>
 
                         <!-- Marque -->
@@ -122,10 +122,10 @@
                     <div class="col-md-6">
                         <!-- Chauffeur -->
                         <div class="mb-3">
-                            <label for="chauffeurId" class="form-label">Chauffeur <span
+                            <label for="depotId" class="form-label">Dépot<span
                                     class="text-danger">*</span></label>
-                            <ng-select class="form-control" [items]="chauffeurs" bindLabel="name" bindValue="id"
-                                formControlName="chauffeurId" [searchable]="true">
+                            <ng-select class="form-control" [items]="depots" bindLabel="nomDepot" bindValue="id"
+                                formControlName="depotId" [searchable]="true">
                             </ng-select>
 
                         </div>

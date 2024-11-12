@@ -6,6 +6,7 @@ import { Table } from 'primeng/table';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from '../../shared-component/utils';
 import { CoreServiceService } from 'src/app/core/core-service.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-localite',
@@ -36,6 +37,7 @@ export class LocaliteComponent {
   dataListUsers: any;
   constructor(
     private _userService: UtilisateurResolveService,
+    private location: Location,
     private _coreService: CoreServiceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
@@ -47,20 +49,14 @@ export class LocaliteComponent {
   }
   ngOnInit() {
     this.LocaliteForm = this.fb.group({
-     
       nomLocalite: [null, Validators.required],
-      // prenom: [null, Validators.required],
-      // email: [null, Validators.required],
-      // telephone_one: [null, Validators.required],
-      // telephone_two: [null, Validators.required],
-      // password: [null, Validators.required],
-      // matricule: [null, Validators.required],
-      // fonction: [null, Validators.required],
-      // roleId: [0, Validators.required],
     });
 
 
     this.GetUserList();
+  }
+  goBack() {
+    this.location.back()
   }
 
   onFilterGlobal(event: Event) {

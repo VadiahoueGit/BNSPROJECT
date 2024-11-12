@@ -1,3 +1,7 @@
+<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
+    <i style="font-size: 18px; " class="fas fw-bold fa-chevron-left me-2 "></i>
+    <h4 class="fw-bold mb-0">Dépots</h4>
+</div>
 <div class="card">
     <div class=" d-flex justify-content-end py-3">
         <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer un dépot</button>
@@ -29,10 +33,10 @@
                     </span>
                 </td>
                 <td>
-                    {{ dataList.localite.nomLocalite }}
+                    {{ dataList.zone.localite.nomLocalite }}
                 </td>
                 <td>
-                    {{ dataList.localisation }}
+                    {{ dataList.latitude }} /  {{ dataList.longitude }}
                 </td>
                 <td>
                     {{ dataList.telephone }}
@@ -84,8 +88,7 @@
                                     placeholder="Entrez le dépot">
                             </div>
                             <div class="mb-3">
-                                <label for="gerant" class="form-label">Gérant <span
-                                        class="text-danger">*</span></label>
+                                <label for="gerant" class="form-label">Gérant <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="gerant" formControlName="gerant"
                                     placeholder="Entrez le gérant">
                             </div>
@@ -98,18 +101,24 @@
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="localisation" class="form-label">Localisation <span
+                                <label for="latitude" class="form-label"> Latitude<span
                                         class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="localisation" formControlName="localisation"
-                                    placeholder="Entrez la localisation">
+                                <input type="text" class="form-control" id="latitude" formControlName="latitude"
+                                    placeholder="Entrez la latitude">
                             </div>
                             <div class="mb-3">
-                                <label for="localiteId" class="form-label">Localité <span
+                                <label for="longitude" class="form-label">Longitude <span
                                         class="text-danger">*</span></label>
-                                        <select class="form-control form-select form-select-sm" formControlName="localiteId" aria-label=".form-select-sm example">
-                                            <option value="" disabled selected>Choisir le localité</option>
-                                            <option [value]="item.id" *ngFor="let item of dataListlocalite">{{item.nomLocalite}}</option>
-                                          </select>
+                                <input type="text" class="form-control" id="longitude" formControlName="longitude"
+                                    placeholder="Entrez la longitude">
+                            </div>
+                            <div class="mb-3">
+                                <label for="zoneId" class="form-label">Zone de livraison <span
+                                        class="text-danger">*</span></label>
+                                <ng-select class="form-control"
+                                    [items]="zones" bindLabel="nomZone" bindValue="id"
+                                    formControlName="zoneId" [searchable]="true">
+                                </ng-select>
                             </div>
                         </div>
                     </div>

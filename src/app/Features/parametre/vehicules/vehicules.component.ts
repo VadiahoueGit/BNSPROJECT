@@ -5,6 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { Table } from 'primeng/table';
 import { LogistiqueService } from 'src/app/core/logistique.service';
 import { ToastrService } from 'ngx-toastr';
+import { CoreServiceService } from 'src/app/core/core-service.service';
 
 declare var $: any;
 @Component({
@@ -20,33 +21,31 @@ export class VehiculesComponent implements AfterViewInit {
   operation: string = '';
   updateData: any;
   vehiculeId: any;
-  chauffeurs = [{ id: 1, name: 'Koffi Serge Ulrich' },
-  { id: 2, name: 'Saab' },
-  { id: 3, name: 'Opel' },
-  { id: 4, name: 'Audi' },]
+  depots = [];
   vehicleForm!: FormGroup;
   constructor(
+    private coreService:CoreServiceService,
     private _logistiqueService: LogistiqueService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
   ) {
     this.vehicleForm = this.fb.group({
-      numero: [null, Validators.required],
       marque: [null, Validators.required],
       energie: [null, Validators.required],
       immatriculation: [null, Validators.required],
       dateDeVisite: [null, Validators.required],
       dateAcqui: [null, Validators.required],
-      NumeroTelBalise: [0, Validators.required],
-      NumeroBalise: [0, Validators.required],
+      NumeroTelBalise: [0],
+      NumeroBalise: [0],
       capacite: [0, Validators.required],
-      chauffeurId: [0, Validators.required]
+      depotId: [0, Validators.required]
     });
 
   }
   ngOnInit() {
     this.GetVehiculeList()
+    this.GetDepotist()
   }
 
   ngAfterViewInit(): void {
@@ -98,13 +97,27 @@ export class VehiculesComponent implements AfterViewInit {
   }
   GetVehiculeList() {
     let data = {
-      paginate: true,
+      paginate: false,
       page: 1,
       limit: 8,
     };
     this._spinner.show();
     this._logistiqueService.GetVehiculeList(data).then((res: any) => {
       this.dataList = res.data
+      this._spinner.hide();
+      console.log(res)
+    })
+  }
+
+  GetDepotist() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.coreService.GetDepotList(data).then((res: any) => {
+      this.depots = res.data
       this._spinner.hide();
       console.log(res)
     })
@@ -131,7 +144,7 @@ export class VehiculesComponent implements AfterViewInit {
       NumeroTelBalise: data.NumeroTelBalise,
       NumeroBalise: data.NumeroBalise,
       capacite: data.capacite,
-      chauffeurId: data.chauffeur.id
+      depotId: data.depot.id
     });
     this.isModalOpen = true;
     this.operation = 'edit';

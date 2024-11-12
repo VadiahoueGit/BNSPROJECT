@@ -6,6 +6,7 @@ import { Table } from 'primeng/table';
 import { CoreServiceService } from 'src/app/core/core-service.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from '../../shared-component/utils';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-zone-livraison',
@@ -28,6 +29,7 @@ export class ZoneLivraisonComponent {
 
   constructor(
     private _userService: UtilisateurResolveService,
+    private location: Location,
     private _coreService: CoreServiceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
@@ -51,13 +53,14 @@ export class ZoneLivraisonComponent {
     });
     this.zoneForm = this.fb.group({
       nomZone: [null, Validators.required],
-
       localite: [0, Validators.required],
     });
 
     this.GetList();
   }
-
+  goBack() {
+    this.location.back()
+  }
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;

@@ -8,6 +8,7 @@ import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.serv
 import { ALERT_QUESTION } from '../../shared-component/utils';
 import { ArticleComponent } from '../../parametre/article/article.component';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-groupe-client',
@@ -40,6 +41,7 @@ export class GroupeClientComponent {
   dataListlocalite: any;
   constructor(
     private _userService: UtilisateurResolveService,
+    private location: Location,
     private _articleService: ArticleServiceService,
     private _coreService: CoreServiceService,
     private _spinner: NgxSpinnerService,
@@ -80,7 +82,9 @@ export class GroupeClientComponent {
 
     this.GetUserList();
   }
-
+  goBack() {
+    this.location.back()
+  }
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;

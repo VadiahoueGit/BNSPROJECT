@@ -6,6 +6,7 @@ import { Table } from 'primeng/table';
 import { CoreServiceService } from 'src/app/core/core-service.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from '../../shared-component/utils';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-depot',
@@ -16,7 +17,9 @@ export class DepotComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
+  zones!: any[];
   DepotForm!: FormGroup;
+  depotId = 0
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
@@ -36,12 +39,14 @@ export class DepotComponent {
   dataListUsers: any;
   dataListlocalite: any;
   constructor(
+    private coreService: CoreServiceService,
     private _userService: UtilisateurResolveService,
+    private location: Location,
     private _coreService: CoreServiceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
-  ) {}
+  ) { }
   ngAfterViewInit(): void {
     // Initialisation de Bootstrap Select
     // $('.selectpicker').selectpicker('refresh');
@@ -58,19 +63,35 @@ export class DepotComponent {
       this.dataListlocalite = res.data;
       this._spinner.hide();
     });
-   
+
     this.DepotForm = this.fb.group({
-     nomDepot: [null, Validators.required],
-     gerant: [null, Validators.required],
-     telephone: [null, Validators.required],
-     localisation: [null, Validators.required],
-     localiteId: [0, Validators.required],
+      nomDepot: [null, Validators.required],
+      gerant: [null, Validators.required],
+      telephone: [null, Validators.required],
+      latitude: [null, Validators.required],
+      longitude: [null, Validators.required],
+      zoneId: [null, Validators.required],
     });
 
-
-    this.GetUserList();
+    this.GetZoneList()
+    this.GetDepotList();
   }
-
+  goBack() {
+    this.location.back()
+  }
+  GetZoneList() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.coreService.GetZoneList(data).then((res: any) => {
+      this.zones = res.data
+      this._spinner.hide();
+      console.log(res)
+    })
+  }
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -97,13 +118,13 @@ export class DepotComponent {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
-    this.localiteId = data.id;
+    this.depotId = data.id;
     this.isModalOpen = true;
-    this.loadArticleDetails();
+    this.loadDepotDetails();
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetUserList() {
+  GetDepotList() {
     let data = {
       paginate: true,
       page: 1,
@@ -117,18 +138,18 @@ export class DepotComponent {
     });
   }
   onSubmit(): void {
-    console.log(this.DepotForm.value);
+    console.log(this.DepotForm);
     if (this.DepotForm.valid) {
       // const formValues = this.DepotForm.value;
-      const formValues = {
-        ...this.DepotForm.value,
-        localiteId: +this.DepotForm.value.localiteId,
+      // const formValues = {
+      //   ...this.DepotForm.value,
+      //   localiteId: +this.DepotForm.value.localiteId,
 
-      };
-      console.log('formValues', formValues);
+      // };
+      console.log('formValues', this.DepotForm.value);
 
       if (this.isEditMode) {
-        this._coreService.UpdateDepot(this.localiteId, formValues).then(
+        this._coreService.UpdateDepot(this.localiteId, this.DepotForm.value).then(
           (response: any) => {
             console.log('Utilisateur mis à jour avec succès', response);
             // this.toastr.success('Succès!', 'Utilisateur  mis à jour avec succès.');
@@ -136,7 +157,7 @@ export class DepotComponent {
 
             this.OnCloseModal();
             this.DepotForm.reset();
-            this.GetUserList();
+            this.GetDepotList();
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -144,10 +165,10 @@ export class DepotComponent {
           }
         );
       } else {
-        this._coreService.CreateDepot(formValues).then(
+        this._coreService.CreateDepot(this.DepotForm.value).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetUserList();
+            this.GetDepotList();
             this.DepotForm.reset();
             // this.toastr.success('Succès!', 'Utilisateur créé avec succès.');
             this.toastr.success(response.message);
@@ -162,13 +183,14 @@ export class DepotComponent {
       }
     }
   }
-  loadArticleDetails(): void {
+  loadDepotDetails(): void {
     this.DepotForm.patchValue({
       nomDepot: this.updateData.nomDepot,
-     gerant: this.updateData.gerant,
-     telephone: this.updateData.telephone,
-     localisation: this.updateData.matricule,
-      localiteId: this.updateData.localiteId,
+      gerant: this.updateData.gerant,
+      telephone: this.updateData.telephone,
+      latitude: this.updateData.latitude,
+      longitude: this.updateData.longitude,
+      zoneId: this.updateData.zone.id,
     });
   }
   OnDelete(Id: any) {
@@ -179,7 +201,7 @@ export class DepotComponent {
           this._coreService.DeleteDepot(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetUserList();
+            this.GetDepotList();
             this._spinner.hide();
           });
         } else {
@@ -187,7 +209,7 @@ export class DepotComponent {
       }
     );
   }
-  OnDisabled(data:any){
-    console.log(data,'data')
+  OnDisabled(data: any) {
+    console.log(data, 'data')
   }
 }

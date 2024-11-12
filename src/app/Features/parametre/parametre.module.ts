@@ -119,10 +119,11 @@ import { ProfilUtilisateurComponent } from './utilisateurs/profil-utilisateur/pr
 import { TruncatePipe } from '../shared-component/Pipe/truncate.pipe';
 import { SharedComponentModule } from '../shared-component/shared-component.module';
 import { QuestionnaireVisiteComponent } from './questionnaire-visite/questionnaire-visite.component';
+import { CommercialComponent } from './commercial/commercial.component';
 
 
 @NgModule({
-    declarations: [QuestionnaireVisiteComponent,TransporteurComponent,LogistiqueComponent,ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent, ListPrixComponent, CreationPrixComponent, EmballageComponent, LiquideComponent, VehiculesComponent, UtilisateursComponent, UtilisateurComponent, ProfilUtilisateurComponent],
+    declarations: [CommercialComponent,QuestionnaireVisiteComponent,TransporteurComponent,LogistiqueComponent,ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent, ListPrixComponent, CreationPrixComponent, EmballageComponent, LiquideComponent, VehiculesComponent, UtilisateursComponent, UtilisateurComponent, ProfilUtilisateurComponent],
     imports: [
       NgSelectModule,
       SharedComponentModule,

@@ -26,7 +26,7 @@ export class ParametreComponent implements OnInit {
     {
       image: 'assets/icon/seller.png',
       title: 'Commerciaux',
-      // url:'feature/parametre/logistique',
+      url:'feature/parametre/commercial',
     },
     {
       image: 'assets/icon/localite.png',
