@@ -6,6 +6,8 @@ import { Table } from 'primeng/table';
 import { CoreServiceService } from 'src/app/core/core-service.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from '../../shared-component/utils';
+import { ArticleComponent } from '../../parametre/article/article.component';
+import { ArticleServiceService } from 'src/app/core/article-service.service';
 
 @Component({
   selector: 'app-groupe-client',
@@ -32,11 +34,13 @@ export class GroupeClientComponent {
   dataListPlastiqueNu: any = [];
   dataListLiquides: any = [];
   dataListArticlesProduits: any = [];
-  dataListProfil: any;
+  dataListTypePrix: any[]=[];
+  dataListPrix: any[]=[];
   dataListUsers: any;
   dataListlocalite: any;
   constructor(
     private _userService: UtilisateurResolveService,
+    private _articleService: ArticleServiceService,
     private _coreService: CoreServiceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
@@ -47,17 +51,25 @@ export class GroupeClientComponent {
     // $('.selectpicker').selectpicker('refresh');
   }
   ngOnInit() {
-    let data = {
-      paginate: true,
-      page: 1,
-      limit: 8,
-    };
-    this._spinner.show();
-    this._coreService.GetLocaliteList(data).then((res: any) => {
-      console.log('GetLocaliteList:::>', res);
-      this.dataListlocalite = res.data;
-      this._spinner.hide();
+    this._articleService.ListTypePrix.subscribe((res: any) => {
+      console.log('ListTypePrix:::>', res);
+      this.dataListTypePrix = res
     });
+    this._articleService.ListPrix.subscribe((res: any) => {
+      console.log('ListPrix:::>', res);
+      this.dataListPrix = res
+    });
+    // let data = {
+    //   paginate: true,
+    //   page: 1,
+    //   limit: 8,
+    // };
+    // this._spinner.show();
+    // this._coreService.GetLocaliteList(data).then((res: any) => {
+    //   console.log('GetLocaliteList:::>', res);
+    //   this.dataListlocalite = res.data;
+    //   this._spinner.hide();
+    // });
    
     this.GroupeClientForm = this.fb.group({
       nomGroupe: [null, Validators.required],

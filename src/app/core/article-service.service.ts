@@ -13,6 +13,7 @@ export class ArticleServiceService {
   apiUrl: any;
   ListTypeArticles: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListTypePrix: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
+  ListPrix: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListArticles: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListGroupesArticles: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListLiquides: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
@@ -34,6 +35,7 @@ export class ArticleServiceService {
     return new Promise<void>((resolve, reject) => {
       this.ListTypeArticles.next([]);
       this.ListTypePrix.next([]);
+      this.ListPrix.next([]);
       this.ListArticles.next([]);
       this.ListGroupesArticles.next([]);
       this.ListLiquides.next([]);
@@ -53,6 +55,9 @@ export class ArticleServiceService {
           : this.Nothing(),
         this.ListArticles.getValue().length === 0
           ? this.GetArticleList(data)
+          : this.Nothing(),
+        this.ListPrix.getValue().length === 0
+          ? this.GetListPrix(data)
           : this.Nothing(),
         this.ListTypePrix.getValue().length === 0
           ? this.GetListTypePrix(data)
@@ -199,6 +204,9 @@ export class ArticleServiceService {
         )
         .subscribe(
           (res: any) => {
+            if (res.statusCode === 200) {
+              this.ListPrix.next(res.data);
+            }
             console.log(res);
             resolve(res);
           },

@@ -85,8 +85,8 @@
                                         class="text-danger">*</span></label>
                                 <select class="form-control form-select form-select-sm" formControlName="listePrix"
                                     aria-label=".form-select-sm example">
-                                    <option value="" disabled selected>Choisir le localité</option>
-                                    <option [value]="item.id" *ngFor="let item of dataListlocalite">{{item.nomLocalite}}
+                                    <option value="" disabled selected>Choisir le prix</option>
+                                    <option [value]="item.id" *ngFor="let item of dataListPrix">{{item.libelle}}
                                     </option>
                                 </select>
                             </div>
@@ -98,8 +98,8 @@
                                         class="text-danger">*</span></label>
                                 <select class="form-control form-select form-select-sm" formControlName="prixReelId"
                                     aria-label=".form-select-sm example">
-                                    <option value="" disabled selected>Choisir le localité</option>
-                                    <option [value]="item.id" *ngFor="let item of dataListlocalite">{{item.nomLocalite}}
+                                    <option value="" disabled selected>Choisir le prix réel</option>
+                                    <option [value]="item.id" *ngFor="let item of dataListTypePrix">{{item.libelle}}
                                     </option>
                                 </select>
                             </div>
