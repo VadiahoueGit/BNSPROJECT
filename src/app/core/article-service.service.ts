@@ -192,6 +192,23 @@ export class ArticleServiceService {
       );
     });
   }
+  CreateTypePrix(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/type-prix`, data, {headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
 
   GetListPrix(data: any) {
     return new Promise((resolve: any, reject: any) => {
@@ -243,6 +260,23 @@ export class ArticleServiceService {
     });
   }
 
+  DeleteTypePrix(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/type-prix/${id}`,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
   DeletePrix(id: number) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -267,6 +301,23 @@ export class ArticleServiceService {
         Authorization: `Bearer ${this.token}`
       });
       this._http.put(`${this.apiUrl}/v1/prix/${id}`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+  UpdateTypePrix(id: number, data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/type-prix/${id}`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -801,4 +852,26 @@ export class ArticleServiceService {
       );
     });
   }
+   GetGroupeClientList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/groupe-revendeur?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`, { headers }
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+  
 }

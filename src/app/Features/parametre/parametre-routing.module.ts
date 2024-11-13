@@ -9,6 +9,7 @@ import { UtilisateursComponent } from './utilisateurs/utilisateurs.component';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { QuestionnaireVisiteComponent } from './questionnaire-visite/questionnaire-visite.component';
 import { CommercialComponent } from './commercial/commercial.component';
+import { ListPrixComponent } from './list-prix/list-prix.component';
 const routes: Routes = [
   { path: '', component: ParametreComponent },
   {
@@ -20,6 +21,7 @@ const routes: Routes = [
   },
   { path: 'logistique', component: LogistiqueComponent },
   { path: 'commercial', component: CommercialComponent },
+  { path: 'typeprix', component: ListPrixComponent, resolve:{ArticleServiceService} },
 
   { path: 'questionnairevisite', component: QuestionnaireVisiteComponent },
   {

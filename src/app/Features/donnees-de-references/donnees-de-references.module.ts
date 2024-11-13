@@ -106,6 +106,8 @@ import { VirtualScrollerModule } from 'primeng/virtualscroller';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ParametreRoutingModule } from '../parametre/parametre-routing.module';
 import { SharedComponentModule } from '../shared-component/shared-component.module';
+import { BouteilleVideComponent } from './bouteille-vide/bouteille-vide.component';
+import { PlastiqueNuComponent } from './plastique-nu/plastique-nu.component';
 
 
 @NgModule({
@@ -114,7 +116,9 @@ import { SharedComponentModule } from '../shared-component/shared-component.modu
     DepotComponent,
     ZoneLivraisonComponent,
     GroupeClientComponent,
-    DatareferencesComponent
+    DatareferencesComponent,
+    BouteilleVideComponent,
+    PlastiqueNuComponent
   ],
   imports: [
     CommonModule,

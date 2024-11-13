@@ -1,7 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
+import { ALERT_QUESTION } from '../../shared-component/utils';
 
 @Component({
   selector: 'app-list-prix',
@@ -15,23 +18,32 @@ export class ListPrixComponent implements OnInit {
   isModalOpen: boolean = false;
   operation: string = '';
   updateData: any;
-  articleId: any;
-  articleForm: any;
+  prixId: any;
+  dataListTypesPrix: any;
+  dataListProduits: any;
+  prixForm: FormGroup;
   constructor(
     private articleService: ArticleServiceService,
-    private _spinner: NgxSpinnerService
+    private _spinner: NgxSpinnerService,
+    private toastr: ToastrService,
+    private fb: FormBuilder,
+
+
   ) {}
   ngOnInit() {
-    this.GetListPrix();
+    this.prixForm = this.fb.group({
+      libelle: [null, Validators.required],
+    });
+    this.GetListTypePrix();
   }
-  GetListPrix() {
+  GetListTypePrix() {
     let data = {
       paginate: true,
       page: 1,
       limit: 8,
     };
     this._spinner.show();
-    this.articleService.GetListPrix(data).then((res: any) => {
+    this.articleService.GetListTypePrix(data).then((res: any) => {
       console.log('DATAPRIX:::>', res);
       this.dataList = res.data;
       this._spinner.hide();
@@ -42,16 +54,80 @@ export class ListPrixComponent implements OnInit {
     const value = inputElement?.value || '';
     this.dt2.filterGlobal(value, 'contains');
   }
-  OnDelete(event: any) {}
-
+  OnDelete(Id: any) {
+    ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
+      (res) => {
+        if (res.isConfirmed == true) {
+          this._spinner.show();
+          this.articleService.DeleteTypePrix(Id).then((res: any) => {
+            console.log('DATA:::>', res);
+            this.toastr.success(res.message);
+            this.GetListTypePrix();
+            this._spinner.hide();
+          });
+        } else {
+        }
+      }
+    );
+  }
+  OnCloseModal() {
+    this.isModalOpen = false;
+    console.log(this.isModalOpen);
+  }
+  OnCreate() {
+    this.isEditMode = false;
+    this.isModalOpen = true;
+    this.operation = 'create';
+    console.log(this.isModalOpen);
+  }
   OnEdit(data: any) {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
-    this.articleId = data.id;
-    this.articleForm.patchValue(data);
+    this.prixId = data.id;
+    this.prixForm.patchValue(data);
     this.isModalOpen = true;
     this.operation = 'edit';
     console.log(this.isModalOpen);
+  }
+  
+  onSubmit(): void {
+    console.log(this.prixForm.value);
+    if (this.prixForm.valid) {
+      const formValues = this.prixForm.value;
+  
+    
+      if (this.isEditMode) {
+        this.articleService.UpdateTypePrix(this.prixId, formValues).then(
+          (response: any) => {
+            this.prixForm.reset()
+            this.OnCloseModal();
+            this.GetListTypePrix();
+            this.toastr.success(response.message);
+            console.log('prix mis à jour avec succès', response);
+
+          },
+          (error: any) => {
+            this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
+            console.error('Erreur lors de la création', error);
+          }
+        );
+      } else {
+        this.articleService.CreateTypePrix(formValues).then(
+          (response: any) => {
+            this.OnCloseModal();
+            this.GetListTypePrix();
+            this.prixForm.reset()
+            this.toastr.success(response.message);
+            console.log('prix crée avec succès', response);
+
+          },
+          (error: any) => {
+            this.toastr.error('Erreur!', 'Erreur lors de la création.');
+            console.error('Erreur lors de la création', error);
+          }
+        );
+      }
+    }
   }
 }

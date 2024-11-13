@@ -23,7 +23,7 @@ export class ZoneLivraisonComponent {
   activityValues: number[] = [0, 100];
   operation: string = '';
   updateData: any = {};
-  localiteId: any = 0;
+  zoneId: any = 0;
   isEditMode: boolean = false;
   dataListlocalite: any = [];
 
@@ -35,10 +35,7 @@ export class ZoneLivraisonComponent {
     private fb: FormBuilder,
     private toastr: ToastrService
   ) {}
-  ngAfterViewInit(): void {
-    // Initialisation de Bootstrap Select
-    // $('.selectpicker').selectpicker('refresh');
-  }
+
   ngOnInit() {
     let data = {
       paginate: true,
@@ -87,7 +84,7 @@ export class ZoneLivraisonComponent {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
-    this.localiteId = data.id;
+    this.zoneId = data.id;
     this.isModalOpen = true;
     this.loadArticleDetails();
     this.operation = 'edit';
@@ -109,18 +106,14 @@ export class ZoneLivraisonComponent {
   onSubmit(): void {
     console.log(this.zoneForm.value);
     if (this.zoneForm.valid) {
-      // const formValues = this.zoneForm.value;
-      const formValues = {
-        ...this.zoneForm.value,
-        localite: +this.zoneForm.value.localite,
-      };
+       const formValues = this.zoneForm.value;
+  
       console.log('formValues', formValues);
 
       if (this.isEditMode) {
-        this._coreService.UpdateZone(this.localiteId, formValues).then(
+        this._coreService.UpdateZone(this.zoneId, formValues).then(
           (response: any) => {
             console.log('Utilisateur mis à jour avec succès', response);
-            // this.toastr.success('Succès!', 'Utilisateur  mis à jour avec succès.');
             this.toastr.success(response.message);
 
             this.OnCloseModal();
@@ -138,7 +131,6 @@ export class ZoneLivraisonComponent {
             this.OnCloseModal();
             this.GetList();
             this.zoneForm.reset();
-            // this.toastr.success('Succès!', 'Utilisateur créé avec succès.');
             this.toastr.success(response.message);
 
             console.log('Nouvel Utilisateur créé avec succès', response);

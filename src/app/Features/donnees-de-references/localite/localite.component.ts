@@ -53,7 +53,7 @@ export class LocaliteComponent {
     });
 
 
-    this.GetUserList();
+    this.GetList();
   }
   goBack() {
     this.location.back()
@@ -87,11 +87,11 @@ export class LocaliteComponent {
     this.updateData = data;
     this.localiteId = data.id;
     this.isModalOpen = true;
-    this.loadArticleDetails();
+    this.loadDetails();
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetUserList() {
+  GetList() {
     let data = {
       paginate: true,
       page: 1,
@@ -107,22 +107,19 @@ export class LocaliteComponent {
   onSubmit(): void {
     console.log(this.LocaliteForm.value);
     if (this.LocaliteForm.valid) {
-      // const formValues = this.LocaliteForm.value;
-      const formValues = {
-        ...this.LocaliteForm.value,
-      };
+       const formValues = this.LocaliteForm.value;
+      
       console.log('formValues', formValues);
 
       if (this.isEditMode) {
         this._coreService.UpdateLocalite(this.localiteId, formValues).then(
           (response: any) => {
             console.log('Utilisateur mis à jour avec succès', response);
-            // this.toastr.success('Succès!', 'Utilisateur  mis à jour avec succès.');
             this.toastr.success(response.message);
 
             this.OnCloseModal();
             this.LocaliteForm.reset();
-            this.GetUserList();
+            this.GetList();
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -133,9 +130,8 @@ export class LocaliteComponent {
         this._coreService.CreateLocalite(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetUserList();
+            this.GetList();
             this.LocaliteForm.reset();
-            // this.toastr.success('Succès!', 'Utilisateur créé avec succès.');
             this.toastr.success(response.message);
 
             console.log('Nouvel Utilisateur créé avec succès', response);
@@ -148,18 +144,9 @@ export class LocaliteComponent {
       }
     }
   }
-  loadArticleDetails(): void {
+  loadDetails(): void {
     this.LocaliteForm.patchValue({
       nomLocalite: this.updateData.nomLocalite,
-     // email: this.updateData.email,
-      // fonction: this.updateData.fonction,
-      // matricule: this.updateData.matricule,
-      // nom: this.updateData.nom,
-      // password: this.updateData.password,
-      // prenom: this.updateData.prenom,
-      // telephone_one: this.updateData.telephone_one,
-      // telephone_two: this.updateData.telephone_two,
-      // roleId: this.updateData.role.id,
     });
   }
   OnDelete(Id: any) {
@@ -170,7 +157,7 @@ export class LocaliteComponent {
           this._coreService.DeleteLocalite(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetUserList();
+            this.GetList();
             this._spinner.hide();
           });
         } else {

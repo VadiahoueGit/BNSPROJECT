@@ -61,17 +61,7 @@ export class GroupeClientComponent {
       console.log('ListPrix:::>', res);
       this.dataListPrix = res
     });
-    // let data = {
-    //   paginate: true,
-    //   page: 1,
-    //   limit: 8,
-    // };
-    // this._spinner.show();
-    // this._coreService.GetLocaliteList(data).then((res: any) => {
-    //   console.log('GetLocaliteList:::>', res);
-    //   this.dataListlocalite = res.data;
-    //   this._spinner.hide();
-    // });
+   
    
     this.GroupeClientForm = this.fb.group({
       nomGroupe: [null, Validators.required],
@@ -80,7 +70,7 @@ export class GroupeClientComponent {
     });
 
 
-    this.GetUserList();
+    this.GetGroupeClientList();
   }
   goBack() {
     this.location.back()
@@ -113,18 +103,18 @@ export class GroupeClientComponent {
     this.updateData = data;
     this.groupeClientId = data.id;
     this.isModalOpen = true;
-    this.loadArticleDetails();
+    this.loadDetails();
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetUserList() {
+  GetGroupeClientList() {
     let data = {
       paginate: true,
       page: 1,
       limit: 8,
     };
     this._spinner.show();
-    this._coreService.GetGroupeClientList(data).then((res: any) => {
+    this._articleService.GetGroupeClientList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.dataList = res.data;
       this._spinner.hide();
@@ -151,7 +141,7 @@ export class GroupeClientComponent {
 
             this.OnCloseModal();
             this.GroupeClientForm.reset();
-            this.GetUserList();
+            this.GetGroupeClientList();
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -162,7 +152,7 @@ export class GroupeClientComponent {
         this._coreService.CreateGroupeClient(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetUserList();
+            this.GetGroupeClientList();
             this.GroupeClientForm.reset();
             // this.toastr.success('Succès!', 'Utilisateur créé avec succès.');
             this.toastr.success(response.message);
@@ -177,11 +167,11 @@ export class GroupeClientComponent {
       }
     }
   }
-  loadArticleDetails(): void {
+  loadDetails(): void {
     this.GroupeClientForm.patchValue({
       nomGroupe: this.updateData.nomGroupe,
-      prixReelId: this.updateData.prixReelId,
-      listePrix: this.updateData.listePrix,
+      prixReelId: this.updateData.prixReelId.id,
+      listePrix: this.updateData.listePrix.id,
     });
   }
   OnDelete(Id: any) {
@@ -192,7 +182,7 @@ export class GroupeClientComponent {
           this._coreService.DeleteGroupeClient(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetUserList();
+            this.GetGroupeClientList();
             this._spinner.hide();
           });
         } else {

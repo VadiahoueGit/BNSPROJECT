@@ -27,18 +27,13 @@
                 </td>
                 <td>
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList?.listePrix?.nom ?? '' }}
+                        {{ dataList?.listePrix?.PrixLiquide }}
                     </span>
                 </td>
                 <td>
-                    {{ dataList?.prixReelId?.nom ?? '' }}
+                    {{ dataList?.prixReelId?.libelle  }}
                 </td>
-                <!-- <td>
-                    {{ dataList.localisation }}
-                </td>
-                <td>
-                    {{ dataList.telephone }}
-                </td> -->
+           
                 <td>
             <tr class="d-flex justify-content-center gap-3">
                 <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
@@ -90,7 +85,7 @@
                                 <select class="form-control form-select form-select-sm" formControlName="listePrix"
                                     aria-label=".form-select-sm example">
                                     <option value="" disabled selected>Choisir le prix</option>
-                                    <option [value]="item.id" *ngFor="let item of dataListPrix">{{item.libelle}}
+                                    <option [value]="item.id" *ngFor="let item of dataListPrix">{{item.PrixLiquide}}
                                     </option>
                                 </select>
                             </div>

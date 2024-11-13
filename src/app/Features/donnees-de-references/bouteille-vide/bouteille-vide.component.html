@@ -1,18 +1,20 @@
 <div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
     <i style="font-size: 18px; " class="fas fw-bold fa-chevron-left me-2 "></i>
-    <h4 class="fw-bold mb-0">Zones de livraison</h4>
-  </div>
+    <h4 class="fw-bold mb-0">Bouteille vide</h4>
+</div>
 <div class="card">
     <div class=" d-flex justify-content-end py-3">
-        <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer une zone de livraison</button>
+        <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer une bouteille vide</button>
     </div>
     <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
         [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true">
 
         <ng-template pTemplate="header">
             <tr>
-                <th style="color: var(--secondary-color);">Zone</th>
-                <th style="color: var(--secondary-color);">Localité</th>
+                <th style="color: var(--secondary-color);">Code</th>
+                <th style="color: var(--secondary-color);">Nom bouteille</th>
+                <th style="color: var(--secondary-color);">Prix unitaire</th>
+                <th style="color: var(--secondary-color);">Format</th>
                 <th style="color: var(--secondary-color);">Actions</th>
             </tr>
         </ng-template>
@@ -21,13 +23,20 @@
 
                 <td>
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.nomZone }}
+                        {{ dataList.code }}
                     </span>
                 </td>
                 <td>
-                    {{ dataList.localite.nomLocalite }}
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.libelle }}
+                    </span>
                 </td>
-
+                <td>
+                    {{ dataList.prixUnitaire  }}
+                </td>
+                <td>
+                    {{ dataList.format }}
+                </td>
                 <td>
             <tr class="d-flex justify-content-center gap-3">
                 <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
@@ -42,7 +51,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
             <tr>
-                <td colspan="5">Aucune zone trouvée.</td>
+                <td colspan="5">Aucune bouteille vide trouvée.</td>
             </tr>
         </ng-template>
     </p-table>
@@ -60,29 +69,36 @@
                     <i class="fas fa-box-check text-primary fs-3"></i>
                 </div>
                 <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création
-                    d'une zone de livraison</h1>
-                <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification d'une zone de livraison</h1>
+                    d'une bouteille vide</h1>
+                <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification d'une
+                    bouteille vide</h1>
             </div>
             <div class="modal-body">
-                <form [formGroup]="zoneForm">
+                <form [formGroup]="BouteilleVideForm">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="nomZone" class="form-label">Zone <span
+                                <label for="libelle" class="form-label">Nom de la bouteille <span
                                         class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="nomZone" formControlName="nomZone"
-                                    placeholder="Entrez la zone">
+                                <input type="text" class="form-control" id="libelle" formControlName="libelle"
+                                    placeholder="Entrez le nom">
                             </div>
+                            <div class="mb-3">
+                                <label for="prixUnitaire" class="form-label">Prix unitaire <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="prixUnitaire" formControlName="prixUnitaire"
+                                    placeholder="Entrez le prix unitaire">
+                            </div>
+                  
                         </div>
                         <div class="col-md-6">
+
                             <div class="mb-3">
-                                <label for="localite" class="form-label">Localité <span
-                                        class="text-danger">*</span></label>
-                                        <select class="form-control form-select form-select-sm" formControlName="localite" aria-label=".form-select-sm example">
-                                            <option value="" disabled selected>Choisir le localité</option>
-                                            <option [value]="item.id" *ngFor="let item of dataListlocalite">{{item.nomLocalite}}</option>
-                                          </select>
-                            </div>
+                                <label for="format" class="form-label">Format <span class="text-danger">*</span></label>
+                                <select class="form-control form-select form-select-sm" formControlName="format" aria-label=".form-select-sm example">
+                                  <option value="" disabled selected>Choisir le format</option>
+                                  <option [value]="item" *ngFor="let item of dataListFormats">{{item}}</option>
+                                </select>
+                              </div>
                         </div>
                     </div>
                 </form>
