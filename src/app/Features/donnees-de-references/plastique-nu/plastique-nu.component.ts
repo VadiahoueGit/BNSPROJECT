@@ -7,19 +7,20 @@ import { CoreServiceService } from 'src/app/core/core-service.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from '../../shared-component/utils';
 import { Location } from '@angular/common';
+import { ArticleServiceService } from 'src/app/core/article-service.service';
 
 @Component({
-  selector: 'app-depot',
-  templateUrl: './depot.component.html',
-  styleUrls: ['./depot.component.scss']
+  selector: 'app-plastique-nu',
+  templateUrl: './plastique-nu.component.html',
+  styleUrls: ['./plastique-nu.component.scss']
 })
-export class DepotComponent {
+export class PlastiqueNuComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
   zones!: any[];
-  DepotForm!: FormGroup;
-  depotId = 0
+  PlastiquenuForm!: FormGroup;
+  plastiquenuId = 0
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
@@ -30,18 +31,11 @@ export class DepotComponent {
   dataListFormats: any = [];
   dataListConditionnements: any = [];
   dataListProduits: any = [];
-  dataListGroupeArticles: any = [];
-  dataListBouteilleVide: any = [];
+
   dataListPlastiqueNu: any = [];
-  dataListLiquides: any = [];
-  dataListArticlesProduits: any = [];
-  dataListProfil: any;
-  dataListUsers: any;
-  dataListlocalite: any;
   constructor(
-    private coreService: CoreServiceService,
-    private _userService: UtilisateurResolveService,
     private location: Location,
+    private _articleService: ArticleServiceService,
     private _coreService: CoreServiceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
@@ -52,46 +46,25 @@ export class DepotComponent {
     // $('.selectpicker').selectpicker('refresh');
   }
   ngOnInit() {
-    let data = {
-      paginate: true,
-      page: 1,
-      limit: 8,
-    };
-    this._spinner.show();
-    this._coreService.GetLocaliteList(data).then((res: any) => {
-      console.log('GetLocaliteList:::>', res);
-      this.dataListlocalite = res.data;
-      this._spinner.hide();
+    this._articleService.GetConditionnementList().then((res: any) => {
+      this.dataListConditionnements = res;
+      console.log(
+        'dataListConditionnements:::>',
+        this.dataListConditionnements
+      );
     });
-
-    this.DepotForm = this.fb.group({
-      nomDepot: [null, Validators.required],
-      gerant: [null, Validators.required],
-      telephone: [null, Validators.required],
-      latitude: [null, Validators.required],
-      longitude: [null, Validators.required],
-      zoneId: [null, Validators.required],
+    this.PlastiquenuForm = this.fb.group({
+      libelle: [null, Validators.required],
+      prixUnitaire: [null, Validators.required],
+      conditionnement: [null, Validators.required],
     });
+    this.GetPlastiqueNuList()
 
-    this.GetZoneList()
-    this.GetDepotList();
   }
   goBack() {
     this.location.back()
   }
-  GetZoneList() {
-    let data = {
-      paginate: false,
-      page: 1,
-      limit: 8,
-    };
-    this._spinner.show();
-    this.coreService.GetZoneList(data).then((res: any) => {
-      this.zones = res.data
-      this._spinner.hide();
-      console.log(res)
-    })
-  }
+ 
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -107,7 +80,7 @@ export class DepotComponent {
     console.log(this.isModalOpen);
   }
   OnCreate() {
-    this.DepotForm.reset();
+    this.PlastiquenuForm.reset();
     this.isEditMode = false;
     this.isModalOpen = true;
     this.operation = 'create';
@@ -118,40 +91,40 @@ export class DepotComponent {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
-    this.depotId = data.id;
+    this.plastiquenuId = data.id;
     this.isModalOpen = true;
-    this.loadDepotDetails();
+    this.loadDetails();
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetDepotList() {
+  GetPlastiqueNuList() {
     let data = {
       paginate: true,
       page: 1,
       limit: 8,
     };
     this._spinner.show();
-    this._coreService.GetDepotList(data).then((res: any) => {
+    this._articleService.GetPlastiqueNuList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.dataList = res.data;
       this._spinner.hide();
     });
   }
   onSubmit(): void {
-    console.log(this.DepotForm);
-    if (this.DepotForm.valid) {
-      console.log('formValues', this.DepotForm.value);
+    console.log(this.PlastiquenuForm);
+    if (this.PlastiquenuForm.valid) {
+      console.log('formValues', this.PlastiquenuForm.value);
 
       if (this.isEditMode) {
-        this._coreService.UpdateDepot(this.depotId, this.DepotForm.value).then(
+        this._articleService.UpdatePlastiqueNu(this.plastiquenuId, this.PlastiquenuForm.value).then(
           (response: any) => {
             console.log('Utilisateur mis à jour avec succès', response);
             // this.toastr.success('Succès!', 'Utilisateur  mis à jour avec succès.');
             this.toastr.success(response.message);
 
             this.OnCloseModal();
-            this.DepotForm.reset();
-            this.GetDepotList();
+            this.PlastiquenuForm.reset();
+            this.GetPlastiqueNuList();
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -159,11 +132,11 @@ export class DepotComponent {
           }
         );
       } else {
-        this._coreService.CreateDepot(this.DepotForm.value).then(
+        this._articleService.CreatePlastiqueNu(this.PlastiquenuForm.value).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetDepotList();
-            this.DepotForm.reset();
+            this.GetPlastiqueNuList();
+            this.PlastiquenuForm.reset();
             // this.toastr.success('Succès!', 'Utilisateur créé avec succès.');
             this.toastr.success(response.message);
 
@@ -177,14 +150,11 @@ export class DepotComponent {
       }
     }
   }
-  loadDepotDetails(): void {
-    this.DepotForm.patchValue({
-      nomDepot: this.updateData.nomDepot,
-      gerant: this.updateData.gerant,
-      telephone: this.updateData.telephone,
-      latitude: this.updateData.latitude,
-      longitude: this.updateData.longitude,
-      zoneId: this.updateData.zone.id,
+  loadDetails(): void {
+    this.PlastiquenuForm.patchValue({
+      libelle: this.updateData.libelle,
+      prixUnitaire: this.updateData.prixUnitaire,
+      conditionnement: this.updateData.conditionnement,
     });
   }
   OnDelete(Id: any) {
@@ -192,10 +162,10 @@ export class DepotComponent {
       (res) => {
         if (res.isConfirmed == true) {
           this._spinner.show();
-          this._coreService.DeleteDepot(Id).then((res: any) => {
+          this._articleService.DeletePlastiqueNu(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetDepotList();
+            this.GetPlastiqueNuList();
             this._spinner.hide();
           });
         } else {
@@ -206,4 +176,5 @@ export class DepotComponent {
   OnDisabled(data: any) {
     console.log(data, 'data')
   }
+
 }

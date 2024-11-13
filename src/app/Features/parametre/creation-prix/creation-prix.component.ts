@@ -37,7 +37,7 @@ export class CreationPrixComponent {
       PrixId: [0,  Validators.required],
       ProduitId: [0,  Validators.required],
     });
-    this.articleService.ListTypeArticles.subscribe((res: any) => {
+    this.articleService.ListArticles.subscribe((res: any) => {
       this.dataListProduits = res;
       console.log(this.dataListProduits ,"this.dataListProduits ")
     });

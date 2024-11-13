@@ -52,6 +52,21 @@ export class ParametreComponent implements OnInit {
       image: 'assets/icon/quest.png',
       title: 'Questions visite',
       url:'feature/parametre/questionnairevisite',
+    },
+    {
+      image: 'assets/icon/quest.png',
+      title: 'Type prix',
+      url:'feature/parametre/typeprix',
+    },
+    {
+      image: 'assets/icon/quest.png',
+      title: 'Plastique nu',
+      url:'feature/datareference/plastique-nu',
+    },
+    {
+      image: 'assets/icon/quest.png',
+      title: 'Bouteille vide',
+      url:'feature/datareference/bouteille-vide',
     }
   ]
   constructor(private _router: Router) { }
