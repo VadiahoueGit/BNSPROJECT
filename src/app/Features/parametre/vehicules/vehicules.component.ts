@@ -69,6 +69,7 @@ export class VehiculesComponent implements AfterViewInit {
       this._logistiqueService.UpdateVehicule(this.vehiculeId, this.vehicleForm.value).then((res:any) => {
         this._spinner.hide();
         this.isModalOpen = false;
+        this.vehicleForm.reset()
         this.toastr.success(res.message);
         this.GetVehiculeList()
         console.log(res)
@@ -82,6 +83,7 @@ export class VehiculesComponent implements AfterViewInit {
       this._spinner.show();
       this._logistiqueService.CreateVehicule(this.vehicleForm.value).then((res:any) => {
         this.GetVehiculeList()
+        this.vehicleForm.reset()
         this.toastr.success(res.message);
         this.isModalOpen = false;
         this._spinner.hide();
@@ -135,7 +137,6 @@ export class VehiculesComponent implements AfterViewInit {
     this.updateData = data;
     this.vehiculeId = data.id;
     this.vehicleForm.patchValue({
-      numero: data.numero,
       marque: data.marque,
       energie: data.energie,
       immatriculation: data.immatriculation,

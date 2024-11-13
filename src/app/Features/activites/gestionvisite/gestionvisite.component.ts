@@ -11,6 +11,7 @@ import { endOfDay, startOfDay } from 'date-fns';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { ActiviteService } from 'src/app/core/activite.service';
+import { LogistiqueService } from 'src/app/core/logistique.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 @Component({
   selector: 'app-gestionvisite',
@@ -32,25 +33,28 @@ export class GestionvisiteComponent {
   loading: boolean = true;
   operation: string = '';
   isModalOpen = false;
-  isEditMode= false;
+  isEditMode = false;
   VisiteForm: FormGroup;
-  updateData:any
-  articleId:number
+  updateData: any
+  visiteId: number
   typeVisite = [];
   pointDeVente = []
   commerciaux = []
+  vehicules = []
   constructor(
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService,
-    private activiteService:ActiviteService,
-    private utilisateurService:UtilisateurResolveService
+    private activiteService: ActiviteService,
+    private utilisateurService: UtilisateurResolveService,
+    private logistiqueService: LogistiqueService
   ) {
     // this.toastr.success('Hello world!', 'Toastr fun!');
     this.VisiteForm = this.fb.group({
       typeVisite: [null, Validators.required],
       commercialId: [null, Validators.required],
       pointDeVenteIds: [null, Validators.required],
+      vehiculeId: [null, Validators.required],
       dateVisite: [null, Validators.required],
       IsRepetitive: [false, Validators.required],
     });
@@ -60,29 +64,29 @@ export class GestionvisiteComponent {
     this.LoadCommercial();
     this.LoadPdv();
     this.LoadVisite()
+    this.GetVehiculeList()
   }
 
-  LoadVisite()
-  {
+  LoadVisite() {
     let data = {
       paginate: true,
       page: 1,
       limit: 8,
     };
     this._spinner.show()
-    this.activiteService.GetVisiteList(data).then((res:any)=>{
-      res.data.forEach((item:any) => {
+    this.activiteService.GetVisiteList(data).then((res: any) => {
+      res.data.forEach((item: any) => {
         this.events = [
           ...this.events,
           {
             start: startOfDay(new Date(item.dateVisite)),
-            title: item.typeVisite.libelle+' de '+ item.commercial.nom+' '+item.commercial.prenom,
+            title: item.typeVisite.libelle + ' de ' + item.commercial.nom + ' ' + item.commercial.prenom,
             color: { primary: '#1e90ff', secondary: '#D1E8FF' },
           },
         ];
       });
       this._spinner.hide()
-      console.log('Visite',res)
+      console.log('Visite', res)
     })
   }
 
@@ -94,7 +98,7 @@ export class GestionvisiteComponent {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
-    this.articleId = data.id;
+    this.visiteId = data.id;
     this.isModalOpen = true;
     // this.loadArticleDetails();
     this.operation = 'edit';
@@ -118,12 +122,13 @@ export class GestionvisiteComponent {
         "pointDeVenteIds": this.VisiteForm.value.pointDeVenteIds,
         "dateDeVisite": this.VisiteForm.value.dateVisite,
         "IsRepetitive": this.VisiteForm.value.IsRepetitive,
-        "typeVisite": this.VisiteForm.value.typeVisite
+        "typeVisite": this.VisiteForm.value.typeVisite,
+        "vehiculeId": this.VisiteForm.value.vehiculeId
       };
       console.log('formValues', formValues);
 
       if (this.isEditMode) {
-        this.activiteService.UpdateVisite(this.articleId, formValues).then(
+        this.activiteService.UpdateVisite(this.visiteId, formValues).then(
           (response: any) => {
             console.log('visite mis à jour avec succès', response);
             this._spinner.hide()
@@ -150,13 +155,12 @@ export class GestionvisiteComponent {
           },
           (error: any) => {
             this._spinner.hide()
-            if(error.error.status == 400)
-            {
+            if (error.error.status == 400) {
               this.toastr.error('Erreur!', error.error.error);
-            }else{
+            } else {
               this.toastr.error('Erreur!', 'Erreur lors de la création.');
             }
-            
+
             console.error('Erreur lors de la création', error);
           }
         );
@@ -164,52 +168,62 @@ export class GestionvisiteComponent {
     }
   }
 
-
-  LoadTypeVisite()
-  {
+  GetVehiculeList() {
     let data = {
-      paginate: true,
+      paginate: false,
       page: 1,
       limit: 8,
     };
-    this.activiteService.GetTypeVisiteList(data).then((res:any)=>{
+    this.logistiqueService.GetVehiculeList(data).then((res: any) => {
+      this.vehicules = res.data
+    },
+      (error: any) => {
+        this._spinner.hide()
+      })
+  }
+
+  LoadTypeVisite() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    this.activiteService.GetTypeVisiteList(data).then((res: any) => {
       this.typeVisite = res.data;
-      console.log('typeVisite',res)
+      console.log('typeVisite', res)
     },
-    (error: any) => {
-      this._spinner.hide()
-    })
+      (error: any) => {
+        this._spinner.hide()
+      })
   }
 
-  LoadCommercial()
-  {
+  LoadCommercial() {
     let data = {
       paginate: true,
       page: 1,
       limit: 8,
     };
-    this.utilisateurService.GetCommercialList(data).then((res:any)=>{
+    this.utilisateurService.GetCommercialList(data).then((res: any) => {
       this.commerciaux = res.data
-      console.log('commerciaux',res)
+      console.log('commerciaux', res)
     },
-    (error: any) => {
-      this._spinner.hide()
-    })
+      (error: any) => {
+        this._spinner.hide()
+      })
   }
 
 
 
-  LoadPdv()
-  {
+  LoadPdv() {
     let data = {
       paginate: true,
       page: 1,
       limit: 8,
     };
-    this.utilisateurService.GetPointDeVenteList(data).then((res:any)=>{
+    this.utilisateurService.GetPointDeVenteList(data).then((res: any) => {
       this.pointDeVente = res.data
-      console.log('pointDeVente',res)
-    },(error: any) => {
+      console.log('pointDeVente', res)
+    }, (error: any) => {
       this._spinner.hide()
     })
   }
