@@ -54,17 +54,17 @@ export class ParametreComponent implements OnInit {
       url:'feature/parametre/questionnairevisite',
     },
     {
-      image: 'assets/icon/quest.png',
+      image: 'assets/icon/article.png',
       title: 'Type prix',
       url:'feature/parametre/typeprix',
     },
     {
-      image: 'assets/icon/quest.png',
+      image: 'assets/icon/casier.png',
       title: 'Plastique nu',
       url:'feature/datareference/plastique-nu',
     },
     {
-      image: 'assets/icon/quest.png',
+      image: 'assets/icon/bouteille.png',
       title: 'Bouteille vide',
       url:'feature/datareference/bouteille-vide',
     }

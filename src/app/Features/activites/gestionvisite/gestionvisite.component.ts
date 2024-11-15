@@ -204,7 +204,10 @@ export class GestionvisiteComponent {
       limit: 8,
     };
     this.utilisateurService.GetCommercialList(data).then((res: any) => {
-      this.commerciaux = res.data
+      this.commerciaux = res.data.map((commercial: any) => ({
+        ...commercial,
+        fullLabel: `${commercial.nom} ${commercial.prenom}` // Exemple de concaténation
+      }));
       console.log('commerciaux', res)
     },
       (error: any) => {

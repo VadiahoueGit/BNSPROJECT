@@ -13,6 +13,7 @@ import { RapportComponent } from './rapport/rapport.component';
 import { AchatsComponent } from './achats/achats.component';
 import { PartenairesComponent } from './partenaires/partenaires.component';
 import { PartenairesModule } from './partenaires/partenaires.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { PartenairesModule } from './partenaires/partenaires.module';
     FeaturesRoutingModule,
     PartenairesModule,
     // ParametreModule,
-   
+    ReactiveFormsModule,
+    FormsModule,
     DashboardModule,
     CommonModule,
     NgxDatatableModule

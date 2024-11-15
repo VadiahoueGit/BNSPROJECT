@@ -56,3 +56,31 @@
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div *ngIf="isModalOpen" class="custom-modal">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center">
+                <div class="d-flex justify-content-center align-items-center"
+                    style="background-color: rgb(219, 230, 255); border-radius: 3rem; width: 3rem; height: 3rem;">
+                    <i class="far fa-key text-secondary fs-3"></i>
+                </div>
+                <Label class="fw-bold fs-6 text-secondary mx-2">Modifiez votre mot de passe</Label>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="passwordForm">
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Nouveau mot de passe</label>
+                        <input type="password" formControlName="password" class="form-control" id="password"
+                            placeholder="Mot de passe 6 caractères minimum!">
+                        <label class="error my-3" *ngIf="submitError">Email ou mot de passe incorrect</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer gap-3 px-3 d-flex justify-content-center">
+                <button type="submit" (click)="onSubmit()" class="btn btn-secondary px-2">Modifier</button>
+            </div>
+        </div>
+    </div>
+</div>

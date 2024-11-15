@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LocalStorageService } from '../core/local-storage.service';
 import { storage_keys } from './shared-component/utils';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-features',
@@ -9,8 +10,10 @@ import { storage_keys } from './shared-component/utils';
   styleUrls: ['./features.component.scss']
 })
 export class FeaturesComponent {
-
+  isModalOpen: boolean = false;
   currentUrl: string;
+  submitError:Boolean = false;
+  passwordForm:FormGroup
   items = [
     { label: 'Dashboard', icon: 'fas fa-chart-line', url: 'feature/dashboard' },
     { label: 'Activités', icon: 'fas fa-truck-container', url: 'feature/activites' },
@@ -25,8 +28,11 @@ export class FeaturesComponent {
   ];
   UserInfo:any
   selectedItem: number | null = null;
-  constructor(private router: Router,private localstorage:LocalStorageService,) {
+  constructor(private router: Router,private localstorage:LocalStorageService,private fb: FormBuilder,) {
     this.currentUrl = this.router.url; // URL courante
+    this.passwordForm =this.fb.group({
+      password: ['', Validators.required, Validators.minLength(6)]
+    });
   }
   ngOnInit(): void {
     this.UserInfo = this.localstorage.getItem(storage_keys.STOREUser);
@@ -51,13 +57,19 @@ export class FeaturesComponent {
     } else if (this.currentUrl.includes('/feature/stocks')) {
       this.setActive(8)
     } 
-    //  else if (this.currentUrl.includes('/feature/datareference')) {
-    //   this.setActive(9)
-    // } 
+
+    if(this.UserInfo.isFirstLogin == true)
+    {
+      // this.isModalOpen = true;
+    }
   }
 
   setActive(index: number) {
     this.selectedItem = index;
+  }
+
+  onSubmit(){
+
   }
 
   navigate(url: string,index: number) {

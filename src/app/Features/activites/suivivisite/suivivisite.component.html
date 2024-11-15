@@ -1,7 +1,7 @@
 <div class="card">
 
     <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
-        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true">
+        [paginator]="true" (onPage)="onPage($event)">
 
         <ng-template pTemplate="header">
             <tr>
@@ -38,7 +38,8 @@
                     </span>
                 </td>
                 <td>
-                    <span class="ml-1 vertical-align-middle fw-bold fs-7" [ngStyle]="{ color: dataList.visiteEffectuee == true ? 'green' : 'red' }" >
+                    <span class="ml-1 vertical-align-middle fw-bold fs-7"
+                        [ngStyle]="{ color: dataList.visiteEffectuee == true ? 'green' : 'red' }">
                         {{ dataList.status }}
                     </span>
                 </td>
@@ -61,7 +62,7 @@
 
 <!-- Modal detail -->
 <!-- Modal -->
-<div *ngIf="isModalOpen" class="custom-modal">
+<div *ngIf="isModalOpen && visiteDetail" class="custom-modal">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header d-flex align-items-center">
@@ -74,40 +75,51 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-6">
-                        <div><strong>Client :</strong> </div><div><label></label></div>
-                        <div><strong>Zone :</strong> </div><div><label></label></div>
-                        <div><strong>Commercial :</strong> </div><div><label>{{visiteDetail.commercial.nom}} {{visiteDetail.commercial.prenom}}</label></div>
+                        <div><strong>Statut:</strong><label class="mx-2"> {{visiteDetail.status}}</label></div>
+                        <div><strong>Zone:</strong> </div>
+                        <div><strong>Commercial :</strong> <label class="mx-2"> {{visiteDetail.commercial.nom}} {{visiteDetail.commercial.prenom}}</label></div>
+                        <div><strong>Vehicule :</strong> <label class="mx-2"> {{visiteDetail.vehicule.marque}} / {{visiteDetail.vehicule.immatriculation}}</label></div>
+
                     </div>
 
                     <div class="col-6">
-                        <div><strong>Heure debut :</strong> </div>
-                        <div><strong>Heure fin :</strong> </div>
-                        <div><strong>Durée :</strong> </div>
+                        <div><strong>Mission :</strong> <label class="mx-2"> {{visiteDetail.typeVisite.libelle}}</label> </div>
+                        <div><strong>Heure debut :</strong> <label class="mx-2" *ngIf="visiteDetail.DateDebut"> {{visiteDetail.DateDebut  | date: 'HH:mm'}}</label> 
+                            <label class="mx-2 text-danger" *ngIf="visiteDetail.DateDebut == null"> Pas encore debuté</label> </div>
+                        <div><strong>Heure fin :</strong>  <label class="mx-2"> {{visiteDetail.DateFin  | date: 'HH:mm'}}</label></div>
+                        <div><strong>Durée :</strong> <label class="mx-2" *ngIf="visiteDetail.DateFin != null">{{ getFormattedDuration() }}</label></div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6" style="overflow-y: auto; max-height: 450px;">
-                        <fieldset class="row border my-2">
-                            <legend class="fs-6 text-primary">Questionnaire - Point de vente 1</legend>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Questions</th>
-                                        <th scope="col">Reponses</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Avez vous vendu?</td>
-                                        <td>Oui</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <div class="col-12" style="overflow-y: auto; max-height: 450px;">
+                        <fieldset class="row border my-2" *ngFor="let item of visiteDetail.pointDeVentes">
+                            <legend class="fs-6 text-primary">Client - {{item.pointDeVente.nom}} {{item.pointDeVente.prenom}} {{item.status}}
+                            </legend>
+                            <fieldset class="row border my-2">
+                                <legend style="font-size: 14px;" class="text-secondary">Questionnaire
+                                </legend>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Questions</th>
+                                            <th scope="col">Reponses</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let quest of item.reponses; let i = index">
+                                            <th scope="row">{{i+1}}</th>
+                                            <td>{{quest.question.texte}}</td>
+                                            <td>{{quest.reponse}}</td>
+                                        </tr>
+                                        <label *ngIf="item.reponses.length == 0" class="text-danger">Pas encore de reponses</label>
+                                    </tbody>
+                                </table>
+                            </fieldset>
+
                         </fieldset>
                     </div>
-                    <div class="col-md-6">
+                    <!-- <div class="col-md-6">
                         <fieldset class="row border my-2">
                             <legend class="fs-6 text-primary">Ventes</legend>
                             <table class="table">
@@ -127,7 +139,7 @@
                                 </tbody>
                             </table>
                         </fieldset>
-                    </div>
+                    </div> -->
                 </div>
 
 
