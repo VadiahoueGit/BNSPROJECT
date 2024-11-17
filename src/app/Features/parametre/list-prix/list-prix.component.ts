@@ -22,6 +22,8 @@ export class ListPrixComponent implements OnInit {
   dataListTypesPrix: any;
   dataListProduits: any;
   prixForm: FormGroup;
+  currentPage: number;
+  rowsPerPage: any;
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -34,12 +36,12 @@ export class ListPrixComponent implements OnInit {
     this.prixForm = this.fb.group({
       libelle: [null, Validators.required],
     });
-    this.GetListTypePrix();
+    this.GetListTypePrix(1);
   }
-  GetListTypePrix() {
+  GetListTypePrix(page:number) {
     let data = {
-      paginate: true,
-      page: 1,
+      paginate: false,
+      page: page,
       limit: 8,
     };
     this._spinner.show();
@@ -48,6 +50,11 @@ export class ListPrixComponent implements OnInit {
       this.dataList = res.data;
       this._spinner.hide();
     });
+  }
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetListTypePrix(this.currentPage);
   }
   filterGlobal(event: any) {
     const inputElement = event.target as HTMLInputElement;
@@ -62,7 +69,7 @@ export class ListPrixComponent implements OnInit {
           this.articleService.DeleteTypePrix(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetListTypePrix();
+            this.GetListTypePrix(1);
             this._spinner.hide();
           });
         } else {
@@ -102,7 +109,7 @@ export class ListPrixComponent implements OnInit {
           (response: any) => {
             this.prixForm.reset()
             this.OnCloseModal();
-            this.GetListTypePrix();
+            this.GetListTypePrix(1);
             this.toastr.success(response.message);
             console.log('prix mis à jour avec succès', response);
 
@@ -116,7 +123,7 @@ export class ListPrixComponent implements OnInit {
         this.articleService.CreateTypePrix(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetListTypePrix();
+            this.GetListTypePrix(1);
             this.prixForm.reset()
             this.toastr.success(response.message);
             console.log('prix crée avec succès', response);

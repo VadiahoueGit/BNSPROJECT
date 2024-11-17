@@ -15,6 +15,8 @@ export class VentechinepageComponent {
   loading: boolean = true;
   isModalOpen = false;
   operation:string = ''
+  currentPage: number;
+  rowsPerPage: any;
   constructor(private _spinner:NgxSpinnerService,
     private toastr: ToastrService,
     private fb: FormBuilder,
@@ -49,4 +51,10 @@ export class VentechinepageComponent {
   }
   onSubmit()
   {}
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    // this.GetArticleList(this.currentPage);
+  }
+
 }

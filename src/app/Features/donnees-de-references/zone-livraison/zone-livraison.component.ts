@@ -26,6 +26,8 @@ export class ZoneLivraisonComponent {
   zoneId: any = 0;
   isEditMode: boolean = false;
   dataListlocalite: any = [];
+  currentPage: number;
+  rowsPerPage: any;
 
   constructor(
     private _userService: UtilisateurResolveService,
@@ -53,7 +55,7 @@ export class ZoneLivraisonComponent {
       localite: [0, Validators.required],
     });
 
-    this.GetList();
+    this.GetList(1);
   }
   goBack() {
     this.location.back()
@@ -90,10 +92,10 @@ export class ZoneLivraisonComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetList() {
+  GetList(page:number) {
     let data = {
-      paginate: true,
-      page: 1,
+      paginate: false,
+      page: page,
       limit: 8,
     };
     this._spinner.show();
@@ -103,6 +105,12 @@ export class ZoneLivraisonComponent {
       this._spinner.hide();
     });
   }
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetList(this.currentPage);
+  }
+
   onSubmit(): void {
     console.log(this.zoneForm.value);
     if (this.zoneForm.valid) {
@@ -118,7 +126,7 @@ export class ZoneLivraisonComponent {
 
             this.OnCloseModal();
             this.zoneForm.reset();
-            this.GetList();
+            this.GetList(1);
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -129,7 +137,7 @@ export class ZoneLivraisonComponent {
         this._coreService.CreateZone(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetList();
+            this.GetList(1);
             this.zoneForm.reset();
             this.toastr.success(response.message);
 
@@ -157,7 +165,7 @@ export class ZoneLivraisonComponent {
           this._coreService.DeleteZone(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetList();
+            this.GetList(1);
             this._spinner.hide();
           });
         } else {

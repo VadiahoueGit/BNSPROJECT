@@ -29,6 +29,8 @@ export class LiquideComponent {
   dataListLiquides: any = [];
   dataListFormats: any= [];
   dataListConditionnements: any= [];
+  currentPage: number;
+  rowsPerPage: any;
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -77,13 +79,13 @@ export class LiquideComponent {
       this.dataListConditionnements = res;
       console.log('dataListConditionnements:::>', this.dataListConditionnements);
     });
-    this.GetLiquideList()
+    this.GetLiquideList(1)
   }
 
-  GetLiquideList() {
+  GetLiquideList(page:number) {
     let data = {
-      paginate: true,
-      page: 1,
+      paginate: false,
+      page:page,
       limit: 8,
     };
     this._spinner.show();
@@ -102,6 +104,11 @@ export class LiquideComponent {
   OnCloseModal() {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
+  }
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetLiquideList(this.currentPage);
   }
   onSubmit(): void {
     console.log(this.liquideForm.value);
@@ -125,7 +132,7 @@ export class LiquideComponent {
             console.log('liquide mis à jour avec succès', response);
             this.liquideForm.reset()
             this.OnCloseModal();
-            this.GetLiquideList();
+            this.GetLiquideList(1);
             this.toastr.success(response.message);
             console.log('Groupe article mis à jour avec succès', response);
 
@@ -140,7 +147,7 @@ export class LiquideComponent {
         this.articleService.CreateLiquide(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetLiquideList();
+            this.GetLiquideList(1);
             this.liquideForm.reset();
             this.toastr.success(response.message);
             // this.toastr.success('Succès!', 'Liquide crée avec succès.');
@@ -190,7 +197,7 @@ export class LiquideComponent {
           this.articleService.DeleteLiquide(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetLiquideList()
+            this.GetLiquideList(1)
             this._spinner.hide();
           });
         } else {

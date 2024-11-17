@@ -29,6 +29,8 @@ export class BouteilleVideComponent {
   dataListFormats: any = [];
 
   dataListPlastiqueNu: any = [];
+  currentPage: number;
+  rowsPerPage: any;
   constructor(
     private location: Location,
     private _articleService: ArticleServiceService,
@@ -54,7 +56,7 @@ export class BouteilleVideComponent {
       prixUnitaire: [null, Validators.required],
       format: [null, Validators.required],
     });
-    this.GetBouteilleVideList()
+    this.GetBouteilleVideList(1)
 
   }
   goBack() {
@@ -93,10 +95,10 @@ export class BouteilleVideComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetBouteilleVideList() {
+  GetBouteilleVideList(page:number) {
     let data = {
-      paginate: true,
-      page: 1,
+      paginate: false,
+      page: page,
       limit: 8,
     };
     this._spinner.show();
@@ -105,6 +107,14 @@ export class BouteilleVideComponent {
       this.dataList = res.data;
       this._spinner.hide();
     });
+  }
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetBouteilleVideList(this.currentPage);
+  }
+  GetArticleList(currentPage: any) {
+    throw new Error('Method not implemented.');
   }
   onSubmit(): void {
     console.log(this.BouteilleVideForm);
@@ -120,7 +130,7 @@ export class BouteilleVideComponent {
 
             this.OnCloseModal();
             this.BouteilleVideForm.reset();
-            this.GetBouteilleVideList();
+            this.GetBouteilleVideList(1);
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -131,7 +141,7 @@ export class BouteilleVideComponent {
         this._articleService.CreateBouteilleVide(this.BouteilleVideForm.value).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetBouteilleVideList();
+            this.GetBouteilleVideList(1);
             this.BouteilleVideForm.reset();
             // this.toastr.success('Succès!', 'Utilisateur créé avec succès.');
             this.toastr.success(response.message);
@@ -161,7 +171,7 @@ export class BouteilleVideComponent {
           this._articleService.DeleteBouteilleVide(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetBouteilleVideList();
+            this.GetBouteilleVideList(1);
             this._spinner.hide();
           });
         } else {

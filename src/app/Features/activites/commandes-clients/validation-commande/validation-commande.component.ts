@@ -31,6 +31,8 @@ export class ValidationCommandeComponent {
   dataListPlastiqueNu: any=[];
   dataListLiquides: any=[];
   dataListArticlesProduits: any=[];
+  currentPage: number;
+  rowsPerPage: any;
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -79,7 +81,7 @@ export class ValidationCommandeComponent {
     this.articleService.ListGroupesArticles.subscribe((res: any) => {
       this.dataListGroupeArticles = res;
     });
-    // this.GetArticleList();
+    this.GetArticleList(1);
   }
   
   onFilterGlobal(event: Event) {
@@ -113,10 +115,10 @@ export class ValidationCommandeComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetArticleList() {
+  GetArticleList(page: number ) {
     let data = {
-      paginate: true,
-      page: 1,
+      paginate: false,
+      page: page,
       limit: 8,
     };
     this._spinner.show();
@@ -147,7 +149,7 @@ export class ValidationCommandeComponent {
             this.toastr.success(response.message);
 
             this.OnCloseModal();
-            this.GetArticleList();
+            this.GetArticleList(1);
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -158,7 +160,7 @@ export class ValidationCommandeComponent {
         this.articleService.CreateArticle(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetArticleList();
+            this.GetArticleList(1);
             this.ArticleForm.reset();
             this.toastr.success(response.message);
             console.log('Nouvel article créé avec succès', response);
@@ -184,6 +186,14 @@ export class ValidationCommandeComponent {
       liquideId: 1,
     });
   }
+  
+  // Méthode pour gérer la pagination
+onPage(event: any) {
+  this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+  this.rowsPerPage = event.rows;
+  this.GetArticleList(this.currentPage);
+}
+
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
       (res:any) => {
@@ -192,7 +202,7 @@ export class ValidationCommandeComponent {
           this.articleService.DeletedArticle(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetArticleList();
+            this.GetArticleList(1);
 
             this._spinner.hide();
           });

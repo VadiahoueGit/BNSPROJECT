@@ -22,6 +22,8 @@ export class CreationPrixComponent {
   updateData: any;
   prixId: any;
   prixForm!: FormGroup;
+  currentPage: number;
+  rowsPerPage: any;
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -45,12 +47,12 @@ export class CreationPrixComponent {
       this.dataListTypesPrix = res;
       console.log(this.dataListTypesPrix ,"this.dataListTypesPrix ")
     });
-    this.GetListPrix();
+    this.GetListPrix(1);
   }
-  GetListPrix() {
+  GetListPrix(page:number) {
     let data = {
-      paginate: true,
-      page: 1,
+      paginate: false,
+      page: page,
       limit: 8,
     };
     this._spinner.show();
@@ -69,6 +71,11 @@ export class CreationPrixComponent {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
   }
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetListPrix(this.currentPage);
+  }
   onSubmit(): void {
     console.log(this.prixForm.value);
     if (this.prixForm.valid) {
@@ -85,7 +92,7 @@ export class CreationPrixComponent {
           (response: any) => {
             this.prixForm.reset()
             this.OnCloseModal();
-            this.GetListPrix();
+            this.GetListPrix(1);
             this.toastr.success(response.message);
             // this.toastr.success('Succès!', 'Prix mis à jour avec succès.');
             console.log('prix mis à jour avec succès', response);
@@ -100,7 +107,7 @@ export class CreationPrixComponent {
         this.articleService.CreatePrix(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetListPrix();
+            this.GetListPrix(1);
             this.prixForm.reset()
             this.toastr.success(response.message);
             // this.toastr.success('Succès!', 'Prix créé avec succès.');
@@ -147,7 +154,7 @@ export class CreationPrixComponent {
           this.articleService.DeletePrix(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetListPrix();
+            this.GetListPrix(1);
             this._spinner.hide();
           });
         } else {

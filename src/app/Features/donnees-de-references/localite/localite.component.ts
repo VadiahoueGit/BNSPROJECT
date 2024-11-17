@@ -35,6 +35,8 @@ export class LocaliteComponent {
   dataListArticlesProduits: any = [];
   dataListProfil: any;
   dataListUsers: any;
+  currentPage: number;
+  rowsPerPage: any;
   constructor(
     private _userService: UtilisateurResolveService,
     private location: Location,
@@ -53,7 +55,7 @@ export class LocaliteComponent {
     });
 
 
-    this.GetList();
+    this.GetList(1);
   }
   goBack() {
     this.location.back()
@@ -91,10 +93,10 @@ export class LocaliteComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetList() {
+  GetList(page:number) {
     let data = {
-      paginate: true,
-      page: 1,
+      paginate: false,
+      page: page,
       limit: 8,
     };
     this._spinner.show();
@@ -103,6 +105,11 @@ export class LocaliteComponent {
       this.dataList = res.data;
       this._spinner.hide();
     });
+  }
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetList(this.currentPage);
   }
   onSubmit(): void {
     console.log(this.LocaliteForm.value);
@@ -119,7 +126,7 @@ export class LocaliteComponent {
 
             this.OnCloseModal();
             this.LocaliteForm.reset();
-            this.GetList();
+            this.GetList(1);
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -130,7 +137,7 @@ export class LocaliteComponent {
         this._coreService.CreateLocalite(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetList();
+            this.GetList(1);
             this.LocaliteForm.reset();
             this.toastr.success(response.message);
 
@@ -157,7 +164,7 @@ export class LocaliteComponent {
           this._coreService.DeleteLocalite(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetList();
+            this.GetList(1);
             this._spinner.hide();
           });
         } else {

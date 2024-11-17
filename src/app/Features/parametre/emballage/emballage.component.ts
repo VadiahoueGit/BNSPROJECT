@@ -28,6 +28,8 @@ export class EmballageComponent {
   dataListBouteilleVide: any = [];
   dataListFormats: any= [];
   dataListConditionnements: any= [];
+  currentPage: number;
+  rowsPerPage: any;
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -72,13 +74,13 @@ export class EmballageComponent {
       this.dataListConditionnements = res;
       console.log('dataListConditionnements:::>', this.dataListConditionnements);
     });
-    this.GetEmballageList()
+    this.GetEmballageList(1)
   }
 
-  GetEmballageList() {
+  GetEmballageList(page:number) {
     let data = {
-      paginate: true,
-      page: 1,
+      paginate: false,
+      page: page,
       limit: 8,
     };
     this._spinner.show();
@@ -97,6 +99,11 @@ export class EmballageComponent {
   OnCloseModal() {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
+  }
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetEmballageList(this.currentPage);
   }
   onSubmit(): void {
     console.log(this.emballageForm.value);
@@ -117,7 +124,7 @@ export class EmballageComponent {
           (response: any) => {
             this.emballageForm.reset()
             this.OnCloseModal();
-            this.GetEmballageList();
+            this.GetEmballageList(1);
             this.toastr.success(response.message);
             // this.toastr.success('Succès!', 'Emballage mise à jour avec succès.');
             console.log('emballage mis à jour avec succès', response);
@@ -131,7 +138,7 @@ export class EmballageComponent {
         this.articleService.CreateEmballage(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetEmballageList();
+            this.GetEmballageList(1);
             this.emballageForm.reset();
             this.toastr.success(response.message);
             // this.toastr.success('Succès!', 'Emballage créé avec succès.');
@@ -182,7 +189,7 @@ export class EmballageComponent {
           this.articleService.DeleteEmballage(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetEmballageList()
+            this.GetEmballageList(1)
             this._spinner.hide();
           });
         } else {

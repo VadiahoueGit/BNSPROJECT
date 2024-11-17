@@ -18,6 +18,8 @@ export class TransporteurComponent {
   updateData: any;
   transporteurId: any;
   transporteurForm!: FormGroup;
+  currentPage: number;
+  rowsPerPage: any;
   constructor(
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder
@@ -33,6 +35,11 @@ export class TransporteurComponent {
   OnCloseModal() {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
+  }
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    // this.GetListTypePrix(this.currentPage);
   }
   onSubmit(){}
   

@@ -27,6 +27,8 @@ export class ClientosrComponent {
   grpClient!: any[];
   localite!: any[];
   depots!: any[];
+  currentPage: number;
+  rowsPerPage: any;
 
   constructor(
     private location: Location,
@@ -54,7 +56,7 @@ export class ClientosrComponent {
     this.GetDepotList()
     this.GetZoneList()
     this.GetGroupeClientList()
-    this.GetClientOSRList()
+    this.GetClientOSRList(1)
   }
 
     goBack() {
@@ -102,7 +104,11 @@ export class ClientosrComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
- 
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetClientOSRList(this.currentPage);
+  }
   onSubmit(): void {
     this._spinner.show();
     console.log(this.clientosrForm.value);
@@ -120,7 +126,7 @@ export class ClientosrComponent {
             this._spinner.hide();
             this.clientosrForm.reset();
             this.OnCloseModal();
-            this.GetClientOSRList()
+            this.GetClientOSRList(1)
             this.toastr.success(response.message);
           },
           (error: any) => {
@@ -133,7 +139,7 @@ export class ClientosrComponent {
           (response: any) => {
             this.OnCloseModal();
             this.clientosrForm.reset();
-            this.GetClientOSRList()
+            this.GetClientOSRList(1)
             this.toastr.success(response.message);
             this._spinner.hide();
             console.log('Nouvel article créé avec succès', response);
@@ -168,7 +174,7 @@ export class ClientosrComponent {
           this.utilisateurService.DeletedPointDeVente(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetClientOSRList()
+            this.GetClientOSRList(1)
             this._spinner.hide();
           });
         } else {
@@ -177,10 +183,10 @@ export class ClientosrComponent {
     );
   }
  
-  GetClientOSRList() {
+  GetClientOSRList(page:number) {
     let data = {
       paginate: false,
-      page: 1,
+      page: page,
       limit: 8,
     };
     this._spinner.show();

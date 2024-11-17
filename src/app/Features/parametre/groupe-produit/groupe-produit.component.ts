@@ -31,6 +31,8 @@ export class GroupeProduitComponent {
   updateData: any = {};
   groupeId : number = 0
   isEditMode: boolean = false;
+  currentPage: number;
+  rowsPerPage: any;
   constructor(private articleService: ArticleServiceService, private _spinner:NgxSpinnerService,
     private toastr: ToastrService,
     private fb: FormBuilder,
@@ -42,7 +44,7 @@ export class GroupeProduitComponent {
       libelle: ['', Validators.required],
       code: ['', Validators.required],
     });
-    this.GetGroupeProduitList()
+    this.GetGroupeProduitList(1)
   }
 
   clear(table: Table) {
@@ -64,6 +66,11 @@ export class GroupeProduitComponent {
     this.operation = 'create';
     console.log(this.isModalOpen)
   }
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetGroupeProduitList(this.currentPage);
+  }
   onSubmit(): void {
     console.log(this.groupeProduitForm.value);
     if (this.groupeProduitForm.valid) {
@@ -73,7 +80,7 @@ export class GroupeProduitComponent {
         this.articleService.UpdateGroupeArticle(this.groupeId, formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetGroupeProduitList();
+            this.GetGroupeProduitList(1);
             this.toastr.success(response.message);
             console.log('Groupe article mis à jour avec succès', response);
 
@@ -88,7 +95,7 @@ export class GroupeProduitComponent {
         this.articleService.CreateGroupeArticle(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetGroupeProduitList();
+            this.GetGroupeProduitList(1);
             this.groupeProduitForm.reset()
             this.toastr.success(response.message);
             console.log('emballage crée avec succès', response);
@@ -120,7 +127,7 @@ export class GroupeProduitComponent {
           this.articleService.DeleteGroupeArticle(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetGroupeProduitList();
+            this.GetGroupeProduitList(1);
             this._spinner.hide();
           });
         } else {
@@ -128,11 +135,11 @@ export class GroupeProduitComponent {
       }
     );
   }
-  GetGroupeProduitList()
+  GetGroupeProduitList(page:number)
   {
     let data = {
-      paginate: true,
-      page:1,
+      paginate: false,
+      page:page,
       limit:8
     }
     this._spinner.show()
