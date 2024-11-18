@@ -9,7 +9,13 @@
 </div> -->
 <div class="card p-2">
     <div *ngIf="currentPosition">
-        <gmp-map [center]="currentPosition" zoom="12" map-id="7e8ae1eacad77dce">
+        <gmp-map [center]="currentPosition" zoom="12" map-id="df680b94cd051002" >
+            <map-marker
+            *ngFor="let marker of markers"
+            [position]="marker.position"
+            [title]="marker.title"
+            [icon]="marker.icon">
+          </map-marker>
             <gmp-advanced-marker [position]="currentPosition" title="My location"></gmp-advanced-marker>
         </gmp-map>
     </div>

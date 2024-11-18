@@ -9,10 +9,11 @@ import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.serv
   styleUrls: ['./cartographie.component.scss']
 })
 export class CartographieComponent {
-  dataList!:[]
+  dataList!: []
+  markers: any[] = [];
   latitude: number | undefined;
   longitude: number | undefined;
-  currentPosition:any
+  currentPosition: any
   mapOptions: google.maps.MapOptions = {
     styles: [
       {
@@ -21,7 +22,7 @@ export class CartographieComponent {
       },
     ],
   };
-  constructor(private logisiticService:LogistiqueService,private utilisateurService: UtilisateurResolveService,private _spinner: NgxSpinnerService,) {
+  constructor(private logisiticService: LogistiqueService, private utilisateurService: UtilisateurResolveService, private _spinner: NgxSpinnerService,) {
   }
   ngOnInit() {
     this.GetClientOSRList()
@@ -39,11 +40,26 @@ export class CartographieComponent {
     this.utilisateurService.GetPointDeVenteList(data).then((res: any) => {
       console.log('GetClientOSRList:::>', res);
       this.dataList = res.data;
+      this.addMarker(res.data)
       this._spinner.hide();
     });
   }
 
-
+  addMarker(data:any) {
+     // Transformation des données en marqueurs
+     this.markers = data.map((point:any) => ({
+      position: {
+        lat: parseFloat(point.latitude),
+        lng: parseFloat(point.longitude),
+      },
+      title: point.nom,
+      icon: {
+        url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+        scaledSize: new google.maps.Size(32, 32)
+      }
+    }));
+    console.log('marker',this.markers)
+  }
   getPosition(): void {
     this._spinner.show();
     this.logisiticService.getCurrentPosition().then(
@@ -55,7 +71,7 @@ export class CartographieComponent {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
-        console.log('currentPosition',this.currentPosition);
+        console.log('currentPosition', this.currentPosition);
 
       },
       (error) => {
