@@ -31,6 +31,8 @@ export class SaisieCommandeComponent {
   dataListPlastiqueNu: any=[];
   dataListLiquides: any=[];
   dataListArticlesProduits: any=[];
+  currentPage: number;
+  rowsPerPage: any;
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -79,7 +81,7 @@ export class SaisieCommandeComponent {
     this.articleService.ListGroupesArticles.subscribe((res: any) => {
       this.dataListGroupeArticles = res;
     });
-    // this.GetArticleList();
+     this.GetArticleList(1);
   }
   
   onFilterGlobal(event: Event) {
@@ -113,10 +115,10 @@ export class SaisieCommandeComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetArticleList() {
+  GetArticleList(page:number) {
     let data = {
       paginate: true,
-      page: 1,
+      page:page,
       limit: 8,
     };
     this._spinner.show();
@@ -146,7 +148,7 @@ export class SaisieCommandeComponent {
             console.log('article mis à jour avec succès', response);
             this.toastr.success('Succès!', 'Article mis à jour avec succès.');
             this.OnCloseModal();
-            this.GetArticleList();
+            this.GetArticleList(1);
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -157,7 +159,7 @@ export class SaisieCommandeComponent {
         this.articleService.CreateArticle(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetArticleList();
+            this.GetArticleList(1);
             this.ArticleForm.reset();
             this.toastr.success('Succès!', 'Article créé avec succès.');
             console.log('Nouvel article créé avec succès', response);
@@ -183,6 +185,11 @@ export class SaisieCommandeComponent {
       liquideId: 1,
     });
   }
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetArticleList(this.currentPage);
+  }
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
       (res:any) => {
@@ -191,7 +198,7 @@ export class SaisieCommandeComponent {
           this.articleService.DeletedArticle(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetArticleList();
+            this.GetArticleList(1);
             this._spinner.hide();
           });
         } else {

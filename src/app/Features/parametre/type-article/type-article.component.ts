@@ -23,6 +23,8 @@ export class TypeArticleComponent {
   isEditMode = false;
   articleId: any;
   updateData: any = {};
+  currentPage: number;
+  rowsPerPage: any;
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -35,7 +37,7 @@ export class TypeArticleComponent {
     this.articleForm = this.fb.group({
       libelle: ['', Validators.required],
     });
-    this.GetTypesArticlesList();
+    this.GetTypesArticlesList(1);
   }
 
   clear(table: Table) {
@@ -68,6 +70,11 @@ export class TypeArticleComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetTypesArticlesList(this.currentPage);
+  }
   onSubmit(): void {
     console.log(this.articleForm.value);
     if (this.articleForm.valid) {
@@ -78,7 +85,7 @@ export class TypeArticleComponent {
           (response: any) => {
             console.log('Article mis à jour avec succès', response);
             this.OnCloseModal();
-            this.GetTypesArticlesList();
+            this.GetTypesArticlesList(1);
                  this.toastr.success(response.message);
             console.log('Groupe article mis à jour avec succès', response);
 
@@ -93,7 +100,7 @@ export class TypeArticleComponent {
         this.articleService.CreateTypesArticles(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetTypesArticlesList();
+            this.GetTypesArticlesList(1);
             this.articleForm.reset()
             this.toastr.success(response.message);
 
@@ -114,7 +121,7 @@ export class TypeArticleComponent {
           this.articleService.DeleteTypesArticles(articleId).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-           this.GetTypesArticlesList()
+           this.GetTypesArticlesList(1)
             this._spinner.hide();
           });
         } else {
@@ -122,10 +129,10 @@ export class TypeArticleComponent {
       }
     );
   }
-  GetTypesArticlesList() {
+  GetTypesArticlesList(page:number) {
     let data = {
-      paginate: true,
-      page: 1,
+      paginate: false,
+      page: page,
       limit: 8,
     };
     this._spinner.show();

@@ -31,6 +31,8 @@ export class ArticleComponent {
   dataListPlastiqueNu: any = [];
   dataListLiquides: any = [];
   dataListArticlesProduits: any = [];
+  currentPage: number;
+  rowsPerPage: any;
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -84,7 +86,7 @@ export class ArticleComponent {
     this.articleService.ListGroupesArticles.subscribe((res: any) => {
       this.dataListGroupeArticles = res;
     });
-    this.GetArticleList();
+    this.GetArticleList(1);
   }
 
   onFilterGlobal(event: Event) {
@@ -118,10 +120,10 @@ export class ArticleComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetArticleList() {
+  GetArticleList(page:number) {
     let data = {
-      paginate: true,
-      page: 1,
+      paginate: false,
+      page: page,
       limit: 8,
     };
     this._spinner.show();
@@ -130,6 +132,11 @@ export class ArticleComponent {
       this.dataList = res.data;
       this._spinner.hide();
     });
+  }
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetArticleList(this.currentPage);
   }
   onSubmit(): void {
     console.log(this.ArticleForm.value);
@@ -151,7 +158,7 @@ export class ArticleComponent {
             console.log('article mis à jour avec succès', response);
 
             this.OnCloseModal();
-            this.GetArticleList();
+            this.GetArticleList(1);
             this.toastr.success(response.message);
           },
           (error: any) => {
@@ -163,7 +170,7 @@ export class ArticleComponent {
         this.articleService.CreateArticle(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetArticleList();
+            this.GetArticleList(1);
             this.ArticleForm.reset();
             this.toastr.success(response.message);
 
@@ -198,7 +205,7 @@ export class ArticleComponent {
           this.articleService.DeletedArticle(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetArticleList();
+            this.GetArticleList(1);
             this._spinner.hide();
           });
         } else {

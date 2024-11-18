@@ -21,6 +21,8 @@ export class QuestionnaireVisiteComponent {
   updateData: any;
   questionId:number
   questionForm:FormGroup
+  currentPage: number;
+  rowsPerPage: any;
   constructor(private activiteService:ActiviteService,private location: Location,private cd: ChangeDetectorRef,private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService) {
@@ -30,7 +32,7 @@ export class QuestionnaireVisiteComponent {
     });
   }
   ngOnInit() {
-    this.GetQuestionList()
+    this.GetQuestionList(1)
   }
   OnCloseModal() {
     this.isModalOpen = false;
@@ -52,7 +54,11 @@ export class QuestionnaireVisiteComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetQuestionList(this.currentPage);
+  }
   onSubmit() {
     if (this.isEditMode) {
       this._spinner.show();
@@ -60,7 +66,7 @@ export class QuestionnaireVisiteComponent {
         this._spinner.hide();
         this.isModalOpen = false;
         this.toastr.success(res.message);
-        this.GetQuestionList()
+        this.GetQuestionList(1)
         console.log(res)
       },
         (error: any) => {
@@ -71,7 +77,7 @@ export class QuestionnaireVisiteComponent {
     } else {
       this._spinner.show();
       this.activiteService.CreateQuestion(this.questionForm.value).then((res:any) => {
-        this.GetQuestionList()
+        this.GetQuestionList(1)
         this.toastr.success(res.message);
         this.isModalOpen = false;
         this._spinner.hide();
@@ -99,12 +105,12 @@ export class QuestionnaireVisiteComponent {
       }
     );
   }
-  GetQuestionList()
+  GetQuestionList(page:number)
   {
     this._spinner.show();
     let data = {
-      paginate: true,
-      page: 1,
+      paginate: false,
+      page: page,
       limit: 8,
     };
     this.activiteService.GetQuestionList(data).then((res:any)=>{

@@ -38,6 +38,8 @@ export class DepotComponent {
   dataListProfil: any;
   dataListUsers: any;
   dataListlocalite: any;
+  currentPage: number;
+  rowsPerPage: any;
   constructor(
     private coreService: CoreServiceService,
     private _userService: UtilisateurResolveService,
@@ -74,7 +76,7 @@ export class DepotComponent {
     });
 
     this.GetZoneList()
-    this.GetDepotList();
+    this.GetDepotList(1);
   }
   goBack() {
     this.location.back()
@@ -124,10 +126,10 @@ export class DepotComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetDepotList() {
+  GetDepotList(page:number) {
     let data = {
-      paginate: true,
-      page: 1,
+      paginate: false,
+      page: page,
       limit: 8,
     };
     this._spinner.show();
@@ -137,6 +139,12 @@ export class DepotComponent {
       this._spinner.hide();
     });
   }
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetDepotList(this.currentPage);
+  }
+ 
   onSubmit(): void {
     console.log(this.DepotForm);
     if (this.DepotForm.valid) {
@@ -151,7 +159,7 @@ export class DepotComponent {
 
             this.OnCloseModal();
             this.DepotForm.reset();
-            this.GetDepotList();
+            this.GetDepotList(1);
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -162,7 +170,7 @@ export class DepotComponent {
         this._coreService.CreateDepot(this.DepotForm.value).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetDepotList();
+            this.GetDepotList(1);
             this.DepotForm.reset();
             // this.toastr.success('Succès!', 'Utilisateur créé avec succès.');
             this.toastr.success(response.message);
@@ -195,7 +203,7 @@ export class DepotComponent {
           this._coreService.DeleteDepot(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetDepotList();
+            this.GetDepotList(1);
             this._spinner.hide();
           });
         } else {

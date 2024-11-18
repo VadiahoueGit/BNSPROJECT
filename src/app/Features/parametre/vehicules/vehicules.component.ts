@@ -23,6 +23,8 @@ export class VehiculesComponent implements AfterViewInit {
   vehiculeId: any;
   depots = [];
   vehicleForm!: FormGroup;
+  currentPage: number;
+  rowsPerPage: any;
   constructor(
     private coreService:CoreServiceService,
     private _logistiqueService: LogistiqueService,
@@ -44,7 +46,7 @@ export class VehiculesComponent implements AfterViewInit {
 
   }
   ngOnInit() {
-    this.GetVehiculeList()
+    this.GetVehiculeList(1)
     this.GetDepotist()
   }
 
@@ -63,6 +65,11 @@ export class VehiculesComponent implements AfterViewInit {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
   }
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetVehiculeList(this.currentPage);
+  }
   onSubmit() {
     if (this.isEditMode) {
       this._spinner.show();
@@ -71,7 +78,7 @@ export class VehiculesComponent implements AfterViewInit {
         this.isModalOpen = false;
         this.vehicleForm.reset()
         this.toastr.success(res.message);
-        this.GetVehiculeList()
+        this.GetVehiculeList(1)
         console.log(res)
       },
         (error: any) => {
@@ -82,7 +89,7 @@ export class VehiculesComponent implements AfterViewInit {
     } else {
       this._spinner.show();
       this._logistiqueService.CreateVehicule(this.vehicleForm.value).then((res:any) => {
-        this.GetVehiculeList()
+        this.GetVehiculeList(1)
         this.vehicleForm.reset()
         this.toastr.success(res.message);
         this.isModalOpen = false;
@@ -97,10 +104,10 @@ export class VehiculesComponent implements AfterViewInit {
     }
 
   }
-  GetVehiculeList() {
+  GetVehiculeList(page:number) {
     let data = {
       paginate: false,
-      page: 1,
+      page: page,
       limit: 8,
     };
     this._spinner.show();
@@ -158,7 +165,7 @@ export class VehiculesComponent implements AfterViewInit {
           this._spinner.show();
           this._logistiqueService.DeleteVehicule(Id).then((res: any) => {
             console.log('DATA:::>', res);
-            this.GetVehiculeList()
+            this.GetVehiculeList(1)
             this.toastr.success(res.message);
             this._spinner.hide();
           });

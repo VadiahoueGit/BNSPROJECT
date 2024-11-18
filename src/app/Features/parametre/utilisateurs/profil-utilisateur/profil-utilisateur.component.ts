@@ -32,6 +32,8 @@ export class ProfilUtilisateurComponent {
   dataListPlastiqueNu: any = [];
   dataListLiquides: any = [];
   dataListArticlesProduits: any = [];
+  currentPage: number;
+  rowsPerPage: any;
   constructor(
     private _userService: UtilisateurResolveService,
     private _spinner: NgxSpinnerService,
@@ -48,7 +50,7 @@ export class ProfilUtilisateurComponent {
       this.dataListProduits = res;
     });
 
-    this.GetProfilList();
+    this.GetProfilList(1);
   }
 
   onFilterGlobal(event: Event) {
@@ -83,10 +85,10 @@ export class ProfilUtilisateurComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetProfilList() {
+  GetProfilList(page:number) {
     let data = {
-      paginate: true,
-      page: 1,
+      paginate: false,
+      page: page,
       limit: 8,
     };
     this._spinner.show();
@@ -95,6 +97,11 @@ export class ProfilUtilisateurComponent {
       this.dataList = res.data;
       this._spinner.hide();
     });
+  }
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetProfilList(this.currentPage);
   }
   onSubmit(): void {
     console.log(this.ProfilForm.value);
@@ -110,7 +117,7 @@ export class ProfilUtilisateurComponent {
           (response: any) => {
             console.log('article mis à jour avec succès', response);
             this.OnCloseModal();
-            this.GetProfilList();
+            this.GetProfilList(1);
             this.toastr.success(response.message);
           },
           (error: any) => {
@@ -122,7 +129,7 @@ export class ProfilUtilisateurComponent {
         this._userService.CreateProfil(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetProfilList();
+            this.GetProfilList(1);
             this.ProfilForm.reset();
             this.toastr.success(response.message);
             // this.toastr.success('Succès!', 'Article créé avec succès.');
@@ -152,7 +159,7 @@ export class ProfilUtilisateurComponent {
             .then((res: any) => {
               console.log('DATA:::>', res);
               this.toastr.success(res.message);
-              this.GetProfilList()
+              this.GetProfilList(1)
               this._spinner.hide();
             })
             .catch((err) => {

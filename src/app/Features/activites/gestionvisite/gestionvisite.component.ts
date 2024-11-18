@@ -69,7 +69,7 @@ export class GestionvisiteComponent {
 
   LoadVisite() {
     let data = {
-      paginate: true,
+      paginate: false,
       page: 1,
       limit: 8,
     };
@@ -199,7 +199,7 @@ export class GestionvisiteComponent {
 
   LoadCommercial() {
     let data = {
-      paginate: true,
+      paginate: false,
       page: 1,
       limit: 8,
     };

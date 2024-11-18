@@ -27,6 +27,8 @@ export class CommercialComponent {
   grpClient!: any[];
   localite!: any[];
   depots!: any[];
+  currentPage: number;
+  rowsPerPage: any;
 
   constructor(
     private location: Location,
@@ -45,12 +47,12 @@ export class CommercialComponent {
       idCommercialBNS: [null, Validators.required],
       depotId: [null, Validators.required],
     });
-    this.GetCommercialList()
+    this.GetCommercialList(1)
     this.GetDepotList()
   }
   GetDepotList() {
     let data = {
-      paginate: true,
+      paginate: false,
       page: 1,
       limit: 8,
     };
@@ -106,7 +108,11 @@ export class CommercialComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
- 
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetCommercialList(this.currentPage);
+  }
   onSubmit(): void {
     this._spinner.show();
     console.log(this.commercialForm.value);
@@ -124,7 +130,7 @@ export class CommercialComponent {
             this._spinner.hide();
             this.commercialForm.reset();
             this.OnCloseModal();
-            this.GetCommercialList()
+            this.GetCommercialList(1)
             this.toastr.success(response.message);
           },
           (error: any) => {
@@ -137,7 +143,7 @@ export class CommercialComponent {
           (response: any) => {
             this.OnCloseModal();
             this.commercialForm.reset();
-            this.GetCommercialList()
+            this.GetCommercialList(1)
             this.toastr.success(response.message);
             this._spinner.hide();
             console.log('Nouvel article créé avec succès', response);
@@ -167,7 +173,7 @@ export class CommercialComponent {
           this.utilisateurService.DeleteCommercial(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetCommercialList()
+            this.GetCommercialList(1)
             this._spinner.hide();
           });
         } else {
@@ -176,11 +182,11 @@ export class CommercialComponent {
     );
   }
 
-  GetCommercialList()
+  GetCommercialList(page:number)
   {
     let data = {
       paginate: false,
-      page: 1,
+      page: page,
       limit: 8,
     };
     this._spinner.show()

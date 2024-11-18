@@ -39,6 +39,8 @@ export class GroupeClientComponent {
   dataListPrix: any[]=[];
   dataListUsers: any;
   dataListlocalite: any;
+  currentPage: number;
+  rowsPerPage: any;
   constructor(
     private _userService: UtilisateurResolveService,
     private location: Location,
@@ -70,7 +72,7 @@ export class GroupeClientComponent {
     });
 
 
-    this.GetGroupeClientList();
+    this.GetGroupeClientList(1);
   }
   goBack() {
     this.location.back()
@@ -107,10 +109,10 @@ export class GroupeClientComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetGroupeClientList() {
+  GetGroupeClientList(page:number) {
     let data = {
-      paginate: true,
-      page: 1,
+      paginate: false,
+      page: page,
       limit: 8,
     };
     this._spinner.show();
@@ -120,6 +122,12 @@ export class GroupeClientComponent {
       this._spinner.hide();
     });
   }
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetGroupeClientList(this.currentPage);
+  }
+
   onSubmit(): void {
     console.log(this.GroupeClientForm.value);
     if (this.GroupeClientForm.valid) {
@@ -141,7 +149,7 @@ export class GroupeClientComponent {
 
             this.OnCloseModal();
             this.GroupeClientForm.reset();
-            this.GetGroupeClientList();
+            this.GetGroupeClientList(1);
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -152,7 +160,7 @@ export class GroupeClientComponent {
         this._coreService.CreateGroupeClient(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetGroupeClientList();
+            this.GetGroupeClientList(1);
             this.GroupeClientForm.reset();
             // this.toastr.success('Succès!', 'Utilisateur créé avec succès.');
             this.toastr.success(response.message);
@@ -182,7 +190,7 @@ export class GroupeClientComponent {
           this._coreService.DeleteGroupeClient(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetGroupeClientList();
+            this.GetGroupeClientList(1);
             this._spinner.hide();
           });
         } else {

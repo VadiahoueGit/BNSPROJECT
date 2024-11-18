@@ -7,7 +7,7 @@ import { AuthGuardService } from './auth-guard.service';
 
 @NgModule({
   declarations: [
-    TransporteurComponent
+    // TransporteurComponent
   ],
   imports: [
     CommonModule,

@@ -34,6 +34,8 @@ export class UtilisateurComponent implements AfterViewInit {
   dataListArticlesProduits: any = [];
   dataListProfil: any;
   dataListUsers: any;
+  currentPage: number;
+  rowsPerPage: any;
   constructor(
     private _userService: UtilisateurResolveService,
     private _spinner: NgxSpinnerService,
@@ -61,7 +63,7 @@ export class UtilisateurComponent implements AfterViewInit {
       this.dataListProfil = res;
     });
 
-    this.GetUserList();
+    this.GetUserList(1);
   }
 
   onFilterGlobal(event: Event) {
@@ -96,9 +98,9 @@ export class UtilisateurComponent implements AfterViewInit {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetUserList() {
+  GetUserList(page:number) {
     let data = {
-      paginate: true,
+      paginate: page,
       page: 1,
       limit: 8,
     };
@@ -108,6 +110,11 @@ export class UtilisateurComponent implements AfterViewInit {
       this.dataList = res.data;
       this._spinner.hide();
     });
+  }
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetUserList(this.currentPage);
   }
   onSubmit(): void {
     console.log(this.UserForm.value);
@@ -128,7 +135,7 @@ export class UtilisateurComponent implements AfterViewInit {
 
             this.OnCloseModal();
             this.UserForm.reset();
-            this.GetUserList();
+            this.GetUserList(1);
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -139,7 +146,7 @@ export class UtilisateurComponent implements AfterViewInit {
         this._userService.CreateUsers(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetUserList();
+            this.GetUserList(1);
             this.UserForm.reset();
             // this.toastr.success('Succès!', 'Utilisateur créé avec succès.');
             this.toastr.success(response.message);
@@ -176,7 +183,7 @@ export class UtilisateurComponent implements AfterViewInit {
           this._userService.DeleteUsers(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetUserList();
+            this.GetUserList(1);
             this._spinner.hide();
           });
         } else {

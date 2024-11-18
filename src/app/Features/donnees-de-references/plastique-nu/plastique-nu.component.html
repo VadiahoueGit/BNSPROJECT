@@ -7,7 +7,7 @@
         <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer un plastique nu</button>
     </div>
     <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
-        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true">
+        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
 
         <ng-template pTemplate="header">
             <tr>

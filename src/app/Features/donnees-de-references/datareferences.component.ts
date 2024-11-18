@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-datareferences',
   templateUrl: './datareferences.component.html',
-  styleUrls: ['./datareferences.component.scss']
+  styleUrls: ['./datareferences.component.scss'],
 })
 export class DatareferencesComponent {
   ListItems = [
@@ -21,17 +21,17 @@ export class DatareferencesComponent {
     {
       image: 'assets/icon/article.png',
       title: 'Localités',
-      url:'feature/datareference/localite',
+      url: 'feature/datareference/localite',
     },
     {
       image: 'assets/icon/article.png',
       title: 'Zone de livraisons',
-      url:'feature/datareference/zone-livraison',
-    }
-  ]
-  constructor (private _router: Router){}
+      url: 'feature/datareference/zone-livraison',
+    },
+  ];
+  constructor(private _router: Router) {}
   displayItem(elt: any) {
-    console.log(elt)
-    this._router.navigate([elt.url])
+    console.log(elt);
+    this._router.navigate([elt.url]);
   }
 }

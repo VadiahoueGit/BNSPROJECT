@@ -33,6 +33,8 @@ export class PlastiqueNuComponent {
   dataListProduits: any = [];
 
   dataListPlastiqueNu: any = [];
+  currentPage: number;
+  rowsPerPage: any;
   constructor(
     private location: Location,
     private _articleService: ArticleServiceService,
@@ -58,7 +60,7 @@ export class PlastiqueNuComponent {
       prixUnitaire: [null, Validators.required],
       conditionnement: [null, Validators.required],
     });
-    this.GetPlastiqueNuList()
+    this.GetPlastiqueNuList(1)
 
   }
   goBack() {
@@ -97,10 +99,10 @@ export class PlastiqueNuComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetPlastiqueNuList() {
+  GetPlastiqueNuList(page:number) {
     let data = {
-      paginate: true,
-      page: 1,
+      paginate: false,
+      page: page,
       limit: 8,
     };
     this._spinner.show();
@@ -109,6 +111,11 @@ export class PlastiqueNuComponent {
       this.dataList = res.data;
       this._spinner.hide();
     });
+  }
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetPlastiqueNuList(this.currentPage);
   }
   onSubmit(): void {
     console.log(this.PlastiquenuForm);
@@ -124,7 +131,7 @@ export class PlastiqueNuComponent {
 
             this.OnCloseModal();
             this.PlastiquenuForm.reset();
-            this.GetPlastiqueNuList();
+            this.GetPlastiqueNuList(1);
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -135,7 +142,7 @@ export class PlastiqueNuComponent {
         this._articleService.CreatePlastiqueNu(this.PlastiquenuForm.value).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetPlastiqueNuList();
+            this.GetPlastiqueNuList(1);
             this.PlastiquenuForm.reset();
             // this.toastr.success('Succès!', 'Utilisateur créé avec succès.');
             this.toastr.success(response.message);
@@ -165,7 +172,7 @@ export class PlastiqueNuComponent {
           this._articleService.DeletePlastiqueNu(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetPlastiqueNuList();
+            this.GetPlastiqueNuList(1);
             this._spinner.hide();
           });
         } else {
