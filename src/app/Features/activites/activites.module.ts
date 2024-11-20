@@ -1,5 +1,5 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule } from '@angular/core';
+import { CommonModule, registerLocaleData } from '@angular/common';
 import { ActivitesComponent } from './activites.component';
 import { ActivitesRoutingModule } from './activites-routing.module';
 import { VisitecomComponent } from './visitecom/visitecom.component';
@@ -111,7 +111,8 @@ import { TreeTableModule } from 'primeng/treetable';
 import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
 import { VirtualScrollerModule } from 'primeng/virtualscroller';
 import { ParametreRoutingModule } from '../parametre/parametre-routing.module';
-
+import localeFr from '@angular/common/locales/fr';
+registerLocaleData(localeFr, 'fr');
 @NgModule({
   declarations: [
     ActivitesComponent,
@@ -239,6 +240,9 @@ import { ParametreRoutingModule } from '../parametre/parametre-routing.module';
     StyleClassModule,
     AutoFocusModule,
 
+  ],
+  providers: [
+    { provide: LOCALE_ID, useValue: 'fr' } 
   ],
   exports: [
     AvatarModule,
