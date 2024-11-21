@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { ConfigService } from './config-service.service';
 import { LocalStorageService } from './local-storage.service';
 import { storage_keys } from '../Features/shared-component/utils';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -151,6 +152,23 @@ export class LogistiqueService {
     });
   }
 
+  GetVehiculeLocation(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http
+        .get(`https://fleetengine.googleapis.com/v1/{parent=providers/*}/deliveryVehicles`)
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
   UpdateVehicule(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
       this._http.put(`${this.apiUrl}/v1/vehicule/${id}`, data).subscribe(
@@ -181,5 +199,10 @@ export class LogistiqueService {
           }
         );
     });
+  }
+
+  getAddress(lat: number, lng: number): Observable<any> {
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyDV1ke-HxBDmSPpqyfivksnjzeD29AC18k`;
+    return this._http.get(url);
   }
 }

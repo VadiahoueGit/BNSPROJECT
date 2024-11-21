@@ -46,6 +46,26 @@ export class CoreServiceService {
           });
     })
   }
+
+  async GetGoogleJWT() {
+    await this.initializeApiUrl();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.token}`
+    });
+    return new Promise((resolve: any, reject: any) => {
+
+      this._http.get(`${this.apiUrl}/v1/google-auth/token`, { headers })
+        .subscribe((res: any) => {
+          console.log(res)
+          resolve(res);
+        }
+          , err => {
+            console.log(err);
+            reject(err);
+          });
+    })
+  }
+
   async ToVerifyPassword(data: any) {
     await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {

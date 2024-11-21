@@ -8,15 +8,142 @@
     </div>
 </div> -->
 <div class="card p-2">
+    <div class="d-flex align-items-center gap-4 p-3">
+        <div class="d-flex align-items-center">
+            <p class="mb-0 me-2" style="font-size: smaller;">Dépôt</p>
+            <img width="21px" src="assets/icon/depot.png" alt="Dépôt">
+        </div>
+        <div class="d-flex align-items-center">
+            <p class="mb-0 me-2" style="font-size: smaller;">Client OSR</p>
+            <img width="21px" src="assets/icon/prospect.png" alt="Dépôt">
+        </div>
+        <div class="d-flex align-items-center">
+            <p class="mb-0 me-2" style="font-size: smaller;">Vehicules</p>
+            <img width="21px" src="assets/icon/delivery.png" alt="Dépôt">
+        </div>
+    </div>
     <div *ngIf="currentPosition">
-        <gmp-map [center]="currentPosition" zoom="12" map-id="df680b94cd051002" >
-            <map-marker
-            *ngFor="let marker of markers"
-            [position]="marker.position"
-            [title]="marker.title"
-            [icon]="marker.icon">
-          </map-marker>
-            <gmp-advanced-marker [position]="currentPosition" title="My location"></gmp-advanced-marker>
+        <gmp-map [center]="currentPosition" zoom="12" map-id="df680b94cd051002">
+            <gmp-advanced-marker *ngFor="let marker of markersClient" [position]="marker.position"
+                [title]="marker.title" [content]="marker.content" title="My location"
+                (mouseover)="openInfoWindowOsr(marker)" (mouseout)="closeInfoWindowOsr()"></gmp-advanced-marker>
+            <gmp-advanced-marker *ngFor="let marker of markersDepot" [position]="marker.position" [title]="marker.title"
+                [content]="marker.content" title="My location" (mouseover)="openInfoWindowDepot(marker)"
+                (mouseout)="closeInfoWindowDepot()"></gmp-advanced-marker>
+            <gmp-advanced-marker *ngFor="let marker of markersVehicule" [position]="marker.position"
+                [title]="marker.title" [content]="marker.content" title="My location"></gmp-advanced-marker>
+            <!-- Info Window -->
+
+
         </gmp-map>
     </div>
+
+    <!-- SLIDE OSR -->
+    <div class="sliding-panel" [ngClass]="{'open': panelOpenOsr}">
+        <div class="row mb-3">
+            <label class="fw-bold text-primary fs-3 text-center">Informations</label>
+        </div>
+        <div class="row mb-3 d-flex align-items-center justify-content-center">
+            <img src="assets/icon/prospect.png" style="width: 10em;" alt="">
+        </div>
+
+        <div *ngIf="slideDetails && panelOpenOsr">
+            <div class="row mb-5">
+                <h6 class="fw-bold">{{slideDetails.nom}} {{slideDetails.nom}}</h6>
+                <label class="info text-secondary fs-7">{{slideDetails.GroupeClient.nomGroupe}}</label>
+            </div>
+            <div class="row">
+
+            </div>
+            <div class="row my-2">
+                <div class="col-6">
+                    <label class="fw-bold info">Contact Gerant:</label>
+                </div>
+                <div class="col-6">
+                    <label class="info info">{{slideDetails.contactGerant}}</label>
+                </div>
+            </div>
+            <div class="row my-2">
+                <div class="col-6">
+                    <label class="fw-bold info">Téléphone:</label>
+                </div>
+                <div class="col-6">
+                    <label class="info">{{slideDetails.telephone}}</label>
+                </div>
+            </div>
+            <div class="row my-2">
+                <div class="col-6">
+                    <label class="fw-bold info">Dépot:</label>
+                </div>
+                <div class="col-6">
+                    <label class="info">{{slideDetails.depot.nomDepot}}</label>
+                </div>
+            </div>
+            <div class="row my-2">
+                <div class="col-6">
+                    <label class="fw-bold info">Zone:</label>
+                </div>
+                <div class="col-6">
+                    <label class="info">{{slideDetails.zoneDeLivraison.nomZone}}</label>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <!-- SLIDE DEPOT -->
+    <div class="sliding-panel" [ngClass]="{'open': panelOpenDepot}">
+        <div class="row mb-3">
+            <label class="fw-bold text-primary fs-3 text-center">Informations</label>
+        </div>
+        <div class="row mb-3 d-flex align-items-center justify-content-center">
+            <img src="assets/icon/depot.png" style="width: 10em;" alt="">
+        </div>
+
+        <div *ngIf="slideDetails && panelOpenDepot">
+            <div class="row mb-5">
+                <h6 class="fw-bold text-center">{{slideDetails.nomDepot}}</h6>
+                <!-- <label class="info text-secondary fs-7">{{slideDetails.GroupeClient.nomGroupe}}</label> -->
+            </div>
+            <div class="row">
+
+            </div>
+            <div class="row my-2">
+                <div class="col-6">
+                    <label class="fw-bold info">Gerant:</label>
+                </div>
+                <div class="col-6">
+                    <label class="info info">{{slideDetails.gerant}}</label>
+                </div>
+            </div>
+            <div class="row my-2">
+                <div class="col-6">
+                    <label class="fw-bold info">Téléphone:</label>
+                </div>
+                <div class="col-6">
+                    <label class="info">{{slideDetails.telephone}}</label>
+                </div>
+            </div>
+            <div class="row my-2">
+                <div class="col-6">
+                    <label class="fw-bold info">Zone:</label>
+                </div>
+                <div class="col-6">
+                    <label class="info">{{slideDetails.zone.nomZone}}</label>
+                </div>
+            </div>
+            <div class="row my-2">
+                <div class="col-6">
+                    <label class="fw-bold info">Localité:</label>
+                </div>
+                <div class="col-6">
+                    <label class="info">{{slideDetails.zone.localite.nomLocalite}}</label>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
+<!--  -->

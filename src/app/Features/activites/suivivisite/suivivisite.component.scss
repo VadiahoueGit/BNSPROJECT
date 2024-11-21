@@ -4,7 +4,16 @@ fieldset{
     padding: 1em;
 }
 
-
+.fieldset1{
+  border:1px solid rgb(207, 207, 207);
+  border-radius:7px !important;
+  padding: 0.4em;
+}
+.fieldset{
+  border:1px solid rgb(207, 207, 207);
+  border-radius:10px !important;
+  padding: 1em;
+}
 label{
   font-size: 14px;
 }
