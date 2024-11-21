@@ -76,12 +76,13 @@ export class GestionvisiteComponent {
     this._spinner.show()
     this.activiteService.GetVisiteList(data).then((res: any) => {
       res.data.forEach((item: any) => {
+        const startDate = startOfDay(new Date(item.dateVisite));
         this.events = [
           ...this.events,
           {
-            start: startOfDay(new Date(item.dateVisite)),
-            title: item.typeVisite.libelle + ' de ' + item.commercial.nom + ' ' + item.commercial.prenom,
-            color: { primary: '#1e90ff', secondary: '#D1E8FF' },
+            start: startDate,
+            title: `${item.typeVisite.libelle} de ${item.commercial.nom} ${item.commercial.prenom}`,
+            color: { primary: '#1e90ff', secondary: '#D1E8FF' }
           },
         ];
       });
