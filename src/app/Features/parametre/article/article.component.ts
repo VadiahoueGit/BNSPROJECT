@@ -139,9 +139,11 @@ export class ArticleComponent {
     this.GetArticleList(this.currentPage);
   }
   onSubmit(): void {
+   
     console.log(this.ArticleForm.value);
     if (this.ArticleForm.valid) {
-      // const formValues = this.ArticleForm.value;
+      // const formValues = this.ArticleForm.value; 
+      this._spinner.show();
       const formValues = {
         ...this.ArticleForm.value,
         categorieId: +this.ArticleForm.value.categorieId,
@@ -150,13 +152,13 @@ export class ArticleComponent {
         bouteillevideId: +this.ArticleForm.value.bouteillevideId,
         liquideId: +this.ArticleForm.value.liquideId,
       };
-      console.log('formValues', formValues);
+      console.log('this.isEditMode', this.isEditMode);
 
       if (this.isEditMode) {
         this.articleService.UpdateArticle(this.articleId, formValues).then(
           (response: any) => {
             console.log('article mis à jour avec succès', response);
-
+            this._spinner.hide();
             this.OnCloseModal();
             this.GetArticleList(1);
             this.toastr.success(response.message);
@@ -170,6 +172,7 @@ export class ArticleComponent {
         this.articleService.CreateArticle(formValues).then(
           (response: any) => {
             this.OnCloseModal();
+            this._spinner.hide();
             this.GetArticleList(1);
             this.ArticleForm.reset();
             this.toastr.success(response.message);
