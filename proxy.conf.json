@@ -1,0 +1,9 @@
+{
+    "/api": {
+      "target": "https://bnsapi.monassoci.com",
+      "secure": true,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    }
+  }
+  

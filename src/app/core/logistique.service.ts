@@ -201,8 +201,8 @@ export class LogistiqueService {
     });
   }
 
-  getAddress(lat: number, lng: number): Observable<any> {
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyDV1ke-HxBDmSPpqyfivksnjzeD29AC18k`;
-    return this._http.get(url);
-  }
+  // getAddress(lat: number, lng: number): Observable<any> {
+  //   const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apkkey}`;
+  //   return this._http.get(url);
+  // }
 }

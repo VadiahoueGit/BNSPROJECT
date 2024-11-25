@@ -133,7 +133,7 @@ export class CartographieComponent {
     if (data != null) {
       
       this.slideDetails = this.clientList.find((client: any) => client.id === parseInt(data.title))
-      // this.getAdress(this.slideDetails.latitude,this.slideDetails.longitude)
+      this.getAdress(this.slideDetails.latitude,this.slideDetails.longitude)
     }
 
   }
@@ -143,7 +143,7 @@ export class CartographieComponent {
     if (data != null) {
       
       this.slideDetails = this.depotList.find((client: any) => client.id === parseInt(data.title))
-      // this.getAdress(this.slideDetails.latitude,this.slideDetails.longitude)
+      this.getAdress(this.slideDetails.latitude,this.slideDetails.longitude)
     }
 
   }
@@ -225,13 +225,13 @@ export class CartographieComponent {
   }
 
   getAdress(lat: any, lng: any) {
-    this.logisiticService.getAddress(lat, lng).subscribe((response: any) => {
-      console.log(response)
-      if (response.results && response.results.length > 0) {
-        this.address = response.results[0].formatted_address;  // Adresse formatée
-      } else {
-        this.address = 'Adresse non trouvée';
-      }
-    });
+    // this.logisiticService.getAddress(lat, lng).subscribe((response: any) => {
+    //   console.log(response)
+    //   if (response.results && response.results.length > 0) {
+    //     this.address = response.results[0].formatted_address;  // Adresse formatée
+    //   } else {
+    //     this.address = 'Adresse non trouvée';
+    //   }
+    // });
   }
 }

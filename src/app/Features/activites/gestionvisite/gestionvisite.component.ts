@@ -220,7 +220,7 @@ export class GestionvisiteComponent {
 
   LoadPdv() {
     let data = {
-      paginate: true,
+      paginate: false,
       page: 1,
       limit: 8,
     };
