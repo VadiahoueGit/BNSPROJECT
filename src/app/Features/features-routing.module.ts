@@ -16,6 +16,8 @@ const routes: Routes = [
             { path: 'datareference', loadChildren: () => import('./donnees-de-references/donnees-de-references.module').then(m => m.DonneesDeReferencesModule) },
             { path: 'partenaire', loadChildren: () => import('./partenaires/partenaires.module').then(m => m.PartenairesModule) },
             { path: 'activites', loadChildren: () => import('./activites/activites.module').then(m => m.ActivitesModule) },
+            { path: 'finances', loadChildren: () => import('./finances/finances.module').then(m => m.FinancesModule) },
+            { path: 'stocks', loadChildren: () => import('./stocks/stocks.module').then(m => m.StocksModule) },
             { path: 'cartographie', component:CartographieComponent }
 
         ]

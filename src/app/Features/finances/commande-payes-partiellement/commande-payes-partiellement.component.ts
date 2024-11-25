@@ -1,17 +1,17 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { ALERT_QUESTION } from '../../shared-component/utils';
+import { Component, ViewChild } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
+import { ALERT_QUESTION } from '../../shared-component/utils';
 
 @Component({
-  selector: 'app-article',
-  templateUrl: './article.component.html',
-  styleUrls: ['./article.component.scss'],
+  selector: 'app-commande-payes-partiellement',
+  templateUrl: './commande-payes-partiellement.component.html',
+  styleUrls: ['./commande-payes-partiellement.component.scss']
 })
-export class ArticleComponent {
+export class CommandePayesPartiellementComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
@@ -42,7 +42,7 @@ export class ArticleComponent {
 
   ngOnInit() {
     this.ArticleForm = this.fb.group({
-      photo: [null],
+      photo: [null, Validators.required],
       libelle: [null, Validators.required],
       format: [null, Validators.required],
       Conditionnement: [null, Validators.required],

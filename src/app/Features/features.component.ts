@@ -22,7 +22,7 @@ export class FeaturesComponent {
     { label: 'Paramètres', icon: 'fas fa-cogs', url: 'feature/parametre' },
     { label: 'Achats', icon: 'fas fa-sack-dollar', url: 'feature/achat' },
     { label: 'Partenaires', icon: 'fas fa-handshake', url:'/feature/partenaire' },
-    { label: 'Finances', icon: 'fas fa-sack-dollar', url: 'feature/finance' },
+    { label: 'Finances', icon: 'fas fa-sack-dollar', url: 'feature/finances' },
     { label: 'Stocks', icon: 'fas fa-warehouse-alt', url: 'feature/stocks' },
     // { label: 'Données de références', icon: 'fas fa-warehouse-alt', url: 'feature/datareference' }
   ];
