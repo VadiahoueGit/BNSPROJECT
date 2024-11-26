@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 export class FinancesComponent {
   ListItems = [
     {
-      image: 'assets/icon/article.png',
+      image: 'assets/icon/compta.png',
       title: 'Comptablité',
       url: 'feature/finances/comptabilite',
     },
