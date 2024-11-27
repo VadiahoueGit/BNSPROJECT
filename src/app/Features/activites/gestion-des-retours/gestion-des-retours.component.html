@@ -1,0 +1,44 @@
+<!-- Navigation -->
+<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
+    <i style="font-size: 18px;" class="fas fw-bold fa-chevron-left me-2"></i>
+    <h4 class="fw-bold mb-0">Gestion des retours</h4>
+</div>
+<nav class="nav nav-pills flex-column flex-sm-row gap-1 border-bottom">
+
+    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'suiviRdv'"
+        (click)="activeElement('suiviRdv')">Suivi des Rdv</a>
+
+
+    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'listReceptionEmallage'"
+        (click)="activeElement('listReceptionEmallage')">Liste des réceptions emballages</a>
+
+    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'receptionEmallage'"
+        (click)="activeElement('receptionEmallage')">Réceptions emballages</a>
+
+    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'retourPlein'"
+        (click)="activeElement('retourPlein')">Retour plein</a>
+
+    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'regroupementEmballages'"
+        (click)="activeElement('regroupementEmballages')">Regroupement emballages</a>
+
+</nav>
+
+<div class="tab-content mt-3">
+    <div *ngIf="activeTab === 'suiviRdv'" class="tab-pane fade show active">
+        <app-suivi-des-rdv></app-suivi-des-rdv>
+    </div>
+
+    <div *ngIf="activeTab === 'listReceptionEmallage'" class="tab-pane fade show active">
+        <app-list-des-receptions-emballages></app-list-des-receptions-emballages>
+    </div>
+    <div *ngIf="activeTab === 'receptionEmallage'" class="tab-pane fade show active">
+        <app-receptions-emballages></app-receptions-emballages>
+    </div>
+    <div *ngIf="activeTab === 'retourPlein'" class="tab-pane fade show active">
+        <app-retour-plein></app-retour-plein>
+    </div>
+    <div *ngIf="activeTab === 'regroupementEmballages'" class="tab-pane fade show active">
+        <app-regroupement-emballages></app-regroupement-emballages>
+    </div>
+
+</div>

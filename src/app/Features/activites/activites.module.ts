@@ -112,6 +112,16 @@ import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
 import { VirtualScrollerModule } from 'primeng/virtualscroller';
 import { ParametreRoutingModule } from '../parametre/parametre-routing.module';
 import localeFr from '@angular/common/locales/fr';
+import { CommandeGratuiteComponent } from './commande-gratuite/commande-gratuite.component';
+import { SaisieCommandeGratuiteComponent } from './commande-gratuite/saisie-commande-gratuite/saisie-commande-gratuite.component';
+import { SuiviCommandeGratuiteComponent } from './commande-gratuite/suivi-commande-gratuite/suivi-commande-gratuite.component';
+import { GestionDesRetoursComponent } from './gestion-des-retours/gestion-des-retours.component';
+import { SuiviDesRDVComponent } from './gestion-des-retours/suivi-des-rdv/suivi-des-rdv.component';
+import { ListDesReceptionsEmballagesComponent } from './gestion-des-retours/list-des-receptions-emballages/list-des-receptions-emballages.component';
+import { RetourPleinComponent } from './gestion-des-retours/retour-plein/retour-plein.component';
+import { RegroupementEmballagesComponent } from './gestion-des-retours/regroupement-emballages/regroupement-emballages.component';
+import { ReceptionsEmballagesComponent } from './gestion-des-retours/receptions-emballages/receptions-emballages.component';
+import { FacturationComponent } from './facturation/facturation.component';
 registerLocaleData(localeFr, 'fr');
 @NgModule({
   declarations: [
@@ -125,7 +135,17 @@ registerLocaleData(localeFr, 'fr');
     CommandesClientsComponent,
     SaisieCommandeComponent,
     ValidationCommandeComponent,
-    SuiviCommandeComponent
+    SuiviCommandeComponent,
+    CommandeGratuiteComponent,
+    SaisieCommandeGratuiteComponent,
+    SuiviCommandeGratuiteComponent,
+    GestionDesRetoursComponent,
+    SuiviDesRDVComponent,
+    ListDesReceptionsEmballagesComponent,
+    RetourPleinComponent,
+    RegroupementEmballagesComponent,
+    ReceptionsEmballagesComponent,
+    FacturationComponent
   ],
   imports: [
     TableModule,
