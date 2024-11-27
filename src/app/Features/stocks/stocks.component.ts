@@ -38,11 +38,6 @@ export class StocksComponent {
       title: 'Analyse de stock',
       url: 'feature/stocks/groupe-stocks',
     },
-    {
-      image: 'assets/icon/magasin.png',
-      title: 'Magasin',
-      url: 'feature/stocks/groupe-stocks',
-    },
   
   ]
   constructor(private _router: Router) { }
