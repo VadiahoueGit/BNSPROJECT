@@ -22,7 +22,7 @@ export class ActivitesComponent implements OnInit{
     {
       image: 'assets/icon/commandefree.png',
       title: 'Commandes gratuite',
-      // url:'feature/activites/logistique',
+      url:'feature/activites/commandes-gratuites',
     },
     {
       image: 'assets/icon/delivery.png',
@@ -32,7 +32,7 @@ export class ActivitesComponent implements OnInit{
     {
       image: 'assets/icon/retour.png',
       title: 'Gestion des retours',
-      // url:'feature/activites/logistique',
+      url:'feature/activites/gestion-retour',
     } ,
     {
       image: 'assets/icon/facture.png',
