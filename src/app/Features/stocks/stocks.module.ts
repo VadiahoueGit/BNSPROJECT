@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 
 import { StocksRoutingModule } from './stocks-routing.module';
 import { StocksComponent } from './stocks.component';
-import { GroupeStocksComponent } from './groupe-stocks/groupe-stocks.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -103,16 +102,23 @@ import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
 import { VirtualScrollerModule } from 'primeng/virtualscroller';
 import { FinancesRoutingModule } from '../finances/finances-routing.module';
 import { SharedComponentModule } from '../shared-component/shared-component.module';
-import { InventaireDepotComponent } from './inventaire-depot/inventaire-depot.component';
-import { StocksPdvComponent } from './stocks-pdv/stocks-pdv.component';
+import { EntreenStockComponent } from './entreen-stock/entreen-stock.component';
+import { SortieDeStockComponent } from './sortie-de-stock/sortie-de-stock.component';
+import { TransfertDeStockComponent } from './transfert-de-stock/transfert-de-stock.component';
+import { VisualisationDeStockComponent } from './visualisation-de-stock/visualisation-de-stock.component';
+import { AnalyseDeStockComponent } from './analyse-de-stock/analyse-de-stock.component';
+import { InventaireStoksComponent } from './inventaire-stoks/inventaire-stoks.component';
 
 
 @NgModule({
   declarations: [
     StocksComponent,
-    GroupeStocksComponent,
-    InventaireDepotComponent,
-    StocksPdvComponent
+    EntreenStockComponent,
+    SortieDeStockComponent,
+    TransfertDeStockComponent,
+    VisualisationDeStockComponent,
+    AnalyseDeStockComponent,
+    InventaireStoksComponent
   ],
   imports: [
     CommonModule,
