@@ -39,6 +39,7 @@ export class StocksComponent {
       url: 'feature/stocks/analyse-stocks',
     },
   
+    
   ]
   constructor(private _router: Router) { }
   ngOnInit(): void {
