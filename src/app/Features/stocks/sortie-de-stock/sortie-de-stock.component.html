@@ -1,1 +1,91 @@
-<p>sortie-de-stock works!</p>
+<!-- Navigation -->
+<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
+    <i style="font-size: 18px;" class="fas fw-bold fa-chevron-left me-2"></i>
+    <h4 class="fw-bold mb-0">Réduction de stock</h4>
+</div>
+
+<!-- Carte contenant le formulaire -->
+<div class="card">
+    <div class="container mt-4">
+        <form [formGroup]="stockForm" (ngSubmit)="onSubmit()">
+            <div class="row g-3">
+                <!-- Colonne gauche -->
+                <div class="col-md-6">
+                    <!-- Numéro -->
+                    <div class="mb-3">
+                        <label for="numero" class="form-label">Numéro</label>
+                        <input type="text" id="numero" class="form-control" formControlName="numero" readonly />
+                    </div>
+
+                    <!-- Date d'enregistrement -->
+                    <div class="mb-3">
+                        <label for="dateEnregistrement" class="form-label">Date d'enregistrement</label> <span
+                        class="text-danger">*</span>
+                        <input type="date" id="dateEnregistrement" class="form-control"
+                            formControlName="dateEnregistrement" />
+                    </div>
+
+                    <!-- Date de document -->
+                    <div class="mb-3">
+                        <label for="dateDocument" class="form-label">Date de document</label> <span
+                        class="text-danger">*</span>
+                        <input type="date" id="dateDocument" class="form-control" formControlName="dateDocument" />
+                    </div>
+
+                    <!-- Code Article -->
+                    <div class="mb-3">
+                        <label for="codeArticle" class="form-label">Article</label> <span
+                        class="text-danger">*</span>
+                        <ng-select class="form-control"  [items]="articleList" bindLabel="libelle" bindValue="id"  formControlName="codeArticle" [searchable]="true">
+                        </ng-select>
+                    </div>
+                </div>
+
+                <!-- Colonne droite -->
+                <div class="col-md-6">
+                    <!-- Description -->
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <input type="text" id="description" class="form-control" formControlName="description" />
+                    </div>
+
+                    <!-- Quantité -->
+                    <div class="mb-3">
+                        <label for="quantite" class="form-label">Quantité à déduire</label> <span
+                        class="text-danger">*</span>
+                        <input type="number" id="quantite" class="form-control" formControlName="quantite" />
+                    </div>
+
+                    <!-- Stock disponible -->
+                    <div class="mb-3">
+                        <label for="stockDisponible" class="form-label">Stock disponible avant déduction</label>
+                        <input type="number" id="stockDisponible" class="form-control" formControlName="stockDisponible"
+                            readonly />
+                    </div>
+
+                    <!-- Magasin -->
+                    <div class="mb-3">
+                        <label for="magasin" class="form-label">Magasin</label> <span
+                        class="text-danger">*</span>
+                        <ng-select class="form-control" [items]="depotList" bindLabel="nomDepot" bindValue="id"  formControlName="magasin" [searchable]="true">
+                        </ng-select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Commentaire -->
+            <div class="mb-3">
+                <label for="commentaire" class="form-label">Commentaire</label>
+                <textarea style="width: 95% !important;" id="commentaire" class="form-control"
+                    formControlName="commentaire" rows="3"></textarea>
+            </div>
+
+            <!-- Bouton -->
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary" [disabled]="!stockForm.valid">
+                    Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
