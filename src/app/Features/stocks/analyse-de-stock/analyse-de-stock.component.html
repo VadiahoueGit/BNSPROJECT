@@ -1,1 +1,66 @@
-<p>analyse-de-stock works!</p>
+<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
+    <i style="font-size: 18px;" class="fas fw-bold fa-chevron-left me-2"></i>
+    <h4 class="fw-bold mb-0">Analyse de stock</h4>
+</div>
+<div class="card">
+    <p-table [styleClass]="'p-datatable-sm'" #dt [value]="dataList" dataKey="id" [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" 
+        [globalFilterFields]="['date', 'partenaire', 'articles', 'magasin']"
+        (onPage)="onPage($event)">
+        <!-- Barre de recherche globale -->
+        <ng-template pTemplate="caption">
+            <div class="d-flex justify-content-between py-3">
+                <span class="p-input-icon-left ml-auto d-flex align-items-center">
+                    <i class="fas fa-search"></i>
+                    <input pInputText type="text" (input)="filterGlobal($event)" placeholder="Recherche" />
+                </span>
+            </div>
+        </ng-template>
+        
+        <!-- En-tête de la table -->
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width:15%;color: var(--secondary-color);">Date</th>
+                <th style="width:25%;color: var(--secondary-color);">Partenaire</th>
+                <th style="width:20%;color: var(--secondary-color);">Article</th>
+                <th style="width:20%;color: var(--secondary-color);">Magasin</th>
+                <th style="width:20%;color: var(--secondary-color);">Type de mouvement</th>
+            </tr>
+            <tr>
+                <th>
+                    <p-columnFilter type="text" field="date" placeholder="Date" />
+                </th>
+                <th>
+                    <p-columnFilter type="text" field="partenaire" placeholder="Partenaire" />
+                </th>
+                <th>
+                    <p-columnFilter type="text" field="article" placeholder="Article" />
+                </th>
+                <th>
+                    <p-columnFilter type="text" field="magasin" placeholder="Magasin" />
+                </th>
+                <th>
+                    <p-columnFilter type="text" field="mouvement" placeholder="Type de mouvement" />
+                </th>
+            </tr>
+        </ng-template>
+        
+        <!-- Corps de la table -->
+        <ng-template pTemplate="body" let-rowData>
+            <tr>
+                <td>{{ rowData.date }}</td>
+                <td>{{ rowData.partenaire }}</td>
+                <td>{{ rowData.article }}</td>
+                <td>{{ rowData.magasin }}</td>
+                <td>{{ rowData.mouvement }}</td>
+            </tr>
+        </ng-template>
+
+        <!-- Message quand aucune donnée n'est trouvée -->
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="5">Aucun mouvement de stock trouvé pour les critères sélectionnés.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

@@ -7,13 +7,14 @@ import { SortieDeStockComponent } from './sortie-de-stock/sortie-de-stock.compon
 import { TransfertDeStockComponent } from './transfert-de-stock/transfert-de-stock.component';
 import { VisualisationDeStockComponent } from './visualisation-de-stock/visualisation-de-stock.component';
 import { AnalyseDeStockComponent } from './analyse-de-stock/analyse-de-stock.component';
+import { ArticleServiceService } from 'src/app/core/article-service.service';
 
 const routes: Routes = [
   {path:'', component:StocksComponent},
   { path: 'entree-stocks', component: EntreenStockComponent },
   { path: 'sortie-stocks', component: SortieDeStockComponent },
   { path: 'transfert-stocks', component: TransfertDeStockComponent },
-  { path: 'inventaire', component: InventaireStoksComponent },
+  { path: 'inventaire', component: InventaireStoksComponent ,resolve:{ArticleServiceService}},
   { path: 'visualisation-stocks', component: VisualisationDeStockComponent },
   { path: 'analyse-stocks', component: AnalyseDeStockComponent },
 ];

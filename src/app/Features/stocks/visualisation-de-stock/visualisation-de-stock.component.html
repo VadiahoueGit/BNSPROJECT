@@ -1,1 +1,67 @@
-<p>visualisation-de-stock works!</p>
+<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
+    <i style="font-size: 18px;" class="fas fw-bold fa-chevron-left me-2"></i>
+    <h4 class="fw-bold mb-0">Visualisation des stocks</h4>
+</div>
+<div class="card">
+    <p-table [styleClass]="'p-datatable-sm'" #dt [value]="dataList" dataKey="id" [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" 
+        [globalFilterFields]="['date', 'articles', 'fournisseurs', 'magasin']"
+        (onPage)="onPage($event)">
+        <!-- Barre de recherche globale -->
+        <ng-template pTemplate="caption">
+            <div class="d-flex justify-content-between py-3">
+                <span class="p-input-icon-left ml-auto d-flex align-items-center">
+                    <i class="fas fa-search"></i>
+                    <input pInputText type="text" (input)="filterGlobal($event)" placeholder="Recherche" />
+                </span>
+            </div>
+        </ng-template>
+        
+        <!-- En-tête de la table -->
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width:20%;color: var(--secondary-color);">Code article</th>
+                <th style="width:30%;color: var(--secondary-color);">Description</th>
+                <th style="width:20%;color: var(--secondary-color);">Stock total</th>
+                <th style="width:30%;color: var(--secondary-color);">Disponibilité par magasin</th>
+            </tr>
+            <tr>
+                <th>
+                    <p-columnFilter type="text" field="code" placeholder="Code article" />
+                </th>
+                <th>
+                    <p-columnFilter type="text" field="description" placeholder="Description" />
+                </th>
+                <th>
+                    <p-columnFilter type="text" field="stock" placeholder="Stock total" />
+                </th>
+                <th>
+                    <p-columnFilter type="text" field="magasin" placeholder="Magasin" />
+                </th>
+            </tr>
+        </ng-template>
+        
+        <!-- Corps de la table -->
+        <ng-template pTemplate="body" let-rowData>
+            <tr>
+                <td>{{ rowData.code }}</td>
+                <td>{{ rowData.description }}</td>
+                <td>{{ rowData.stock }}</td>
+                <td>
+                    <ul class="list-unstyled mb-0">
+                        <li *ngFor="let magasin of rowData.magasins">
+                            <span class="fw-bold">{{ magasin.nom }}:</span> {{ magasin.disponibilite }}
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </ng-template>
+
+        <!-- Message quand aucune donnée n'est trouvée -->
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="4">Aucun stock trouvé pour les critères sélectionnés.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>  
