@@ -26,4 +26,8 @@ export class ConfigService {
     console.log(this.config,'this.config')
     return this.config?.apiUrlBns;
   }
+  get wsUrl(): string {
+    console.log(this.config,'this.config')
+    return this.config?.webSocketUrl;
+  }
 }

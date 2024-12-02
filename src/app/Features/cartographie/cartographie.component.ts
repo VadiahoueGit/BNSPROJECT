@@ -1,8 +1,11 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
+import { data } from 'jquery';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Subscription } from 'rxjs';
 import { CoreServiceService } from 'src/app/core/core-service.service';
 import { LogistiqueService } from 'src/app/core/logistique.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
+import { GpsWebSocketService } from 'src/app/core/webSocket.service';
 
 @Component({
   selector: 'app-cartographie',
@@ -40,17 +43,58 @@ export class CartographieComponent {
     top: '0px', // Ajoutez la propriété top
     left: '0px' // Ajoutez la propriété left
   };
-  constructor(private cdr: ChangeDetectorRef, private _coreService: CoreServiceService, private logisiticService: LogistiqueService, private utilisateurService: UtilisateurResolveService, private _spinner: NgxSpinnerService,) {
+  coordinates: any[] = [];
+  private gpsSubscription: Subscription;
+  constructor(private gpsWebSocketService: GpsWebSocketService, private cdr: ChangeDetectorRef, private _coreService: CoreServiceService, private logisiticService: LogistiqueService, private utilisateurService: UtilisateurResolveService, private _spinner: NgxSpinnerService,) {
   }
   ngOnInit() {
-    this.GetClientOSRList()
-    this.getPosition()
-    this.GetDepotList()
-    this.GetGoogleJWT()
-    // this.logisiticService.getAccessToken().then(res=>{console.log('kk')})
+    setInterval(() => {
+      console.log(this.gpsWebSocketService.isConnected())
+      
+    },1000)
+    if (this.gpsWebSocketService.isConnected()) {
+      console.log('WebSocket est connecté');
+    } else {
+      console.warn('WebSocket n’est pas connecté, tentative de reconnexion...');
+      this.reconnect();
+    }
+
+    // Active l'abonnement aux messages
+    this.gpsSubscription = this.gpsWebSocketService.getCoordinates().subscribe({
+      next: (data) => {
+        console.log('Message reçu via WebSocket :', data);
+        if (data.latitude && data.longitude) {
+          this.coordinates.push(data);
+          // Par exemple, ajouter un marqueur sur la carte
+          this.addMarker([data], 'vehicule');
+        } else {
+          console.warn('Message non conforme reçu :', data);
+        }
+      },
+      error: (err) => console.error('Erreur WebSocket :', err),
+    });
+  
+    // Tester l'envoi d'un message
+    this.sendGpsData();
+  
+    this.GetClientOSRList();
+    this.getPosition();
+    this.GetDepotList();
+    this.GetGoogleJWT();
+  }
+  
+
+  // Méthode pour envoyer des données GPS
+  sendGpsData(): void {
+    const data = { latitude: 48.8566, longitude: 2.3522 }; // Exemple de données GPS
+    this.gpsWebSocketService.sendMessage(data);
   }
 
-
+  // Méthode pour tenter la reconnexion
+  reconnect(): void {
+    // this.gpsWebSocketService.reconnect();
+  }
+  
   async addMarker(data: any, type: string) {
     // Import libraries dynamically
     const { Map, InfoWindow } = (await google.maps.importLibrary('maps')) as google.maps.MapsLibrary;
@@ -59,7 +103,7 @@ export class CartographieComponent {
     console.log('data', data)
     if (type == 'osr') {
       this.markersClient = data.map((position: any, i: number) => {
-        console.log(position);
+        console.log('position',position);
         const positions = {
           lat: parseFloat(position.latitude),
           lng: parseFloat(position.longitude),
@@ -131,9 +175,9 @@ export class CartographieComponent {
   togglePanelOsr(data: any) {
     this.panelOpenOsr = !this.panelOpenOsr;
     if (data != null) {
-      
+
       this.slideDetails = this.clientList.find((client: any) => client.id === parseInt(data.title))
-      this.getAdress(this.slideDetails.latitude,this.slideDetails.longitude)
+      this.getAdress(this.slideDetails.latitude, this.slideDetails.longitude)
     }
 
   }
@@ -141,9 +185,9 @@ export class CartographieComponent {
   togglePanelDepot(data: any) {
     this.panelOpenDepot = !this.panelOpenDepot;
     if (data != null) {
-      
+
       this.slideDetails = this.depotList.find((client: any) => client.id === parseInt(data.title))
-      this.getAdress(this.slideDetails.latitude,this.slideDetails.longitude)
+      this.getAdress(this.slideDetails.latitude, this.slideDetails.longitude)
     }
 
   }
@@ -222,6 +266,13 @@ export class CartographieComponent {
       this.tokenGoogle = res.token;
       this._spinner.hide();
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.gpsSubscription) {
+      this.gpsSubscription.unsubscribe();
+    }
+    this.gpsWebSocketService.closeConnection();
   }
 
   getAdress(lat: any, lng: any) {

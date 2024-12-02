@@ -13,8 +13,10 @@ export class LogistiqueService {
  accessToken?:string;
   token:string;
   apiUrl: any;
+  ws:any;
   constructor(private localstorage:LocalStorageService,private _http: HttpClient, private configService: ConfigService) {
     this.apiUrl = this.configService.apiUrl;
+    this.ws = this.configService.wsUrl;
     this.token = this.localstorage.getItem(storage_keys.STOREToken) || '';
   }
    //GOOGLE CLOUD
