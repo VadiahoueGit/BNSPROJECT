@@ -11,7 +11,7 @@ import { CoreServiceService } from 'src/app/core/core-service.service';
 @Component({
   selector: 'app-clientosr',
   templateUrl: './clientosr.component.html',
-  styleUrls: ['./clientosr.component.scss']
+  styleUrls: ['./clientosr.component.scss'],
 })
 export class ClientosrComponent {
   @ViewChild('dt2') dt2!: Table;
@@ -32,37 +32,77 @@ export class ClientosrComponent {
 
   constructor(
     private location: Location,
-    private coreService:CoreServiceService,
-    private utilisateurService:UtilisateurResolveService,
+    private coreService: CoreServiceService,
+    private utilisateurService: UtilisateurResolveService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
   ) {}
   ngOnInit() {
     this.clientosrForm = this.fb.group({
+      photo: [null, Validators.required],
       nom: ['', Validators.required],
       prenom: ['', Validators.required],
       latitude: ['', [Validators.required]],
       longitude: ['', [Validators.required]],
       contactGerant: ['', [Validators.required]],
       telephone: ['', [Validators.required]],
-      localiteId: [null, Validators.required],
-      zoneLivraisonId: [null, Validators.required],
+      localiteId: [null],
+      zoneLivraisonId: [null],
       groupeClientId: [null, Validators.required],
-      depotId: [null, Validators.required]
+      depotId: [null, Validators.required],
+      nomEtablissement: [null, Validators.required],
     });
-  
-    this.GetLocaliteList()
-    this.GetDepotList()
-    this.GetZoneList()
-    this.GetGroupeClientList()
-    this.GetClientOSRList(1)
+
+    this.GetLocaliteList();
+    this.GetDepotList();
+    this.GetZoneList();
+    this.GetGroupeClientList();
+    this.GetClientOSRList(1);
+  }
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const fileName = file.name; // Récupère le nom du fichier
+
+      // Ajoute le nom du fichier au formulaire
+      this.clientosrForm.patchValue({
+        photo: fileName, // Ajoute le nom du fichier dans le champ "photo"
+      });
+    }
+  }
+  goBack() {
+    this.location.back();
   }
 
-    goBack() {
-      this.location.back()
+  onDepotChange(event: any): void {
+    const depotId = event?.id; 
+    console.log(event, 'depotId');
+    if (depotId) {
+      this.getDepotDetails(depotId);
     }
-
+  }
+  getDepotDetails(depotId: number): void {
+    this.coreService
+      .GetDepotDetail(depotId)
+      .then((response: any) => {
+        if (response) {
+          console.log(response, 'response');
+          this.clientosrForm.patchValue({
+            zoneLivraisonId: response.data.zone?.id || null,
+            localiteId: response.data.zone.localite?.id || null,
+          });
+        }
+      })
+      .catch((error: any) => {
+        console.error(
+          'Erreur lors de la récupération des informations du dépôt:',
+          error
+        );
+      });
+  }
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -76,10 +116,10 @@ export class ClientosrComponent {
   OnCloseModal() {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
-    this.clientosrForm.enable()
+    this.clientosrForm.enable();
   }
   OnCreate() {
-    this.clientosrForm.enable()
+    this.clientosrForm.enable();
     this.isEditMode = false;
     this.isModalOpen = true;
     this.operation = 'create';
@@ -91,7 +131,7 @@ export class ClientosrComponent {
     this.articleId = data.id;
     this.isModalOpen = true;
     this.loadClientDetails();
-    this.clientosrForm.disable()
+    this.clientosrForm.disable();
   }
 
   OnEdit(data: any) {
@@ -114,46 +154,51 @@ export class ClientosrComponent {
     console.log(this.clientosrForm.value);
     if (this.clientosrForm.valid) {
       // const formValues = this.ArticleForm.value;
-      const formValues = {
-      
-      };
+      const formValues = {};
       console.log('formValues', formValues);
 
       if (this.isEditMode) {
-        this.utilisateurService.UpdatePointDeVente(this.articleId, this.clientosrForm.value).then(
-          (response: any) => {
-            console.log('article mis à jour avec succès', response);
-            this._spinner.hide();
-            this.clientosrForm.reset();
-            this.OnCloseModal();
-            this.GetClientOSRList(1)
-            this.toastr.success(response.message);
-          },
-          (error: any) => {
-            this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
-            console.error('Erreur lors de la mise à jour', error);
-          }
-        );
+        this.utilisateurService
+          .UpdatePointDeVente(this.articleId, this.clientosrForm.value)
+          .then(
+            (response: any) => {
+              console.log('article mis à jour avec succès', response);
+              this._spinner.hide();
+              this.clientosrForm.reset();
+              this.OnCloseModal();
+              this.GetClientOSRList(1);
+              this.toastr.success(response.message);
+            },
+            (error: any) => {
+              this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
+              console.error('Erreur lors de la mise à jour', error);
+            }
+          );
       } else {
-        this.utilisateurService.CreatePointDeVente(this.clientosrForm.value).then(
-          (response: any) => {
-            this.OnCloseModal();
-            this.clientosrForm.reset();
-            this.GetClientOSRList(1)
-            this.toastr.success(response.message);
-            this._spinner.hide();
-            console.log('Nouvel article créé avec succès', response);
-          },
-          (error: any) => {
-            this.toastr.error('Erreur!', 'Erreur lors de la création.');
-            console.error('Erreur lors de la création', error);
-          }
-        );
+        this.utilisateurService
+          .CreatePointDeVente(this.clientosrForm.value)
+          .then(
+            (response: any) => {
+              this.OnCloseModal();
+              this.clientosrForm.reset();
+              this.GetClientOSRList(1);
+              this.toastr.success(response.message);
+              this._spinner.hide();
+              console.log('Nouvel article créé avec succès', response);
+            },
+            (error: any) => {
+              this._spinner.hide();
+              this.toastr.error('Erreur!', 'Erreur lors de la création.');
+              console.error('Erreur lors de la création', error);
+            }
+          );
       }
     }
   }
   loadClientDetails(): void {
     this.clientosrForm.patchValue({
+      photo: this.updateData.photo,
+      nomEtablissement: this.updateData.nomEtablissement,
       nom: this.updateData.nom,
       prenom: this.updateData.prenom,
       latitude: this.updateData.latitude,
@@ -166,15 +211,34 @@ export class ClientosrComponent {
       depotId: this.updateData.depot.id,
     });
   }
-  OnDelete(Id: any) {
+  OnValidate(data:any){
+    ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous valider ce client?').then(
+      (res) => {
+        if (res.isConfirmed == true) {
+          const dataRequest = {
+            id: data.id,
+            isValide: true
+          }
+          this._spinner.show();
+          this.utilisateurService.ValidatePointDeVente(dataRequest).then((res: any) => {
+            console.log('VALIDEEEEEEEEEE:::>', res);
+            this.toastr.success(res.message);
+            this._spinner.hide();
+            this.GetClientOSRList(1);
+          });
+        } 
+      }
+    );
+  }
+  OnDelete(id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
       (res) => {
         if (res.isConfirmed == true) {
           this._spinner.show();
-          this.utilisateurService.DeletedPointDeVente(Id).then((res: any) => {
+          this.utilisateurService.DeletedPointDeVente(id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetClientOSRList(1)
+            this.GetClientOSRList(1);
             this._spinner.hide();
           });
         } else {
@@ -182,8 +246,8 @@ export class ClientosrComponent {
       }
     );
   }
- 
-  GetClientOSRList(page:number) {
+
+  GetClientOSRList(page: number) {
     let data = {
       paginate: false,
       page: page,

@@ -104,6 +104,28 @@ export class CoreServiceService {
     });
   }
 
+ async GetDepotDetail(id:number) {
+  await this.initializeApiUrl();
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/depot/${id}`, { headers }
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
  async GetDepotList(data: any) {
   await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
