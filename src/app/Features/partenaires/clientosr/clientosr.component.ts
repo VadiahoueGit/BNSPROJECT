@@ -1,12 +1,12 @@
-import { Component, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
-import { Table } from 'primeng/table';
-import { ALERT_QUESTION } from '../../shared-component/utils';
-import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
-import { Location } from '@angular/common';
-import { CoreServiceService } from 'src/app/core/core-service.service';
+import {Component, ViewChild} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {ToastrService} from 'ngx-toastr';
+import {Table} from 'primeng/table';
+import {ALERT_QUESTION} from '../../shared-component/utils';
+import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
+import {Location} from '@angular/common';
+import {CoreServiceService} from 'src/app/core/core-service.service';
 
 @Component({
   selector: 'app-clientosr',
@@ -37,7 +37,9 @@ export class ClientosrComponent {
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
-  ) {}
+  ) {
+  }
+
   ngOnInit() {
     this.clientosrForm = this.fb.group({
       photo: [null, Validators.required],
@@ -60,6 +62,7 @@ export class ClientosrComponent {
     this.GetGroupeClientList();
     this.GetClientOSRList(1);
   }
+
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
 
@@ -73,17 +76,19 @@ export class ClientosrComponent {
       });
     }
   }
+
   goBack() {
     this.location.back();
   }
 
   onDepotChange(event: any): void {
-    const depotId = event?.id; 
+    const depotId = event?.id;
     console.log(event, 'depotId');
     if (depotId) {
       this.getDepotDetails(depotId);
     }
   }
+
   getDepotDetails(depotId: number): void {
     this.coreService
       .GetDepotDetail(depotId)
@@ -103,6 +108,7 @@ export class ClientosrComponent {
         );
       });
   }
+
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -118,6 +124,7 @@ export class ClientosrComponent {
     console.log(this.isModalOpen);
     this.clientosrForm.enable();
   }
+
   OnCreate() {
     this.clientosrForm.enable();
     this.isEditMode = false;
@@ -125,6 +132,7 @@ export class ClientosrComponent {
     this.operation = 'create';
     console.log(this.isModalOpen);
   }
+
   OnPreview(data: any) {
     console.log(data);
     this.updateData = data;
@@ -144,11 +152,13 @@ export class ClientosrComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
+
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
     this.GetClientOSRList(this.currentPage);
   }
+
   onSubmit(): void {
     this._spinner.show();
     console.log(this.clientosrForm.value);
@@ -195,6 +205,7 @@ export class ClientosrComponent {
       }
     }
   }
+
   loadClientDetails(): void {
     this.clientosrForm.patchValue({
       photo: this.updateData.photo,
@@ -211,25 +222,30 @@ export class ClientosrComponent {
       depotId: this.updateData.depot.id,
     });
   }
-  OnValidate(data:any){
-    ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous valider ce client?').then(
-      (res) => {
-        if (res.isConfirmed == true) {
-          const dataRequest = {
-            id: data.id,
-            isValide: true
+
+  OnValidate(data: any) {
+    if (!data.isValide) {
+      ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous valider ce client?').then(
+        (res) => {
+          if (res.isConfirmed == true) {
+            const dataRequest = {
+              id: data.id,
+              isValide: true
+            }
+            this._spinner.show();
+            this.utilisateurService.ValidatePointDeVente(dataRequest).then((res: any) => {
+              console.log('VALIDEEEEEEEEEE:::>', res);
+              this.toastr.success(res.message);
+              this._spinner.hide();
+              this.GetClientOSRList(1);
+            });
           }
-          this._spinner.show();
-          this.utilisateurService.ValidatePointDeVente(dataRequest).then((res: any) => {
-            console.log('VALIDEEEEEEEEEE:::>', res);
-            this.toastr.success(res.message);
-            this._spinner.hide();
-            this.GetClientOSRList(1);
-          });
-        } 
-      }
-    );
+        }
+      );
+    }
+
   }
+
   OnDelete(id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
       (res) => {
