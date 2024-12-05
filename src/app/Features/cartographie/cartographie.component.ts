@@ -16,7 +16,8 @@ export class CartographieComponent {
   panelOpenOsr: boolean = false;
   panelOpenDepot: boolean = false;
   depotList!: []
-
+  private messageSubscription: Subscription;
+  messages: string[] = [];
   clientList!: []
   vehiculeList!: []
   tokenGoogle: string
@@ -48,53 +49,51 @@ export class CartographieComponent {
   constructor(private gpsWebSocketService: GpsWebSocketService, private cdr: ChangeDetectorRef, private _coreService: CoreServiceService, private logisiticService: LogistiqueService, private utilisateurService: UtilisateurResolveService, private _spinner: NgxSpinnerService,) {
   }
   ngOnInit() {
-    setInterval(() => {
-      console.log(this.gpsWebSocketService.isConnected())
-      
-    },1000)
-    if (this.gpsWebSocketService.isConnected()) {
-      console.log('WebSocket est connecté');
-    } else {
-      console.warn('WebSocket n’est pas connecté, tentative de reconnexion...');
-      this.reconnect();
-    }
+    // Ouvrir la connexion WebSocket
+    this.gpsWebSocketService.openConnection('ws://wsbnsapi.monassoci.com/');  // Remplacez l'URL par celle de votre serveur WebSocket
 
-    // Active l'abonnement aux messages
-    this.gpsSubscription = this.gpsWebSocketService.getCoordinates().subscribe({
-      next: (data) => {
-        console.log('Message reçu via WebSocket :', data);
-        if (data.latitude && data.longitude) {
-          this.coordinates.push(data);
-          // Par exemple, ajouter un marqueur sur la carte
-          this.addMarker([data], 'vehicule');
-        } else {
-          console.warn('Message non conforme reçu :', data);
-        }
+    // S'abonner aux messages entrants
+    this.messageSubscription = this.gpsWebSocketService.getMessages().subscribe(
+      (message:any) => {
+        console.log('Message reçu:', message);
+        this.messages.push(message);  // Ajoute le message à la liste
       },
-      error: (err) => console.error('Erreur WebSocket :', err),
-    });
-  
+      (error:any) => {
+        console.error('Erreur lors de la réception des messages:', error);
+      }
+    );
+
     // Tester l'envoi d'un message
     this.sendGpsData();
-  
+
     this.GetClientOSRList();
     this.getPosition();
     this.GetDepotList();
     this.GetGoogleJWT();
   }
-  
 
-  // Méthode pour envoyer des données GPS
-  sendGpsData(): void {
-    const data = { latitude: 48.8566, longitude: 2.3522 }; // Exemple de données GPS
-    this.gpsWebSocketService.sendMessage(data);
+ngOnDestroy(): void {
+    // Se désabonner lorsque le composant est détruit
+    if (this.messageSubscription) {
+      this.messageSubscription.unsubscribe();
+    }
+
+    // Fermer la connexion WebSocket
+    this.gpsWebSocketService.closeConnection();
   }
 
-  // Méthode pour tenter la reconnexion
-  reconnect(): void {
-    // this.gpsWebSocketService.reconnect();
+  sendMessage(): void {
+    const message = 'Hello WebSocket!';
+    this.gpsWebSocketService.sendMessage(message);  // Envoie un message via WebSocket
+    console.log('Message envoyé:', message);
   }
-  
+
+    // Méthode pour envoyer des données GPS
+    sendGpsData(): void {
+      const data = { latitude: 48.8566, longitude: 2.3522 }; // Exemple de données GPS
+      this.sendMessage();
+    }
+
   async addMarker(data: any, type: string) {
     // Import libraries dynamically
     const { Map, InfoWindow } = (await google.maps.importLibrary('maps')) as google.maps.MapsLibrary;
@@ -103,7 +102,7 @@ export class CartographieComponent {
     console.log('data', data)
     if (type == 'osr') {
       this.markersClient = data.map((position: any, i: number) => {
-        console.log('position',position);
+        console.log('position', position);
         const positions = {
           lat: parseFloat(position.latitude),
           lng: parseFloat(position.longitude),
@@ -268,12 +267,6 @@ export class CartographieComponent {
     });
   }
 
-  ngOnDestroy(): void {
-    if (this.gpsSubscription) {
-      this.gpsSubscription.unsubscribe();
-    }
-    this.gpsWebSocketService.closeConnection();
-  }
 
   getAdress(lat: any, lng: any) {
     // this.logisiticService.getAddress(lat, lng).subscribe((response: any) => {

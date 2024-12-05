@@ -10,7 +10,10 @@
       <!-- Partie droite : image ou texte de bienvenue -->
       <div class="col-lg-6 d-flex align-items-center justify-content-center bg-light">
         <div class="login-form w-100 p-4" style="max-width: 400px;">
-          <h3 class="text-center mb-3 fw-bold">Connectez-vous </h3>
+          <div class="p-3  d-flex justify-content-center">
+            <img src="assets/image/armonyssansfond.png" style="height: 90px;">
+        </div>
+          <h4 class="text-center mb-3 fw-bold">Connectez-vous </h4>
           <p class="mb-3 text-black-50 text-center fs-7">Bienvenue sur l'espace administrateur BEST NEGOCE SERVICE</p>
           <form  [formGroup]="loginForm"
           (ngSubmit)="ToConnect()">
