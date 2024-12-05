@@ -207,7 +207,23 @@ export class UtilisateurResolveService {
       );
     });
   }
-  
+  ValidatePointDeVente(data: any){
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.patch(`${this.apiUrl}/v1/point-de-vente/validation`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+   }
   // COMMERCIAL
   GetCommercialList(data: any) {
     return new Promise((resolve: any, reject: any) => {

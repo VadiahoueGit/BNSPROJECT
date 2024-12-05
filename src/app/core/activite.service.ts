@@ -15,7 +15,7 @@ export class ActiviteService {
     this.token = this.localstorage.getItem(storage_keys.STOREToken) || '';
   }
 
- 
+
 
   DeletePointDeVente(id: number) {
     return new Promise((resolve: any, reject: any) => {
