@@ -134,12 +134,12 @@ export class UtilisateurResolveService {
   }
 
    //POINT DE VENTE 
-   CreatePointDeVente(data: any) {
+   CreatePointDeVente(formData: FormData) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
-      this._http.post(`${this.apiUrl}/v1/point-de-vente`, data,{headers}).subscribe(
+      this._http.post(`${this.apiUrl}/v1/point-de-vente`, formData,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -173,12 +173,12 @@ export class UtilisateurResolveService {
         );
     });
   }
-  UpdatePointDeVente(id: number, data: any) {
+  UpdatePointDeVente(id: number, formData: FormData) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
-      this._http.put(`${this.apiUrl}/v1/point-de-vente/${id}`, data,{headers}).subscribe(
+      this._http.put(`${this.apiUrl}/v1/point-de-vente/${id}`, formData,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);

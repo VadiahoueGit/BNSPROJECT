@@ -29,7 +29,7 @@ export class ClientosrComponent {
   depots!: any[];
   currentPage: number;
   rowsPerPage: any;
-
+  selectedFile: File | null = null; 
   constructor(
     private location: Location,
     private coreService: CoreServiceService,
@@ -63,20 +63,15 @@ export class ClientosrComponent {
     this.GetClientOSRList(1);
   }
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      const fileName = file.name; // Récupère le nom du fichier
-
-      // Ajoute le nom du fichier au formulaire
-      this.clientosrForm.patchValue({
-        photo: fileName, // Ajoute le nom du fichier dans le champ "photo"
-      });
+  
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
     }
   }
-
+  
+  
   goBack() {
     this.location.back();
   }
@@ -162,46 +157,51 @@ export class ClientosrComponent {
   onSubmit(): void {
     this._spinner.show();
     console.log(this.clientosrForm.value);
+  
     if (this.clientosrForm.valid) {
-      // const formValues = this.ArticleForm.value;
-      const formValues = {};
-      console.log('formValues', formValues);
-
+      const formData = new FormData();
+  
+      Object.keys(this.clientosrForm.value).forEach((key) => {
+        if (key !== 'photo') {
+          formData.append(key, this.clientosrForm.value[key]);
+        }
+      });
+  
+      if (this.selectedFile) {
+        formData.append('photo', this.selectedFile);
+      }
+  
       if (this.isEditMode) {
-        this.utilisateurService
-          .UpdatePointDeVente(this.articleId, this.clientosrForm.value)
-          .then(
-            (response: any) => {
-              console.log('article mis à jour avec succès', response);
-              this._spinner.hide();
-              this.clientosrForm.reset();
-              this.OnCloseModal();
-              this.GetClientOSRList(1);
-              this.toastr.success(response.message);
-            },
-            (error: any) => {
-              this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
-              console.error('Erreur lors de la mise à jour', error);
-            }
-          );
+        this.utilisateurService.UpdatePointDeVente(this.articleId, formData).then(
+          (response: any) => {
+            console.log('Article mis à jour avec succès', response);
+            this._spinner.hide();
+            this.clientosrForm.reset();
+            this.OnCloseModal();
+            this.GetClientOSRList(1);
+            this.toastr.success(response.message);
+          },
+          (error: any) => {
+            this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
+            console.error('Erreur lors de la mise à jour', error);
+          }
+        );
       } else {
-        this.utilisateurService
-          .CreatePointDeVente(this.clientosrForm.value)
-          .then(
-            (response: any) => {
-              this.OnCloseModal();
-              this.clientosrForm.reset();
-              this.GetClientOSRList(1);
-              this.toastr.success(response.message);
-              this._spinner.hide();
-              console.log('Nouvel article créé avec succès', response);
-            },
-            (error: any) => {
-              this._spinner.hide();
-              this.toastr.error('Erreur!', 'Erreur lors de la création.');
-              console.error('Erreur lors de la création', error);
-            }
-          );
+        this.utilisateurService.CreatePointDeVente(formData).then(
+          (response: any) => {
+            console.log('Nouvel article créé avec succès', response);
+            this._spinner.hide();
+            this.clientosrForm.reset();
+            this.OnCloseModal();
+            this.GetClientOSRList(1);
+            this.toastr.success(response.message);
+          },
+          (error: any) => {
+            this._spinner.hide();
+            this.toastr.error('Erreur!', 'Erreur lors de la création.');
+            console.error('Erreur lors de la création', error);
+          }
+        );
       }
     }
   }

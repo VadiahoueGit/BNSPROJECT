@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { ALERT_QUESTION } from '../../shared-component/utils';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-list-prix',
@@ -29,6 +30,7 @@ export class ListPrixComponent implements OnInit {
     private _spinner: NgxSpinnerService,
     private toastr: ToastrService,
     private fb: FormBuilder,
+    private location: Location,
 
 
   ) {}
@@ -55,6 +57,9 @@ export class ListPrixComponent implements OnInit {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
     this.GetListTypePrix(this.currentPage);
+  }
+  goBack() {
+    this.location.back()
   }
   filterGlobal(event: any) {
     const inputElement = event.target as HTMLInputElement;
