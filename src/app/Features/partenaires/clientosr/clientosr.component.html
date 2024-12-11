@@ -7,7 +7,7 @@
     <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer un client OSR</button>
   </div>
   <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
-           [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
+    [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
 
     <ng-template pTemplate="header">
       <tr>
@@ -22,29 +22,29 @@
     <ng-template pTemplate="body" let-dataList>
       <tr>
         <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.nom }}
-                    </span>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.nom }}
+          </span>
         </td>
         <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.prenom }}
-                    </span>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.prenom }}
+          </span>
         </td>
         <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.zoneDeLivraison.nomZone }}
-                    </span>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.zoneDeLivraison.nomZone }}
+          </span>
         </td>
         <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.isValide ? 'Validé' : ' En attente' }}
-                    </span>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.isValide ? 'Validé' : ' En attente' }}
+          </span>
         </td>
         <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.contactGerant }}
-                    </span>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.contactGerant }}
+          </span>
         </td>
         <td>
       <tr class="d-flex justify-content-center gap-3">
@@ -55,7 +55,7 @@
         </td>
         <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary fw-bold"></i></td>
         <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
-               class="fas fa-trash-alt text-danger fw-bold"></i></td>
+            class="fas fa-trash-alt text-danger fw-bold"></i></td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
@@ -74,7 +74,7 @@
     <div class="modal-content">
       <div class="modal-header d-flex align-items-center">
         <div class="d-flex justify-content-center align-items-center"
-             style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
+          style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
           <i class="fas fa-box-check text-primary fs-3"></i>
         </div>
         <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création
@@ -89,25 +89,22 @@
               <div class="mb-3">
                 <label for="photo" class="form-label">Photo <span class="text-danger">*</span></label>
                 <input type="file" class="form-control" id="photo" (change)="onFileSelected($event)"
-                       formControlName="photo"
-                       placeholder="Entrez la photo">
+                  formControlName="photo" placeholder="Entrez la photo">
               </div>
               <div class="mb-3">
                 <label for="nom" class="form-label">Nom <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="nom" formControlName="nom"
-                       placeholder="Entrez le nom">
+                <input type="text" class="form-control" id="nom" formControlName="nom" placeholder="Entrez le nom">
               </div>
               <div class="mb-3">
-                <label for="latitude" class="form-label">Latitude <span
-                  class="text-danger">*</span></label>
+                <label for="latitude" class="form-label">Latitude <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="latitude" formControlName="latitude"
-                       placeholder="Entrez la latitude">
+                  placeholder="Entrez la latitude">
               </div>
               <div class="mb-3">
                 <label for="contactGerant" class="form-label">Contact du gérant <span
-                  class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="contactGerant"
-                       formControlName="contactGerant" placeholder="Entrez le contact du gérant">
+                    class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="contactGerant" formControlName="contactGerant"
+                  placeholder="Entrez le contact du gérant">
               </div>
               <!-- <div class="mb-3">
                   <label for="zoneLivraisonId" class="form-label">Zone de Livraison <span
@@ -117,36 +114,34 @@
                   </ng-select>
               </div> -->
               <div class="mb-3">
-                <label for="groupeClientId" class="form-label">Groupe client <span
-                  class="text-danger">*</span></label>
+                <label for="groupeClientId" class="form-label">Groupe client <span class="text-danger">*</span></label>
                 <ng-select class="form-control" [items]="grpClient" bindLabel="nomGroupe" bindValue="id"
-                           formControlName="groupeClientId" [searchable]="true">
+                  formControlName="groupeClientId" [searchable]="true">
                 </ng-select>
               </div>
             </div>
 
             <div class="col-md-6">
               <div class="mb-3">
-                <label for="nomEtablissement" class="form-label">Nom d'établissement <span class="text-danger">*</span></label>
+                <label for="nomEtablissement" class="form-label">Nom d'établissement <span
+                    class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="nomEtablissement" formControlName="nomEtablissement"
-                       placeholder="Entrez le nom d'établissement">
+                  placeholder="Entrez le nom d'établissement">
               </div>
               <div class="mb-3">
                 <label for="prenom" class="form-label">Prénom <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="prenom" formControlName="prenom"
-                       placeholder="Entrez le prénom">
+                  placeholder="Entrez le prénom">
               </div>
               <div class="mb-3">
-                <label for="longitude" class="form-label">Longitude <span
-                  class="text-danger">*</span></label>
+                <label for="longitude" class="form-label">Longitude <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="longitude" formControlName="longitude"
-                       placeholder="Entrez la longitude">
+                  placeholder="Entrez la longitude">
               </div>
               <div class="mb-3">
-                <label for="telephone" class="form-label">Téléphone <span
-                  class="text-danger">*</span></label>
+                <label for="telephone" class="form-label">Téléphone <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="telephone" formControlName="telephone"
-                       placeholder="Entrez le téléphone">
+                  placeholder="Entrez le téléphone">
               </div>
               <!-- <div class="mb-3">
                   <label for="localiteId" class="form-label">Localité <span
@@ -158,8 +153,7 @@
               <div class="mb-3">
                 <label for="depotId" class="form-label">Dépôt <span class="text-danger">*</span></label>
                 <ng-select class="form-control" [items]="depots" (change)="onDepotChange($event)" bindLabel="nomDepot"
-                           bindValue="id"
-                           formControlName="depotId" [searchable]="true">
+                  bindValue="id" formControlName="depotId" [searchable]="true">
                 </ng-select>
               </div>
             </div>
@@ -172,10 +166,60 @@
       <div class="modal-footer gap-3 px-4">
         <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
         <button *ngIf="operation == 'create' || operation == 'edit'" [disabled]="clientosrForm.invalid" type="submit"
-                (click)="onSubmit()"
-                class="btn btn-primary px-2">Valider
+          (click)="onSubmit()" class="btn btn-primary px-2">Valider
         </button>
       </div>
     </div>
   </div>
 </div>
+
+<div *ngIf="isModalDetail" class="custom-modal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex align-items-center">
+        <div class="d-flex justify-content-center align-items-center"
+          style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
+          <i class="fas fa-box-check text-primary fs-3"></i>
+        </div>
+        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">Détails client</h1>
+      </div>
+      <div class="modal-body">
+        <div class="modal-body">
+          <div class="details-grid">
+            <div class="detail-item">
+              <!-- <strong>Photo:</strong> -->
+              <img [src]="imageUrl" alt="Photo" class="photo-preview" />
+            </div>
+            <div class="detail-item">
+              <strong>Nom:</strong> {{ ClientOsrDetail.nom }}
+            </div>
+            <div class="detail-item">
+              <strong>Prénom:</strong> {{ ClientOsrDetail.prenom }}
+            </div>
+            <div class="detail-item">
+              <strong>Etablissement:</strong> {{ ClientOsrDetail.nomEtablissement }}
+            </div>
+            <div class="detail-item">
+              <strong>Contact Gérant:</strong> {{ ClientOsrDetail.contactGerant }}
+            </div>
+            <div class="detail-item">
+              <strong>Téléphone:</strong> {{ ClientOsrDetail.telephone }}
+            </div>
+            <div class="detail-item">
+              <strong>Zone de livraison:</strong> {{ ClientOsrDetail.zoneDeLivraison.nomZone }}
+            </div>
+            <div class="detail-item">
+              <strong>Groupe Client:</strong> {{ ClientOsrDetail.GroupeClient.nomGroupe }}
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer gap-3 px-4" *ngIf="ClientOsrDetail.isValide">
+          <button (click)="OnCloseDetailModal()" class="btn btn-primary px-2">Fermer</button>
+        </div>
+        <div class="modal-footer gap-3 px-4" *ngIf="!ClientOsrDetail.isValide">
+          <button (click)="confirmValidateOperation(ClientOsrDetail)" class="btn btn-primary px-2">Valider</button>
+        </div>
+      </div>
+    </div>
+  </div>
