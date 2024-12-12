@@ -1,12 +1,13 @@
-import {Component, ViewChild} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {NgxSpinnerService} from 'ngx-spinner';
-import {ToastrService} from 'ngx-toastr';
-import {Table} from 'primeng/table';
-import {ALERT_QUESTION} from '../../shared-component/utils';
-import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
-import {Location} from '@angular/common';
-import {CoreServiceService} from 'src/app/core/core-service.service';
+import { Component, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { ToastrService } from 'ngx-toastr';
+import { Table } from 'primeng/table';
+import { ALERT_QUESTION } from '../../shared-component/utils';
+import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
+import { Location } from '@angular/common';
+import { CoreServiceService } from 'src/app/core/core-service.service';
+import { ConfigService } from 'src/app/core/config-service.service';
 
 @Component({
   selector: 'app-clientosr',
@@ -29,15 +30,23 @@ export class ClientosrComponent {
   depots!: any[];
   currentPage: number;
   rowsPerPage: any;
-  selectedFile: File | null = null; 
+  selectedFile: File | null = null;
+  isModalDetail: boolean = false;
+  ClientOsrDetail: any = {};
+  apiUrl : any
+  imageUrl : any
+  docUrl : any
+
   constructor(
     private location: Location,
     private coreService: CoreServiceService,
     private utilisateurService: UtilisateurResolveService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private _config: ConfigService
   ) {
+    this.docUrl = this._config.docUrl;
   }
 
   ngOnInit() {
@@ -63,15 +72,13 @@ export class ClientosrComponent {
     this.GetClientOSRList(1);
   }
 
-  
   onFileSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
       this.selectedFile = file;
     }
   }
-  
-  
+
   goBack() {
     this.location.back();
   }
@@ -157,35 +164,37 @@ export class ClientosrComponent {
   onSubmit(): void {
     this._spinner.show();
     console.log(this.clientosrForm.value);
-  
+
     if (this.clientosrForm.valid) {
       const formData = new FormData();
-  
+
       Object.keys(this.clientosrForm.value).forEach((key) => {
         if (key !== 'photo') {
           formData.append(key, this.clientosrForm.value[key]);
         }
       });
-  
+
       if (this.selectedFile) {
         formData.append('photo', this.selectedFile);
       }
-  
+
       if (this.isEditMode) {
-        this.utilisateurService.UpdatePointDeVente(this.articleId, formData).then(
-          (response: any) => {
-            console.log('Article mis à jour avec succès', response);
-            this._spinner.hide();
-            this.clientosrForm.reset();
-            this.OnCloseModal();
-            this.GetClientOSRList(1);
-            this.toastr.success(response.message);
-          },
-          (error: any) => {
-            this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
-            console.error('Erreur lors de la mise à jour', error);
-          }
-        );
+        this.utilisateurService
+          .UpdatePointDeVente(this.articleId, formData)
+          .then(
+            (response: any) => {
+              console.log('Article mis à jour avec succès', response);
+              this._spinner.hide();
+              this.clientosrForm.reset();
+              this.OnCloseModal();
+              this.GetClientOSRList(1);
+              this.toastr.success(response.message);
+            },
+            (error: any) => {
+              this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
+              console.error('Erreur lors de la mise à jour', error);
+            }
+          );
       } else {
         this.utilisateurService.CreatePointDeVente(formData).then(
           (response: any) => {
@@ -224,28 +233,45 @@ export class ClientosrComponent {
   }
 
   OnValidate(data: any) {
+    console.log(data, ' client Osr details');
+    this.isModalDetail = true;
+    this.ClientOsrDetail = data;
+    this.imageUrl = `${this.docUrl.replace(/\/$/, '')}/${data.photo.replace(/^\//, '')}`;
+    console.log(this.imageUrl, ' imageUrl');
+
+  }
+  OnCloseDetailModal() {
+    this.isModalDetail = false;
+    console.log(this.isModalOpen);
+  }
+  confirmValidateOperation(data: any) {
     if (!data.isValide) {
-      ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous valider ce client?').then(
-        (res) => {
-          if (res.isConfirmed == true) {
-            const dataRequest = {
-              id: data.id,
-              isValide: true
-            }
-            this._spinner.show();
-            this.utilisateurService.ValidatePointDeVente(dataRequest).then((res: any) => {
+      ALERT_QUESTION(
+        'warning',
+        'Attention !',
+        'Voulez-vous valider ce client?'
+      ).then((res) => {
+        if (res.isConfirmed == true) {
+          const dataRequest = {
+            id: data.id,
+            isValide: true,
+          };
+          this._spinner.show();
+          this.utilisateurService
+            .ValidatePointDeVente(dataRequest)
+            .then((res: any) => {
               console.log('VALIDEEEEEEEEEE:::>', res);
               this.toastr.success(res.message);
+              this.OnCloseDetailModal()
               this._spinner.hide();
               this.GetClientOSRList(1);
             });
-          }
+        }else {
+          this.isModalDetail = false
         }
-      );
+      });
     }
-
   }
-
   OnDelete(id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
       (res) => {

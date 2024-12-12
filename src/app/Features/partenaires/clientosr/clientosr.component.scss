@@ -50,4 +50,54 @@
     min-width: 10px; 
   }
 
+  .modal {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    width: 500px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: auto;
+  }
+  
+  .modal-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .modal-header .icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+  }
+  
+  .details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  
+  .detail-item {
+    font-size: 14px;
+  }
+  
+  .photo-preview {
+    width: 100px;
+    height: 80px;
+    border-radius: 5px;
+  }
+  
+  .modal-footer {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .close-button {
+    background-color: #78c67e;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
   
