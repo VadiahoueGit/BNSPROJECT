@@ -35,6 +35,7 @@ export class ClientosrComponent {
   ClientOsrDetail: any = {};
   apiUrl : any
   imageUrl : any
+  docUrl : any
 
   constructor(
     private location: Location,
@@ -45,7 +46,7 @@ export class ClientosrComponent {
     private toastr: ToastrService,
     private _config: ConfigService
   ) {
-    this.apiUrl = this._config.apiUrl;
+    this.docUrl = this._config.docUrl;
   }
 
   ngOnInit() {
@@ -235,7 +236,7 @@ export class ClientosrComponent {
     console.log(data, ' client Osr details');
     this.isModalDetail = true;
     this.ClientOsrDetail = data;
-    this.imageUrl = `${this.apiUrl.replace(/\/$/, '')}/${data.photo.replace(/^\//, '')}`;
+    this.imageUrl = `${this.docUrl.replace(/\/$/, '')}/${data.photo.replace(/^\//, '')}`;
     console.log(this.imageUrl, ' imageUrl');
 
   }
@@ -265,6 +266,8 @@ export class ClientosrComponent {
               this._spinner.hide();
               this.GetClientOSRList(1);
             });
+        }else {
+          this.isModalDetail = false
         }
       });
     }

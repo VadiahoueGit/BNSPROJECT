@@ -30,4 +30,8 @@ export class ConfigService {
     console.log(this.config,'this.config')
     return this.config?.webSocketUrl;
   }
+  get docUrl(): string {
+    console.log(this.config,'this.config')
+    return this.config?.docUrl;
+  }
 }

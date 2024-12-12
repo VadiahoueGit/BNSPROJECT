@@ -185,31 +185,36 @@
       </div>
       <div class="modal-body">
         <div class="modal-body">
-          <div class="details-grid">
-            <div class="detail-item">
+          <div class="row">
+            <div class="col-md-2">
               <!-- <strong>Photo:</strong> -->
               <img [src]="imageUrl" alt="Photo" class="photo-preview" />
             </div>
-            <div class="detail-item">
-              <strong>Nom:</strong> {{ ClientOsrDetail.nom }}
+            <div class="col-md-5">
+
+              <div class="detail-item">
+                <strong>Nom:</strong> {{ ClientOsrDetail.nom }}
+              </div>
+              <div class="detail-item">
+                <strong>Prénom:</strong> {{ ClientOsrDetail.prenom }}
+              </div>
+              <div class="detail-item">
+                <strong>Etablissement:</strong> {{ ClientOsrDetail.nomEtablissement }}
+              </div>
+              <div class="detail-item">
+                <strong>Contact Gérant:</strong> {{ ClientOsrDetail.contactGerant }}
+              </div>
             </div>
-            <div class="detail-item">
-              <strong>Prénom:</strong> {{ ClientOsrDetail.prenom }}
-            </div>
-            <div class="detail-item">
-              <strong>Etablissement:</strong> {{ ClientOsrDetail.nomEtablissement }}
-            </div>
-            <div class="detail-item">
-              <strong>Contact Gérant:</strong> {{ ClientOsrDetail.contactGerant }}
-            </div>
-            <div class="detail-item">
-              <strong>Téléphone:</strong> {{ ClientOsrDetail.telephone }}
-            </div>
-            <div class="detail-item">
-              <strong>Zone de livraison:</strong> {{ ClientOsrDetail.zoneDeLivraison.nomZone }}
-            </div>
-            <div class="detail-item">
-              <strong>Groupe Client:</strong> {{ ClientOsrDetail.GroupeClient.nomGroupe }}
+            <div class="col-md-5">
+              <div class="detail-item">
+                <strong>Téléphone:</strong> {{ ClientOsrDetail.telephone }}
+              </div>
+              <div class="detail-item">
+                <strong>Zone de livraison:</strong> {{ ClientOsrDetail.zoneDeLivraison.nomZone }}
+              </div>
+              <div class="detail-item">
+                <strong>Groupe Client:</strong> {{ ClientOsrDetail.GroupeClient.nomGroupe }}
+              </div>
             </div>
           </div>
         </div>
