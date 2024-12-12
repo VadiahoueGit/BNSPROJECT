@@ -11,8 +11,7 @@
 
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color);">Nom</th>
-        <th style="color: var(--secondary-color);">Prénom</th>
+        <th style="color: var(--secondary-color);">Etablissement</th>
         <th style="color: var(--secondary-color);">Zone de livraison</th>
         <th style="color: var(--secondary-color);">Statut</th>
         <th style="color: var(--secondary-color);">Contact</th>
@@ -23,12 +22,7 @@
       <tr>
         <td>
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.nom }}
-                    </span>
-        </td>
-        <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.prenom }}
+                        {{ dataList.nomEtablissement }}
                     </span>
         </td>
         <td>

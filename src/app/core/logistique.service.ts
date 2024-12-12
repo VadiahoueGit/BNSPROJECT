@@ -20,8 +20,8 @@ export class LogistiqueService {
     this.token = this.localstorage.getItem(storage_keys.STOREToken) || '';
   }
    //GOOGLE CLOUD
-  
-  
+
+
    CreateCarOnFleetEngine(data: any) {
     const token = '';
     const headers = new HttpHeaders({
@@ -203,8 +203,8 @@ export class LogistiqueService {
     });
   }
 
-  // getAddress(lat: number, lng: number): Observable<any> {
-  //   const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apkkey}`;
-  //   return this._http.get(url);
-  // }
+  GetAddress(lat: number, lng: number): Observable<any> {
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key='AIzaSyDV1ke-HxBDmSPpqyfivksnjzeD29AC18k'`;
+    return this._http.get(url);
+  }
 }
