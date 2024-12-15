@@ -15,6 +15,7 @@ export class TransfertDeStockComponent implements OnInit {
   transfertForm!: FormGroup;
   articleList:any
   depotList:any
+  isModalOpen:boolean
   constructor(private _coreService:CoreServiceService,private fb: FormBuilder,private location: Location,private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService) {}
 
@@ -38,6 +39,16 @@ export class TransfertDeStockComponent implements OnInit {
   generateNumero(): string {
     return `T-${new Date().getTime()}`;
   }
+  OnCloseModal()
+  {
+    this.isModalOpen = false;
+    console.log(this.isModalOpen)
+  }
+  OnCreate()
+  {
+    this.isModalOpen = true;
+    console.log(this.isModalOpen)
+  }
 
   // Accéder aux articles comme un FormArray
   get articles(): FormArray {
@@ -55,7 +66,7 @@ export class TransfertDeStockComponent implements OnInit {
   }
 
   // Supprimer un article
-  removeArticle(index: number): void {
+  removeArticle(index: number=0): void {
     this.articles.removeAt(index);
   }
   GetArticleList(page:number) {

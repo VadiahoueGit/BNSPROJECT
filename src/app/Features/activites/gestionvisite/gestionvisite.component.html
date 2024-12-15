@@ -50,7 +50,7 @@
                                 <label for="format" class="form-label">Point de vente <span
                                         class="text-danger">*</span></label>
                                 <ng-select class="form-control" [multiple]="true" [checkbox]="true" [items]="pointDeVente"
-                                    bindLabel="nom" bindValue="id" formControlName="pointDeVenteIds"
+                                    bindLabel="nomEtablissement" bindValue="id" formControlName="pointDeVenteIds"
                                     [searchable]="true">
                                 </ng-select>
                             </div>
@@ -75,7 +75,7 @@
 
             <div class="modal-footer gap-3 px-4">
                 <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-                <button type="submit" class="btn btn-primary px-2" (click)="onSubmit()">Valider</button>
+                <button [disabled]="VisiteForm.invalid" type="submit" class="btn btn-primary px-2" (click)="onSubmit()">Valider</button>
             </div>
         </div>
     </div>
