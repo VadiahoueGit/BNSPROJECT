@@ -82,9 +82,9 @@
   }
   
   .photo-preview {
-    width: 100px;
-    height: 80px;
-    border-radius: 5px;
+    height: 5rem;
+    width: 5rem;
+    border-radius: 100%;
   }
   
   .modal-footer {
@@ -99,5 +99,15 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+  }
+  .key {
+    width: 120px; /* Fixe la largeur des clés */
+    text-align: left; /* Aligne le texte des clés à gauche */
+    display: inline-block; /* Maintient la structure alignée */
+  }
+  
+  .value {
+    flex: 1; /* Permet à la valeur de s'étendre pour occuper l'espace disponible */
+    text-align: left; /* Aligne le texte des valeurs à gauche */
   }
   

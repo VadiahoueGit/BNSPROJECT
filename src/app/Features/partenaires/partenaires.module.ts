@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TableModule } from 'primeng/table';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { SharedComponentModule } from "../shared-component/shared-component.module";
 
 
 
@@ -18,14 +19,14 @@ import { NgSelectModule } from '@ng-select/ng-select';
     RevendeurComponent
   ],
   imports: [
-   
     NgSelectModule,
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
     TableModule,
     PartenairesRoutingModule,
-  ],
+    SharedComponentModule
+],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PartenairesModule { }
