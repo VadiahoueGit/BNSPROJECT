@@ -233,13 +233,20 @@ export class ClientosrComponent {
   }
 
   OnValidate(data: any) {
-    console.log(data, ' client Osr details');
+    console.log(data, 'client Osr details');
     this.isModalDetail = true;
     this.ClientOsrDetail = data;
-    this.imageUrl = `${this.docUrl.replace(/\/$/, '')}/${data.photo.replace(/^\//, '')}`;
-    console.log(this.imageUrl, ' imageUrl');
-
+  
+    if (this.docUrl && data?.photo) {
+      this.imageUrl = `${this.docUrl.replace(/\/$/, '')}/${data.photo.replace(/^\//, '')}`;
+    } else {
+      console.log('docUrl ou data.photo est null ou undefined.');
+      this.imageUrl = ''; 
+    }
+  
+    console.log(this.imageUrl, 'imageUrl');
   }
+
   OnCloseDetailModal() {
     this.isModalDetail = false;
     console.log(this.isModalOpen);

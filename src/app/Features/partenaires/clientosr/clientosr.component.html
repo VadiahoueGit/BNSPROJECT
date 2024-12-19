@@ -181,33 +181,39 @@
       <div class="modal-body">
         <div class="modal-body">
           <div class="row">
-            <div class="col-md-2">
+            <div class="col-md-2 mt-3">
               <!-- <strong>Photo:</strong> -->
               <img [src]="imageUrl" alt="Photo" class="photo-preview"/>
             </div>
             <div class="col-md-5">
-
               <div class="detail-item">
                 <strong>Gérant:</strong> {{ ClientOsrDetail.nom }} {{ ClientOsrDetail.prenom }}
               </div>
-              <div class="detail-item">
-                <strong>Etablissement:</strong> {{ ClientOsrDetail.nomEtablissement }}
+              <div class="detail-item mb-2 d-flex">
+                <strong class="key">Etablissement:</strong>
+                <span class="value">{{ ClientOsrDetail.nomEtablissement | truncate:15 }}</span>
               </div>
-              <div class="detail-item">
-                <strong>Contact Gérant:</strong> {{ ClientOsrDetail.contactGerant }}
+              <div class="detail-item mb-2 d-flex">
+                <strong class="key">Contact Gérant:</strong>
+                <span class="value">{{ ClientOsrDetail.contactGerant }}</span>
               </div>
             </div>
             <div class="col-md-5">
-              <div class="detail-item">
-                <strong>Téléphone:</strong> {{ ClientOsrDetail.telephone }}
+              <div class="detail-item mb-2 d-flex">
+                <strong class="key">Téléphone:</strong>
+                <span class="value">{{ ClientOsrDetail.telephone }}</span>
               </div>
-              <div class="detail-item">
-                <strong>Zone de livraison:</strong> {{ ClientOsrDetail.zoneDeLivraison.nomZone }}
+              <div class="detail-item mb-2 d-flex">
+                <strong class="key">Zone livraison:</strong>
+                <span class="value">{{ ClientOsrDetail.zoneDeLivraison.nomZone | truncate:15 }}</span>
               </div>
-              <div class="detail-item">
-                <strong>Groupe Client:</strong> {{ ClientOsrDetail.GroupeClient.nomGroupe }}
+              <div class="detail-item mb-2 d-flex">
+                <strong class="key">Groupe Client:</strong>
+                <span class="value">{{ ClientOsrDetail.GroupeClient.nomGroupe | truncate:15 }}</span>
               </div>
             </div>
+
+
           </div>
         </div>
         <div class="modal-footer gap-3 px-4">
