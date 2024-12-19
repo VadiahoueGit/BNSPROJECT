@@ -49,22 +49,22 @@ export class CartographieComponent {
   constructor(private gpsWebSocketService: GpsWebSocketService, private cdr: ChangeDetectorRef, private _coreService: CoreServiceService, private logisiticService: LogistiqueService, private utilisateurService: UtilisateurResolveService, private _spinner: NgxSpinnerService,) {
   }
   ngOnInit() {
-    // Ouvrir la connexion WebSocket
-    this.gpsWebSocketService.openConnection('ws://wsbnsapi.monassoci.com/');  // Remplacez l'URL par celle de votre serveur WebSocket
-
-    // S'abonner aux messages entrants
-    this.messageSubscription = this.gpsWebSocketService.getMessages().subscribe(
-      (message:any) => {
-        console.log('Message reçu:', message);
-        this.messages.push(message);  // Ajoute le message à la liste
-      },
-      (error:any) => {
-        console.error('Erreur lors de la réception des messages:', error);
-      }
-    );
-
-    // Tester l'envoi d'un message
-    this.sendGpsData();
+    // // Ouvrir la connexion WebSocket
+    // this.gpsWebSocketService.openConnection('ws://wsbnsapi.monassoci.com/');  // Remplacez l'URL par celle de votre serveur WebSocket
+    //
+    // // S'abonner aux messages entrants
+    // this.messageSubscription = this.gpsWebSocketService.getMessages().subscribe(
+    //   (message:any) => {
+    //     console.log('Message reçu:', message);
+    //     this.messages.push(message);  // Ajoute le message à la liste
+    //   },
+    //   (error:any) => {
+    //     console.error('Erreur lors de la réception des messages:', error);
+    //   }
+    // );
+    //
+    // // Tester l'envoi d'un message
+    // this.sendGpsData();
 
     this.GetClientOSRList();
     this.getPosition();
@@ -133,7 +133,7 @@ ngOnDestroy(): void {
       });
     } else if (type == 'depot') {
       this.markersDepot = data.map((position: any, i: number) => {
-        console.log(position);
+        console.log('positionDepot',position);
         const positions = {
           lat: parseFloat(position.latitude),
           lng: parseFloat(position.longitude),

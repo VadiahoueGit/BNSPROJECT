@@ -56,6 +56,7 @@ export class PlastiqueNuComponent {
       );
     });
     this.PlastiquenuForm = this.fb.group({
+      code: [null, Validators.required],
       libelle: [null, Validators.required],
       prixUnitaire: [null, Validators.required],
       conditionnement: [null, Validators.required],
@@ -66,7 +67,7 @@ export class PlastiqueNuComponent {
   goBack() {
     this.location.back()
   }
- 
+
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -159,6 +160,7 @@ export class PlastiqueNuComponent {
   }
   loadDetails(): void {
     this.PlastiquenuForm.patchValue({
+      code: this.updateData.code,
       libelle: this.updateData.libelle,
       prixUnitaire: this.updateData.prixUnitaire,
       conditionnement: this.updateData.conditionnement,

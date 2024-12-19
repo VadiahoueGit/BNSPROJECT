@@ -55,7 +55,7 @@ export class ParametreComponent implements OnInit {
     },
     {
       image: 'assets/icon/article.png',
-      title: 'Type prix',
+      title: 'Nom du prix',
       url:'feature/parametre/typeprix',
     },
     {
@@ -71,7 +71,7 @@ export class ParametreComponent implements OnInit {
   ]
   constructor(private _router: Router) { }
   ngOnInit(): void {
-    
+
   }
   displayItem(elt: any) {
     console.log(elt)

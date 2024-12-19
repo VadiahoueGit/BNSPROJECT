@@ -59,7 +59,7 @@ export class ClientosrComponent {
       contactGerant: ['', [Validators.required]],
       telephone: ['', [Validators.required]],
       localiteId: [null],
-      zoneLivraisonId: [null],
+      zoneLivraisonId: [null, Validators.required],
       groupeClientId: [null, Validators.required],
       depotId: [null, Validators.required],
       nomEtablissement: [null, Validators.required],
@@ -98,7 +98,6 @@ export class ClientosrComponent {
         if (response) {
           console.log(response, 'response');
           this.clientosrForm.patchValue({
-            zoneLivraisonId: response.data.zone?.id || null,
             localiteId: response.data.zone.localite?.id || null,
           });
         }
@@ -125,6 +124,7 @@ export class ClientosrComponent {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
     this.clientosrForm.enable();
+    this.clientosrForm.reset()
   }
 
   OnCreate() {

@@ -35,6 +35,7 @@ export class TypeArticleComponent {
 
   ngOnInit() {
     this.articleForm = this.fb.group({
+      code: [null, Validators.required],
       libelle: ['', Validators.required],
     });
     this.GetTypesArticlesList(1);
@@ -48,7 +49,7 @@ export class TypeArticleComponent {
     const value = inputElement?.value || ''; // Utilisez une valeur par défaut
     this.dt2.filterGlobal(value, 'contains');
   }
-  
+
   OnCloseModal() {
     this.isModalOpen = false;
     console.log(this.isModalOpen);

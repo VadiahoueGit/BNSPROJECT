@@ -1,16 +1,17 @@
 <div class="d-flex">
     <!-- Sidebar -->
-    <nav id="sidebar" class="border-end">
+    <nav id="sidebar" class="border-end px-2">
         <div class="sidebar-header py-3  d-flex justify-content-center">
-            <img src="assets/image/armonyssansfond.png" style="height: 90px;">
+            <img src="assets/image/armonyssansfond.png" >
         </div>
-        <div class="p-1 my-4  d-flex justify-content-center">
-            <label class="fw-bold">Best Negoce Service</label>
-        </div>
-        <ul class="list-unstyled ps-0 ">
+      <div class="p-1 my-4  d-flex justify-content-center">
+        <label class="fw-bold">Best Negoce Service</label>
+      </div>
+
+      <ul class="list-unstyled ps-0 ">
             <li class="mb-1 d-flex justify-content-center" *ngFor="let item of items; let i = index"
                 (click)="navigate(item.url,i)">
-                <a class="btn btn-toggle gap-4 d-flex align-items-center rounded my-1"
+                <a class="btn btn-toggle gap-4 d-flex align-items-center  w-100 rounded my-1"
                     [ngClass]="{'active': selectedItem === i}">
                     <i [class]="item.icon" [ngClass]="{'active': selectedItem === i}"></i> <!-- Icone ici -->
                     <label>{{ item.label }}</label>

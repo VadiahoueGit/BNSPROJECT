@@ -40,6 +40,7 @@ export class LiquideComponent {
   ) {}
   ngOnInit() {
     this.liquideForm = this.fb.group({
+      code: [null, Validators.required],
       libelle: [null, Validators.required],
       format: [null, Validators.required],
       condition: [null, Validators.required],
@@ -121,7 +122,7 @@ export class LiquideComponent {
         categorieproduitId: +this.liquideForm.value.categorieproduitId,
         groupearticleId: +this.liquideForm.value.groupearticleId,
         emballageId: +this.liquideForm.value.emballageId,
-        
+
       };
       console.log('formValues', formValues);
 
@@ -179,6 +180,7 @@ export class LiquideComponent {
   }
   loadLiquideDetails(): void {
     this.liquideForm.patchValue({
+      code: this.updateData.code,
       libelle: this.updateData.libelle,
       format: this.updateData.format,
       condition: this.updateData.condition,

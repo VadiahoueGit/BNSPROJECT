@@ -104,13 +104,13 @@
                     </div>
                     <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
                         <div class="d-flex align-items-center">
-                            <label for="prixId" class="form-label me-1 label-fixed-width">Type prix</label>
+                            <label for="prixId" class="form-label me-1 label-fixed-width">Nom du prix</label>
                             <p class="text-danger mb-0">*</p>
                         </div>
 
                         <select class=" form-control form-select form-select-sm" formControlName="PrixId"
                             aria-label=".form-select-sm example">
-                            <option value="" disabled selected>Choisir le type prix</option>
+                            <option value="" disabled selected>Choisir le nom du prix</option>
                             <option [value]="item.id" *ngFor="let item of dataListTypesPrix">{{item.libelle}}</option>
 
                         </select>

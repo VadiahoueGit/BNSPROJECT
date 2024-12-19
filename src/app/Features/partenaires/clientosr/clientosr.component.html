@@ -87,7 +87,7 @@
                        formControlName="photo" placeholder="Entrez la photo">
               </div>
               <div class="mb-3">
-                <label for="nom" class="form-label">Nom <span class="text-danger">*</span></label>
+                <label for="nom" class="form-label">Nom du gérant <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="nom" formControlName="nom" placeholder="Entrez le nom">
               </div>
               <div class="mb-3">
@@ -101,13 +101,13 @@
                 <input type="text" class="form-control" id="contactGerant" formControlName="contactGerant"
                        placeholder="Entrez le contact du gérant">
               </div>
-              <!-- <div class="mb-3">
+               <div class="mb-3">
                   <label for="zoneLivraisonId" class="form-label">Zone de Livraison <span
                           class="text-danger">*</span></label>
                   <ng-select class="form-control" [items]="zoneLivraison" bindLabel="nomZone"
                       bindValue="id" formControlName="zoneLivraisonId" [searchable]="true">
                   </ng-select>
-              </div> -->
+              </div>
               <div class="mb-3">
                 <label for="groupeClientId" class="form-label">Groupe client <span class="text-danger">*</span></label>
                 <ng-select class="form-control" [items]="grpClient" bindLabel="nomGroupe" bindValue="id"
@@ -124,7 +124,7 @@
                        placeholder="Entrez le nom d'établissement">
               </div>
               <div class="mb-3">
-                <label for="prenom" class="form-label">Prénom <span class="text-danger">*</span></label>
+                <label for="prenom" class="form-label">Prénom du gérant<span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="prenom" formControlName="prenom"
                        placeholder="Entrez le prénom">
               </div>
@@ -188,10 +188,7 @@
             <div class="col-md-5">
 
               <div class="detail-item">
-                <strong>Nom:</strong> {{ ClientOsrDetail.nom }}
-              </div>
-              <div class="detail-item">
-                <strong>Prénom:</strong> {{ ClientOsrDetail.prenom }}
+                <strong>Gérant:</strong> {{ ClientOsrDetail.nom }} {{ ClientOsrDetail.prenom }}
               </div>
               <div class="detail-item">
                 <strong>Etablissement:</strong> {{ ClientOsrDetail.nomEtablissement }}
@@ -213,13 +210,11 @@
             </div>
           </div>
         </div>
-
-        <div class="modal-footer gap-3 px-4" *ngIf="ClientOsrDetail.isValide">
-          <button (click)="OnCloseDetailModal()" class="btn btn-primary px-2">Fermer</button>
-        </div>
-        <div class="modal-footer gap-3 px-4" *ngIf="!ClientOsrDetail.isValide">
+        <div class="modal-footer gap-3 px-4">
+          <button (click)="OnCloseDetailModal()" class="btn btn-secondary px-2">Fermer</button>
           <button (click)="confirmValidateOperation(ClientOsrDetail)" class="btn btn-primary px-2">Valider</button>
         </div>
       </div>
     </div>
   </div>
+</div>

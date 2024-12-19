@@ -52,6 +52,7 @@ export class BouteilleVideComponent {
       );
     });
     this.BouteilleVideForm = this.fb.group({
+      code: [null, Validators.required],
       libelle: [null, Validators.required],
       prixUnitaire: [null, Validators.required],
       format: [null, Validators.required],
@@ -62,7 +63,7 @@ export class BouteilleVideComponent {
   goBack() {
     this.location.back()
   }
- 
+
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -158,6 +159,7 @@ export class BouteilleVideComponent {
   }
   loadDetails(): void {
     this.BouteilleVideForm.patchValue({
+      code: this.updateData.code,
       libelle: this.updateData.libelle,
       prixUnitaire: this.updateData.prixUnitaire,
       format: this.updateData.format,

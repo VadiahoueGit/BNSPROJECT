@@ -37,7 +37,7 @@
                 <td>
                     {{ dataList.format }}
                 </td>
-                <td> 
+                <td>
             <tr class="d-flex justify-content-center gap-3">
                 <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
 
@@ -88,10 +88,15 @@
                                 <input type="number" class="form-control" id="prixUnitaire" formControlName="prixUnitaire"
                                     placeholder="Entrez le prix unitaire">
                             </div>
-                  
+
                         </div>
                         <div class="col-md-6">
-
+                          <div class="mb-3">
+                            <label for="code" class="form-label">Code <span
+                              class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="code" formControlName="code"
+                                   placeholder="Entrez le code">
+                          </div>
                             <div class="mb-3">
                                 <label for="format" class="form-label">Format <span class="text-danger">*</span></label>
                                 <select class="form-control form-select form-select-sm" formControlName="format" aria-label=".form-select-sm example">

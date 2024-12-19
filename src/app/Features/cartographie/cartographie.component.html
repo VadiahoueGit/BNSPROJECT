@@ -49,12 +49,20 @@
 
         <div *ngIf="slideDetails && panelOpenOsr">
             <div class="row mb-5">
-                <h6 class="fw-bold text-center">{{slideDetails.nom}} {{slideDetails.prenom}}</h6>
+              <h6 class="fw-bold text-center">{{slideDetails.nomEtablissement}}</h6>
                 <label class="info text-center text-secondary fs-7">{{slideDetails.GroupeClient.nomGroupe}}</label>
             </div>
             <div class="row">
 
             </div>
+          <div class="row my-2">
+            <div class="col-6">
+              <label class="fw-bold info">Gerant:</label>
+            </div>
+            <div class="col-6">
+              <label class="info info">{{slideDetails.nom}} {{slideDetails.prenom}}</label>
+            </div>
+          </div>
             <div class="row my-2">
                 <div class="col-6">
                     <label class="fw-bold info">Contact Gerant:</label>

@@ -42,6 +42,7 @@ export class ArticleComponent {
 
   ngOnInit() {
     this.ArticleForm = this.fb.group({
+      reference: [null, Validators.required],
       photo: [null],
       libelle: [null, Validators.required],
       format: [null, Validators.required],
@@ -139,10 +140,10 @@ export class ArticleComponent {
     this.GetArticleList(this.currentPage);
   }
   onSubmit(): void {
-   
+
     console.log(this.ArticleForm.value);
     if (this.ArticleForm.valid) {
-      // const formValues = this.ArticleForm.value; 
+      // const formValues = this.ArticleForm.value;
       this._spinner.show();
       const formValues = {
         ...this.ArticleForm.value,
@@ -189,6 +190,7 @@ export class ArticleComponent {
   }
   loadArticleDetails(): void {
     this.ArticleForm.patchValue({
+      reference: this.updateData.reference,
       photo: this.updateData.photo ?? '',
       libelle: this.updateData.libelle,
       format: this.updateData.format,

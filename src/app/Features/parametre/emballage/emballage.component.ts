@@ -38,8 +38,9 @@ export class EmballageComponent {
 
   ) {}
   ngOnInit() {
-    
+
     this.emballageForm = this.fb.group({
+      code: [null, Validators.required],
       libelle: [null, Validators.required],
       format: [null, Validators.required],
       condition: [null, Validators.required],
@@ -172,13 +173,14 @@ export class EmballageComponent {
   }
   loadEmballageDetails(): void {
     this.emballageForm.patchValue({
+      code: this.updateData.code,
       libelle: this.updateData.libelle,
       format: this.updateData.format,
       condition: this.updateData.condition,
       plastiquenuId: this.updateData.plastiquenu.id,
       bouteillevideId: this.updateData.bouteillevide.id,
       categorieProduitId: this.updateData.categorieproduit.id,
-      groupeArticleId: this.updateData.groupeArticle.id,
+      groupeArticleId: this.updateData.groupearticle.id,
     });
   }
   OnDelete(Id: any) {

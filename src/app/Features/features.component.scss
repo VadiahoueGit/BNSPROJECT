@@ -1,79 +1,196 @@
-/* Styles pour la mise en page */
+/* --- Styles généraux pour la sidebar --- */
 #sidebar {
-    width: 260px;
-    min-width: 260px;
-    height: auto;
-    background-color: white;
-    -webkit-box-shadow: 0px 0px 17px -7px rgba(204,204,204,0.72);
-    -moz-box-shadow: 0px 0px 17px -7px rgba(204,204,204,0.72);
-    box-shadow: 0px 0px 17px -7px rgba(204,204,204,0.72);
+  width: 260px;
+  height: 100vh; /* Assurez-vous que la sidebar prend 100% de la hauteur de la fenêtre */
+  background-color: white;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(204,204,204,0.72);
+  -moz-box-shadow: 0px 0px 17px -7px rgba(204,204,204,0.72);
+  box-shadow: 0px 0px 17px -7px rgba(204,204,204,0.72);
+  position: fixed; /* Garder la sidebar fixée à gauche */
+  top: 0; /* Collée en haut */
+  left: 0; /* Collée à gauche */
+  transition: width 0.3s ease; /* Transition fluide pour la largeur de la sidebar */
+  z-index: 1000; /* S'assurer qu'elle soit au-dessus du contenu */
 }
 
-.btn {
-    width: 200px;
+/* --- Affichage du logo en petite taille sur tablette --- */
+#sidebar .sidebar-header img {
+  height: 90px; /* Taille par défaut du logo */
 }
 
-a,
-label {
-    cursor: pointer;
-}
+/* --- Sur les petits écrans (tablette ou mobile) --- */
+@media (max-width: 768px) {
+  /* Masquer le bloc contenant le nom de l'entreprise sur mobile/tablette */
+  #sidebar .p-1.my-4 {
+    display: none !important;
+  }
 
-a:hover{
-    cursor: pointer;
-    background-color: rgb(220, 255, 220);
-}
-.flex-grow-1 {
-    min-height: 100vh;
-}
+  /* Ajuster la largeur de la sidebar sur les petits écrans */
+  #sidebar {
+    width: 100px; /* Réduit la largeur de la sidebar */
+    padding: 0;
+  }
 
-i {
-    font-size: 18px;
-    color: rgb(154, 154, 154);
-}
+  /* Afficher le logo mais réduire sa taille sur tablette */
+  #sidebar .sidebar-header img {
+    height: 45px; /* Réduit encore la taille du logo sur tablette */
+  }
 
-.navbar {
-    height: 60px;
-}
-
-.active {
-    background-color: var(--primary-color) !important;
-    color: white;
-}
-
-
-.form-control{
-    width: 100% !important;
-}
-
-.custom-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+  /* Ajustements des items du menu */
+  #sidebar .list-unstyled li {
+    justify-content: center; /* Centre les éléments dans la sidebar */
+    text-align: center; /* Centrer les icônes et le texte */
     display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 1050;
   }
 
-  .modal-dialog {
-    background-color: white;
-    border-radius: 0.3rem;
-    width: 30em;
-    max-width: 30em;
-    padding: 1rem;
-  }
-  
-  .modal-header, .modal-body, .modal-footer {
-    padding: 1rem;
-  }
-  
-  .btn-close {
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
+  /* Ajuste la taille des boutons pour s'adapter à la nouvelle largeur */
+  .btn-toggle {
+    justify-content: center; /* Centre les éléments horizontalement */
+    padding: 8px 0;
+    width: 50px; /* Réduit la taille des boutons */
   }
 
- 
+  /* Masque le texte des labels dans le menu */
+  .btn-toggle label {
+    display: none;
+  }
+
+  /* Agrandit les icônes pour être plus visibles */
+  .btn-toggle i {
+    font-size: 24px; /* Agrandit la taille des icônes */
+  }
+
+  /* Ajuste la navbar sur tablette */
+  .navbar {
+    padding: 0.5rem 1rem;
+  }
+}
+
+/* --- Sur les écrans plus grands (au-dessus de 768px) --- */
+@media (min-width: 769px) {
+  /* Affiche le nom de l'entreprise sur les écrans plus larges */
+  #sidebar .p-1.my-4 {
+    display: block;
+  }
+
+  /* La sidebar reprend sa largeur normale */
+  #sidebar {
+    width: 260px;
+  }
+
+  /* Aligner les éléments du menu à gauche sur grand écran */
+  #sidebar .list-unstyled li {
+    justify-content: flex-start; /* Aligner à gauche */
+    text-align: left; /* Aligner le texte à gauche */
+    display: flex;
+    align-items: center;
+  }
+
+  /* Affiche à nouveau les labels dans le menu */
+  .btn-toggle label {
+    display: block;
+  }
+
+  /* Réduit la taille des icônes sur les grands écrans */
+  .btn-toggle i {
+    font-size: 18px;
+  }
+}
+
+/* --- Styles des boutons et icônes --- */
+.btn-toggle {
+  color: rgb(154, 154, 154);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-toggle:hover {
+  background-color: rgb(220, 255, 220);
+  color: var(--primary-color);
+}
+
+.btn-toggle.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-toggle.active i {
+  color: white;
+}
+
+/* Icones */
+i {
+  font-size: 18px;
+  color: rgb(154, 154, 154);
+}
+
+i.active {
+  color: white;
+}
+
+/* --- Couleur de la navbar --- */
+.navbar {
+  background-color: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.navbar .nav-link {
+  color: rgb(154, 154, 154);
+}
+
+.navbar .nav-link:hover {
+  color: var(--primary-color);
+}
+
+/* --- Styles du Modal --- */
+.custom-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+.modal-dialog {
+  background-color: white;
+  border-radius: 0.3rem;
+  width: 30em;
+  max-width: 30em;
+  padding: 1rem;
+}
+
+.modal-header, .modal-body, .modal-footer {
+  padding: 1rem;
+}
+
+.btn-close {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+}
+
+/* --- Gestion des erreurs dans le formulaire de mot de passe --- */
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* --- Contenu principal : éviter qu'il passe derrière la sidebar --- */
+.flex-grow-1 {
+  min-height: 100vh; /* Prendre toute la hauteur de la fenêtre */
+  padding-left: 260px; /* Espace pour la sidebar */
+  transition: padding-left 0.3s ease; /* Transition fluide lorsque la sidebar est redimensionnée */
+}
+
+/* --- Si la sidebar se réduit sur tablette --- */
+@media (max-width: 768px) {
+  .flex-grow-1 {
+    padding-left: 100px; /* Réduit l'espace lorsque la sidebar est plus petite */
+  }
+}
