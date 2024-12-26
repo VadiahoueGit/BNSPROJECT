@@ -116,7 +116,7 @@ export class SuiviDesRDVComponent {
   }
   GetArticleList(page:number) {
     let data = {
-      paginate: true,
+      paginate: false,
       page:page,
       limit: 8,
     };

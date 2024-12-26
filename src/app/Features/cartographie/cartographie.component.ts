@@ -1,11 +1,11 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { data } from 'jquery';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { Subscription } from 'rxjs';
-import { CoreServiceService } from 'src/app/core/core-service.service';
-import { LogistiqueService } from 'src/app/core/logistique.service';
-import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
-import { GpsWebSocketService } from 'src/app/core/webSocket.service';
+import {ChangeDetectorRef, Component} from '@angular/core';
+import {data} from 'jquery';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {Subscription} from 'rxjs';
+import {CoreServiceService} from 'src/app/core/core-service.service';
+import {LogistiqueService} from 'src/app/core/logistique.service';
+import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
+import {WebsocketService} from 'src/app/core/webSocket.service';
 
 @Component({
   selector: 'app-cartographie',
@@ -33,7 +33,7 @@ export class CartographieComponent {
     styles: [
       {
         featureType: 'poi', // Points of interest
-        stylers: [{ visibility: 'off' }],
+        stylers: [{visibility: 'off'}],
       },
     ],
   };
@@ -46,25 +46,22 @@ export class CartographieComponent {
   };
   coordinates: any[] = [];
   private gpsSubscription: Subscription;
-  constructor(private gpsWebSocketService: GpsWebSocketService, private cdr: ChangeDetectorRef, private _coreService: CoreServiceService, private logisiticService: LogistiqueService, private utilisateurService: UtilisateurResolveService, private _spinner: NgxSpinnerService,) {
+
+  constructor(private websocketService: WebsocketService, private cdr: ChangeDetectorRef, private _coreService: CoreServiceService, private logisiticService: LogistiqueService, private utilisateurService: UtilisateurResolveService, private _spinner: NgxSpinnerService,) {
   }
+
   ngOnInit() {
-    // // Ouvrir la connexion WebSocket
-    // this.gpsWebSocketService.openConnection('ws://wsbnsapi.monassoci.com/');  // Remplacez l'URL par celle de votre serveur WebSocket
-    //
-    // // S'abonner aux messages entrants
-    // this.messageSubscription = this.gpsWebSocketService.getMessages().subscribe(
-    //   (message:any) => {
-    //     console.log('Message reçu:', message);
-    //     this.messages.push(message);  // Ajoute le message à la liste
-    //   },
-    //   (error:any) => {
-    //     console.error('Erreur lors de la réception des messages:', error);
-    //   }
-    // );
-    //
-    // // Tester l'envoi d'un message
-    // this.sendGpsData();
+    this.websocketService.connect('ws://wsbnsapi.monassoci.com/');
+// Abonnez-vous pour recevoir les messages
+    this.messageSubscription = this.websocketService.getMessages().subscribe(
+      (message) => {
+        this.messages.push(message);
+        console.log(this.messages);
+      },
+      (error) => {
+        console.error('Error receiving message:', error);
+      }
+    );
 
     this.GetClientOSRList();
     this.getPosition();
@@ -72,37 +69,44 @@ export class CartographieComponent {
     this.GetGoogleJWT();
   }
 
-ngOnDestroy(): void {
-    // Se désabonner lorsque le composant est détruit
-    if (this.messageSubscription) {
-      this.messageSubscription.unsubscribe();
-    }
 
-    // Fermer la connexion WebSocket
-    this.gpsWebSocketService.closeConnection();
-  }
+  // ngOnDestroy(): void {
+  //   // Se désabonner lorsque le composant est détruit
+  //   if (this.messageSubscription) {
+  //     this.messageSubscription.unsubscribe();
+  //   }
+  //
+  //   // Fermer la connexion WebSocket
+  //   this.gpsWebSocketService.closeConnection();
+  // }
 
   sendMessage(): void {
     const message = 'Hello WebSocket!';
-    this.gpsWebSocketService.sendMessage(message);  // Envoie un message via WebSocket
-    console.log('Message envoyé:', message);
+    if (message.trim()) {
+      this.websocketService.sendMessage({message: message});
+      console.log('Message envoyé:', message);
+    }
+
   }
 
-    // Méthode pour envoyer des données GPS
-    sendGpsData(): void {
-      const data = { latitude: 48.8566, longitude: 2.3522 }; // Exemple de données GPS
-      this.sendMessage();
-    }
+  // Méthode pour envoyer des données GPS
+  sendGpsData(): void {
+    const data = {latitude: 48.8566, longitude: 2.3522}; // Exemple de données GPS
+    this.sendMessage();
+  }
 
   async addMarker(data: any, type: string) {
     // Import libraries dynamically
-    const { Map, InfoWindow } = (await google.maps.importLibrary('maps')) as google.maps.MapsLibrary;
-    const { AdvancedMarkerElement, PinElement } = (await google.maps.importLibrary('marker')) as google.maps.MarkerLibrary;
+    const {Map, InfoWindow} = (await google.maps.importLibrary('maps')) as google.maps.MapsLibrary;
+    const {
+      AdvancedMarkerElement,
+      PinElement
+    } = (await google.maps.importLibrary('marker')) as google.maps.MarkerLibrary;
 
-    console.log('data', data)
+    // console.log('data', data)
     if (type == 'osr') {
       this.markersClient = data.map((position: any, i: number) => {
-        console.log('position', position);
+        // console.log('position', position);
         const positions = {
           lat: parseFloat(position.latitude),
           lng: parseFloat(position.longitude),
@@ -112,13 +116,13 @@ ngOnDestroy(): void {
           content: this.createCustomPinContent(type), // Élément DOM du marqueur
           title: (position.id).toString()
         });
-        console.log('container', marker)
+        // console.log('container', marker)
         return marker;
       });
 
     } else if (type == 'vehicule') {
       this.markersVehicule = data.map((position: any, i: number) => {
-        console.log(position);
+        // console.log(position);
         const positions = {
           lat: parseFloat(position.latitude),
           lng: parseFloat(position.longitude),
@@ -128,12 +132,12 @@ ngOnDestroy(): void {
           content: this.createCustomPinContent(type), // Élément DOM du marqueur
           title: (position.id).toString()
         });
-        console.log('container', marker)
+        // console.log('container', marker)
         return marker;
       });
     } else if (type == 'depot') {
       this.markersDepot = data.map((position: any, i: number) => {
-        console.log('positionDepot',position);
+        // console.log('positionDepot', position);
         const positions = {
           lat: parseFloat(position.latitude),
           lng: parseFloat(position.longitude),
@@ -143,7 +147,7 @@ ngOnDestroy(): void {
           content: this.createCustomPinContent(type), // Élément DOM du marqueur
           title: (position.id).toString()
         });
-        console.log('container', marker)
+        // console.log('container', marker)
         return marker;
       });
     }

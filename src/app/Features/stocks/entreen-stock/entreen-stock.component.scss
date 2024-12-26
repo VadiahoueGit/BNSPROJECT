@@ -31,3 +31,12 @@
 .modal-footer {
   padding: 0.5rem;
 }
+/* Appliquer une bordure rouge et un fond rouge clair lorsque la quantité dépasse la quantité disponible */
+input.invalid {
+  border-color: red !important;  /* Force la bordure rouge */
+  background-color: #f8d7da; /* Fond rouge clair pour signaler l'erreur */
+}
+
+input:disabled {
+  background-color: #e9ecef; /* Couleur de fond pour les champs désactivés */
+}

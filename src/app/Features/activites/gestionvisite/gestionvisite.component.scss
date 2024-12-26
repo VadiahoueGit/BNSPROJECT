@@ -14,16 +14,20 @@
     background-color: rgb(220, 255, 220);
 }
 .label-fixed-width {
-    min-width: 150px; 
+    min-width: 150px;
   }
 
 
-  //modal
-  .modal-dialog{
-    max-width: 45em;
-    min-width: auto;
-}
 
+.table thead th {
+  padding: 10px;
+  position: sticky;
+  top: 0;
+  background-color: var(--primary-color);
+  color: white;
+  z-index: 1;
+  /* Assurez-vous que l'en-tête est au-dessus du corps de la table */
+}
 .custom-modal {
     position: fixed;
     top: 0;
@@ -40,19 +44,20 @@
   .modal-dialog {
     background-color: white;
     border-radius: 0.3rem;
-    width: 45em;
-    max-width: 45em;
+    width: 75em;
+    max-height: 90%;
+    max-width: 75em;
+    min-width: auto;
     padding: 1rem;
   }
-  
+
   .modal-header, .modal-body, .modal-footer {
     padding: 1rem;
   }
-  
+
   .btn-close {
     background: transparent;
     border: none;
     font-size: 1.5rem;
   }
 
-  

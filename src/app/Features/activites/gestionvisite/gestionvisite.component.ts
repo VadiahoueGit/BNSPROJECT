@@ -1,18 +1,19 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {
   CalendarDayViewBeforeRenderEvent,
   CalendarEvent,
   CalendarEventTimesChangedEvent,
   CalendarView,
 } from 'angular-calendar';
-import { ResizeCursors } from 'angular-resizable-element';
-import { endOfDay, startOfDay } from 'date-fns';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
-import { ActiviteService } from 'src/app/core/activite.service';
-import { LogistiqueService } from 'src/app/core/logistique.service';
-import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
+import {ResizeCursors} from 'angular-resizable-element';
+import {endOfDay, startOfDay} from 'date-fns';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {ToastrService} from 'ngx-toastr';
+import {ActiviteService} from 'src/app/core/activite.service';
+import {LogistiqueService} from 'src/app/core/logistique.service';
+import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
+
 @Component({
   selector: 'app-gestionvisite',
   templateUrl: './gestionvisite.component.html',
@@ -26,7 +27,7 @@ export class GestionvisiteComponent {
       start: startOfDay(new Date()), // Début de l'événement
       end: endOfDay(new Date()), // Fin de l'événement
       title: '',
-      color: { primary: '#ad2121', secondary: '#FAE3E3' },
+      color: {primary: '#ad2121', secondary: '#FAE3E3'},
     },
   ];
   @Input() locale: string = 'EN';
@@ -38,9 +39,15 @@ export class GestionvisiteComponent {
   updateData: any
   visiteId: number
   typeVisite = [];
-  pointDeVente = []
+  pointDeVente: any = []
+  filteredPointDeVente: any[] = [];
+  searchQuery: string = '';
   commerciaux = []
   vehicules = []
+  selectedItems: any = []
+  selectedItemsIds: any = []
+  searchForm: FormGroup
+
   constructor(
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
@@ -49,7 +56,10 @@ export class GestionvisiteComponent {
     private utilisateurService: UtilisateurResolveService,
     private logistiqueService: LogistiqueService
   ) {
-    // this.toastr.success('Hello world!', 'Toastr fun!');
+
+    this.searchForm = this.fb.group({
+      searchQuery: ['', Validators.required]
+    });
     this.VisiteForm = this.fb.group({
       typeVisite: [null, Validators.required],
       commercialId: [null, Validators.required],
@@ -59,12 +69,28 @@ export class GestionvisiteComponent {
       IsRepetitive: [false, Validators.required],
     });
   }
+
   ngOnInit() {
     this.LoadTypeVisite();
     this.LoadCommercial();
     this.LoadPdv();
     this.LoadVisite()
     this.GetVehiculeList()
+
+  }
+
+  filterData(): void {
+    const query = this.searchForm.get('searchQuery')?.value;
+
+    if (!query) {
+      // Si la recherche est vide, on réinitialise la liste filtrée à l'ensemble des points de vente
+      this.filteredPointDeVente = this.pointDeVente;
+    } else {
+      // Sinon, on filtre les points de vente en fonction de la recherche (case insensitive)
+      this.filteredPointDeVente = this.pointDeVente.filter((item: any) =>
+        item.nomEtablissement.toLowerCase().includes(query.toLowerCase())
+      );
+    }
   }
 
   LoadVisite() {
@@ -82,7 +108,7 @@ export class GestionvisiteComponent {
           {
             start: startDate,
             title: `${item.typeVisite.libelle} de ${item.commercial.nom} ${item.commercial.prenom}`,
-            color: { primary: '#1e90ff', secondary: '#D1E8FF' }
+            color: {primary: '#1e90ff', secondary: '#D1E8FF'}
           },
         ];
       });
@@ -92,9 +118,11 @@ export class GestionvisiteComponent {
   }
 
   OnCloseModal() {
+    this.deselectAllItems()
     this.isModalOpen = false;
     console.log(this.isModalOpen);
   }
+
   OnEdit(data: any) {
     this.isEditMode = true;
     console.log(data);
@@ -176,8 +204,8 @@ export class GestionvisiteComponent {
       limit: 8,
     };
     this.logistiqueService.GetVehiculeList(data).then((res: any) => {
-      this.vehicules = res.data
-    },
+        this.vehicules = res.data
+      },
       (error: any) => {
         this._spinner.hide()
       })
@@ -190,9 +218,9 @@ export class GestionvisiteComponent {
       limit: 8,
     };
     this.activiteService.GetTypeVisiteList(data).then((res: any) => {
-      this.typeVisite = res.data;
-      console.log('typeVisite', res)
-    },
+        this.typeVisite = res.data;
+        console.log('typeVisite', res)
+      },
       (error: any) => {
         this._spinner.hide()
       })
@@ -205,17 +233,16 @@ export class GestionvisiteComponent {
       limit: 8,
     };
     this.utilisateurService.GetCommercialList(data).then((res: any) => {
-      this.commerciaux = res.data.map((commercial: any) => ({
-        ...commercial,
-        fullLabel: `${commercial.nom} ${commercial.prenom}` // Exemple de concaténation
-      }));
-      console.log('commerciaux', res)
-    },
+        this.commerciaux = res.data.map((commercial: any) => ({
+          ...commercial,
+          fullLabel: `${commercial.nom} ${commercial.prenom}` // Exemple de concaténation
+        }));
+        console.log('commerciaux', res)
+      },
       (error: any) => {
         this._spinner.hide()
       })
   }
-
 
 
   LoadPdv() {
@@ -226,9 +253,50 @@ export class GestionvisiteComponent {
     };
     this.utilisateurService.GetPointDeVenteList(data).then((res: any) => {
       this.pointDeVente = res.data
+      this.filteredPointDeVente = this.pointDeVente;
       console.log('pointDeVente', res)
     }, (error: any) => {
       this._spinner.hide()
     })
+  }
+
+  // Ajouter l'élément sélectionné au tableau des éléments sélectionnés
+  toggleSelection(item: any): void {
+    console.log('item', item);
+
+    if (item.isChecked) {
+      this.selectedItems.push(item);
+      this.selectedItemsIds.push(item.id);
+    } else {
+      const indexToRemove = this.selectedItems.findIndex(
+        (selectedArticle:any) => selectedArticle.id === item.id
+      );
+      if (indexToRemove !== -1) {
+        this.selectedItems.splice(indexToRemove, 1);
+        this.selectedItemsIds.splice(indexToRemove, 1);
+      }
+    }
+    this.VisiteForm.controls['pointDeVenteIds'].setValue(this.selectedItemsIds)
+  }
+
+
+  // Méthode pour supprimer un élément du tableau des éléments sélectionnés
+  removeItem(item: any): void {
+    const index = this.selectedItems.findIndex((i: any) => i.id === item.id);
+    if (index !== -1) {
+      this.selectedItems.splice(index, 1);
+    }
+    item.isChecked = false;
+    this.toggleSelection(item);
+  }
+
+  // Méthode pour décocher tous les éléments
+  deselectAllItems(): void {
+    this.selectedItems.forEach((item:any) => {
+      item.isChecked = false;
+    });
+
+    this.selectedItems = [];
+
   }
 }

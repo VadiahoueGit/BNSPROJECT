@@ -40,7 +40,7 @@ export class ZoneLivraisonComponent {
 
   ngOnInit() {
     let data = {
-      paginate: true,
+      paginate: false,
       page: 1,
       limit: 8,
     };
@@ -115,7 +115,7 @@ export class ZoneLivraisonComponent {
     console.log(this.zoneForm.value);
     if (this.zoneForm.valid) {
        const formValues = this.zoneForm.value;
-  
+
       console.log('formValues', formValues);
 
       if (this.isEditMode) {

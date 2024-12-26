@@ -106,12 +106,16 @@ export class TransfertDeStockComponent implements OnInit {
   // Soumission du formulaire
   onSubmit(): void {
     if (this.transfertForm.valid) {
-      const formData = {
-        ...this.transfertForm.getRawValue(),
-        numero: this.transfertForm.get('numero')?.value,
-        totalProduits: this.totalProduits,
-      };
-      console.log('Données du transfert :', formData);
+
+      alert('Transfert enregistré avec succès.');
+    } else {
+      alert('Veuillez remplir tous les champs requis.');
+    }
+  }
+
+  add(): void {
+    if (this.transfertForm.valid) {
+
       alert('Transfert enregistré avec succès.');
     } else {
       alert('Veuillez remplir tous les champs requis.');

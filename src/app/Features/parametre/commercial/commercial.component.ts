@@ -9,7 +9,7 @@ import { CoreServiceService } from 'src/app/core/core-service.service';
 import { Location } from '@angular/common';
 
 @Component({
-  selector: 'app-commercial', 
+  selector: 'app-commercial',
   templateUrl: './commercial.component.html',
   styleUrls: ['./commercial.component.scss']
 })
@@ -119,7 +119,7 @@ export class CommercialComponent {
     if (this.commercialForm.valid) {
       // const formValues = this.ArticleForm.value;
       const formValues = {
-      
+
       };
       console.log('formValues', formValues);
 
@@ -158,6 +158,7 @@ export class CommercialComponent {
   }
   loadCommercialDetails(): void {
     this.commercialForm.patchValue({
+      idCommercialBNS: this.updateData.idCommercialBNS,
       nom: this.updateData.nom,
       prenom: this.updateData.prenom,
       email: this.updateData.email,

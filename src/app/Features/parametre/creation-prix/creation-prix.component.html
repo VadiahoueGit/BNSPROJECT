@@ -78,6 +78,31 @@
 
             <div class="modal-body">
                 <form [formGroup]="prixForm">
+                  <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
+                    <div class="d-flex align-items-center">
+                      <label for="produitId" class="form-label me-1 label-fixed-width">Produit</label>
+                      <p class="text-danger mb-0">*</p>
+                    </div>
+                    <select class="form-control form-select form-select-sm" formControlName="ProduitId"
+                            aria-label=".form-select-sm example">
+                      <option value="" disabled selected>Choisir le produit</option>
+                      <option [value]="item.id" *ngFor="let item of dataListProduits">{{item.libelle}}</option>
+                    </select>
+
+                  </div>
+                  <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
+                    <div class="d-flex align-items-center">
+                      <label for="prixId" class="form-label me-1 label-fixed-width">Nom du prix</label>
+                      <p class="text-danger mb-0">*</p>
+                    </div>
+
+                    <select class=" form-control form-select form-select-sm" formControlName="PrixId"
+                            aria-label=".form-select-sm example">
+                      <option value="" disabled selected>Choisir le nom du prix</option>
+                      <option [value]="item.id" *ngFor="let item of dataListTypesPrix">{{item.libelle}}</option>
+
+                    </select>
+                  </div>
                     <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
                         <div class="d-flex align-items-center">
                             <label for="PrixLiquide" class="form-label me-1 label-fixed-width">Prix liquide</label>
@@ -102,31 +127,8 @@
                         <input type="number" class="form-control" formControlName="Quantite" id="quantite"
                             placeholder="Entrez la quantité ">
                     </div>
-                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
-                        <div class="d-flex align-items-center">
-                            <label for="prixId" class="form-label me-1 label-fixed-width">Nom du prix</label>
-                            <p class="text-danger mb-0">*</p>
-                        </div>
 
-                        <select class=" form-control form-select form-select-sm" formControlName="PrixId"
-                            aria-label=".form-select-sm example">
-                            <option value="" disabled selected>Choisir le nom du prix</option>
-                            <option [value]="item.id" *ngFor="let item of dataListTypesPrix">{{item.libelle}}</option>
 
-                        </select>
-                    </div>
-                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
-                        <div class="d-flex align-items-center">
-                            <label for="produitId" class="form-label me-1 label-fixed-width">Produit</label>
-                            <p class="text-danger mb-0">*</p>
-                        </div>
-                        <select class="form-control form-select form-select-sm" formControlName="ProduitId"
-                            aria-label=".form-select-sm example">
-                            <option value="" disabled selected>Choisir le produit</option>
-                            <option [value]="item.id" *ngFor="let item of dataListProduits">{{item.libelle}}</option>
-                        </select>
-
-                    </div>
                 </form>
             </div>
             <div class="modal-footer gap-3 px-4">

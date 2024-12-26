@@ -1,190 +1,214 @@
 /* You can add global styles to this file, and also import other style files */
 body {
-    background-color: #f7fcff;
-    font-family: 'Poppins', sans-serif !important;
-                                            
+  background-color: #f7fcff;
+  font-family: 'Poppins', sans-serif !important;
+
 }
-a{
-    font-size: 14px !important;
+
+a {
+  font-size: 14px !important;
 }
+
 .btn-primary {
-    background-color: var(--primary-color);
-    border-color: transparent;
-    -webkit-box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
-    -moz-box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
-    box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
+  background-color: var(--primary-color);
+  border-color: transparent;
+  -webkit-box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
+  -moz-box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
+  box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
 }
 
 .btn-secondary {
-    background-color:var(--secondary-color) !important;
-    border-color: transparent;
-    color: white !important;
-    -webkit-box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
-    -moz-box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
-    box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
+  background-color: var(--secondary-color) !important;
+  border-color: transparent;
+  color: white !important;
+  -webkit-box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
+  -moz-box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
+  box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
 }
 
 .text-primary {
-    color: var(--primary-color) !important;
+  color: var(--primary-color) !important;
 }
 
 .text-secondary {
-    color: var(--secondary-color) !important;
+  color: var(--secondary-color) !important;
 }
 
 .btn-primary:hover {
-    border-color: transparent;
-    background-color: rgb(103, 192, 130) !important;
+  border-color: transparent;
+  background-color: rgb(103, 192, 130) !important;
 }
 
 .form-control {
-    width: 300px!important;
-    height: 45px;
-    border:var(--bs-border-width) solid rgb(187, 187, 187);
- }
-
- .form-control:focus, textarea:focus, select:focus {
-    outline: none; /* Supprime l'effet d'outline bleu */
-    box-shadow: none; /* Supprime la bordure bleue générée par Bootstrap */
-  }
-  
-.form-label {
-    color: #959799 !important;
+  width: 300px !important;
+  height: 40px;
+  font-size: 13px;
+  border: var(--bs-border-width) solid rgb(187, 187, 187);
 }
 
+.form-control:focus, textarea:focus, select:focus {
+  outline: none; /* Supprime l'effet d'outline bleu */
+  box-shadow: none; /* Supprime la bordure bleue générée par Bootstrap */
+}
+
+.form-label {
+  color: #959799 !important;
+  font-size: 13px;
+}
+.btn{
+  font-size: 14px !important;
+}
 .btn:disabled {
-    border-color: transparent;
-    background-color: rgb(103, 192, 130) !important;
+  font-size: 14px !important;
+  border-color: transparent;
+  background-color: rgb(103, 192, 130) !important;
 }
 
 .bg-primary {
-    background-color: var(--primary-color) !important;
+  background-color: var(--primary-color) !important;
 }
 
 .card {
-    padding: 2rem;
-    border-radius: 10px;
-    background-color: white;
-    width: 100%;
-    height: auto;
-    border: none;
-    -webkit-box-shadow: 0px 0px 17px -7px rgba(204,204,204,0.72);
-    -moz-box-shadow: 0px 0px 17px -7px rgba(204,204,204,0.72);
-    box-shadow: 0px 0px 17px -7px rgba(204,204,204,0.72);
+  padding: 2rem;
+  border-radius: 10px;
+  background-color: white;
+  width: 100%;
+  height: auto;
+  border: none;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(204, 204, 204, 0.72);
+  -moz-box-shadow: 0px 0px 17px -7px rgba(204, 204, 204, 0.72);
+  box-shadow: 0px 0px 17px -7px rgba(204, 204, 204, 0.72);
 }
 
 .hover-scale {
-    transition: transform 0.3s ease-in-out; /* Transition fluide */
+  transition: transform 0.3s ease-in-out; /* Transition fluide */
 }
 
 .hover-scale:hover {
-    transform: scale(1.05); /* Grossissement léger au survol */
+  transform: scale(1.05); /* Grossissement léger au survol */
 }
 
 .hover-scale-image {
-    transition: transform 0.3s ease-in-out; /* Transition fluide sur l'image */
+  transition: transform 0.3s ease-in-out; /* Transition fluide sur l'image */
 }
 
 .hover-scale-image:hover {
-    transform: scale(1.1); /* Grossissement plus important de l'image au survol */
+  transform: scale(1.1); /* Grossissement plus important de l'image au survol */
 }
 
-.p-datatable .p-datatable-thead > tr > th
-{
-    background: none;
-}
-.p-datatable .p-datatable-tbody > tr
-{
-    border-bottom: 0.5px solid #cfcfcf;
+.p-datatable .p-datatable-thead > tr > th {
+  background: none;
 }
 
-.p-datatable .p-datatable-tbody > tr td span
-{
-    font-size: 14px;
+.p-datatable .p-datatable-tbody > tr {
+  border-bottom: 0.5px solid #cfcfcf;
 }
+
+.p-datatable .p-datatable-tbody > tr td span {
+  font-size: 13px;
+}
+.table-bordered th,td {
+  font-size: 13px;
+}
+.p-datatable-sm th,
+.p-datatable-sm td {
+  font-size: 13px;
+}
+
 // sweet alert style
-.swal2-popup{
-    width:23em;
+.swal2-popup {
+  width: 23em;
 }
-div:where(.swal2-icon){
-    margin: 1.5em auto .6em !important;
+
+div:where(.swal2-icon) {
+  margin: 1.5em auto .6em !important;
 }
-.swal2-title{
-    font-size: 20px!important;
+
+.swal2-title {
+  font-size: 20px !important;
 }
-.swal2-html-container{
-    font-size: 16px!important;
+
+.swal2-html-container {
+  font-size: 16px !important;
 }
 
 // Modal style
-.modal-footer{
-    border-top: none;
+.modal-footer {
+  border-top: none;
 }
-.btn-secondary{
-    background-color: transparent;
-    border: 0.5px solid gray;
-    color: grey;
+
+.btn-secondary {
+  background-color: transparent;
+  border: 0.5px solid gray;
+  color: grey;
 }
-.btn-secondary:hover{
-    background-color: transparent;
-    border: 0.5px solid gray;
-    color: grey;
+
+.btn-secondary:hover {
+  background-color: transparent;
+  border: 0.5px solid gray;
+  color: grey;
 }
-.modal-header{
-    border-bottom: 0.5px solid gray;
+
+.modal-header {
+  border-bottom: 0.5px solid gray;
 }
-.p-column-filter-row .p-column-filter-menu-button{
-    display: none;
-    padding: 0 !important;
+
+.p-column-filter-row .p-column-filter-menu-button {
+  display: none;
+  padding: 0 !important;
 }
+
 .p-fluid .p-inputtext {
-    width: 10em;
-    height: 2.5rem;
+  width: 10em;
+  height: 2.5rem;
 }
-.p-datatable-header{
-    background-color:transparent;
-    border: none;
+
+.p-datatable-header {
+  background-color: transparent;
+  border: none;
 }
+
 .p-inputtext {
-    height: 2.5rem;
+  height: 2.5rem;
 }
 
 //NG SELECT
 /* Style du conteneur principal */
 .ng-select {
-    width: 100%; /* S'assure qu'il occupe toute la largeur du parent */
-    max-width: 400px;
-    // margin-bottom: 20px;
-    
-  }
-  .ng-dropdown-panel .scroll-host {
-    border-color: transparent;
-    -webkit-box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
-    -moz-box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
-    box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
-  }
-  /* Style du conteneur d'entrée et du bouton */
-  .ng-select-container {
-    // border: 1px solid #ced4da;
-    border-radius: 0.25rem;
-    padding: 0.375rem 0.75rem;
-  }
-  
-  /* Style des options dans le panneau déroulant */
-  .ng-option {
-    background-color: white;
-    padding: 10px;
-    cursor: pointer;
-  }
-  
-  .ng-option:hover {
-    background-color: #d9ecff;
-  }
-  
-  /* Style de la barre de recherche */
-  .ng-select-search {
-    padding: 5px;
-    border-radius: 0.25rem;
-    border: 1px solid #ced4da;
-  }
-  
+  width: 100%; /* S'assure qu'il occupe toute la largeur du parent */
+  max-width: 400px;
+  // margin-bottom: 20px;
+
+}
+
+.ng-dropdown-panel .scroll-host {
+  border-color: transparent;
+  -webkit-box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
+  -moz-box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
+  box-shadow: 0px 2px 17px -2px rgba(0, 0, 0, 0.26);
+}
+
+/* Style du conteneur d'entrée et du bouton */
+.ng-select-container {
+  // border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  padding: 0.375rem 0.75rem;
+}
+
+/* Style des options dans le panneau déroulant */
+.ng-option {
+  background-color: white;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.ng-option:hover {
+  background-color: #d9ecff;
+}
+
+/* Style de la barre de recherche */
+.ng-select-search {
+  padding: 5px;
+  border-radius: 0.25rem;
+  border: 1px solid #ced4da;
+}

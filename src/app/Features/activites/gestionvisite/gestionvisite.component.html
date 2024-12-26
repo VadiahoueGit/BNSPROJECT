@@ -1,82 +1,131 @@
 <div class="card">
-    <div class=" d-flex justify-content-end py-3">
-        <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer une visite</button>
-    </div>
-    <mwl-calendar-month-view [locale]="'fr'" [viewDate]="viewDate" [events]="events">
-    </mwl-calendar-month-view>
+  <div class=" d-flex justify-content-end py-3">
+    <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer une visite</button>
+  </div>
+  <mwl-calendar-month-view [locale]="'fr'" [viewDate]="viewDate" [events]="events">
+  </mwl-calendar-month-view>
 </div>
 
 <!-- Modal creation -->
 <!-- Modal -->
 <div *ngIf="isModalOpen" class="custom-modal">
-    <div class="modal-dialog  modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header d-flex align-items-center">
-                <div class="d-flex justify-content-center align-items-center"
-                    style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
-                    <i class="fas fa-box-check text-primary fs-3"></i>
-                </div>
-                <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création
-                    de visite</h1>
-                <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification de
-                    la visite</h1>
-            </div>
-            <div class="modal-body">
-                <form [formGroup]="VisiteForm">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="format" class="form-label">Type visite <span
-                                        class="text-danger">*</span></label>
-                                <ng-select class="form-control" [items]="typeVisite" bindLabel="libelle" bindValue="id"
-                                    formControlName="typeVisite" [searchable]="true">
-                                </ng-select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="format" class="form-label">Commercial <span
-                                        class="text-danger">*</span></label>
-                                <ng-select class="form-control" [items]="commerciaux" bindLabel="fullLabel" bindValue="id"
-                                    formControlName="commercialId" [searchable]="true">
-                                </ng-select>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" formControlName="IsRepetitive"
-                                    id="flexSwitchCheckDefault">
-                                <label class="form-check-label" for="flexSwitchCheckDefault">Répétitif</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="format" class="form-label">Point de vente <span
-                                        class="text-danger">*</span></label>
-                                <ng-select class="form-control" [multiple]="true" [checkbox]="true" [items]="pointDeVente"
-                                    bindLabel="nomEtablissement" bindValue="id" formControlName="pointDeVenteIds"
-                                    [searchable]="true">
-                                </ng-select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="format" class="form-label">Date de visite <span
-                                        class="text-danger">*</span></label>
-                                <input type="date" class="form-control" formControlName="dateVisite" />
-                            </div>
-                            <div class="mb-3">
-                                <label for="format" class="form-label">Vehicule <span
-                                        class="text-danger">*</span></label>
-                                <ng-select class="form-control" [multiple]="true" [checkbox]="true" [items]="vehicules"
-                                    bindLabel="marque" bindValue="id" formControlName="vehiculeId"
-                                    [searchable]="true">
-                                </ng-select>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-
-            <div class="modal-footer gap-3 px-4">
-                <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-                <button [disabled]="VisiteForm.invalid" type="submit" class="btn btn-primary px-2" (click)="onSubmit()">Valider</button>
-            </div>
+  <div class="modal-dialog  modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex align-items-center">
+        <div class="d-flex justify-content-center align-items-center"
+             style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
+          <i class="fas fa-box-check text-primary fs-3"></i>
         </div>
+        <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création
+          de visite</h1>
+        <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification de
+          la visite</h1>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-8">
+          <form [formGroup]="VisiteForm">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="format" class="form-label">Type visite <span
+                      class="text-danger">*</span></label>
+                    <ng-select class="form-control" [items]="typeVisite" bindLabel="libelle" bindValue="id"
+                               formControlName="typeVisite" [searchable]="true">
+                    </ng-select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="format" class="form-label">Vehicule <span
+                      class="text-danger">*</span></label>
+                    <ng-select class="form-control" [multiple]="true" [checkbox]="true" [items]="vehicules"
+                               bindLabel="marque" bindValue="id" formControlName="vehiculeId"
+                               [searchable]="true">
+                    </ng-select>
+                  </div>
+
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" formControlName="IsRepetitive"
+                           id="flexSwitchCheckDefault">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Répétitif</label>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="format" class="form-label">Commercial <span
+                      class="text-danger">*</span></label>
+                    <ng-select class="form-control" [items]="commerciaux" bindLabel="fullLabel" bindValue="id"
+                               formControlName="commercialId" [searchable]="true">
+                    </ng-select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="format" class="form-label">Date de visite <span
+                      class="text-danger">*</span></label>
+                    <input type="date" class="form-control" formControlName="dateVisite"/>
+                  </div>
+                </div>
+              </div>
+          </form>
+          </div>
+          <div class="col-4">
+            <div class="col-md-12">
+              <div class="mb-3">
+                <form [formGroup]="searchForm">
+                  <label for="format" class="form-label">Point de vente <span class="text-danger">*</span></label>
+                  <input type="text" placeholder="Recherche" class="form-control w-70" formControlName="searchQuery"
+                         (input)="filterData()"/>
+                </form>
+                <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                  <table class="table">
+                    <thead>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let item of filteredPointDeVente; let i = index" style="font-size: small;">
+                      <td><input type="checkbox" [name]="'checkbox_' + i" [(ngModel)]="item.isChecked"
+                                 (change)="toggleSelection(item)"></td>
+                      <td>{{ item.nomEtablissement }}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+            <table class="table">
+              <thead>
+              <tr style="font-size: small;">
+                <th scope="col">Point de vente</th>
+                <th scope="col">Contact</th>
+                <th scope="col">Zone de livraison</th>
+                <th scope="col">Action</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let item of selectedItems" style="font-size: small;">
+                <th scope="row">{{ item.nomEtablissement }}</th>
+                <td>{{ item.contactGerant }}</td>
+                <td>{{ item.zoneDeLivraison.nomZone }}</td>
+                <td>
+
+                  <button class="btn btn-danger" (click)="removeItem(item)"><i class="fas fa-trash"></i></button>
+                </td>
+              </tr>
+              <!-- Ajoutez d'autres lignes si nécessaire -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="modal-footer gap-3 px-4">
+        <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
+        <button [disabled]="VisiteForm.invalid" type="submit" class="btn btn-primary px-2" (click)="onSubmit()">
+          Valider
+        </button>
+      </div>
     </div>
+  </div>
 </div>

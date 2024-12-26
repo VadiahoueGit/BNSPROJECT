@@ -60,7 +60,7 @@
 
 <!-- Modal -->
 <div *ngIf="isModalOpen" class="custom-modal">
-    <div class="modal-dialog  modal-dialog-centered">
+    <div class="modal-dialog  modal-dialog-centered  px-5">
         <div class="modal-content">
             <div class="modal-header d-flex align-items-center">
                 <div class="d-flex justify-content-center align-items-center"
@@ -70,17 +70,23 @@
                 <Label class="fw-bold fs-6 text-secondary mx-2">Modifiez votre mot de passe</Label>
             </div>
             <div class="modal-body">
-                <form [formGroup]="passwordForm">
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Nouveau mot de passe</label>
-                        <input type="password" formControlName="password" class="form-control" id="password"
-                            placeholder="Mot de passe 6 caractères minimum!">
-                        <label class="error my-3" *ngIf="submitError">Email ou mot de passe incorrect</label>
-                    </div>
-                </form>
+              <form [formGroup]="passwordForm">
+                <div class="mb-3">
+                  <label for="password" class="form-label">Ancien mot de passe</label>
+                  <input type="password" formControlName="password" class="form-control" id="password"
+                         placeholder="Mot de passe 6 caractères minimum!">
+                </div>
+                <div class="mb-3">
+                  <label for="newPassword" class="form-label">Nouveau mot de passe</label>
+                  <input type="password" formControlName="newPassword" class="form-control" id="newPassword"
+                         placeholder="Mot de passe 6 caractères minimum!">
+                  <label class="error my-3" *ngIf="submitError">Mot de passe incorrect</label>
+                </div>
+              </form>
+
             </div>
             <div class="modal-footer gap-3 px-3 d-flex justify-content-center">
-                <button type="submit" (click)="onSubmit()" class="btn btn-secondary px-2">Modifier</button>
+                <button [disabled]="passwordForm.invalid" type="submit" (click)="onSubmit()" class="btn btn-secondary w-100">Modifier</button>
             </div>
         </div>
     </div>

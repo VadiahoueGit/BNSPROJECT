@@ -1,63 +1,73 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, timer } from 'rxjs';
-import { catchError, filter, map, retryWhen, delay, tap, scan } from 'rxjs/operators';
-import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
+import { Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class GpsWebSocketService {
-  private socket$: WebSocketSubject<any> | null = null;
-  private readonly reconnectInterval = 5000; // Intervalle en ms entre tentatives
-  private readonly maxReconnectAttempts = 5; // Nombre max de tentatives de reconnexion
-  private connectionClosed$ = new Subject<void>(); // Pour signaler la fermeture manuelle
+export class WebsocketService {
   private socket: WebSocket;
-  private messageSubject: Subject<any> = new Subject<any>();
+  private subject: Subject<any> = new Subject<any>();
 
-  constructor() {
-   
-  }
+  constructor() {}
 
-  openConnection(url: string): void {
+  connect(url: string): void {
     this.socket = new WebSocket(url);
 
     this.socket.onopen = () => {
-      console.log('WebSocket connecté');
+      console.log('WebSocket connection established');
     };
 
-    // Écouter les messages entrants
     this.socket.onmessage = (event: MessageEvent) => {
-      this.messageSubject.next(event.data);  // Emmettre le message via un Observable
+      console.log('Message reçu :', event.data);  // Ajoutez ce log
+      try {
+        const message = event.data;  // Si la réponse est en JSON
+        this.subject.next(message);
+      } catch (error) {
+        console.error('Erreur lors du parsing du message :', error);
+        this.subject.next(event.data); // Si ce n'est pas du JSON, on envoie les données brutes
+      }
     };
 
-    this.socket.onerror = (error) => {
-      console.error('Erreur WebSocket:', error);
+    // this.socket.onmessage = (event: MessageEvent) => {
+    //   // Transmettre les données du message reçu à nos abonnés
+    //   this.subject.next(event.data);
+    //   // this.subject.next(JSON.parse(event.data));
+    // };
+
+    this.socket.onerror = (error: Event) => {
+      console.error('WebSocket error:', error);
     };
 
     this.socket.onclose = () => {
-      console.log('WebSocket fermé');
+      console.log('WebSocket connection closed');
     };
   }
 
-  // Envoyer un message au serveur
-  sendMessage(message: string): void {
+  sendMessage(message: any): void {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send(message);
+      console.log('Message envoyé :', message);  // Log du message envoyé
+      this.socket.send(JSON.stringify(message));  // Envoi du message au serveur
     } else {
-      console.warn('La connexion WebSocket n\'est pas ouverte');
+      this.reconnect()
+      console.error('La connexion WebSocket n\'est pas ouverte');
     }
   }
 
-  // Retourner un Observable qui émet les messages entrants
   getMessages(): Observable<any> {
-    return this.messageSubject.asObservable();
+    return this.subject.asObservable();
   }
 
-  // Fermer la connexion
   closeConnection(): void {
     if (this.socket) {
       this.socket.close();
     }
   }
-}
 
+  reconnect(): void {
+    console.log('Tentative de reconnexion WebSocket...');
+    if (this.socket.readyState === WebSocket.CLOSED || this.socket.readyState === WebSocket.CLOSING) {
+      this.connect('ws://localhost:8080'); // Reconnecter le WebSocket
+    }
+  }
+}

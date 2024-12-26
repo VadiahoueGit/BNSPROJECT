@@ -6,7 +6,6 @@
         <ng-template pTemplate="header">
             <tr>
                 <th style="color: var(--secondary-color);">Type</th>
-                <th style="color: var(--secondary-color);">Zone</th>
                 <th style="color: var(--secondary-color);">Commercial</th>
                 <th style="color: var(--secondary-color);">Nombre de visites</th>
                 <th style="color: var(--secondary-color);">Date de la visite</th>
@@ -20,9 +19,6 @@
                     <span class="ml-1 vertical-align-middle">
                         {{ dataList.typeVisite.libelle }}
                     </span>
-                </td>
-                <td>
-                    <!-- {{ dataList.libelle }} -->
                 </td>
                 <td>
                     <span class="ml-1 vertical-align-middle">
@@ -40,7 +36,7 @@
                 <td>
                     <span class="ml-1 vertical-align-middle fw-bold fs-7" [ngStyle]="{
                         color: dataList.status == 'TERMINÉ' ? 'green' :
-                               dataList.status === 'EN COURS' ? 'orange' : 
+                               dataList.status === 'EN COURS' ? 'orange' :
                                'red'}">
                         {{ dataList.status }}
                     </span>
@@ -77,26 +73,26 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-6">
-                        <div><strong>Statut:</strong><label class="mx-2"> {{visiteDetail.status}}</label></div>
-                        <div><strong>Zone:</strong> </div>
-                        <div><strong>Commercial :</strong> <label class="mx-2"> {{visiteDetail.commercial.nom}}
+                        <div><strong>Statut:</strong><label class="mx-2 my-2"> {{visiteDetail.status}}</label></div>
+
+                        <div><strong>Commercial :</strong> <label class="mx-2 my-2"> {{visiteDetail.commercial.nom}}
                                 {{visiteDetail.commercial.prenom}}</label></div>
-                        <div><strong>Vehicule :</strong> <label class="mx-2"> {{visiteDetail.vehicule.marque}} /
+                        <div><strong>Vehicule :</strong> <label class="mx-2 my-2"> {{visiteDetail.vehicule.marque}} /
                                 {{visiteDetail.vehicule.immatriculation}}</label></div>
 
                     </div>
 
                     <div class="col-6">
-                        <div><strong>Mission :</strong> <label class="mx-2"> {{visiteDetail.typeVisite.libelle}}</label>
+                        <div  class="my-2"><strong>Mission :</strong> <label class="mx-2"> {{visiteDetail.typeVisite.libelle}}</label>
                         </div>
-                        <div><strong>Heure debut :</strong> <label class="mx-2" *ngIf="visiteDetail.DateDebut">
+                        <div  class="my-2"><strong>Heure debut :</strong> <label class="mx-2" *ngIf="visiteDetail.DateDebut">
                                 {{visiteDetail.DateDebut | date: 'HH:mm'}}</label>
                             <label class="mx-2 text-danger" *ngIf="visiteDetail.DateDebut == null"> Pas encore
                                 debuté</label>
                         </div>
-                        <div><strong>Heure fin :</strong> <label class="mx-2"> {{visiteDetail.DateFin | date:
+                        <div class="my-2"><strong>Heure fin :</strong> <label class="mx-2"> {{visiteDetail.DateFin | date:
                                 'HH:mm'}}</label></div>
-                        <div><strong>Durée :</strong> <label class="mx-2" *ngIf="visiteDetail.DateFin != null">{{
+                        <div class="my-2"><strong>Durée :</strong> <label class="mx-2" *ngIf="visiteDetail.DateFin != null">{{
                                 getFormattedDuration() }}</label></div>
                     </div>
                 </div>
@@ -104,20 +100,20 @@
                     <div id="accordionExample" class="accordion col-12 fieldset1" style="overflow-y: auto; max-height: 400px;">
                         <div *ngFor="let item of visiteDetail.pointDeVentes; let idx = index" class="accordion-item my-2">
                             <h2 class="accordion-header" id="heading{{idx}}">
-                                <button 
-                                    class="accordion-button collapsed " 
-                                    type="button" 
-                                    data-bs-toggle="collapse" 
-                                    [attr.data-bs-target]="'#collapse' + idx" 
-                                    aria-expanded="false" 
+                                <button
+                                    class="accordion-button collapsed "
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    [attr.data-bs-target]="'#collapse' + idx"
+                                    aria-expanded="false"
                                     [attr.aria-controls]="'collapse' + idx">
                                     <div class="w-100 d-flex justify-content-between">
                                         <label class="text-secondary fw-bold">
-                                            Client - {{ item.pointDeVente.nom }} {{ item.pointDeVente.prenom }}
+                                            Client - {{ item.pointDeVente.nomEtablissement }}
                                         </label>
-                                        <label 
+                                        <label
                                             [ngStyle]="{
-                                                color: item.status == 'TERMINÉ' ? 'green' : 
+                                                color: item.status == 'TERMINÉ' ? 'green' :
                                                        item.status === 'EN COURS' ? 'orange' : 'red'
                                             }">
                                             {{ item.status }}
@@ -125,10 +121,10 @@
                                     </div>
                                 </button>
                             </h2>
-                            <div 
-                                id="collapse{{idx}}" 
-                                class="accordion-collapse collapse" 
-                                [attr.aria-labelledby]="'heading' + idx" 
+                            <div
+                                id="collapse{{idx}}"
+                                class="accordion-collapse collapse"
+                                [attr.aria-labelledby]="'heading' + idx"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <!-- Nested Fieldset -->
@@ -158,7 +154,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- <div class="col-md-6">
                         <fieldset class="row border my-2">
                             <legend class="fs-6 text-primary">Ventes</legend>

@@ -47,6 +47,24 @@ export class CoreServiceService {
     })
   }
 
+  async UpdatePasswordFirstConnexion(data: any) {
+    await this.initializeApiUrl();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.token}`
+    });
+    return new Promise((resolve: any, reject: any) => {
+
+      this._http.post(`${this.apiUrl}/v1/auth/update-password`, data, { headers })
+        .subscribe((res: any) => {
+            console.log(res)
+            resolve(res);
+          }
+          , err => {
+            console.log(err);
+            reject(err);
+          });
+    })
+  }
   async GetGoogleJWT() {
     await this.initializeApiUrl();
     const headers = new HttpHeaders({
@@ -230,7 +248,7 @@ export class CoreServiceService {
         );
     });
   }
-  
+
   async UpdateGroupeClient(id: number, data: any) {
     await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {

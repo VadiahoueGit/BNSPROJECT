@@ -76,7 +76,7 @@
 
         <!-- Bouton de soumission -->
         <div class="text-end">
-          <button type="submit" class="btn btn-primary" [disabled]="!transfertForm.valid">
+          <button type="submit" (click)="onSubmit()" class="btn btn-primary" [disabled]="!transfertForm.valid">
             Enregistrer le transfert
           </button>
         </div>
@@ -116,8 +116,6 @@
                     <td  class="editable-cell"><input type="text" class="form-control-custom" value="3"></td>
                     <td  class="editable-cell"><input type="checkbox" class="form-control-custom" ></td>
                   </tr>
-
-                  <!-- Ajoutez d'autres lignes si nécessaire -->
                   </tbody>
                 </table>
               </div>
@@ -127,7 +125,7 @@
       </div>
       <div class="modal-footer gap-3 px-4y">
         <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-        <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
+        <button type="submit" (click)="add()" class="btn btn-primary px-2">Valider</button>
 
       </div>
     </div>

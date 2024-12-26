@@ -14,7 +14,7 @@
                 <th style="color: var(--secondary-color);">Dépot</th>
                 <th style="color: var(--secondary-color);">Gérant</th>
                 <th style="color: var(--secondary-color);">localité</th>
-                <th style="color: var(--secondary-color);">Localisation</th>
+                <th style="color: var(--secondary-color);">Zone de livraison</th>
                 <th style="color: var(--secondary-color);">Télephone</th>
                 <th style="color: var(--secondary-color);">Actions</th>
             </tr>
@@ -36,7 +36,7 @@
                     {{ dataList.zone.localite.nomLocalite }}
                 </td>
                 <td>
-                    {{ dataList.latitude }} /  {{ dataList.longitude }}
+                    {{ dataList.zone.nomZone }}
                 </td>
                 <td>
                     {{ dataList.telephone }}

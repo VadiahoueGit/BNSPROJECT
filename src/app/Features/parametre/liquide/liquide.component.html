@@ -154,7 +154,20 @@
             </div>
 
             <div class="col-md-6">
-
+              <!-- Emballage -->
+              <div class="mb-3">
+                <label for="emballageId" class="form-label d-flex align-items-center">
+                  Emballage <span class="text-danger">*</span>
+                </label>
+                <select class="form-control form-select form-select-sm" formControlName="emballageId" (change)="onEmballageChange($event)" aria-label="emballage">
+                  <option value="" disabled selected>Choisir l'article</option>
+                  <option [value]="item.id" *ngFor="let item of dataListEmballage">{{ item.libelle }}</option>
+                </select>
+<!--                <select class="form-control form-select form-select-sm" formControlName="emballageId" aria-label="emballage">-->
+<!--                  <option value="" disabled selected>Choisir l'article</option>-->
+<!--                  <option [value]="item.id" *ngFor="let item of dataListEmballage">{{ item.libelle }}</option>-->
+<!--                </select>-->
+              </div>
               <!-- Bouteille Vide -->
               <div class="mb-3">
                 <label for="bouteillevideId" class="form-label d-flex align-items-center">
@@ -188,16 +201,7 @@
                 </select>
               </div>
 
-              <!-- Emballage -->
-              <div class="mb-3">
-                <label for="emballageId" class="form-label d-flex align-items-center">
-                  Emballage <span class="text-danger">*</span>
-                </label>
-                <select class="form-control form-select form-select-sm" formControlName="emballageId" aria-label="emballage">
-                  <option value="" disabled selected>Choisir l'article</option>
-                  <option [value]="item.id" *ngFor="let item of dataListEmballage">{{ item.libelle }}</option>
-                </select>
-              </div>
+
 
             </div>
           </div>
@@ -206,7 +210,7 @@
       </div>
       <div class="modal-footer gap-3 px-4">
         <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-        <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
+        <button [disabled]="liquideForm.invalid" type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
       </div>
     </div>
   </div>

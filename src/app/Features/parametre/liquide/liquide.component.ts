@@ -83,6 +83,25 @@ export class LiquideComponent {
     this.GetLiquideList(1)
   }
 
+  onEmballageChange(event: any): void {
+    console.log('onEmballageChange:::>', event);
+    const selectedEmballageId = event.target.value;
+    console.log(selectedEmballageId);
+    const selectedEmballage = this.dataListEmballage.find((item:any) => {
+      console.log(item.id,selectedEmballageId);
+      if (item.id == selectedEmballageId) {
+        // Mise à jour automatique des champs du formulaire
+        this.liquideForm.patchValue({
+          format: item.format,
+          condition: item.condition,
+          plastiquenuId: item.plastiquenu.id,
+          bouteillevideId: item.bouteillevide.id
+        });
+      }
+    });
+
+
+  }
   GetLiquideList(page:number) {
     let data = {
       paginate: false,
@@ -103,6 +122,7 @@ export class LiquideComponent {
     this.dt2.filterGlobal(value, 'contains');
   }
   OnCloseModal() {
+    this.liquideForm.reset();
     this.isModalOpen = false;
     console.log(this.isModalOpen);
   }
