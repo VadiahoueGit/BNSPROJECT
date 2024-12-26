@@ -16,7 +16,7 @@ import { ConfigService } from 'src/app/core/config-service.service';
 })
 export class ClientosrComponent {
   @ViewChild('dt2') dt2!: Table;
-  dataList!: any[];
+  dataList: any[] = [];
   clientosrForm!: FormGroup;
   loading: boolean = true;
   isModalOpen = false;
