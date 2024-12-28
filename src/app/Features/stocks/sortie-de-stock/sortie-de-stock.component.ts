@@ -165,7 +165,7 @@ export class SortieDeStockComponent {
       this._spinner.show()
 
       console.log(this.stockForm)
-      this.articleService.SaveStock(this.stockForm.value).then((response:any) => {
+      this.articleService.OutPutStock(this.stockForm.value).then((response:any) => {
         if(response.statusCode === 201) {
           this.stockForm.reset();
           this.generateNumero()
@@ -247,13 +247,7 @@ export class SortieDeStockComponent {
     return this.stockForm.get('articles') as FormArray;
   }
 
-  onQuantiteChange(article: any): void {
-    if (article.quantite > article.quantiteDisponible) {
-      // Réinitialiser la quantité à la quantité disponible si la saisie est trop grande
-      article.quantite = article.quantiteDisponible;
-      this.toastr.warning('La quantité saisie dépasse la quantité disponible.');
-    }
-  }
+
   validateQuantite(data: any): void {
     // Vérifier si la quantité saisie dépasse la quantité disponible
     if (data.quantite > this.stocksDisponibles[data.id]) {

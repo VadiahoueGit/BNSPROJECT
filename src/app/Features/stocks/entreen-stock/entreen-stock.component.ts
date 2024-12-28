@@ -252,17 +252,9 @@ export class EntreenStockComponent {
       this.articles.push(articleGroup);
     })
 
-
-
       console.log('this.articles.length > 0', this.articles)
   }
-  onQuantiteChange(article: any): void {
-    if (article.quantite > article.quantiteDisponible) {
-      // Réinitialiser la quantité à la quantité disponible si la saisie est trop grande
-      article.quantite = article.quantiteDisponible;
-      this.toastr.warning('La quantité saisie dépasse la quantité disponible.');
-    }
-  }
+
   validateQuantite(data: any): void {
     // Si la quantité dépasse la quantité disponible, réinitialiser la quantité à la valeur maximale
     if (data.quantite > this.stocksDisponibles[data.id]) {
@@ -283,12 +275,7 @@ export class EntreenStockComponent {
 
   }
 
-  stockFormValid(): boolean {
-    // Vérifie que le FormArray a au moins un article et que chaque article est valide
-    // console.log('this.articles.length > 0',this.articles);
-    // console.log('Formulaire',this.stockForm.valid && this.articles.length > 0 && this.articles.controls.every(article => article.valid));
-    return this.stockForm.valid && this.selectedArticles.length > 0 ;
-  }
+
 
   async fetchData() {
     let data = {
