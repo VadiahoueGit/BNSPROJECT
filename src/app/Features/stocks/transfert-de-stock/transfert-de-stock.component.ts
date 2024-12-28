@@ -5,51 +5,78 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { CoreServiceService } from 'src/app/core/core-service.service';
 
-
 @Component({
   selector: 'app-transfert-de-stock',
   templateUrl: './transfert-de-stock.component.html',
-  styleUrls: ['./transfert-de-stock.component.scss']
+  styleUrls: ['./transfert-de-stock.component.scss'],
 })
 export class TransfertDeStockComponent implements OnInit {
   transfertForm!: FormGroup;
-  articleList:any
-  depotList:any
-  isModalOpen:boolean
-  constructor(private _coreService:CoreServiceService,private fb: FormBuilder,private location: Location,private articleService: ArticleServiceService,
-    private _spinner: NgxSpinnerService) {}
+  articleList: any;
+  depotList: any;
+  isModalOpen: boolean;
+  selectedArticles: any[] = [];
+  totalProduits: number = 0;
+  tempArticleData: {
+    [key: string]: { description: string; quantite: number };
+  } = {};
+  constructor(
+    private _coreService: CoreServiceService,
+    private fb: FormBuilder,
+    private location: Location,
+    private articleService: ArticleServiceService,
+    private _spinner: NgxSpinnerService
+  ) {}
 
   ngOnInit(): void {
     this.transfertForm = this.fb.group({
       numero: [{ value: this.generateNumero(), disabled: true }],
-      dateEnregistrement: [null, Validators.required],
-      magasinOrigine: [null, Validators.required],
-      magasinRecepteur: [null, Validators.required],
+      transferDate: [null, Validators.required],
+      sourceDepotId: [null, Validators.required],
+      destinationDepotId: [null, Validators.required],
       articles: this.fb.array([]),
     });
-    this.GetArticleList(1)
-    this.GetDepotList(1)
+    this.GetArticleList(1);
+    this.GetDepotList(1);
     // Ajouter un article par défaut
     this.addArticle();
   }
   goBack() {
-    this.location.back()
+    this.location.back();
   }
   // Génère un numéro de transfert unique
   generateNumero(): string {
     return `T-${new Date().getTime()}`;
   }
-  OnCloseModal()
-  {
-    this.isModalOpen = false;
-    console.log(this.isModalOpen)
-  }
-  OnCreate()
-  {
-    this.isModalOpen = true;
-    console.log(this.isModalOpen)
+  deselectAllItems(): void {
+    this.selectedArticles.forEach((item: any) => {
+      delete item.quantite;
+      delete item.description;
+      item.isChecked = false;
+    });
   }
 
+  OnCloseModal() {
+    this.deselectAllItems();
+    this.isModalOpen = false;
+  }
+
+  OnCreate() {
+    this.isModalOpen = true;
+
+    // Initialiser l'objet temporaire avec des valeurs par défaut
+    this.articleList.forEach((article: any) => {
+      this.tempArticleData[article.reference] = {
+        description: '',
+        quantite: 0,
+      };
+    });
+  }
+  // get totalProduits(): number {
+  //   return this.selectedArticles.reduce((total, article) => {
+  //     return total + (article.quantite || 0);
+  //   }, 0);
+  // }
   // Accéder aux articles comme un FormArray
   get articles(): FormArray {
     return this.transfertForm.get('articles') as FormArray;
@@ -65,11 +92,20 @@ export class TransfertDeStockComponent implements OnInit {
     this.articles.push(articleForm);
   }
 
-  // Supprimer un article
-  removeArticle(index: number=0): void {
-    this.articles.removeAt(index);
+  removeArticle(article: any) {
+    this.selectedArticles = this.selectedArticles.filter(
+      (a) => a.reference !== article.reference
+    );
+
+    // Désélectionner dans la liste principale
+    const index = this.articleList.findIndex(
+      (a: any) => a.reference === article.reference
+    );
+    if (index > -1) {
+      this.articleList[index].isChecked = false;
+    }
   }
-  GetArticleList(page:number) {
+  GetArticleList(page: number) {
     let data = {
       paginate: false,
       page: page,
@@ -83,7 +119,7 @@ export class TransfertDeStockComponent implements OnInit {
     });
   }
 
-  GetDepotList(page:number) {
+  GetDepotList(page: number) {
     let data = {
       paginate: false,
       page: page,
@@ -96,29 +132,54 @@ export class TransfertDeStockComponent implements OnInit {
       this._spinner.hide();
     });
   }
-  // Calculer le total des produits transférés
-  get totalProduits(): number {
-    return this.articles.controls.reduce((total, control) => {
-      return total + (control.get('quantite')?.value || 0);
-    }, 0);
-  }
 
   // Soumission du formulaire
   onSubmit(): void {
     if (this.transfertForm.valid) {
-
       alert('Transfert enregistré avec succès.');
     } else {
       alert('Veuillez remplir tous les champs requis.');
     }
   }
 
-  add(): void {
-    if (this.transfertForm.valid) {
+  add() {
+    this.articleList.forEach((article: any) => {
+      if (article.isChecked) {
+        console.log(article.isChecked, 'article.isChecked');
+        const description =
+          this.tempArticleData[article.reference]?.description;
+        const quantite = this.tempArticleData[article.reference]?.quantite;
+        console.log(description, 'description.description');
+        console.log(quantite, 'quantite.quantite');
+        console.log(this.tempArticleData, 'tempArticleData');
+        console.log(
+          this.tempArticleData[article.reference],
+          'article reference'
+        );
+        if (!description || quantite <= 0) {
+          alert(
+            `Veuillez remplir les champs pour l'article ${article.libelle}`
+          );
+          return;
+        }
+        this.selectedArticles.push({
+          reference: article.reference,
+          libelle: article.libelle,
+          description: description,
+          quantite: quantite,
+          test: 'oui',
+        });
+      }
+    });
 
-      alert('Transfert enregistré avec succès.');
-    } else {
-      alert('Veuillez remplir tous les champs requis.');
-    }
+    // Réinitialiser le modal après avoir ajouté les articles sélectionnés
+    this.OnCloseModal();
+    console.log(this.selectedArticles);
+  }
+
+  updateTotal() {
+    this.totalProduits = this.selectedArticles.reduce((total, article) => {
+      return total + (article.quantite || 0);
+    }, 0);
   }
 }
