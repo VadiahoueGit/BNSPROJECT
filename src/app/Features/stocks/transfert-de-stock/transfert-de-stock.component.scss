@@ -18,9 +18,14 @@
   width: 45em;
   padding: 1rem;
 }
-
+.is-invalid {
+  border: 1px solid red !important;
+}
 .modal-header,
 .modal-body,
 .modal-footer {
   padding: 0.5rem;
+}
+#quantite{
+  max-width: 5rem;
 }
