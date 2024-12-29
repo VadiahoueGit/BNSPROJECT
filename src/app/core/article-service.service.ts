@@ -876,6 +876,23 @@ export class ArticleServiceService {
 
   //STOCK
 
+  TransfertStock(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/movements/transfert`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
   SaveStock(data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -954,4 +971,23 @@ export class ArticleServiceService {
         );
     });
   }
+
+  GetStocksDetails() {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.get(`${this.apiUrl}/v1/movements/stock-details`,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
 }

@@ -23,34 +23,35 @@
                 <th style="width:20%;color: var(--secondary-color);">Code article</th>
                 <th style="width:30%;color: var(--secondary-color);">Description</th>
                 <th style="width:20%;color: var(--secondary-color);">Stock total</th>
-                <th style="width:30%;color: var(--secondary-color);">Disponibilité par magasin</th>
+                <th style="width:30%;color: var(--secondary-color);">Disponibilité par dépot</th>
             </tr>
-            <tr>
+            <!-- <tr>
                 <th>
                     <p-columnFilter type="text" field="code" placeholder="Code article" />
                 </th>
                 <th>
-                    <p-columnFilter type="text" field="description" placeholder="Description" />
+                    <p-columnFilter type="text" field="libelle" placeholder="Description" />
                 </th>
                 <th>
-                    <p-columnFilter type="text" field="stock" placeholder="Stock total" />
+                    <p-columnFilter type="text" field="totalQuantity" placeholder="Stock total" />
                 </th>
                 <th>
-                    <p-columnFilter type="text" field="magasin" placeholder="Magasin" />
+                    <p-columnFilter type="text" field="elt" placeholder="Dépot" />
                 </th>
-            </tr>
+            </tr> -->
         </ng-template>
         
         <!-- Corps de la table -->
         <ng-template pTemplate="body" let-rowData>
             <tr>
                 <td>{{ rowData.code }}</td>
-                <td>{{ rowData.description }}</td>
-                <td>{{ rowData.stock }}</td>
+                <td>{{ rowData.libelle }}</td>
+                <td>{{ rowData.totalQuantity }}</td>
                 <td>
                     <ul class="list-unstyled mb-0">
-                        <li *ngFor="let magasin of rowData.magasins">
-                            <span class="fw-bold">{{ magasin.nom }}:</span> {{ magasin.disponibilite }}
+                        <li *ngFor="let elt of rowData.stockByDepot">
+                            <span class="fw-bold">{{ elt.depot }}:</span> {{ elt.quantity
+ }}
                         </li>
                     </ul>
                 </td>

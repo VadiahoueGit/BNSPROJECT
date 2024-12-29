@@ -91,9 +91,9 @@ export class VisualisationDeStockComponent {
       limit:8
     }
     this._spinner.show()
-    this.articleService.GetGroupeArticleList(data).then((res:any)=>{
+    this.articleService.GetStocksDetails().then((res:any)=>{
       console.log('DATA:::>',res)
-      // this.dataList = res.data
+      this.dataList = res.data
       this._spinner.hide()
     })
   }

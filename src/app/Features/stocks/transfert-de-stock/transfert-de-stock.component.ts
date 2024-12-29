@@ -2,6 +2,7 @@ import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { ToastrService } from 'ngx-toastr';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { CoreServiceService } from 'src/app/core/core-service.service';
 
@@ -12,34 +13,48 @@ import { CoreServiceService } from 'src/app/core/core-service.service';
 })
 export class TransfertDeStockComponent implements OnInit {
   transfertForm!: FormGroup;
-  articleList: any;
-  depotList: any;
+  articleList: any[] = [];
+  depotList: any[] = [];
   isModalOpen: boolean;
   selectedArticles: any[] = [];
   totalProduits: number = 0;
   tempArticleData: {
     [key: string]: { description: string; quantite: number };
   } = {};
+  numero: string = ''; // Numéro du transfert (généré automatiquement)
+  comment: string = '';
+  transferDate: string = ''; // Date d'enregistrement
+  sourceDepotId = null; // Dépôt d'origine sélectionné
+  destinationDepotId = null; // Dépôt récepteur sélectionné
   constructor(
     private _coreService: CoreServiceService,
     private fb: FormBuilder,
     private location: Location,
     private articleService: ArticleServiceService,
-    private _spinner: NgxSpinnerService
+    private _spinner: NgxSpinnerService,
+    private toastr: ToastrService,
   ) {}
 
   ngOnInit(): void {
-    this.transfertForm = this.fb.group({
-      numero: [{ value: this.generateNumero(), disabled: true }],
-      transferDate: [null, Validators.required],
-      sourceDepotId: [null, Validators.required],
-      destinationDepotId: [null, Validators.required],
-      articles: this.fb.array([]),
-    });
+    this.numero = this.generateNumero();
+    const today = new Date();
+    this.transferDate = today.toISOString().split('T')[0];
     this.GetArticleList(1);
     this.GetDepotList(1);
     // Ajouter un article par défaut
-    this.addArticle();
+    // if (this.articleList && this.articleList.length > 0) {
+    //   this.initializeTempArticleData();
+    // }
+  }
+  // Initialisation des données temporaires
+  initializeTempArticleData() {
+    this.tempArticleData = {}; // Remet à zéro les données temporaires
+    this.articleList.forEach((article: any) => {
+      this.tempArticleData[article.reference] = {
+        description: '',
+        quantite: 0,
+      };
+    });
   }
   goBack() {
     this.location.back();
@@ -56,54 +71,14 @@ export class TransfertDeStockComponent implements OnInit {
     });
   }
 
-  OnCloseModal() {
-    this.deselectAllItems();
-    this.isModalOpen = false;
-  }
-
-  OnCreate() {
-    this.isModalOpen = true;
-
-    // Initialiser l'objet temporaire avec des valeurs par défaut
-    this.articleList.forEach((article: any) => {
-      this.tempArticleData[article.reference] = {
-        description: '',
-        quantite: 0,
-      };
-    });
-  }
-  // get totalProduits(): number {
-  //   return this.selectedArticles.reduce((total, article) => {
-  //     return total + (article.quantite || 0);
-  //   }, 0);
-  // }
-  // Accéder aux articles comme un FormArray
-  get articles(): FormArray {
-    return this.transfertForm.get('articles') as FormArray;
-  }
-
-  // Ajouter un article
-  addArticle(): void {
-    const articleForm = this.fb.group({
-      codeArticle: [null, Validators.required],
-      description: [''],
-      quantite: [null, [Validators.required, Validators.min(1)]],
-    });
-    this.articles.push(articleForm);
-  }
-
   removeArticle(article: any) {
-    this.selectedArticles = this.selectedArticles.filter(
-      (a) => a.reference !== article.reference
+    const index = this.selectedArticles.findIndex(
+      (item) => item.reference === article.reference
     );
-
-    // Désélectionner dans la liste principale
-    const index = this.articleList.findIndex(
-      (a: any) => a.reference === article.reference
-    );
-    if (index > -1) {
-      this.articleList[index].isChecked = false;
+    if (index !== -1) {
+      this.selectedArticles.splice(index, 1);
     }
+    this.updateTotal()
   }
   GetArticleList(page: number) {
     let data = {
@@ -115,6 +90,7 @@ export class TransfertDeStockComponent implements OnInit {
     this.articleService.GetArticleList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.articleList = res.data;
+      this.initializeTempArticleData();
       this._spinner.hide();
     });
   }
@@ -132,54 +108,115 @@ export class TransfertDeStockComponent implements OnInit {
       this._spinner.hide();
     });
   }
-
-  // Soumission du formulaire
-  onSubmit(): void {
-    if (this.transfertForm.valid) {
-      alert('Transfert enregistré avec succès.');
-    } else {
-      alert('Veuillez remplir tous les champs requis.');
-    }
+  OnCreate() {
+    this.isModalOpen = true;
+    this.initializeTempArticleData();
   }
 
+  // Fermer la modal
+  OnCloseModal() {
+    this.isModalOpen = false;
+  }
+  // add() {
+  //   this.articleList.forEach((article: any) => {
+  //     if (article.isChecked) {
+  //       console.log(article.isChecked, 'article.isChecked');
+  //       const description =
+  //         this.tempArticleData[article.reference]?.description;
+  //       const quantite = this.tempArticleData[article.reference]?.quantite;
+  //       console.log(description, 'description.description');
+  //       console.log(quantite, 'quantite.quantite');
+  //       console.log(this.tempArticleData, 'tempArticleData');
+  //       console.log(
+  //         this.tempArticleData[article.reference],
+  //         'article reference'
+  //       );
+  //       if (!description || quantite <= 0) {
+  //         alert(
+  //           `Veuillez remplir les champs pour l'article ${article.libelle}`
+  //         );
+  //         return;
+  //       }
+  //       this.selectedArticles.push({
+  //         reference: article.reference,
+  //         libelle: article.libelle,
+  //         description: description,
+  //         quantite: quantite,
+  //         test: 'oui',
+  //       });
+  //     }
+  //   });
+
+  //   // Réinitialiser le modal après avoir ajouté les articles sélectionnés
+  //   this.OnCloseModal();
+  //   console.log(this.selectedArticles);
+  // }
+  isAnyArticleSelected(): boolean {
+    return this.articleList.some((article) => article.isChecked);
+  }
   add() {
     this.articleList.forEach((article: any) => {
       if (article.isChecked) {
-        console.log(article.isChecked, 'article.isChecked');
         const description =
           this.tempArticleData[article.reference]?.description;
         const quantite = this.tempArticleData[article.reference]?.quantite;
-        console.log(description, 'description.description');
-        console.log(quantite, 'quantite.quantite');
-        console.log(this.tempArticleData, 'tempArticleData');
-        console.log(
-          this.tempArticleData[article.reference],
-          'article reference'
-        );
-        if (!description || quantite <= 0) {
-          alert(
-            `Veuillez remplir les champs pour l'article ${article.libelle}`
-          );
-          return;
-        }
         this.selectedArticles.push({
           reference: article.reference,
           libelle: article.libelle,
           description: description,
           quantite: quantite,
-          test: 'oui',
         });
+
+        article.isChecked = false;
       }
     });
-
-    // Réinitialiser le modal après avoir ajouté les articles sélectionnés
+    this.updateTotal();
     this.OnCloseModal();
-    console.log(this.selectedArticles);
   }
 
   updateTotal() {
     this.totalProduits = this.selectedArticles.reduce((total, article) => {
       return total + (article.quantite || 0);
     }, 0);
+  }
+
+  onSubmit() {
+    const transferData = {
+      numero: this.numero, 
+      sourceDepotId: this.sourceDepotId, 
+      destinationDepotId: this.destinationDepotId, 
+      articles: this.selectedArticles.map((article) => ({
+        productCode: article.reference, 
+        quantite: article.quantite,
+      })),
+      transferDate: this.transferDate, 
+      comment: this.comment || '', 
+    };
+
+    console.log('Données prêtes pour enregistrement :', transferData);
+
+    this.submitToServer(transferData);
+  }
+
+  submitToServer(data: any) {
+    if (data!== undefined) {
+    this._spinner.show()
+    this.articleService.TransfertStock(data).then((response:any) => {
+      if(response.statusCode === 201) {
+        this.selectedArticles = []
+        this.toastr.success(response.message);
+      }else{
+        this.toastr.error(response.message);
+      }
+      this._spinner.hide()
+
+    },(error: any) => {
+      this._spinner.hide()
+      this.toastr.error('Erreur!', "Erreur lors de l'enregistrement.");
+      console.error('Erreur lors de la mise à jour', error);
+    })
+  } else {
+    this.toastr.error('donnée incorrecte!');
+  }
   }
 }
