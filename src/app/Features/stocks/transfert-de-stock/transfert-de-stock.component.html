@@ -52,6 +52,7 @@
               bindLabel="nomDepot"
               bindValue="id"
               [(ngModel)]="sourceDepotId"
+              (change)="selectDepot()"
               name="sourceDepotId"
               [searchable]="true"
             >
@@ -91,7 +92,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let data of selectedArticles">
-        <td>{{ data.reference }}</td>
+        <td>{{ data.articleCode }}</td>
         <td>{{ data.description }}</td>
         <td>{{ data.quantite }}</td>
         <td>
@@ -235,17 +236,18 @@
                   <th>Produits</th>
                   <th>Description</th>
                   <th>Quantité</th>
+                  <th>Quantité disponible</th>
                   <th>Choix</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let article of articleList; let i = index">
-                  <td>{{ article.libelle }}</td>
+                  <td>{{ article.articleName }}</td>
                   <td>
                     <input
                       type="text"
                       class="form-control"
-                      [(ngModel)]="tempArticleData[article.reference].description"
+                      [(ngModel)]="tempArticleData[article.articleId].description"
                       name="description_{{ i }}"
                       placeholder="Entrez une description"
                     />
@@ -255,23 +257,24 @@
                       type="number"
                       class="form-control"
                       id="quantite"
-                      [(ngModel)]="tempArticleData[article.reference].quantite"
+                      [(ngModel)]="tempArticleData[article.articleId].quantite"
                       name="quantite_{{ i }}"
                       placeholder="Quantité"
                       min="1"
                       [ngClass]="{
-                        'is-valid': tempArticleData[article.reference].quantite > 0,
-                        'is-invalid': tempArticleData[article.reference].quantite === 0
+                        'is-valid': tempArticleData[article.articleId].quantite > 0,
+                        'is-invalid': tempArticleData[article.articleId].quantite === 0
                       }"
                     />
                   </td>
+                  <td>{{ article.quantiteDisponible }}</td>
                   <td>
                     <input
                       type="checkbox"
                       class="form-check-input"
                       [(ngModel)]="article.isChecked"
                       name="checkbox_{{ i }}"
-                      [disabled]="tempArticleData[article.reference].quantite <= 0"
+                      [disabled]="tempArticleData[article.articleId].quantite <= 0"
                     />
                   </td>
                 </tr>

@@ -928,14 +928,14 @@ export class ArticleServiceService {
       );
     });
   }
-  GetStockByDepot(data: any) {
+  GetStockByDepot(depotId: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/movements/depot/${data}`, { headers }
+          `${this.apiUrl}/v1/movements/${depotId}/articles`, { headers }
         )
         .subscribe(
           (res: any) => {

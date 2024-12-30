@@ -21,36 +21,33 @@ export class TransfertDeStockComponent implements OnInit {
   tempArticleData: {
     [key: string]: { description: string; quantite: number };
   } = {};
-  numero: string = ''; // Numéro du transfert (généré automatiquement)
+  numero: string = ''; 
   comment: string = '';
-  transferDate: string = ''; // Date d'enregistrement
-  sourceDepotId = null; // Dépôt d'origine sélectionné
-  destinationDepotId = null; // Dépôt récepteur sélectionné
+  transferDate: string = ''; 
+  sourceDepotId = null; 
+  destinationDepotId = null;
   constructor(
     private _coreService: CoreServiceService,
     private fb: FormBuilder,
     private location: Location,
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
-    private toastr: ToastrService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
     this.numero = this.generateNumero();
     const today = new Date();
     this.transferDate = today.toISOString().split('T')[0];
-    this.GetArticleList(1);
+    // this.GetArticleList(1);
     this.GetDepotList(1);
-    // Ajouter un article par défaut
-    // if (this.articleList && this.articleList.length > 0) {
-    //   this.initializeTempArticleData();
-    // }
+
   }
   // Initialisation des données temporaires
   initializeTempArticleData() {
     this.tempArticleData = {}; // Remet à zéro les données temporaires
     this.articleList.forEach((article: any) => {
-      this.tempArticleData[article.reference] = {
+      this.tempArticleData[article.articleId] = {
         description: '',
         quantite: 0,
       };
@@ -73,27 +70,27 @@ export class TransfertDeStockComponent implements OnInit {
 
   removeArticle(article: any) {
     const index = this.selectedArticles.findIndex(
-      (item) => item.reference === article.reference
+      (item) => item.articleId === article.articleId
     );
     if (index !== -1) {
       this.selectedArticles.splice(index, 1);
     }
-    this.updateTotal()
+    this.updateTotal();
   }
-  GetArticleList(page: number) {
-    let data = {
-      paginate: false,
-      page: page,
-      limit: 8,
-    };
-    this._spinner.show();
-    this.articleService.GetArticleList(data).then((res: any) => {
-      console.log('DATATYPEPRIX:::>', res);
-      this.articleList = res.data;
-      this.initializeTempArticleData();
-      this._spinner.hide();
-    });
-  }
+  // GetArticleList(page: number) {
+  //   let data = {
+  //     paginate: false,
+  //     page: page,
+  //     limit: 8,
+  //   };
+  //   this._spinner.show();
+  //   this.articleService.GetArticleList(data).then((res: any) => {
+  //     console.log('DATATYPEPRIX:::>', res);
+  //     this.articleList = res.data;
+  //     this.initializeTempArticleData();
+  //     this._spinner.hide();
+  //   });
+  // }
 
   GetDepotList(page: number) {
     let data = {
@@ -117,40 +114,7 @@ export class TransfertDeStockComponent implements OnInit {
   OnCloseModal() {
     this.isModalOpen = false;
   }
-  // add() {
-  //   this.articleList.forEach((article: any) => {
-  //     if (article.isChecked) {
-  //       console.log(article.isChecked, 'article.isChecked');
-  //       const description =
-  //         this.tempArticleData[article.reference]?.description;
-  //       const quantite = this.tempArticleData[article.reference]?.quantite;
-  //       console.log(description, 'description.description');
-  //       console.log(quantite, 'quantite.quantite');
-  //       console.log(this.tempArticleData, 'tempArticleData');
-  //       console.log(
-  //         this.tempArticleData[article.reference],
-  //         'article reference'
-  //       );
-  //       if (!description || quantite <= 0) {
-  //         alert(
-  //           `Veuillez remplir les champs pour l'article ${article.libelle}`
-  //         );
-  //         return;
-  //       }
-  //       this.selectedArticles.push({
-  //         reference: article.reference,
-  //         libelle: article.libelle,
-  //         description: description,
-  //         quantite: quantite,
-  //         test: 'oui',
-  //       });
-  //     }
-  //   });
-
-  //   // Réinitialiser le modal après avoir ajouté les articles sélectionnés
-  //   this.OnCloseModal();
-  //   console.log(this.selectedArticles);
-  // }
+  
   isAnyArticleSelected(): boolean {
     return this.articleList.some((article) => article.isChecked);
   }
@@ -158,11 +122,11 @@ export class TransfertDeStockComponent implements OnInit {
     this.articleList.forEach((article: any) => {
       if (article.isChecked) {
         const description =
-          this.tempArticleData[article.reference]?.description;
-        const quantite = this.tempArticleData[article.reference]?.quantite;
+          this.tempArticleData[article.articleId]?.description;
+        const quantite = this.tempArticleData[article.articleId]?.quantite;
         this.selectedArticles.push({
-          reference: article.reference,
-          libelle: article.libelle,
+          articleCode: article.articleCode,
+          articleName: article.articleName,
           description: description,
           quantite: quantite,
         });
@@ -182,15 +146,15 @@ export class TransfertDeStockComponent implements OnInit {
 
   onSubmit() {
     const transferData = {
-      numero: this.numero, 
-      sourceDepotId: this.sourceDepotId, 
-      destinationDepotId: this.destinationDepotId, 
+      numero: this.numero,
+      sourceDepotId: this.sourceDepotId,
+      destinationDepotId: this.destinationDepotId,
       articles: this.selectedArticles.map((article) => ({
-        productCode: article.reference, 
+        productCode: article.articleCode,
         quantite: article.quantite,
       })),
-      transferDate: this.transferDate, 
-      comment: this.comment || '', 
+      transferDate: this.transferDate,
+      comment: this.comment || '',
     };
 
     console.log('Données prêtes pour enregistrement :', transferData);
@@ -199,24 +163,37 @@ export class TransfertDeStockComponent implements OnInit {
   }
 
   submitToServer(data: any) {
-    if (data!== undefined) {
-    this._spinner.show()
-    this.articleService.TransfertStock(data).then((response:any) => {
-      if(response.statusCode === 201) {
-        this.selectedArticles = []
-        this.toastr.success(response.message);
-      }else{
-        this.toastr.error(response.message);
-      }
-      this._spinner.hide()
-
-    },(error: any) => {
-      this._spinner.hide()
-      this.toastr.error('Erreur!', "Erreur lors de l'enregistrement.");
-      console.error('Erreur lors de la mise à jour', error);
-    })
-  } else {
-    this.toastr.error('donnée incorrecte!');
+    if (data !== undefined) {
+      this._spinner.show();
+      this.articleService.TransfertStock(data).then(
+        (response: any) => {
+          if (response.statusCode === 201) {
+            this.selectedArticles = [];
+            this.totalProduits = 0
+            this.sourceDepotId = null
+            this.destinationDepotId = null
+            this.toastr.success(response.message);
+          } else {
+            this.toastr.error(response.message);
+          }
+          this._spinner.hide();
+        },
+        (error: any) => {
+          this._spinner.hide();
+          this.toastr.error('Erreur!', "Erreur lors de l'enregistrement.");
+          console.error('Erreur lors de la mise à jour', error);
+        }
+      );
+    } else {
+      this.toastr.error('donnée incorrecte!');
+    }
   }
+  selectDepot() {
+    let id = this.sourceDepotId;
+    this.articleService.GetStockByDepot(id).then((res: any) => {
+    console.log(res,'produit par depot')
+    this.articleList = res.articles
+
+    });
   }
 }
