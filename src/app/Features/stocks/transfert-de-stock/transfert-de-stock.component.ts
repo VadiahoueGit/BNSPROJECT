@@ -178,6 +178,7 @@ export class TransfertDeStockComponent implements OnInit {
           }
           this._spinner.hide();
         },
+        
         (error: any) => {
           this._spinner.hide();
           this.toastr.error('Erreur!', "Erreur lors de l'enregistrement.");
