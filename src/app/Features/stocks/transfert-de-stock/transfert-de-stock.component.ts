@@ -14,6 +14,7 @@ import { CoreServiceService } from 'src/app/core/core-service.service';
 export class TransfertDeStockComponent implements OnInit {
   transfertForm!: FormGroup;
   articleList: any[] = [];
+  filteredArticleList: any[] = [];
   depotList: any[] = [];
   isModalOpen: boolean;
   selectedArticles: any[] = [];
@@ -21,11 +22,13 @@ export class TransfertDeStockComponent implements OnInit {
   tempArticleData: {
     [key: string]: { description: string; quantite: number };
   } = {};
-  numero: string = ''; 
+  numero: string = '';
   comment: string = '';
-  transferDate: string = ''; 
-  sourceDepotId = null; 
+  transferDate: string = '';
+  sourceDepotId = null;
   destinationDepotId = null;
+  searchTerm: string = '';
+
   constructor(
     private _coreService: CoreServiceService,
     private fb: FormBuilder,
@@ -39,13 +42,10 @@ export class TransfertDeStockComponent implements OnInit {
     this.numero = this.generateNumero();
     const today = new Date();
     this.transferDate = today.toISOString().split('T')[0];
-    // this.GetArticleList(1);
     this.GetDepotList(1);
-
   }
-  // Initialisation des données temporaires
   initializeTempArticleData() {
-    this.tempArticleData = {}; // Remet à zéro les données temporaires
+    this.tempArticleData = {};
     this.articleList.forEach((article: any) => {
       this.tempArticleData[article.articleId] = {
         description: '',
@@ -77,20 +77,7 @@ export class TransfertDeStockComponent implements OnInit {
     }
     this.updateTotal();
   }
-  // GetArticleList(page: number) {
-  //   let data = {
-  //     paginate: false,
-  //     page: page,
-  //     limit: 8,
-  //   };
-  //   this._spinner.show();
-  //   this.articleService.GetArticleList(data).then((res: any) => {
-  //     console.log('DATATYPEPRIX:::>', res);
-  //     this.articleList = res.data;
-  //     this.initializeTempArticleData();
-  //     this._spinner.hide();
-  //   });
-  // }
+ 
 
   GetDepotList(page: number) {
     let data = {
@@ -107,36 +94,84 @@ export class TransfertDeStockComponent implements OnInit {
   }
   OnCreate() {
     this.isModalOpen = true;
-    this.initializeTempArticleData();
+    this.articleList.forEach((article) => {
+      const matchedArticle = this.selectedArticles.find(
+        (selected) => selected.articleId === article.articleId
+      );
+
+      if (matchedArticle) {
+        this.tempArticleData[article.articleId] = {
+          description: matchedArticle.description,
+          quantite: matchedArticle.quantite,
+        };
+        article.isChecked = true; 
+      } else {
+    
+        this.initializeTempArticleData();
+        article.isChecked = false;
+      }
+    });
   }
 
   // Fermer la modal
   OnCloseModal() {
     this.isModalOpen = false;
   }
-  
-  isAnyArticleSelected(): boolean {
-    return this.articleList.some((article) => article.isChecked);
-  }
-  add() {
-    this.articleList.forEach((article: any) => {
-      if (article.isChecked) {
-        const description =
-          this.tempArticleData[article.articleId]?.description;
-        const quantite = this.tempArticleData[article.articleId]?.quantite;
-        this.selectedArticles.push({
-          articleCode: article.articleCode,
-          articleName: article.articleName,
-          description: description,
-          quantite: quantite,
-        });
 
-        article.isChecked = false;
+  isAnyArticleSelected(): boolean {
+    return this.articleList.some(
+      (article) => this.tempArticleData[article.articleId]?.quantite > 0  && 
+      this.tempArticleData[article.articleId]?.quantite <= article.quantiteDisponible
+    );
+  }
+  isArticleSelected(articleId: number): boolean {
+    return !!this.selectedArticles.find((a) => a.articleId === articleId);
+  }
+  
+  // Méthode pour filtrer les articles en fonction du terme de recherche
+  filterArticles(): void {
+    console.log(this.searchTerm)
+    if (this.searchTerm) {
+      this.filteredArticleList = this.articleList.filter((article: any) =>
+        article.articleCode.toLowerCase().includes(this.searchTerm.toLowerCase())
+      //  || article.code.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+      console.log(this.filteredArticleList)
+    } else {
+      this.filteredArticleList = [...this.articleList];
+    }
+  }
+  add(): void {
+    this.articleList.forEach((article) => {
+      if (
+        article.isChecked &&
+        this.tempArticleData[article.articleId].quantite > 0
+      ) {
+        const existingArticle = this.selectedArticles.find(
+          (a) => a.articleId === article.articleId
+        );
+
+        if (existingArticle) {
+          existingArticle.description =
+            this.tempArticleData[article.articleId].description;
+          existingArticle.quantite =
+            this.tempArticleData[article.articleId].quantite;
+        } else {
+          this.selectedArticles.push({
+            articleId: article.articleId,
+            articleCode: article.articleCode,
+            articleName: article.articleName,
+            description: this.tempArticleData[article.articleId].description,
+            quantite: this.tempArticleData[article.articleId].quantite,
+          });
+        }
       }
     });
     this.updateTotal();
-    this.OnCloseModal();
+    this.isModalOpen = false; 
   }
+
+  
 
   updateTotal() {
     this.totalProduits = this.selectedArticles.reduce((total, article) => {
@@ -169,16 +204,16 @@ export class TransfertDeStockComponent implements OnInit {
         (response: any) => {
           if (response.statusCode === 201) {
             this.selectedArticles = [];
-            this.totalProduits = 0
-            this.sourceDepotId = null
-            this.destinationDepotId = null
+            this.totalProduits = 0;
+            this.sourceDepotId = null;
+            this.destinationDepotId = null;
             this.toastr.success(response.message);
           } else {
             this.toastr.error(response.message);
           }
           this._spinner.hide();
         },
-        
+
         (error: any) => {
           this._spinner.hide();
           this.toastr.error('Erreur!', "Erreur lors de l'enregistrement.");
@@ -192,9 +227,9 @@ export class TransfertDeStockComponent implements OnInit {
   selectDepot() {
     let id = this.sourceDepotId;
     this.articleService.GetStockByDepot(id).then((res: any) => {
-    console.log(res,'produit par depot')
-    this.articleList = res.articles
-
+      console.log(res, 'produit par depot');
+      this.articleList = res.articles; 
+      this.filteredArticleList = this.articleList; 
     });
   }
 }

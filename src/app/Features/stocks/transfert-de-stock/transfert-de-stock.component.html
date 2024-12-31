@@ -230,6 +230,11 @@
       <div class="modal-body">
         <form>
           <div class="table-responsive" style="max-height: 300px; overflow-y: auto">
+            <div class="d-flex justify-content-center ">
+              <!-- Champ de recherche -->
+              <input type="text" name="search" (input)="filterArticles()" [(ngModel)]="searchTerm"
+                     placeholder="Rechercher un produit" class="form-control ">
+            </div>
             <table class="table">
               <thead>
                 <tr>
@@ -241,8 +246,8 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let article of articleList; let i = index">
-                  <td>{{ article.articleName }}</td>
+                <tr *ngFor="let article of filteredArticleList; let i = index">
+                  <td>{{ article.articleCode }}</td>
                   <td>
                     <input
                       type="text"
@@ -250,6 +255,7 @@
                       [(ngModel)]="tempArticleData[article.articleId].description"
                       name="description_{{ i }}"
                       placeholder="Entrez une description"
+                      [disabled]="isArticleSelected(article.articleId)"
                     />
                   </td>
                   <td>
@@ -260,10 +266,15 @@
                       [(ngModel)]="tempArticleData[article.articleId].quantite"
                       name="quantite_{{ i }}"
                       placeholder="Quantité"
+                      [readonly]="!article.isChecked"
+                      [disabled]="isArticleSelected(article.articleId)"
+                      
                       min="1"
                       [ngClass]="{
-                        'is-valid': tempArticleData[article.articleId].quantite > 0,
-                        'is-invalid': tempArticleData[article.articleId].quantite === 0
+                        'is-valid': tempArticleData[article.articleId].quantite > 0 &&
+                        tempArticleData[article.articleId].quantite <= article.quantiteDisponible,
+                        'is-invalid': tempArticleData[article.articleId].quantite === 0||
+                        tempArticleData[article.articleId].quantite > article.quantiteDisponible
                       }"
                     />
                   </td>
@@ -274,7 +285,8 @@
                       class="form-check-input"
                       [(ngModel)]="article.isChecked"
                       name="checkbox_{{ i }}"
-                      [disabled]="tempArticleData[article.articleId].quantite <= 0"
+                      [disabled]="isArticleSelected(article.articleId)"
+                      
                     />
                   </td>
                 </tr>

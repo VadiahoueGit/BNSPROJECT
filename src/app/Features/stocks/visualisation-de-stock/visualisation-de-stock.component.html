@@ -3,9 +3,9 @@
     <h4 class="fw-bold mb-0">Visualisation des stocks</h4>
 </div>
 <div class="card">
-    <p-table [styleClass]="'p-datatable-sm'" #dt [value]="dataList" dataKey="id" [rows]="10"
+    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="10"
         [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" 
-        [globalFilterFields]="['date', 'articles', 'fournisseurs', 'magasin']"
+        [globalFilterFields]="['code', 'libelle', 'totalQuantity']"
         (onPage)="onPage($event)">
         <!-- Barre de recherche globale -->
         <ng-template pTemplate="caption">

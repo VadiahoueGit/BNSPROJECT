@@ -25,26 +25,8 @@ export class VisualisationDeStockComponent {
   isEditMode: boolean = false;
   currentPage: number;
   rowsPerPage: any;
-  dataList = [
-    {
-      code: 'A001',
-      description: 'Article 1',
-      stock: 150,
-      magasins: [
-        { nom: 'Magasin A', disponibilite: 50 },
-        { nom: 'Magasin B', disponibilite: 100 }
-      ]
-    },
-    {
-      code: 'A002',
-      description: 'Article 2',
-      stock: 300,
-      magasins: [
-        { nom: 'Magasin A', disponibilite: 150 },
-        { nom: 'Magasin B', disponibilite: 150 }
-      ]
-    }
-  ];
+  
+  dataList : any[] = [];
   constructor(private articleService: ArticleServiceService, private _spinner:NgxSpinnerService,
     private toastr: ToastrService,
     private fb: FormBuilder,
@@ -62,7 +44,7 @@ export class VisualisationDeStockComponent {
   filterGlobal(event:any) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement?.value || ''; // Utilisez une valeur par défaut
-    this.dt2.filterGlobal(value, 'contains');
+    this.dt2?.filterGlobal(value, 'contains');
   }
   OnCloseModal()
   {
