@@ -124,7 +124,8 @@ export class ValidationCommandeComponent {
     this._spinner.show();
     this.articleService.GetArticleList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
-      this.dataList = res.data;
+      // this.dataList = res.data;
+      this.dataList = [];
       this._spinner.hide();
     });
   }
