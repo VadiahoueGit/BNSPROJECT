@@ -26,10 +26,11 @@
           </div>
           <div class="mb-3">
             <label for="dateEnregistrement" class="form-label"
-              >Date d'enregistrement</label
+            >Date d'enregistrement</label
             >
             <span class="text-danger">*</span>
             <input
+              [disabled]="true"
               type="date"
               id="dateEnregistrement"
               class="form-control"
@@ -43,7 +44,7 @@
         <div class="col-md-6">
           <div class="mb-3">
             <label for="magasinOrigine" class="form-label"
-              >Magasin d'origine</label
+            >Dépot d'origine</label
             >
             <span class="text-danger">*</span>
             <ng-select
@@ -60,7 +61,7 @@
           </div>
           <div class="mb-3">
             <label for="magasinRecepteur" class="form-label"
-              >Magasin récepteur</label
+            >Dépot récepteur</label
             >
             <span class="text-danger">*</span>
             <ng-select
@@ -77,57 +78,59 @@
         </div>
       </div>
 
-     <!-- Tableau des articles -->
-<div class="mt-4">
-  <h5>Articles à transférer</h5>
-  <button [disabled]="sourceDepotId == null || destinationDepotId == null" type="button" class="btn btn-secondary mb-3" (click)="OnCreate()">Ajouter des articles</button>
-  <table class="table table-bordered">
-    <thead class="table-light">
-      <tr>
-        <th scope="col">Code Article</th>
-        <th scope="col">Description</th>
-        <th scope="col">Quantité</th>
-        <th scope="col">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let data of selectedArticles">
-        <td>{{ data.articleCode }}</td>
-        <td>{{ data.description }}</td>
-        <td>{{ data.quantite }}</td>
-        <td>
-          <button type="button" class="btn btn-danger btn-sm" (click)="removeArticle(data)">
-            <i class="fas fa-trash"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+      <!-- Tableau des articles -->
+      <div class="mt-4">
+        <h5>Articles à transférer</h5>
+        <button [disabled]="sourceDepotId == null || destinationDepotId == null" type="button"
+                class="btn btn-secondary mb-3" (click)="OnCreate()">Ajouter des articles
+        </button>
+        <table class="table table-bordered">
+          <thead class="table-light">
+          <tr>
+            <th scope="col">Code Article</th>
+            <th scope="col">Description</th>
+            <th scope="col">Quantité</th>
+            <th scope="col">Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let data of selectedArticles">
+            <td>{{ data.articleCode }}</td>
+            <td>{{ data.description }}</td>
+            <td>{{ data.quantite }}</td>
+            <td>
+              <button type="button" class="btn btn-danger btn-sm" (click)="removeArticle(data)">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
 
 
-   <!-- Total des produits transférés -->
-<div class="mb-3">
-  <label for="totalProduits" class="form-label">Total des produits transférés</label>
-  <input
-    type="number"
-    id="totalProduits"
-    class="form-control"
-    [value]="totalProduits"
-    readonly
-  />
-</div>
+      <!-- Total des produits transférés -->
+      <div class="mb-3">
+        <label for="totalProduits" class="form-label">Total des produits transférés</label>
+        <input
+          type="number"
+          id="totalProduits"
+          class="form-control"
+          [value]="totalProduits"
+          readonly
+        />
+      </div>
 
       <!-- Bouton de soumission -->
       <div class="text-end">
         <button
-        type="submit"
-        (click)="onSubmit()"
-        class="btn btn-primary"
-        [disabled]="!selectedArticles.length"
-      >
-        Enregistrer le transfert
-      </button>
+          type="submit"
+          (click)="onSubmit()"
+          class="btn btn-primary"
+          [disabled]="!selectedArticles.length"
+        >
+          Enregistrer le transfert
+        </button>
       </div>
     </form>
   </div>
@@ -192,7 +195,7 @@
                       </td>
                     </tr>
                   </tbody>
-                  
+
                 </table>
               </div>
             </fieldset>
@@ -229,67 +232,67 @@
 
       <div class="modal-body">
         <form>
-          <div class="table-responsive" style="max-height: 300px; overflow-y: auto">
-            <div class="d-flex justify-content-center ">
+            <div class="p-3">
               <!-- Champ de recherche -->
               <input type="text" name="search" (input)="filterArticles()" [(ngModel)]="searchTerm"
-                     placeholder="Rechercher un produit" class="form-control ">
+                     placeholder="Rechercher un produit" class="form-control mb-3">
             </div>
+          <div class="table-responsive" style="max-height: 300px; overflow-y: auto">
             <table class="table">
               <thead>
-                <tr>
-                  <th>Produits</th>
-                  <th>Description</th>
-                  <th>Quantité</th>
-                  <th>Quantité disponible</th>
-                  <th>Choix</th>
-                </tr>
+              <tr style="font-size: small;">
+                <th scope="col" class="text-secondary">Produits</th>
+                <th scope="col" class="text-secondary">Description</th>
+                <th scope="col" class="text-secondary">Quantité</th>
+                <th scope="col" class="text-secondary">Quantité disponible</th>
+                <th scope="col" class="text-secondary text-center">Choix</th>
+              </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let article of filteredArticleList; let i = index">
-                  <td>{{ article.articleCode }}</td>
-                  <td>
-                    <input
-                      type="text"
-                      class="form-control"
-                      [(ngModel)]="tempArticleData[article.articleId].description"
-                      name="description_{{ i }}"
-                      placeholder="Entrez une description"
-                      [disabled]="isArticleSelected(article.articleId)"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="quantite"
-                      [(ngModel)]="tempArticleData[article.articleId].quantite"
-                      name="quantite_{{ i }}"
-                      placeholder="Quantité"
-                      [readonly]="!article.isChecked"
-                      [disabled]="isArticleSelected(article.articleId)"
-                      
-                      min="1"
-                      [ngClass]="{
+              <tr *ngFor="let article of filteredArticleList; let i = index">
+                <td>{{ article.articleCode }}</td>
+                <td>
+                  <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="tempArticleData[article.articleId].description"
+                    name="description_{{ i }}"
+                    placeholder="Entrez une description"
+                    [disabled]="isArticleSelected(article.articleId)"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="quantite"
+                    [(ngModel)]="tempArticleData[article.articleId].quantite"
+                    name="quantite_{{ i }}"
+                    placeholder="Quantité"
+                    [readonly]="!article.isChecked"
+                    [disabled]="isArticleSelected(article.articleId)"
+
+                    min="1"
+                    [ngClass]="{
                         'is-valid': tempArticleData[article.articleId].quantite > 0 &&
                         tempArticleData[article.articleId].quantite <= article.quantiteDisponible,
                         'is-invalid': tempArticleData[article.articleId].quantite === 0||
                         tempArticleData[article.articleId].quantite > article.quantiteDisponible
                       }"
-                    />
-                  </td>
-                  <td>{{ article.quantiteDisponible }}</td>
-                  <td>
-                    <input
-                      type="checkbox"
-                      class="form-check-input"
-                      [(ngModel)]="article.isChecked"
-                      name="checkbox_{{ i }}"
-                      [disabled]="isArticleSelected(article.articleId)"
-                      
-                    />
-                  </td>
-                </tr>
+                  />
+                </td>
+                <td>{{ article.quantiteDisponible }}</td>
+                <td>
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    [(ngModel)]="article.isChecked"
+                    name="checkbox_{{ i }}"
+                    [disabled]="isArticleSelected(article.articleId)"
+
+                  />
+                </td>
+              </tr>
               </tbody>
             </table>
           </div>
@@ -298,7 +301,8 @@
 
       <div class="modal-footer  gap-3 px-4y">
         <button type="button" class="btn btn-secondary" (click)="OnCloseModal()">Annuler</button>
-        <button type="button" [disabled]="!isAnyArticleSelected()" class="btn btn-primary" (click)="add()">Valider</button>
+        <button type="button" [disabled]="!isAnyArticleSelected()" class="btn btn-primary" (click)="add()">Valider
+        </button>
       </div>
     </div>
   </div>

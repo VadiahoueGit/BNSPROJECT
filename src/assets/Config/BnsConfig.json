@@ -1,5 +1,5 @@
 {
-    "apiUrlBns":"https://bnsapi.monassoci.com/api",
+    "apiUrlBns":"https://apibns.localdev.business/api",
     "webSocketUrl":" http://wsbnsapi.monassoci.com/",
-    "docUrl":"https://bnsapi.monassoci.com"
+    "docUrl":"https://apibns.localdev.business"
 }

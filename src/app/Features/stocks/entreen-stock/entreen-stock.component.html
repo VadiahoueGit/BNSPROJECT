@@ -80,10 +80,6 @@
             class="form-control-custom"
             [(ngModel)]="data.quantite"
             [min]="0"
-            [max]="stocksDisponibles[data.id]"
-            [disabled]="stocksDisponibles[data.id] === 0"
-            [ngClass]="{ 'invalid': data.quantite > stocksDisponibles[data.id] }"
-            (input)="validateQuantite(data)"
           >
         </td>
         <td>{{ stocksDisponibles[data.id] }}</td>

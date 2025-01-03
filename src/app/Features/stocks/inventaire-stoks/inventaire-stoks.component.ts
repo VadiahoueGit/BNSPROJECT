@@ -23,6 +23,7 @@ export class InventaireStoksComponent {
   filteredArticleList: any[] = [];
   selectedArticles: any[] = [];
   stocksDisponibles: any = {};
+  ecart: any = {};
   InventaireForm!: FormGroup;
   loading: boolean = true;
   isModalOpen = false;
@@ -95,6 +96,7 @@ export class InventaireStoksComponent {
     // this.articleService.ListGroupesArticles.subscribe((res: any) => {
     //   this.dataListGroupeArticles = res;
     // });
+
     this.GetArticleList(1);
     this.GetDepotList(1);
     this.fetchData();
@@ -278,6 +280,7 @@ export class InventaireStoksComponent {
   }
 
   articlesRequiredValidator(control: any): { [key: string]: boolean } | null {
+
     if (control.length === 0) {
       return {'articlesRequired': true};  // Le FormArray doit contenir au moins un article
     }
@@ -313,6 +316,14 @@ export class InventaireStoksComponent {
     }
   }
 
+  calculateData(stockTheorique: number, stockPhysique: number) {
+    const ecart = stockPhysique - stockTheorique ;
+    const ecartPercent = (ecart * stockTheorique) / 100;
+    console.log(ecart, ecartPercent)
+    return { ecart, ecartPercent }; // Facultatif : retournez un objet si besoin
+  }
+
+
   // Méthode pour ajouter un article au FormArray
   setArticles(articlesData: any) {
     // Vider d'abord le FormArray
@@ -322,7 +333,10 @@ export class InventaireStoksComponent {
     articlesData.forEach((item: any) => {
       const articleGroup = this.fb.group({
         productCode: [item.code, Validators.required],
-        quantite: [item.quantite, [Validators.required, Validators.min(1)]]
+        stockstheorique: [item.code, Validators.required],
+        stockphysique: [item.code,  [Validators.required, Validators.min(1)]],
+        ecart: [item.code, Validators.required],
+        pourcentageEcart: [item.quantite,Validators.required]
       })
       this.articles.push(articleGroup);
     })
@@ -333,13 +347,11 @@ export class InventaireStoksComponent {
   get articles(): FormArray {
     return this.InventaireForm.get('articles') as FormArray;
   }
-  validateQuantite(data: any): void {
-    // Si la quantité dépasse la quantité disponible, réinitialiser la quantité à la valeur maximale
-    if (data.quantite > this.stocksDisponibles[data.id]) {
-      data.quantite = this.stocksDisponibles[data.id];  // Réinitialise la quantité
-      this.toastr.warning('La quantité saisie dépasse la quantité disponible.');
-    }
+
+  validateQuantite(data: any, stockTheorique:number): void {
+      this.ecart[data.ecart] = this.calculateData(stockTheorique,data.quantite).ecart;
   }
+
 
   deselectAllItems(): void {
     this.selectedArticles.forEach((item: any) => {

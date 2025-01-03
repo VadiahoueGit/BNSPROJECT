@@ -15,7 +15,8 @@
 .modal-dialog {
   background-color: white;
   border-radius: 0.3rem;
-  width: 45em;
+  min-width: 45em;
+  width: auto;
   padding: 1rem;
 }
 .is-invalid {

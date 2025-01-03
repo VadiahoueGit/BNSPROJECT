@@ -139,48 +139,44 @@
                         </div>
                     </div>
                 </form>
-              <table class="table table-bordered">
-                <thead class="table-light">
-                <tr>
-                  <th scope="col">Code</th>
-                  <th scope="col">Description</th>
-                  <th scope="col">Quantité</th>
-                  <th scope="col">Qte disponible</th>
-                  <th scope="col">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let data of selectedArticles; let i = index">
-                  <td class=""><p>{{ data.code }}</p></td>
-                  <td class=""><p>{{ data.libelle }}</p></td>
-                  <td>
-                    <input
-                      type="number"
-                      class="form-control-custom"
-                      [(ngModel)]="data.quantite"
-                      [min]="0"
-                      [max]="stocksDisponibles[data.id]"
-                      [disabled]="stocksDisponibles[data.id] === 0"
-                      [ngClass]="{ 'invalid': data.quantite > stocksDisponibles[data.id] }"
-                      (input)="validateQuantite(data)"
-                    >
-                  </td>
-                  <td>{{ stocksDisponibles[data.id] }}</td>
-                  <td class="d-flex justify-content-center">
-                    <button type="button" class="btn btn-danger btn-sm" (click)="removeArticle(data)">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
-
-              <!-- Bouton -->
-              <div class="text-end">
-                <button (click)="onSubmit()" type="submit" class="btn btn-primary">
-                  Enregistrer
-                </button>
+              <div style="max-height: 300px; overflow-y: auto; border: 1px solid #dee2e6;">
+                <table class="table table-bordered">
+                  <thead class="table-light">
+                  <tr>
+                    <th scope="col">Code</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">stock physique</th>
+                    <th scope="col">Stock théorique</th>
+                    <th scope="col">Écart</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let data of selectedArticles; let i = index">
+                    <td><p>{{ data.code }}</p></td>
+                    <td><p>{{ data.libelle }}</p></td>
+                    <td>
+                      <input
+                        type="number"
+                        class="form-control-custom"
+                        [(ngModel)]="data.quantite"
+                        [min]="0"
+                        value="0"
+                        (input)="validateQuantite(data,stocksDisponibles[data.id])"
+                      >
+                    </td>
+                    <td>{{ stocksDisponibles[data.id] }}</td>
+                    <td>{{ this.ecart[data.ecart] }}</td>
+                    <td class="d-flex justify-content-center">
+                      <button type="button" class="btn btn-danger btn-sm" (click)="removeArticle(data)">
+                        <i class="fas fa-trash fs-6"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
               </div>
+
             </div>
 
 

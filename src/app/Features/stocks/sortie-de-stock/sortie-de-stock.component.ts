@@ -42,7 +42,7 @@ export class SortieDeStockComponent {
 
     this.generateNumero()
     this.GetDepotList(1)
-    this.GetArticleList(1)
+    // this.GetArticleList(1)
     this.fetchData()
   }
   GetArticleList(page:number) {
@@ -285,9 +285,10 @@ export class SortieDeStockComponent {
     };
     try {
       // Effectuer les deux appels API en parallèle
-      const [plastiques, liquides] : [any, any] = await Promise.all([
+      const [plastiques, liquides, emballage]: [any, any, any]  = await Promise.all([
         this.articleService.GetPlastiqueNuList(data),  // Remplacez par votre méthode API
-        this.articleService.GetLiquideList(data)      // Remplacez par votre méthode API
+        this.articleService.GetLiquideList(data) ,
+        this.articleService.GetEmballageList(data)     // Remplacez par votre méthode API
       ]);
 
       console.log("Données plastiques:", plastiques);
@@ -308,9 +309,15 @@ export class SortieDeStockComponent {
       } else {
         console.error("Les données de liquides ne sont pas un tableau");
       }
-
-
-      console.log('Données combinées dans dataList:', this.dataList);
+      if (Array.isArray(emballage.data)) {
+        // this.dataListLiquides = emballage.data;
+        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
+        this.dataList.push(...emballage.data);
+      } else {
+        console.error("Les données de liquides ne sont pas un tableau");
+      }
+      this.filteredArticleList = this.dataList;
+      console.log('Données combinées dans dataList:', this.filteredArticleList);
     } catch (error) {
       // Gestion des erreurs
       console.error('Erreur lors de la récupération des données:', error);
