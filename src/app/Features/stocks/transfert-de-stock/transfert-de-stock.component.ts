@@ -14,6 +14,8 @@ import { CoreServiceService } from 'src/app/core/core-service.service';
 export class TransfertDeStockComponent implements OnInit {
   transfertForm!: FormGroup;
   articleList: any[] = [];
+  dataListLiquides: any[] = [];
+  dataListPlastiqueNu: any[] = [];
   filteredArticleList: any[] = [];
   depotList: any[] = [];
   isModalOpen: boolean;
@@ -43,6 +45,7 @@ export class TransfertDeStockComponent implements OnInit {
     const today = new Date();
     this.transferDate = today.toISOString().split('T')[0];
     this.GetDepotList(1);
+    this.fetchData()
   }
   initializeTempArticleData() {
     this.tempArticleData = {};
@@ -231,5 +234,45 @@ export class TransfertDeStockComponent implements OnInit {
       this.articleList = res.articles; 
       this.filteredArticleList = this.articleList; 
     });
+  }
+  
+  async fetchData() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    try {
+      // Effectuer les deux appels API en parallèle
+      const [plastiques, liquides]: [any, any] = await Promise.all([
+        this.articleService.GetPlastiqueNuList(data),  // Remplacez par votre méthode API
+        this.articleService.GetLiquideList(data)      // Remplacez par votre méthode API
+      ]);
+
+      console.log("Données plastiques:", plastiques);
+      console.log("Données liquides:", liquides);
+      // Vérifier si plastiques et liquides sont bien des tableaux
+      if (Array.isArray(plastiques.data)) {
+        this.dataListPlastiqueNu = plastiques.data;
+        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
+        this.articleList.push(...plastiques.data);
+      } else {
+        console.error("Les données de plastiques ne sont pas un tableau");
+      }
+
+      if (Array.isArray(liquides.data)) {
+        this.dataListLiquides = liquides.data;
+        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
+        this.articleList.push(...liquides.data);
+      } else {
+        console.error("Les données de liquides ne sont pas un tableau");
+      }
+
+
+      console.log('Données combinées dans dataList:', this.articleList);
+    } catch (error) {
+      // Gestion des erreurs
+      console.error('Erreur lors de la récupération des données:', error);
+    }
   }
 }
