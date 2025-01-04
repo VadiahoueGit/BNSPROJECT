@@ -2,3 +2,214 @@
     <i style="font-size: 18px;" class="fas fw-bold fa-chevron-left me-2" ></i>
     <h4 class="fw-bold mb-0">Revendeurs</h4>
 </div> 
+<div class="card">
+    <div class=" d-flex justify-content-end py-3">
+      <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer un revendeur</button>
+    </div>
+    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+             [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
+  
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="color: var(--secondary-color);">Etablissement</th>
+          <th style="color: var(--secondary-color);">Zone de livraison</th>
+          <th style="color: var(--secondary-color);">Statut</th>
+          <th style="color: var(--secondary-color);">Contact</th>
+          <th class="d-flex justify-content-center" style="color: var(--secondary-color);">Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-dataList>
+        <tr>
+          <td>
+            <span class="ml-1 vertical-align-middle">
+              {{ dataList.nomEtablissement }}
+            </span>
+  
+          </td>
+          <td>
+            <span class="ml-1 vertical-align-middle">
+              {{ dataList.zoneDeLivraison.nomZone }}
+            </span>
+          </td>
+          <td>
+            <span class="ml-1 vertical-align-middle">
+              {{ dataList.isValide ? 'Validé' : ' En attente' }}
+            </span>
+          </td>
+          <td>
+            <span class="ml-1 vertical-align-middle">
+              {{ dataList.contactGerant }}
+            </span>
+          </td>
+          <td>
+        <tr class="d-flex justify-content-center gap-3">
+          <td>
+            <i [ngStyle]="{
+                          'color': dataList.isValide ? 'gray' : '#08AD36',
+                        }" (click)="OnValidate(dataList)" style="cursor: pointer;" class="fas fa-check fw-bold"></i>
+          </td>
+          <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary fw-bold"></i></td>
+          <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
+                 class="fas fa-trash-alt text-danger fw-bold"></i></td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5">Aucun article trouvé.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <div *ngIf="isModalOpen" class="custom-modal">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header d-flex align-items-center">
+            <div class="d-flex justify-content-center align-items-center"
+                 style="background-color: #DBFFE8; border-radius: 50%; width: 3rem; height: 3rem;">
+              <i class="fas fa-box-check text-success fs-4"></i>
+            </div>
+            <h1 class="modal-title fs-5 ms-3">Création de revendeur</h1>
+            <button type="button" class="btn-close" aria-label="Close" (click)="OnCloseModal()"></button>
+          </div>
+        <div class="modal-body" style="max-height: 70vh; overflow-y: auto; ">
+          <form [formGroup]="revendeurForm" (ngSubmit)="onSubmit()">
+            <!-- TYPE DE CLIENT, CODE APPLICATION, CATEGORIE -->
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label for="typeClient" class="form-label">Type de Client</label>
+                <select class="form-select" id="typeClient" formControlName="typeClient">
+                  <option *ngFor="let clientType of clientTypes" [value]="clientType">{{ clientType }}</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="codeApplication" class="form-label">Code Application<span class="text-danger">*</span></label>
+                <input type="text" class="form-control w-100" id="codeApplication" formControlName="codeApplication" placeholder="Entrez le code"  style="max-width: 100%;">
+              </div>
+              <div class="col-md-4">
+                <label for="categorie" class="form-label">Catégorie</label>
+                <select class="form-select" id="categorie" formControlName="categorie">
+                  <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+                </select>
+              </div>
+            </div>
+  
+            <!-- REFERENCES -->
+            <fieldset class="border p-3 mb-3">
+              <legend class="float-none w-auto px-2">Références</legend>
+              <div class="row">
+                <div class="col-md-6">
+                  <label for="codeClient" class="form-label">Code Client</label>
+                  <input type="text" class="form-control" id="codeClient" formControlName="codeClient" placeholder="Entrez le code client">
+                </div>
+                <div class="col-md-6">
+                  <label for="userLogin" class="form-label">User Login</label>
+                  <input type="text" class="form-control" id="userLogin" formControlName="userLogin" placeholder="Entrez le login">
+                </div>
+                <div class="col-md-6 mt-3">
+                  <label for="registreCommerce" class="form-label">N° Registre de commerce</label>
+                  <input type="text" class="form-control" id="registreCommerce" formControlName="registreCommerce" placeholder="Entrez le numéro">
+                </div>
+                <div class="col-md-6 mt-3">
+                  <label for="raisonSociale" class="form-label">Raison sociale</label>
+                  <input type="text" class="form-control" id="raisonSociale" formControlName="raisonSociale" placeholder="Entrez la raison sociale">
+                </div>
+                <div class="col-md-6 mt-3">
+                  <label for="agentCommercial" class="form-label">Agent commercial</label>
+                  <input type="text" class="form-control" id="agentCommercial" formControlName="agentCommercial" placeholder="Entrez l'agent">
+                </div>
+                <div class="col-md-6 mt-3">
+                  <label for="contact" class="form-label">Contact</label>
+                  <input type="text" class="form-control" id="contact" formControlName="contact" placeholder="Entrez le contact">
+                </div>
+              </div>
+            </fieldset>
+  
+            <!-- ADRESSE -->
+            <fieldset class="border p-3 mb-3">
+              <legend class="float-none w-auto px-2">Adresse</legend>
+              <div class="row">
+                <div class="col-md-6">
+                  <label for="localisation" class="form-label">Localisation</label>
+                  <input type="text" class="form-control" id="localisation" formControlName="localisation" placeholder="Entrez la localisation">
+                </div>
+                <div class="col-md-6">
+                  <label for="telephone" class="form-label">Téléphone</label>
+                  <input type="text" class="form-control" id="telephone" formControlName="telephone" placeholder="Entrez le téléphone">
+                </div>
+                <div class="col-md-6 mt-3">
+                  <label for="localite" class="form-label">Localité</label>
+                  <select class="form-select" id="localite" formControlName="localite">
+                    <option *ngFor="let loc of localites" [value]="loc">{{ loc }}</option>
+                  </select>
+                </div>
+                <div class="col-md-6 mt-3">
+                  <label for="depot" class="form-label">Dépôt</label>
+                  <select class="form-select" id="depot" formControlName="depot">
+                    <option *ngFor="let depot of depots" [value]="depot">{{ depot }}</option>
+                  </select>
+                </div>
+                <div class="col-md-6 mt-3">
+                  <label for="depot" class="form-label">Zone de livraison</label>
+                  <select class="form-select" id="depot" formControlName="zoneLivraison ">
+                    <option *ngFor="let depot of depots" [value]="depot">{{ depot }}</option>
+                  </select>
+                </div>
+              </div>
+            </fieldset>
+  
+            <!-- GESTION -->
+            <fieldset class="border p-3 mb-3">
+              <legend class="float-none w-auto px-2">Gestion</legend>
+              <div class="row">
+                <div class="col-md-6">
+                  <label for="nomProprietaire" class="form-label">Nom du propriétaire</label>
+                  <input type="text" class="form-control" id="nomProprietaire" formControlName="nomProprietaire" placeholder="Entrez le nom">
+                </div>
+                <div class="col-md-6">
+                  <label for="telProprietaire" class="form-label">Tel du propriétaire</label>
+                  <input type="text" class="form-control" id="telProprietaire" formControlName="telProprietaire" placeholder="Entrez le téléphone">
+                </div>
+                <div class="col-md-6 mt-3">
+                  <label for="nomGerant" class="form-label">Nom du gérant</label>
+                  <input type="text" class="form-control" id="nomGerant" formControlName="nomGerant" placeholder="Entrez le nom">
+                </div>
+                <div class="col-md-6 mt-3">
+                  <label for="telGerant" class="form-label">Tel du gérant</label>
+                  <input type="text" class="form-control" id="telGerant" formControlName="telGerant" placeholder="Entrez le téléphone">
+                </div>
+              </div>
+            </fieldset>
+  
+            <!-- AUTRES -->
+            <fieldset class="border p-3 mb-3">
+              <legend class="float-none w-auto px-2">Autres</legend>
+              <div class="row">
+                <div class="col-md-6">
+                  <label for="quantiteMinimum" class="form-label">Quantité minimum à commander</label>
+                  <input type="number" class="form-control" id="quantiteMinimum" formControlName="quantiteMinimum" placeholder="Entrez la quantité">
+                </div>
+                <div class="col-md-6">
+                  <label for="compteContribuable" class="form-label">N° Compte contribuable</label>
+                  <input type="text" class="form-control" id="compteContribuable" formControlName="compteContribuable" placeholder="Entrez le numéro">
+                </div>
+                <div class="col-md-6 mt-3">
+                  <label for="familleProduit" class="form-label">Famille de produit (Produit favoris)</label>
+                  <select class="form-select" id="familleProduit" formControlName="familleProduit">
+                    <option *ngFor="let produit of produits" [value]="produit">{{ produit }}</option>
+                  </select>
+                </div>
+              </div>
+            </fieldset>
+  
+            <!-- FOOTER -->
+            <div class="modal-footer gap-3 px-4">
+              <button type="button" class="btn btn-secondary" (click)="OnCloseModal()">Annuler</button>
+              <button type="submit" class="btn btn-primary" [disabled]="revendeurForm.invalid">Enregistrer</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
