@@ -64,15 +64,15 @@ export class InventaireStoksComponent {
     this.InventaireForm = this.fb.group(
       {
         dateComptage: [null],
-        utilisateur: [null, Validators.required],
+        utilisateur: ['', Validators.required],
         inventeur: ['', Validators.required],
-        description: [null, Validators.required],
+        // description: [''],
         depotId: [null, Validators.required],
         articles: this.fb.array([], this.articlesRequiredValidator)
 
       });
 
-
+    this.GetInventaireList(1);
     this.GetArticleList(1);
     this.GetDepotList(1);
     this.fetchData();
@@ -130,11 +130,23 @@ export class InventaireStoksComponent {
     this._spinner.show();
     this.articleService.GetArticleList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
-      // this.dataList = res.data;
       this._spinner.hide();
     });
   }
 
+  GetInventaireList(page: number) {
+    let data = {
+      paginate: true,
+      page: page,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.articleService.GetInventaire(data).then((res: any) => {
+      console.log('inventaire:::>', res);
+      this.dataList = res.data;
+      this._spinner.hide();
+    });
+  }
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
@@ -218,7 +230,7 @@ export class InventaireStoksComponent {
   }
 
   onSubmit(): void {
-    this.InventaireForm.controls['utilisateur'].setValue(this.UserInfo.id);
+    this.InventaireForm.controls['utilisateur'].setValue(this.UserInfo.nom+' '+this.UserInfo.prenom);
     this.selectedArticles = this.selectedArticles.filter(article => {
       if (article.isChecked) {
         if (!article.quantite || article.quantite <= 0) {
@@ -240,7 +252,7 @@ export class InventaireStoksComponent {
       this._spinner.show()
 
       console.log(this.InventaireForm)
-      this.articleService.SaveStock(this.InventaireForm.value).then((response: any) => {
+      this.articleService.SaveInventaire(this.InventaireForm.value).then((response: any) => {
         if (response.statusCode === 201) {
           this.InventaireForm.reset();
           this.deselectAllItems()
@@ -318,11 +330,11 @@ export class InventaireStoksComponent {
     articlesData.forEach((item: any) => {
       const articleGroup = this.fb.group({
         productCode: [item.code, Validators.required],
-        stockstheorique: [item.quantite, Validators.required],
-        stockphysique: [item.stocksDisponibles, [Validators.required, Validators.min(1)]],
+        stockstheorique: [item.stockTheorique, Validators.required],
+        stockphysique: [item.quantite, [Validators.required, Validators.min(1)]],
         ecart: [item.ecart, Validators.required],
         pourcentageEcart: [item.ecartPercent, Validators.required],
-        description: ''
+        description: item.libelle
       })
       this.articles.push(articleGroup);
     })
@@ -335,10 +347,11 @@ export class InventaireStoksComponent {
   }
 
   validateQuantite(data: any, stockTheorique: number): void {
+    data.stockTheorique = stockTheorique;
     this.ecart[data.id] = this.calculateData(stockTheorique, data.quantite).ecart;
     data.ecart = this.ecart[data.id]
-    this.ecartPercent[data.id] = this.calculateData(stockTheorique, data.quantite).ecart;
-    data.ecartPercent = this.ecart[data.ecartPercent]
+    this.ecartPercent[data.id] = this.calculateData(stockTheorique, data.quantite).ecartPercent;
+    data.ecartPercent = this.ecartPercent[data.id]
     console.log('data',data)
   }
 
