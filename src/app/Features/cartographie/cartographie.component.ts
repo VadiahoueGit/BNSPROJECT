@@ -51,17 +51,17 @@ export class CartographieComponent {
   }
 
   ngOnInit() {
-    this.websocketService.connect('ws://wsbnsapi.monassoci.com/');
+    // this.websocketService.connect('ws://wsbnsapi.monassoci.com/');
 // Abonnez-vous pour recevoir les messages
-    this.messageSubscription = this.websocketService.getMessages().subscribe(
-      (message) => {
-        this.messages.push(message);
-        console.log(this.messages);
-      },
-      (error) => {
-        console.error('Error receiving message:', error);
-      }
-    );
+//     this.messageSubscription = this.websocketService.getMessages().subscribe(
+//       (message) => {
+//         this.messages.push(message);
+//         console.log(this.messages);
+//       },
+//       (error) => {
+//         console.error('Error receiving message:', error);
+//       }
+//     );
 
     this.GetClientOSRList();
     this.getPosition();

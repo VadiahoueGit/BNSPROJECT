@@ -1,12 +1,13 @@
-import { Component, ViewChild } from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {FormGroup, FormBuilder, Validators, FormArray} from '@angular/forms';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
-import { Table } from 'primeng/table';
-import { ArticleServiceService } from 'src/app/core/article-service.service';
-import { ALERT_QUESTION } from '../../shared-component/utils';
-import { Location } from '@angular/common';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {ToastrService} from 'ngx-toastr';
+import {Table} from 'primeng/table';
+import {ArticleServiceService} from 'src/app/core/article-service.service';
+import {ALERT_QUESTION, storage_keys} from '../../shared-component/utils';
+import {Location} from '@angular/common';
 import {CoreServiceService} from "../../../core/core-service.service";
+import {LocalStorageService} from "../../../core/local-storage.service";
 
 @Component({
   selector: 'app-inventaire-stoks',
@@ -24,6 +25,8 @@ export class InventaireStoksComponent {
   selectedArticles: any[] = [];
   stocksDisponibles: any = {};
   ecart: any = {};
+  stockPhysique: any = {};
+  ecartPercent: any = {};
   InventaireForm!: FormGroup;
   loading: boolean = true;
   isModalOpen = false;
@@ -44,59 +47,32 @@ export class InventaireStoksComponent {
   currentPage: number;
   rowsPerPage: any;
   now = new Date().toISOString().split('T')[0];
+  UserInfo:any
   constructor(
+    private localstorage:LocalStorageService,
     private articleService: ArticleServiceService,
-    private _coreService:CoreServiceService,
+    private _coreService: CoreServiceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService,
     private location: Location,
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
-    this.InventaireForm = this.fb.group({
-      dateComptage: [null],
-      inventoriste: [null, Validators.required],
-      description: [null, Validators.required],
-      depotId: [null, Validators.required],
-      articles: this.fb.array([], this.articlesRequiredValidator)
-      // stockstheorique: [null, Validators.required],
-      // stockphysique: [null, Validators.required],
-      // ecart: [null, Validators.required],
-      // pourcentageEcart: [null, Validators.required],
-    });
-    // this.articleService.ListPlastiquesNu.subscribe((res: any) => {
-    //   this.dataListPlastiqueNu = res;
-    // });
-    // this.articleService.ListLiquides.subscribe((res: any) => {
-    //   console.log('dataListLiquides:::>', this.dataListLiquides);
-    //
-    //   this.dataListLiquides = res;
-    // });
-    // this.articleService.ListBouteilleVide.subscribe((res: any) => {
-    //   this.dataListBouteilleVide = res;
-    // });
+    this.UserInfo = this.localstorage.getItem(storage_keys.STOREUser);
+    this.InventaireForm = this.fb.group(
+      {
+        dateComptage: [null],
+        utilisateur: ['', Validators.required],
+        inventeur: ['', Validators.required],
+        // description: [''],
+        depotId: [null, Validators.required],
+        articles: this.fb.array([], this.articlesRequiredValidator)
 
-    // this.articleService.GetFormatList().then((res: any) => {
-    //   this.dataListFormats = res;
-    //   console.log('dataListFormats:::>', this.dataListFormats);
-    // });
+      });
 
-    // this.articleService.GetConditionnementList().then((res: any) => {
-    //   this.dataListConditionnements = res;
-    //   console.log(
-    //     'dataListConditionnements:::>',
-    //     this.dataListConditionnements
-    //   );
-    // });
-    // this.articleService.ListTypeArticles.subscribe((res: any) => {
-    //   this.dataListProduits = res;
-    //   console.log(this.dataListProduits, 'this.dataListProduits ');
-    // });
-    // this.articleService.ListGroupesArticles.subscribe((res: any) => {
-    //   this.dataListGroupeArticles = res;
-    // });
-
+    this.GetInventaireList(1);
     this.GetArticleList(1);
     this.GetDepotList(1);
     this.fetchData();
@@ -129,9 +105,11 @@ export class InventaireStoksComponent {
     this.isArticleModalOpen = false;
     console.log(this.isModalOpen);
   }
+
   onSubmitSelection() {
     this.isArticleModalOpen = false;
   }
+
   OnEdit(data: any) {
     this.isEditMode = true;
     console.log(data);
@@ -142,7 +120,8 @@ export class InventaireStoksComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetArticleList(page:number) {
+
+  GetArticleList(page: number) {
     let data = {
       paginate: false,
       page: page,
@@ -151,7 +130,20 @@ export class InventaireStoksComponent {
     this._spinner.show();
     this.articleService.GetArticleList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
-      // this.dataList = res.data;
+      this._spinner.hide();
+    });
+  }
+
+  GetInventaireList(page: number) {
+    let data = {
+      paginate: true,
+      page: page,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.articleService.GetInventaire(data).then((res: any) => {
+      console.log('inventaire:::>', res);
+      this.dataList = res.data;
       this._spinner.hide();
     });
   }
@@ -160,13 +152,14 @@ export class InventaireStoksComponent {
     this.rowsPerPage = event.rows;
     this.GetArticleList(this.currentPage);
   }
+
   goBack() {
     this.location.back()
   }
 
   // Méthode appelée lorsque l'état d'un checkbox change
   onCheckboxChange(article: any): void {
-    console.log('onCheckboxChange',article);
+    console.log('onCheckboxChange', article);
     this.GetStockDisponibleByDepot(article)
     if (article.isChecked) {
       this.selectedArticles.push(article);
@@ -186,6 +179,7 @@ export class InventaireStoksComponent {
   afficherArticlesSelectionnes() {
     console.log(this.selectedArticles);
   }
+
   removeArticle(item: any): void {
     item.isChecked = false;
     this.onCheckboxChange(item);
@@ -234,7 +228,9 @@ export class InventaireStoksComponent {
       }
     );
   }
+
   onSubmit(): void {
+    this.InventaireForm.controls['utilisateur'].setValue(this.UserInfo.nom+' '+this.UserInfo.prenom);
     this.selectedArticles = this.selectedArticles.filter(article => {
       if (article.isChecked) {
         if (!article.quantite || article.quantite <= 0) {
@@ -250,25 +246,25 @@ export class InventaireStoksComponent {
     });
     console.log(this.selectedArticles)
     this.setArticles(this.selectedArticles)
-    console.log(this.InventaireForm)
+    console.log("InventaireForm",this.InventaireForm)
     // this.stockForm.controls['depotId'].value
     if (this.InventaireForm.valid) {
       this._spinner.show()
 
       console.log(this.InventaireForm)
-      this.articleService.SaveStock(this.InventaireForm.value).then((response:any) => {
-        if(response.statusCode === 201) {
+      this.articleService.SaveInventaire(this.InventaireForm.value).then((response: any) => {
+        if (response.statusCode === 201) {
           this.InventaireForm.reset();
           this.deselectAllItems()
           this.InventaireForm.controls['dateEnregistrement'].setValue(this.now)
           this.toastr.success(response.message);
-        }else{
+        } else {
           this.toastr.error(response.message);
         }
         this._spinner.hide()
         this.OnCloseModal();
 
-      },(error: any) => {
+      }, (error: any) => {
         this._spinner.hide()
         this.toastr.error('Erreur!', "Erreur lors de l'enregistrement.");
         console.error('Erreur lors de la mise à jour', error);
@@ -297,18 +293,18 @@ export class InventaireStoksComponent {
 
     try {
       // Attendre la réponse de la promesse
-      const response:any = await this.articleService.GetStockDisponibleByDepot(data);
+      const response: any = await this.articleService.GetStockDisponibleByDepot(data);
       console.log(response)
       // Vérifier si le statusCode est 200
       if (response) {
         this.stocksDisponibles[item.id] = response.quantiteDisponible;
         console.log(this.stocksDisponibles)
       } else if (response.statusCode === 404) {
-        this.stocksDisponibles[item.id] =  0; // Si le code est 404, retourner 0
+        this.stocksDisponibles[item.id] = 0; // Si le code est 404, retourner 0
       } else {
         return null; // Si un autre code, retourner null ou une valeur par défaut
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.log(error);
       if (error.status === 404) {
         this.stocksDisponibles[item.id] = 0; // Si le code est 404, retourner 0
@@ -318,9 +314,10 @@ export class InventaireStoksComponent {
 
   calculateData(stockTheorique: number, stockPhysique: number) {
     const ecart = stockPhysique - stockTheorique ;
-    const ecartPercent = (ecart * stockTheorique) / 100;
+    console.log(ecart, stockTheorique)
+    const ecartPercent = stockTheorique > 0 ? (ecart / stockTheorique) * 100 : 100;
     console.log(ecart, ecartPercent)
-    return { ecart, ecartPercent }; // Facultatif : retournez un objet si besoin
+    return {ecart, ecartPercent}; // Facultatif : retournez un objet si besoin
   }
 
 
@@ -328,28 +325,34 @@ export class InventaireStoksComponent {
   setArticles(articlesData: any) {
     // Vider d'abord le FormArray
     this.articles.clear();
-    console.log(articlesData);
+    console.log('articlesData:::>',articlesData);
     // Ajouter chaque article au FormArray
     articlesData.forEach((item: any) => {
       const articleGroup = this.fb.group({
         productCode: [item.code, Validators.required],
-        stockstheorique: [item.code, Validators.required],
-        stockphysique: [item.code,  [Validators.required, Validators.min(1)]],
-        ecart: [item.code, Validators.required],
-        pourcentageEcart: [item.quantite,Validators.required]
+        stockstheorique: [item.stockTheorique, Validators.required],
+        stockphysique: [item.quantite, [Validators.required, Validators.min(1)]],
+        ecart: [item.ecart, Validators.required],
+        pourcentageEcart: [item.ecartPercent, Validators.required],
+        description: item.libelle
       })
       this.articles.push(articleGroup);
     })
 
-    console.log('this.articles.length > 0', this.articles)
+    console.log('form', this.InventaireForm.getRawValue());
   }
 
   get articles(): FormArray {
     return this.InventaireForm.get('articles') as FormArray;
   }
 
-  validateQuantite(data: any, stockTheorique:number): void {
-      this.ecart[data.ecart] = this.calculateData(stockTheorique,data.quantite).ecart;
+  validateQuantite(data: any, stockTheorique: number): void {
+    data.stockTheorique = stockTheorique;
+    this.ecart[data.id] = this.calculateData(stockTheorique, data.quantite).ecart;
+    data.ecart = this.ecart[data.id]
+    this.ecartPercent[data.id] = this.calculateData(stockTheorique, data.quantite).ecartPercent;
+    data.ecartPercent = this.ecartPercent[data.id]
+    console.log('data',data)
   }
 
 
