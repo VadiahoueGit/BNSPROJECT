@@ -109,7 +109,7 @@
                             <div class="mb-3">
                                 <label for="inventoriste" class="form-label">Inventoriste <span
                                         class="text-danger">*</span></label>
-                              <input type="text" class="form-control" id="inventoriste" formControlName="dateComptage"
+                              <input type="text" class="form-control" id="inventoriste" formControlName="inventeur"
                                      placeholder="Nom et prénoms ">
                             </div>
                           <div class="mb-3">
@@ -166,7 +166,16 @@
                       >
                     </td>
                     <td>{{ stocksDisponibles[data.id] }}</td>
-                    <td>{{ this.ecart[data.ecart] }}</td>
+                    <td>{{ ecart[data.id] }}
+                      <input
+                        hidden="true"
+                        type="text"
+                        class="form-control-custom"
+                        [(ngModel)]="ecartPercent[data.id]"
+                        [min]="0"
+                        value="0"
+                      >
+                    </td>
                     <td class="d-flex justify-content-center">
                       <button type="button" class="btn btn-danger btn-sm" (click)="removeArticle(data)">
                         <i class="fas fa-trash fs-6"></i>
@@ -182,7 +191,7 @@
 
             <div class="modal-footer gap-3 px-4">
                 <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-                <button type="submit" (click)="onSubmit()" [disabled]="!InventaireForm.valid" class="btn btn-primary px-2">Valider</button>
+                <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
             </div>
         </div>
     </div>
