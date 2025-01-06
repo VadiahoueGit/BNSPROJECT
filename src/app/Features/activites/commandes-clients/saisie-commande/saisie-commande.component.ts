@@ -15,11 +15,15 @@ export class SaisieCommandeComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
-  ArticleForm!:FormGroup
+  commandClientForm!:FormGroup
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
   operation: string = '';
+  totalLiquide: string = '';
+  totalEmballage: string = '';
+  totalGlobal: string = '';
+  totalQuantite: string = '';
   updateData: any = {};
   articleId: any = 0;
   isEditMode: boolean = false;
@@ -29,8 +33,14 @@ export class SaisieCommandeComponent {
   dataListGroupeArticles: any =[];
   dataListBouteilleVide: any=[];
   dataListPlastiqueNu: any=[];
-  dataListLiquides: any=[];
-  dataListArticlesProduits: any=[];
+  items: any=[];
+  articles = [
+    { id: 1, libelle: 'Article A', liquide: 500, emballage: 200, total: 700 },
+    { id: 2, libelle: 'Article B', liquide: 800, emballage: 300, total: 1100 },
+    { id: 3, libelle: 'Article C', liquide: 400, emballage: 100, total: 500 },
+  ];
+  selectedArticle: any=[];
+  clients: any=[];
   currentPage: number;
   rowsPerPage: any;
   constructor(
@@ -41,30 +51,31 @@ export class SaisieCommandeComponent {
   ) {}
 
   ngOnInit() {
-    this.ArticleForm = this.fb.group({
-      photo: [null, Validators.required],
-      libelle: [null, Validators.required],
-      format: [null, Validators.required],
-      Conditionnement: [null, Validators.required],
-      categorieId: [0, Validators.required],
-      groupeId: [0, Validators.required],
-      plastiquenuId: [0, Validators.required],
-      bouteillevideId: [0, Validators.required],
-      liquideId: [0, Validators.required],
+    this.commandClientForm = this.fb.group({
+      numeroCompte: ['', Validators.required],
+      raisonSociale: ['', Validators.required],
+      montantCredit: ['', Validators.required],
+      contact: ['', Validators.required],
+      soldeLiquide: ['', Validators.required],
+      statutCompte: ['DÉSACTIVÉ', Validators.required],
+      numeroCommande: ['', Validators.required],
+      referenceArticle: ['', Validators.required],
+      quantite: [0, [Validators.required, Validators.min(1)]],
+      fraisTransport: [0, Validators.required],
     });
+
+    // Par défaut, aucun article n'est sélectionné
+    this.selectedArticle = this.articles[0];
     this.articleService.ListPlastiquesNu.subscribe((res: any) => {
       this.dataListPlastiqueNu = res;
     });
-    this.articleService.ListLiquides.subscribe((res: any) => {
-      this.dataListLiquides = res;
-    });
+    // this.articleService.ListLiquides.subscribe((res: any) => {
+    //   this.dataListLiquides = res;
+    // });
     this.articleService.ListBouteilleVide.subscribe((res: any) => {
       this.dataListBouteilleVide = res;
     });
-    // this.articleService.ListArticles.subscribe((res: any) => {
-    //   this.dataList = res;
-    //   console.log('dataList:::>', this.dataList);
-    // });
+
     this.articleService.GetFormatList().then((res: any) => {
       this.dataListFormats = res;
       console.log('dataListFormats:::>', this.dataListFormats);
@@ -83,7 +94,9 @@ export class SaisieCommandeComponent {
     });
      this.GetArticleList(1);
   }
-  
+  onDelete(item:any){
+console.log(item)
+  }
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -102,6 +115,7 @@ export class SaisieCommandeComponent {
     this.isEditMode = false;
     this.isModalOpen = true;
     this.operation = 'create';
+    this.commandClientForm.reset();
     console.log(this.isModalOpen);
   }
 
@@ -128,17 +142,20 @@ export class SaisieCommandeComponent {
       this._spinner.hide();
     });
   }
+  onArticleChange(articleId: number): void {
+    this.selectedArticle = this.articles.find(article => article.id === articleId);
+  }
   onSubmit(): void {
-    console.log(this.ArticleForm.value);
-    if (this.ArticleForm.valid) {
-      // const formValues = this.ArticleForm.value;
+    console.log(this.commandClientForm.value);
+    if (this.commandClientForm.valid) {
+      // const formValues = this.commandClientForm.value;
       const formValues = {
-        ...this.ArticleForm.value,
-        categorieId: +this.ArticleForm.value.categorieId,
-        groupeId: +this.ArticleForm.value.groupeId,
-        plastiquenuId: +this.ArticleForm.value.plastiquenuId,
-        bouteillevideId: +this.ArticleForm.value.bouteillevideId,
-        liquideId: +this.ArticleForm.value.liquideId,
+        ...this.commandClientForm.value,
+        categorieId: +this.commandClientForm.value.categorieId,
+        groupeId: +this.commandClientForm.value.groupeId,
+        plastiquenuId: +this.commandClientForm.value.plastiquenuId,
+        bouteillevideId: +this.commandClientForm.value.bouteillevideId,
+        liquideId: +this.commandClientForm.value.liquideId,
       };
       console.log('formValues', formValues);
 
@@ -160,7 +177,7 @@ export class SaisieCommandeComponent {
           (response: any) => {
             this.OnCloseModal();
             this.GetArticleList(1);
-            this.ArticleForm.reset();
+            this.commandClientForm.reset();
             this.toastr.success('Succès!', 'Article créé avec succès.');
             console.log('Nouvel article créé avec succès', response);
           },
@@ -172,8 +189,10 @@ export class SaisieCommandeComponent {
       }
     }
   }
+  onSearchClient(): void {
+  }
   loadArticleDetails(): void {
-    this.ArticleForm.patchValue({
+    this.commandClientForm.patchValue({
       photo: this.updateData.photo??"",
       libelle: this.updateData.libelle,
       format: this.updateData.format,

@@ -1,8 +1,19 @@
-.modal-dialog{
-    max-width: 45em;
-    min-width: auto;
+.modal-dialog {
+  background-color: white;
+  border-radius: 0.3rem;
+  width: auto;
+  min-width: 60em; /* Augmenter la largeur minimale */
+  max-width: 90%; /* S'assurer qu'elle ne dépasse pas trop l'écran */
+  padding: 1rem;
 }
 
+.modal-body {
+  padding: 1.5rem; /* Ajouter du padding dans la modal */
+}
+
+.form-control {
+  margin-bottom: -0.5rem; /* Espacer les champs */
+}
 .custom-modal {
     position: fixed;
     top: 0;
@@ -16,13 +27,7 @@
     z-index: 1050;
   }
 
-  .modal-dialog {
-    background-color: white;
-    border-radius: 0.3rem;
-    width: 45em;
-    max-width: 45em;
-    padding: 1rem;
-  }
+ 
   
   .modal-header, .modal-body, .modal-footer {
     padding: 1rem;
