@@ -82,79 +82,207 @@
 
 <!-- Modal creation -->
 <!-- Modal -->
+
 <div *ngIf="isModalOpen" class="custom-modal">
-    <div class="modal-dialog  modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header d-flex align-items-center">
-                <div class="d-flex justify-content-center align-items-center"
-                    style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
-                    <i class="fas fa-box-check text-primary fs-3"></i>
-                </div>
-                <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création
-                    de la commande</h1>
-                <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification de
-                  la commande</h1>
-            </div>
-            <div class="modal-body">
-                <form [formGroup]="ArticleForm">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="mb-3">
-                        <label for="photo" class="form-label">Raison sociale <span class="text-danger">*</span></label>
-                        <input type="file" class="form-control" id="photo" formControlName="photo" placeholder="Entrez la photo de l'article">
-                      </div>
-              
-                      <div class="mb-3">
-                        <label for="libelle" class="form-label">Entrepôt <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="libelle" formControlName="libelle" placeholder="Entrez le libellé du groupe produit">
-                      </div>
-              
-                      <div class="mb-3">
-                        <label for="format" class="form-label">Montant <span class="text-danger">*</span></label>
-                        <select class="form-control form-select form-select-sm" formControlName="format" aria-label=".form-select-sm example">
-                          <option value="" disabled selected>Choisir le format</option>
-                          <option [value]="item" *ngFor="let item of dataListFormats">{{item}}</option>
-                        </select>
-                      </div>
-              
-                   
-                    </div>
-              
-                    <div class="col-md-6">
-                      <div class="mb-3">
-                        <label for="categorieId" class="form-label">Date <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control" id="date" formControlName="date" placeholder="Entrez le libellé du groupe produit">
-
-                      </div>
-
-                      <div class="mb-3">
-                        <label for="liquideId" class="form-label">Statut <span class="text-danger">*</span></label>
-                        <select class="form-control form-select form-select-sm" formControlName="liquideId" aria-label=".form-select-sm example">
-                          <option value="" disabled selected>Choisir le liquide</option>
-                          <option [value]="item.id" *ngFor="let item of dataListLiquides">{{item.libelle}}</option>
-                        </select>
-                      </div>
-                      <div class="mb-3">
-                        <label for="groupeId" class="form-label">Localité <span class="text-danger">*</span></label>
-                        <select class="form-control form-select form-select-sm" formControlName="groupeId" aria-label=".form-select-sm example">
-                          <option value="" disabled selected>Choisir l'article</option>
-                          <option [value]="item.id" *ngFor="let item of dataListGroupeArticles">{{item.libelle}}</option>
-                        </select>
-                      </div>
-              
-                      
-              
-                    
-                    </div>
-                  </div>
-                </form>
-              </div>
-              
-              
-            <div class="modal-footer gap-3 px-4">
-                <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-                <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
-            </div>
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header d-flex align-items-center">
+          <div
+            class="d-flex justify-content-center align-items-center"
+            style="background-color: #DBFFE8; border-radius: 50%; width: 3rem; height: 3rem;"
+          >
+            <i class="fas fa-box-check text-success fs-4"></i>
+          </div>
+          <h1 class="modal-title fs-5 ms-3">Gestion des commandes clients</h1>
+          <button type="button" class="btn-close" aria-label="Close" (click)="OnCloseModal()"></button>
         </div>
+  
+        <!-- Barre de recherche client centrée -->
+        <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+          <div class="mb-4 text-center">
+            <div class="d-flex justify-content-center gap-2">
+              <div class="d-flex ">
+                <div class="mr-2">
+                    <label for="client" class="form-label me-2 mb-0 pt-2" >Client<span class="text-danger">*</span></label>
+
+                </div>
+                <input
+                  type="text"
+                  id="client"
+                  class="form-control"
+                  formControlName="client"
+                  placeholder="Rechercher un client..."
+                />
+              </div>
+              <div class="">
+                <button class="btn btn-primary w-100" type="button" (click)="onSearchClient()">Rechercher</button>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Formulaire: Informations client -->
+          <form [formGroup]="commandClientForm">
+            <div class="border rounded p-3 mb-4">
+              <h6 class="mb-4">Informations client</h6>
+              <div class="row g-3">
+                <div class="col-md-3">
+                  <label for="numeroCompte" class="form-label">Numéro de compte<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="numeroCompte" formControlName="numeroCompte" />
+                </div>
+                <div class="col-md-3">
+                  <label for="raisonSociale" class="form-label">Raison sociale<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="raisonSociale" formControlName="raisonSociale" />
+                </div>
+                <div class="col-md-3">
+                  <label for="contact" class="form-label">Contact<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="contact" formControlName="contact" />
+                </div>
+              
+                <div class="col-md-3">
+                  <label for="montantCredit" class="form-label">Montant crédit<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="montantCredit" formControlName="montantCredit" />
+                </div>
+                <div class="col-md-3">
+                  <label for="enCours" class="form-label">En cours<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="enCours" formControlName="enCours" />
+                </div>
+                <div class="col-md-3">
+                    <label for="soldeLiquide" class="form-label">Solde liquide<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="soldeLiquide" formControlName="soldeLiquide" />
+                  </div>
+                <div class="col-md-3">
+                  <label for="soldeEmballage" class="form-label">Solde emballage<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="soldeEmballage" formControlName="soldeEmballage" />
+                </div>
+                <div class="col-md-3">
+                  <label for="statutCompte" class="form-label">Statut du compte<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="statutCompte" formControlName="statutCompte" />
+                </div>
+                <div class="col-md-3">
+                  <label for="numSap" class="form-label">Numéro SAP<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="numSap" formControlName="numSap" />
+                </div>
+              </div>
+            </div>
+  
+            <!-- Section: Saisie commande -->
+            <div class="border rounded p-3 mb-4">
+              <h6 class="mb-4">Saisie commande</h6>
+              <div class="row g-3">
+                <div class="col-md-3">
+                  <label for="numeroCommande" class="form-label">Numéro commande<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="numeroCommande" formControlName="numeroCommande" />
+                </div>
+                <div class="col-md-3">
+                  <label for="referenceArticle" class="form-label">Référence article<span class="text-danger">*</span></label>
+                  <select class="form-control" formControlName="referenceArticle">
+                    <option value="" disabled>Choisir un article</option>
+                    <option *ngFor="let article of articles" [value]="article.id">
+                      {{ article.libelle }}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <label for="quantite" class="form-label">Quantité<span class="text-danger">*</span></label>
+                  <input type="number" class="form-control" id="quantite" formControlName="quantite" />
+                </div>
+                <div class="col-md-2">
+                  <label for="fraisTransport" class="form-label">Frais transport<span class="text-danger">*</span></label>
+                  <input type="number" class="form-control" id="fraisTransport" formControlName="fraisTransport" />
+                </div>
+        
+                <div class="col-md-2">
+                  <label for="remise" class="form-label">Remise<span class="text-danger">*</span></label>
+                  <select class="form-control" formControlName="remise">
+                    <option value="" disabled>Choisir un nombre</option>
+                    <!-- <option *ngFor="let article of articles" [value]="article.id">
+                      {{ article.libelle }}
+                    </option> -->
+                  </select>
+                </div>
+              </div>
+            </div>
+  
+            <!-- Section: Totaux -->
+            <div class="table-responsive">
+                <table class="table table-bordered text-center">
+                  <thead class="table-success">
+                    <tr>
+                      <th scope="col">Articles</th>
+                      <th scope="col">Liquide (FCFA)</th>
+                      <th scope="col">Emballage (FCFA)</th>
+                      <th scope="col">Total (FCFA)</th>
+                      <th scope="col">Quantité</th>
+                      <th scope="col">Liquide (FCFA)</th>
+                      <th scope="col">Emballage (FCFA)</th>
+                      <th scope="col">Total (FCFA)</th>
+                      <th scope="col">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of items">
+                      <td>{{ item.article }}</td>
+                      <td>{{ item.prixLiquide }}</td>
+                      <td>{{ item.prixEmballage }}</td>
+                      <td>{{ item.prixTotal }}</td>
+                      <td>{{ item.quantite }}</td>
+                      <td>{{ item.montantLiquide }}</td>
+                      <td>{{ item.montantEmballage }}</td>
+                      <td>{{ item.montantTotal }}</td>
+                      <td>
+                        <button class="btn btn-danger btn-sm" (click)="onDelete(item)">
+                          <i class="fa fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr class="fw-bold">
+                      <td colspan="4">Total:</td>
+                      <td>{{ totalQuantite }}</td>
+                      <td>{{ totalLiquide }}</td>
+                      <td>{{ totalEmballage }}</td>
+                      <td>{{ totalGlobal }}</td>
+                      <td></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            
+              
+            <!-- <div class="border rounded p-3">
+              <h6 class="mb-4">Totaux</h6>
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Articles</th>
+                      <th>Liquide (FCFA)</th>
+                      <th>Emballage (FCFA)</th>
+                      <th>Total (FCFA)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{{ selectedArticle?.libelle }}</td>
+                      <td>{{ selectedArticle?.liquide }}</td>
+                      <td>{{ selectedArticle?.emballage }}</td>
+                      <td>{{ selectedArticle?.total }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div> -->
+          </form>
+        </div>
+  
+        <!-- Modal Footer -->
+        <div class="modal-footer gap-3 px-4">
+          <button type="button" class="btn btn-secondary" (click)="OnCloseModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary" (click)="onSubmit()">Valider</button>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
+  
