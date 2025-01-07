@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup,Validators } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Table } from 'primeng/table';
 import { ALERT_QUESTION } from '../../shared-component/utils';
@@ -23,7 +23,14 @@ export class TransporteurComponent {
   constructor(
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder
-  ) {}
+  ) {
+    this.transporteurForm = this.fb.group({
+      nom: ['', [Validators.required]],
+      prenom: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      telephone: ['', [Validators.required, Validators.pattern(/^(\+?\d{1,3}[- ]?)?\d{10}$/)]]
+    });
+  }
 
 
 
@@ -42,7 +49,7 @@ export class TransporteurComponent {
     // this.GetListTypePrix(this.currentPage);
   }
   onSubmit(){}
-  
+
   OnCreate() {
     this.isEditMode = false;
     this.isModalOpen = true;

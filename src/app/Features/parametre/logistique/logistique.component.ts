@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./logistique.component.scss']
 })
 export class LogistiqueComponent {
-  public activeTab: string = 'vehicules';
+  public activeTab: string = 'transporteurs';
   loading: boolean = true;
   selected = [];
   rows: any = [];

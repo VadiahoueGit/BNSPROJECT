@@ -1014,7 +1014,7 @@ export class ArticleServiceService {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
-      this._http.get(`${this.apiUrl}/v1/inventaire`,{headers}).subscribe(
+      this._http.get(`${this.apiUrl}/v1/inventaire?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);

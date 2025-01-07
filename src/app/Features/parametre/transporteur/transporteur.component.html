@@ -1,105 +1,154 @@
 <div class="card">
-   
-    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
-        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" [globalFilterFields]="['code', 'libelle']" [globalFilterFields]="['code', 'libelle']" (onPage)="onPage($event)">
-        <ng-template pTemplate="caption">
-            <div class=" d-flex justify-content-between py-3">
+
+  <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+           [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" [globalFilterFields]="['code', 'libelle']"
+           [globalFilterFields]="['code', 'libelle']" (onPage)="onPage($event)">
+    <ng-template pTemplate="caption">
+      <div class=" d-flex justify-content-between py-3">
                 <span class="p-input-icon-left ml-auto d-flex align-items-center">
                     <i class="fas fa-search"></i>
-                    <input pInputText type="text" (input)="filterGlobal($event)" placeholder="Recherche" />
+                    <input pInputText type="text" (input)="filterGlobal($event)" placeholder="Recherche"/>
                 </span>
-                <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer un transporteur</button>
-            </div>
-        </ng-template>
-        <ng-template pTemplate="header">
-            <tr>
-                <th style="color: var(--secondary-color);">Nom</th>
-                <th style="color: var(--secondary-color);">Prénoms</th>
-                <th style="color: var(--secondary-color);">Produits</th>
-                <th style="color: var(--secondary-color);">Téléphone</th>
-                <th style="color: var(--secondary-color);">Login</th>
-                <th style="color: var(--secondary-color);">Actions</th>
-            </tr>
-      
-        </ng-template>
-        <ng-template pTemplate="body" let-dataList>
-            <tr>
-                <td class="">
-                    {{ dataList.Code }}
-                </td>
-                <td class="">
+        <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer un transporteur</button>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="color: var(--secondary-color);">Nom</th>
+        <th style="color: var(--secondary-color);">Prénoms</th>
+        <th style="color: var(--secondary-color);">Produits</th>
+        <th style="color: var(--secondary-color);">Téléphone</th>
+        <th style="color: var(--secondary-color);">Login</th>
+        <th style="color: var(--secondary-color);">Actions</th>
+      </tr>
+
+    </ng-template>
+    <ng-template pTemplate="body" let-dataList>
+      <tr>
+        <td class="">
+          {{ dataList.Code }}
+        </td>
+        <td class="">
                     <span class="ml-1 vertical-align-middle">
                         {{ dataList.libelle }}
                     </span>
-                </td>
-                <td class="">
+        </td>
+        <td class="">
                     <span class="ml-1 vertical-align-middle">
                         {{ dataList.createdAt | date }}
                     </span>
-                </td>
-                <td>
-                <td class="">
+        </td>
+        <td>
+        <td class="">
                     <span class="ml-1 vertical-align-middle">
                         {{ dataList.createdAt | date }}
                     </span>
-                </td>
-                <td>
-                <td>
-                <td class="">
+        </td>
+        <td>
+        <td>
+        <td class="">
                     <span class="ml-1 vertical-align-middle">
                         {{ dataList.createdAt | date }}
                     </span>
-                </td>
-                <td>
-            <tr class="d-flex justify-content-center gap-3">
-                <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
-                <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;" class="fas fa-trash-alt text-danger"></i>
-                </td>
-            </tr>
+        </td>
+        <td>
+      <tr class="d-flex justify-content-center gap-3">
+        <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
+        <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;" class="fas fa-trash-alt text-danger"></i>
+        </td>
+      </tr>
 
-            </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="5">Aucun article trouvé!</td>
-            </tr>
-        </ng-template>
-    </p-table>
+      </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">Aucun article trouvé!</td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>
 
 <!-- Modal creation -->
 <!-- Modal -->
 <div *ngIf="isModalOpen" class="custom-modal">
-    <div class="modal-dialog  modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header d-flex align-items-center">
-                <div class="d-flex justify-content-center align-items-center"
-                    style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
-                    <i class="fas fa-box-check text-primary fs-3"></i>
-                </div>
-                <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création d'un
-                    prix</h1>
-                <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification du
-                    prix</h1>
+  <div class="modal-dialog  modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex align-items-center">
+        <div class="d-flex justify-content-center align-items-center"
+             style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
+          <i class="fas fa-box-check text-primary fs-3"></i>
+        </div>
+        <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création de transporteur
+          </h1>
+        <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification de transporteur
+        </h1>
+      </div>
+
+      <div class="modal-body">
+        <form [formGroup]="transporteurForm">
+          <div class="row">
+            <!-- Colonne gauche -->
+            <div class="col-md-6">
+              <div class="mb-3 position-relative">
+                <label for="nom" class="form-label">Nom</label>
+                <span class="text-danger required-star">*</span>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="nom"
+                  id="nom"
+                  placeholder="Entrez le nom"
+                />
+              </div>
+
+              <div class="mb-3 position-relative">
+                <label for="email" class="form-label">Email</label>
+                <span class="text-danger required-star">*</span>
+                <input
+                  type="email"
+                  class="form-control"
+                  formControlName="email"
+                  id="email"
+                  placeholder="Entrez l'email"
+                />
+              </div>
             </div>
 
-            <div class="modal-body">
-                <form [formGroup]="transporteurForm">
-                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
-                        <div class="d-flex align-items-center">
-                            <label for="code" class="form-label me-1">Nom</label>
-                            <p class="text-danger mb-0">*</p>
-                        </div>
-                        <input type="text" class="form-control" formControlName="libelle" id="code"
-                            placeholder="Entrez le nom ">
-                    </div>
-                </form>
+            <!-- Colonne droite -->
+            <div class="col-md-6">
+              <div class="mb-3 position-relative">
+                <label for="prenom" class="form-label">Prénom</label>
+                <span class="text-danger required-star">*</span>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="prenom"
+                  id="prenom"
+                  placeholder="Entrez le prénom"
+                />
+              </div>
+
+              <div class="mb-3 position-relative">
+                <label for="telephone" class="form-label">Téléphone</label>
+                <span class="text-danger required-star">*</span>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="telephone"
+                  id="telephone"
+                  placeholder="Entrez le téléphone"
+                />
+              </div>
             </div>
-            <div class="modal-footer gap-3 px-4">
-                <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-                <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
-            </div>
-        </div>
+          </div>
+        </form>
+
+      </div>
+      <div class="modal-footer gap-3 px-4">
+        <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
+        <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
+      </div>
     </div>
+  </div>
 </div>
