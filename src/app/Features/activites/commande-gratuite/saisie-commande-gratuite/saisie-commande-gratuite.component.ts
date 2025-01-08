@@ -33,6 +33,16 @@ export class SaisieCommandeGratuiteComponent {
   dataListArticlesProduits: any=[];
   currentPage: number;
   rowsPerPage: any;
+  stocksDisponibles: any = {};
+  prixLiquide: any = {};
+  prixEmballage: any = {};
+  prixLiquideTotal: any = {};
+  totalLiquide:number = 0;
+  totalEmballage:number = 0;
+  totalGlobal:number = 0;
+  totalQte:number = 0;
+  prixEmballageTotal: any = {};
+  montantTotal: any = {};
   selectedOption: string = 'gratuitClient';
   constructor(
     private articleService: ArticleServiceService,
@@ -120,6 +130,8 @@ export class SaisieCommandeGratuiteComponent {
     })
   }
   onCheckboxChange(article: any): void {
+    this.GetPrixByArticle(article)
+    // this.GetStockDisponibleByDepot(article)
     if (article.isChecked) {
       this.selectedArticles.push(article);
       this.afficherArticlesSelectionnes()
@@ -133,6 +145,16 @@ export class SaisieCommandeGratuiteComponent {
         this.afficherArticlesSelectionnes()
       }
     }
+  }
+  removeArticle(item: any): void {
+    item.isChecked = false;
+    this.onCheckboxChange(item);
+    const index = this.selectedArticles.findIndex((i: any) => i.id === item.id);
+
+    if (index !== -1) {
+      this.selectedArticles = this.selectedArticles.slice(0, index).concat(this.selectedArticles.slice(index + 1));
+    }
+
   }
   onSubmitSelection() {
     this.isChoiceModalOpen = false;
@@ -187,5 +209,84 @@ export class SaisieCommandeGratuiteComponent {
         }
       }
     );
+  }
+  async GetStockDisponibleByDepot(item: any): Promise<any> {
+    let data = {
+      productId: item.code,
+      depotId: 0,
+    };
+
+    try {
+      // Attendre la réponse de la promesse
+      const response:any = await this.articleService.GetStockDisponibleByDepot(data);
+      console.log(response)
+      // Vérifier si le statusCode est 200
+      if (response) {
+        this.stocksDisponibles[item.id] = response.quantiteDisponible;
+        console.log(this.stocksDisponibles)
+      } else if (response.statusCode === 404) {
+        this.stocksDisponibles[item.id] =  0; // Si le code est 404, retourner 0
+      } else {
+        return null; // Si un autre code, retourner null ou une valeur par défaut
+      }
+    } catch (error:any) {
+      console.log(error);
+      if (error.status === 404) {
+        this.stocksDisponibles[item.id] = 0; // Si le code est 404, retourner 0
+      }
+    }
+  }
+  validateQuantite(data: any): void {
+
+    // Vérifier si la quantité saisie dépasse la quantité disponible
+    if (data.quantite > this.stocksDisponibles[data.id]) {
+      // Réinitialiser la quantité à la quantité disponible
+      data.quantite ='';
+      // Afficher un message de warning
+      this.toastr.warning('La quantité saisie dépasse la quantité disponible.');
+    }else{
+      this.calculatePrix(data)
+    }
+  }
+
+  calculatePrix(data:any) {
+
+
+    if (this.prixLiquideTotal[data.id]) {
+      this.totalEmballage -= this.prixEmballageTotal[data.id] || 0;
+      this.totalLiquide -= this.prixLiquideTotal[data.id] || 0;
+      this.totalGlobal -= this.montantTotal[data.id] || 0;
+      this.totalQte -= data.oldQuantite || 0
+    }
+    this.prixLiquideTotal[data.id] = data.quantite * this.prixLiquide[data.id];
+    this.prixEmballageTotal[data.id] = data.quantite * this.prixEmballage[data.id];
+    this.montantTotal[data.id] = this.prixLiquideTotal[data.id] + this.prixEmballageTotal[data.id];
+
+    this.totalEmballage += this.prixEmballageTotal[data.id];
+    this.totalLiquide  += this.prixLiquideTotal[data.id];
+    this.totalGlobal += this.montantTotal[data.id];
+    this.totalQte += data.quantite
+
+    data.oldQuantite = data.quantite;
+    console.log(data);
+  }
+  async GetPrixByArticle(item: any): Promise<any> {
+    let data = {
+      id: item.id,
+    };
+
+    try {
+      // Attendre la réponse de la promesse
+      const response:any = await this.articleService.GetPrixByProduit(data);
+      console.log(response)
+      // Vérifier si le statusCode est 200
+      if (response.data) {
+        this.prixLiquide[item.id] = response.data.PrixLiquide;
+        this.prixEmballage[item.id] = response.data.PrixConsigne;
+        console.log('prixByArticle',this.prixLiquide[item.id])
+      }
+    } catch (error:any) {
+      console.log(error);
+    }
   }
 }

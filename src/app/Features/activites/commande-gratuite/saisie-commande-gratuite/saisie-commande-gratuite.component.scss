@@ -30,7 +30,7 @@ label + label {
 .modal-dialog {
   background-color: white;
   border-radius: 0.3rem;
-  width: auto;
+  width: 90%;
   min-width: 45em;
   padding: 1rem;
 }
@@ -65,7 +65,9 @@ label + label {
 .p-column-filter {
   padding-right: 0; /* Supprime l'espace réservé à l'icône */
 }
-
+.form-control-custom{
+  width: 80px;
+}
 .label-fixed-width {
   min-width: 10px;
 }
