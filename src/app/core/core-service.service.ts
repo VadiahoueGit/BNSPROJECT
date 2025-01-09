@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { ConfigService } from './config-service.service';
 import { LocalStorageService } from './local-storage.service';
 import { storage_keys } from '../Features/shared-component/utils';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,36 @@ export class CoreServiceService {
     this.token = this.localstorage.getItem(storage_keys.STOREToken) || '';
   }
 
+  resolve(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable<any> | Promise<any> | any {
+    return new Promise<void>((resolve, reject) => {
+      this.listLocalite.next([]);
+      this.ListZoneLivraison.next([]);
+     
 
+      let data = {};
+      Promise.all([
+        this.listLocalite.getValue().length === 0
+          ? this.GetLocaliteList(data)
+          : this.Nothing(),
+        this.ListZoneLivraison.getValue().length === 0
+          ? this.GetZoneList(data)
+          : this.Nothing(),
+       
+      ]).then(() => {
+        resolve();
+      }, () =>
+      {
+        reject();
+      });
+    });
+  }
+
+  private Nothing() {
+    return true;
+  }
   private async initializeApiUrl() {
     if (!this.apiUrl) {
       await this.configService.loadConfig();

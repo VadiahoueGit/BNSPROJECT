@@ -1,6 +1,7 @@
 import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { CoreServiceService } from 'src/app/core/core-service.service';
 
@@ -13,10 +14,11 @@ export class RevendeurComponent {
   dataList: any[] = [];
   produits: any[] = [];
   depots: any[] = [];
-  ListZoneLivraison: any[] = [];
+  zoneLivraison: any[] = [];
   localites: any[] = [];
   categories: any[] = [];
   clientTypes: any[] = [];
+  ListGroupesArticles: any[] = [];
   currentPage: number;
   rowsPerPage: any;
   revendeurForm!: FormGroup;
@@ -27,23 +29,35 @@ export class RevendeurComponent {
     private fb: FormBuilder,
     private location: Location,
     private coreService: CoreServiceService,
-    private _articleService: ArticleServiceService
+    private _articleService: ArticleServiceService,
+    private _spinner: NgxSpinnerService,
+    
   ) {}
   ngOnInit(): void {
-    this.revendeurForm = this.fb.group({
-      photo: [null, Validators.required],
-      nom: ['', Validators.required],
-      prenom: ['', Validators.required],
-      latitude: ['', [Validators.required]],
-      longitude: ['', [Validators.required]],
-      contactGerant: ['', [Validators.required]],
-      telephone: ['', [Validators.required]],
-      localiteId: [null],
-      zoneLivraisonId: [null, Validators.required],
+     this.revendeurForm = this.fb.group({
       groupeClientId: [null, Validators.required],
+      categorieClientId: [null,],
+      codeApplication: [null, Validators.required],
+      codeClient: [null],
+      userLogin: [null, Validators.required],
+      registreCommerce: [null],
+      raisonSociale: [null, Validators.required],
+      agentCommercial: [null],
+      contact: [null],
+      localisation: [null,Validators.required],
+      telephone: [null, [Validators.required, Validators.pattern(/^[+]?[\d\s-]+$/)]],
+      localiteId: [null,],
       depotId: [null, Validators.required],
-      nomEtablissement: [null, Validators.required],
+      zoneDeLivraisonId: [null,Validators.required],
+      nomProprietaire: [null,Validators.required],
+      telProprietaire: [null,Validators.required],
+      nomGerant: [null,Validators.required],
+      telGerant: [null,Validators.required],
+      quantiteMinimum: [null, Validators.min(0)],
+      compteContribuable: [null,Validators.required],
+      familleProduitId: [null,Validators.required]
     });
+    console.log(this.revendeurForm.value,'form value')
     this._articleService.ListGroupeRevendeurs.subscribe((res: any) => {
       console.log(res, 'res client groupe');
       this.clientTypes = res;
@@ -52,10 +66,14 @@ export class RevendeurComponent {
       console.log(res, 'res localites');
       this.localites = res;
     });
-    this.coreService.ListZoneLivraison.subscribe((res: any) => {
-      console.log(res, 'res ListDepots');
-      this.ListZoneLivraison = res;
+    this._articleService.ListGroupesArticles.subscribe((res: any) => {
+      console.log(res, 'res ListGroupesArticles');
+      this.ListGroupesArticles = res;
     });
+  
+    // this.GetLocaliteList();
+    this.GetDepotList();
+    this.GetZoneList();
   }
   goBack() {
     this.location.back();
@@ -79,7 +97,32 @@ export class RevendeurComponent {
       this.getDepotDetails(depotId);
     }
   }
-
+  GetDepotList() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.coreService.GetDepotList(data).then((res: any) => {
+      this.depots = res.data;
+      console.log('GetDepotList:::>', this.depots);
+      this._spinner.hide();
+    });
+  }
+  GetZoneList() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.coreService.GetZoneList(data).then((res: any) => {
+      console.log('GetZoneList:::>', res);
+      this.zoneLivraison = res.data;
+      this._spinner.hide();
+    });
+  }
   getDepotDetails(depotId: number): void {
     this.coreService
       .GetDepotDetail(depotId)
@@ -98,7 +141,9 @@ export class RevendeurComponent {
         );
       });
   }
-  onSubmit() {}
+  onSubmit() {
+    console.log(this.revendeurForm.value,'form value')
+  }
   OnEdit(id: number) {}
   OnValidate(id: number) {}
   OnDelete(id: number) {}
