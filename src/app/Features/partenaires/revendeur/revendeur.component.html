@@ -79,20 +79,20 @@
             <!-- TYPE DE CLIENT, CODE APPLICATION, CATEGORIE -->
             <div class="row mb-3">
               <div class="col-md-4">
-                <label for="typeClient" class="form-label">Type de Client</label>
-                <select class="form-select" id="typeClient" formControlName="typeClient">
-                  <option *ngFor="let clientType of clientTypes" [value]="clientType">{{ clientType }}</option>
-                </select>
-              </div>
+                <label for="groupeClientId" class="form-label">Type de Client</label>
+                  <ng-select class="form-control" [items]="clientTypes" bindLabel="nomGroupe" bindValue="id"
+                             formControlName="groupeClientId" [searchable]="true">
+                  </ng-select>
+                </div>
               <div class="col-md-4">
                 <label for="codeApplication" class="form-label">Code Application<span class="text-danger">*</span></label>
                 <input type="text" class="form-control w-100" id="codeApplication" formControlName="codeApplication" placeholder="Entrez le code"  style="max-width: 100%;">
               </div>
               <div class="col-md-4">
-                <label for="categorie" class="form-label">Catégorie</label>
-                <select class="form-select" id="categorie" formControlName="categorie">
-                  <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
-                </select>
+                <label for="categorieClientId" class="form-label">Catégorie</label>
+                <ng-select class="form-control" [items]="clientTypes" bindLabel="nomGroupe" bindValue="id"
+                             formControlName="categorieClientId" [searchable]="true">
+                  </ng-select>
               </div>
             </div>
   
@@ -154,7 +154,7 @@
                 <div class="col-md-6 mt-3">
                   <label for="depot" class="form-label">Zone de livraison</label>
                   <select class="form-select" id="depot" formControlName="zoneLivraison ">
-                    <option *ngFor="let depot of depots" [value]="depot">{{ depot }}</option>
+                    <option *ngFor="let depot of ListZoneLivraison" [value]="depot.depotId">{{ depot.nomZone }}</option>
                   </select>
                 </div>
               </div>

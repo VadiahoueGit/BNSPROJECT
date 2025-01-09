@@ -13,6 +13,7 @@ export class CoreServiceService {
   apiUrl: any;
   isauth: boolean = false
   listLocalite: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
+  ListZoneLivraison: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
 
   constructor(private localstorage: LocalStorageService, private _http: HttpClient, private configService: ConfigService) {
     this.token = this.localstorage.getItem(storage_keys.STOREToken) || '';
@@ -321,6 +322,7 @@ export class CoreServiceService {
         )
         .subscribe(
           (res: any) => {
+            this.ListZoneLivraison.next(res.data)
             console.log(res);
             resolve(res);
           },

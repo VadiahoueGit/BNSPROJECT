@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { PartenairesComponent } from './partenaires.component';
 import { ClientosrComponent } from './clientosr/clientosr.component';
 import { RevendeurComponent } from './revendeur/revendeur.component';
+import { ArticleServiceService } from 'src/app/core/article-service.service';
 
 
 const routes: Routes = [
@@ -10,7 +11,7 @@ const routes: Routes = [
         path: '', component: PartenairesComponent,
     },
     { path: 'clientosr', component: ClientosrComponent },
-    { path: 'revendeur', component: RevendeurComponent }
+    { path: 'revendeur', component: RevendeurComponent, resolve:{ArticleServiceService}  }
 
 ];
 
