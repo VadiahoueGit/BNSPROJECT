@@ -2,8 +2,10 @@ import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { ToastrService } from 'ngx-toastr';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { CoreServiceService } from 'src/app/core/core-service.service';
+import { ALERT_QUESTION } from '../../shared-component/utils';
 
 @Component({
   selector: 'app-revendeur',
@@ -20,10 +22,14 @@ export class RevendeurComponent {
   clientTypes: any[] = [];
   ListGroupesArticles: any[] = [];
   currentPage: number;
+  updateData: any = {};
   rowsPerPage: any;
+  id: any = 0;
   revendeurForm!: FormGroup;
   operation: string = '';
   isModalOpen: boolean = false;
+  isEditMode: boolean = false;
+
   constructor(
     private cd: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -31,33 +37,35 @@ export class RevendeurComponent {
     private coreService: CoreServiceService,
     private _articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
-    
+    private toastr: ToastrService
   ) {}
   ngOnInit(): void {
-     this.revendeurForm = this.fb.group({
+    this.revendeurForm = this.fb.group({
       groupeClientId: [null, Validators.required],
-      categorieClientId: [null,],
-      codeApplication: [null, Validators.required],
-      codeClient: [null],
+      codeClient: [null,Validators.required],
       userLogin: [null, Validators.required],
-      registreCommerce: [null],
-      raisonSociale: [null, Validators.required],
-      agentCommercial: [null],
-      contact: [null],
-      localisation: [null,Validators.required],
-      telephone: [null, [Validators.required, Validators.pattern(/^[+]?[\d\s-]+$/)]],
-      localiteId: [null,],
+      numeroRegistre: [null,Validators.required],
+      raisonSocial: [null, Validators.required],
+      agentCommercial: [null,Validators.required],
+      contact: [null,Validators.required],
+      longitude: [null, Validators.required],
+      latitude: [null, Validators.required],
+      telephone: [
+        null,
+        [Validators.required,],
+      ],
+      localiteId: [null,Validators.required],
       depotId: [null, Validators.required],
-      zoneDeLivraisonId: [null,Validators.required],
-      nomProprietaire: [null,Validators.required],
-      telProprietaire: [null,Validators.required],
-      nomGerant: [null,Validators.required],
-      telGerant: [null,Validators.required],
-      quantiteMinimum: [null, Validators.min(0)],
-      compteContribuable: [null,Validators.required],
-      familleProduitId: [null,Validators.required]
+      zoneDeLivraisonId: [null, Validators.required],
+      nomProprietaire: [null, Validators.required],
+      telephoneProprietaire: [null, Validators.required,],
+      nomGerant: [null, Validators.required],
+      telephoneGerant: [null, Validators.required,],
+      quantiteMinimumACommander: [null, Validators.min(0)],
+      numeroCompteContribuable: [null, Validators.required],
+      familleProduitId: [null, Validators.required],
     });
-    console.log(this.revendeurForm.value,'form value')
+
     this._articleService.ListGroupeRevendeurs.subscribe((res: any) => {
       console.log(res, 'res client groupe');
       this.clientTypes = res;
@@ -70,10 +78,11 @@ export class RevendeurComponent {
       console.log(res, 'res ListGroupesArticles');
       this.ListGroupesArticles = res;
     });
-  
+
     // this.GetLocaliteList();
     this.GetDepotList();
     this.GetZoneList();
+    this.GetRevendeurList(1)
   }
   goBack() {
     this.location.back();
@@ -81,11 +90,48 @@ export class RevendeurComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
-    // this.GetClientOSRList(this.currentPage);
+    this.GetRevendeurList(this.currentPage);
   }
   OnCreate() {
+    this.revendeurForm.enable();
     this.isModalOpen = true;
     this.operation = 'create';
+    this.isEditMode = false;
+  }
+  OnEdit(data: any) {
+    this.isEditMode = true;
+    console.log(data);
+    this.updateData = data;
+    this.id = data.id;
+    this.isModalOpen = true;
+    this.loadClientDetails();
+    this.operation = 'edit';
+    console.log(this.isModalOpen);
+  }
+  loadClientDetails(): void {
+    this.revendeurForm.patchValue({
+      groupeClientId:this.updateData.groupeClient.id,
+      codeClient:this.updateData.codeClient,
+      userLogin:this.updateData.userLogin,
+      numeroRegistre: this.updateData.numeroRegistre,
+      raisonSocial:this.updateData.raisonSocial,
+      agentCommercial: this.updateData.agentCommercial,
+      contact:this.updateData.contact,
+      longitude:this.updateData.longitude,
+      latitude:this.updateData.latitude,
+      telephone:this.updateData.telephone,
+      localiteId:this.updateData.localite.id,
+      depotId:this.updateData.depot.id,
+      zoneDeLivraisonId:this.updateData.zoneDeLivraison.id,
+      nomProprietaire:this.updateData.nomProprietaire,
+      telephoneProprietaire:this.updateData.telephoneProprietaire,
+      nomGerant:this.updateData.nomGerant,
+      telephoneGerant: this.updateData.telephoneGerant,
+      quantiteMinimumACommander: this.updateData.quantiteMinimumACommander,
+      numeroCompteContribuable:this.updateData.numeroCompteContribuable,
+      familleProduitId:this.updateData.familleProduitId,
+     
+    });
   }
   OnCloseModal() {
     this.isModalOpen = false;
@@ -141,10 +187,81 @@ export class RevendeurComponent {
         );
       });
   }
-  onSubmit() {
-    console.log(this.revendeurForm.value,'form value')
+  GetRevendeurList(page: number) {
+    let data = {
+      paginate: false,
+      page: page,
+      limit: 8,
+    };
+    this._spinner.show();
+    this._articleService.GetListRevendeur(data).then((res: any) => {
+      console.log('GetListRevendeur:::>', res);
+      this.dataList = res.data;
+      this._spinner.hide();
+    });
   }
-  OnEdit(id: number) {}
-  OnValidate(id: number) {}
-  OnDelete(id: number) {}
+  onSubmit() {
+    this._spinner.show();
+    console.log(this.revendeurForm.value, 'form value');
+    if (this.isEditMode) {
+      this._articleService
+        .UpdateRevendeur(this.id, this.revendeurForm.value)
+        .then(
+          (response: any) => {
+            console.log(' mis à jour avec succès', response);
+            this._spinner.hide();
+            this.revendeurForm.reset();
+            this.OnCloseModal();
+            this.GetRevendeurList(1);
+            this.toastr.success(response.message);
+          },
+          (error: any) => {
+            this._spinner.hide();
+            this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
+            console.error('Erreur lors de la mise à jour', error);
+          }
+        );
+    } else {
+      this._articleService.CreateRevendeur(this.revendeurForm.value).then(
+        (response: any) => {
+          console.log('Nouveau revendeur créé avec succès', response);
+          this._spinner.hide();
+          this.revendeurForm.reset();
+          this.OnCloseModal();
+          this.GetRevendeurList(1);
+          this.toastr.success(response.message);
+        },
+        (error: any) => {
+          this._spinner.hide();
+          this.toastr.error('Erreur!', 'Erreur lors de la création.');
+          console.error('Erreur lors de la création', error);
+        }
+      );
+    }
+  }
+  OnDelete(id: number) {
+     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
+       (res) => {
+         if (res.isConfirmed) {
+           this._spinner.show();
+           this._articleService
+             .DeleteRevendeur(id)
+             .then((res: any) => {
+               console.log('DATA:::>', res);
+               this.toastr.success(res.message);
+               this.GetRevendeurList(1)
+               this._spinner.hide();
+             })
+             .catch((err) => {
+               console.error(err);
+               this.toastr.error(
+                 'Erreur!',
+                 'Une erreur est survenue lors de la suppression.'
+               );
+               this._spinner.hide();
+             });
+         }
+       }
+     );
+   }
 }

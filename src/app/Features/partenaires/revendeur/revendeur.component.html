@@ -24,12 +24,13 @@
   >
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color)">Réf client</th>
+        <th style="color: var(--secondary-color)">Ref client</th>
+        <th style="color: var(--secondary-color)">Agent</th>
         <th style="color: var(--secondary-color)">Raison sociale</th>
         <th style="color: var(--secondary-color)">Gérant</th>
-        <th style="color: var(--secondary-color)">N° Téléphone</th>
-        <th style="color: var(--secondary-color)">Modèle du téléphone</th>
-        <th style="color: var(--secondary-color)">Version téléphone</th>
+        <th style="color: var(--secondary-color)">Propriétaire</th>
+        <th style="color: var(--secondary-color)">Role</th>
+        <th style="color: var(--secondary-color)">Groupe client</th>
         <th
           class="d-flex justify-content-center"
           style="color: var(--secondary-color)"
@@ -42,36 +43,41 @@
       <tr>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.nomEtablissement }}
+            {{ dataList.codeClient }}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.zoneDeLivraison.nomZone }}
+            {{ dataList.agentCommercial }}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.isValide ? "Validé" : " En attente" }}
+            {{ dataList.raisonSocial }}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.contactGerant }}
+            {{ dataList.nomGerant }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.nomProprietaire }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.role }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.groupeClient.nomGroupe }}
           </span>
         </td>
         <td>
           <tr class="d-flex justify-content-center gap-3">
-            <td>
-              <i
-                [ngStyle]="{
-                          'color': dataList.isValide ? 'gray' : '#08AD36',
-                        }"
-                (click)="OnValidate(dataList)"
-                style="cursor: pointer"
-                class="fas fa-check fw-bold"
-              ></i>
-            </td>
             <td>
               <i
                 (click)="OnEdit(dataList)"
@@ -139,25 +145,7 @@
               >
               </ng-select>
             </div>
-            <div class="col-md-6 col-lg-6">
-              <label for="codeApplication" class="form-label"
-                >Code Application<span class="text-danger">*</span></label
-              >
-              <input
-                type="text"
-                class="form-control w-100"
-                id="codeApplication"
-                formControlName="codeApplication"
-                placeholder="Entrez le code"
-                style="max-width: 100%"
-              />
-            </div>
-            <!-- <div class="col-md-4">
-                <label for="categorieClientId" class="form-label">Catégorie</label>
-                <ng-select class="form-control" [items]="clientTypes" bindLabel="nomGroupe" bindValue="id"
-                             formControlName="categorieClientId" [searchable]="true">
-                  </ng-select>
-              </div> -->
+          
           </div>
 
           <!-- REFERENCES -->
@@ -185,14 +173,14 @@
                 />
               </div>
               <div class="col-md-6 mt-3">
-                <label for="registreCommerce" class="form-label"
+                <label for="numeroRegistre" class="form-label"
                   >N° Registre de commerce</label
                 >
                 <input
                   type="text"
                   class="form-control"
-                  id="registreCommerce"
-                  formControlName="registreCommerce"
+                  id="numeroRegistre"
+                  formControlName="numeroRegistre"
                   placeholder="Entrez le numéro"
                 />
               </div>
@@ -204,7 +192,7 @@
                   type="text"
                   class="form-control"
                   id="raisonSociale"
-                  formControlName="raisonSociale"
+                  formControlName="raisonSocial"
                   placeholder="Entrez la raison sociale"
                 />
               </div>
@@ -238,15 +226,23 @@
             <legend class="float-none w-auto px-2">Adresse</legend>
             <div class="row">
               <div class="col-md-6">
-                <label for="localisation" class="form-label"
-                  >Localisation</label
-                >
+                <label for="latitude" class="form-label">latitude</label>
                 <input
                   type="text"
                   class="form-control"
-                  id="localisation"
-                  formControlName="localisation"
-                  placeholder="Entrez la localisation"
+                  id="latitude"
+                  formControlName="latitude"
+                  placeholder="Entrez la latitude"
+                />
+              </div>
+              <div class="col-md-6">
+                <label for="longitude" class="form-label">longitude</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="longitude"
+                  formControlName="longitude"
+                  placeholder="Entrez la longitude"
                 />
               </div>
               <div class="col-md-6">
@@ -259,7 +255,7 @@
                   placeholder="Entrez le téléphone"
                 />
               </div>
-              <div class="col-md-6 mt-3">
+              <div class="col-md-6">
                 <label for="depot" class="form-label">Dépôt</label>
                 <!-- <select
                   class="form-select"
@@ -275,6 +271,7 @@
                   [items]="depots"
                   bindLabel="nomDepot"
                   bindValue="id"
+                  (change)="onDepotChange($event)"
                   formControlName="depotId"
                   [searchable]="true"
                 >
@@ -286,7 +283,7 @@
                     <option *ngFor="let loc of localites" [value]="loc">{{ loc }}</option>
                   </select>
                 </div> -->
-              <div class="col-md-6 mt-3">
+              <div class="col-md-6">
                 <label for="zone" class="form-label">Zone de livraison</label>
                 <!-- <select
                   class="form-select"
@@ -298,14 +295,14 @@
                   </option>
                 </select> -->
                 <ng-select
-                class="form-control"
-                [items]="zoneLivraison"
-                bindLabel="nomZone"
-                bindValue="id"
-                formControlName="zoneDeLivraisonId"
-                [searchable]="true"
-              >
-              </ng-select>
+                  class="form-control"
+                  [items]="zoneLivraison"
+                  bindLabel="nomZone"
+                  bindValue="id"
+                  formControlName="zoneDeLivraisonId"
+                  [searchable]="true"
+                >
+                </ng-select>
               </div>
             </div>
           </fieldset>
@@ -334,7 +331,7 @@
                   type="text"
                   class="form-control"
                   id="telProprietaire"
-                  formControlName="telProprietaire"
+                  formControlName="telephoneProprietaire"
                   placeholder="Entrez le téléphone"
                 />
               </div>
@@ -354,7 +351,7 @@
                   type="text"
                   class="form-control"
                   id="telGerant"
-                  formControlName="telGerant"
+                  formControlName="telephoneGerant"
                   placeholder="Entrez le téléphone"
                 />
               </div>
@@ -373,7 +370,7 @@
                   type="number"
                   class="form-control"
                   id="quantiteMinimum"
-                  formControlName="quantiteMinimum"
+                  formControlName="quantiteMinimumACommander"
                   placeholder="Entrez la quantité"
                 />
               </div>
@@ -385,7 +382,7 @@
                   type="text"
                   class="form-control"
                   id="compteContribuable"
-                  formControlName="compteContribuable"
+                  formControlName="numeroCompteContribuable"
                   placeholder="Entrez le numéro"
                 />
               </div>
@@ -406,14 +403,14 @@
                   </option>
                 </select> -->
                 <ng-select
-                class="form-control"
-                [items]="ListGroupesArticles"
-                bindLabel="libelle"
-                bindValue="id"
-                formControlName="familleProduitId"
-                [searchable]="true"
-              >
-              </ng-select>
+                  class="form-control"
+                  [items]="ListGroupesArticles"
+                  bindLabel="libelle"
+                  bindValue="id"
+                  formControlName="familleProduitId"
+                  [searchable]="true"
+                >
+                </ng-select>
               </div>
             </div>
           </fieldset>
@@ -427,7 +424,7 @@
             >
               Annuler
             </button>
-            <button type="submit" class="btn btn-primary" (click)="onSubmit()">
+            <button type="submit" [disabled]="revendeurForm.invalid" class="btn btn-primary">
               Enregistrer
             </button>
           </div>
