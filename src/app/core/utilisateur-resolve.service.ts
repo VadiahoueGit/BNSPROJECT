@@ -12,6 +12,7 @@ import { storage_keys } from '../Features/shared-component/utils';
 export class UtilisateurResolveService {
   apiUrl: any;
   ListUsers: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
+  listPointDeVente: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListPermissions: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListProfils: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   token:string;
@@ -25,6 +26,7 @@ export class UtilisateurResolveService {
   ): Observable<any> | Promise<any> | any {
     return new Promise<void>((resolve, reject) => {
       this.ListUsers.next([]);
+      this.listPointDeVente.next([]);
       this.ListPermissions.next([]);
       this.ListProfils.next([]);
 
@@ -35,6 +37,9 @@ export class UtilisateurResolveService {
           : this.Nothing(),
         this.ListUsers.getValue().length === 0
           ? this.GetUsersList(data)
+          : this.Nothing(),
+        this.listPointDeVente.getValue().length === 0
+          ? this.GetPointDeVenteList(data)
           : this.Nothing(),
         this.ListPermissions.getValue().length === 0
           ? this.GetPermissionsList(data)
@@ -164,6 +169,7 @@ export class UtilisateurResolveService {
         .subscribe(
           (res: any) => {
             console.log(res);
+            this.listPointDeVente.next(res.data)
             resolve(res);
           },
           (err) => {
@@ -179,6 +185,23 @@ export class UtilisateurResolveService {
         Authorization: `Bearer ${this.token}`
       });
       this._http.put(`${this.apiUrl}/v1/point-de-vente/${id}`, formData,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+  GetPointDeVenteDetailById(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.get(`${this.apiUrl}/v1/point-de-vente/${id}`,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);

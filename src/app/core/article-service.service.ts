@@ -21,6 +21,7 @@ export class ArticleServiceService {
   ListEmballages: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListBouteilleVide: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListGroupeRevendeurs: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
+  ListRevendeurs: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListFormats: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListConditionnements: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
 
@@ -43,6 +44,7 @@ export class ArticleServiceService {
       this.ListPlastiquesNu.next([]);
       this.ListEmballages.next([]);
       this.ListBouteilleVide.next([]);
+      this.ListRevendeurs.next([]);
       this.ListGroupeRevendeurs.next([]);
       this.ListFormats.next([]);
       this.ListConditionnements.next([]);
@@ -84,6 +86,9 @@ export class ArticleServiceService {
           : this.Nothing(),
         this.ListGroupeRevendeurs.getValue().length === 0
           ? this.GetGroupeClientList(data)
+          : this.Nothing(),
+        this.ListRevendeurs.getValue().length === 0
+          ? this.GetListRevendeur(data)
           : this.Nothing(),
       ]).then(() => {
         resolve();
@@ -1065,6 +1070,9 @@ export class ArticleServiceService {
       this._http.get(`${this.apiUrl}/v1/revendeur?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}).subscribe(
         (res: any) => {
           console.log(res);
+          if (res.statusCode === 200) {
+            this.ListRevendeurs.next(res.data)
+          }
           resolve(res);
         },
         (err) => {

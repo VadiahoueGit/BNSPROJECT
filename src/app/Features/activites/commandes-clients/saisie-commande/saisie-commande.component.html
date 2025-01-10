@@ -100,6 +100,7 @@
   
         <!-- Barre de recherche client centrée -->
         <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+          <form [formGroup]="commandClientForm">
           <div class="mb-4 text-center">
             <div class="d-flex justify-content-center gap-2">
               <div class="d-flex ">
@@ -107,13 +108,16 @@
                     <label for="client" class="form-label me-2 mb-0 pt-2" >Client<span class="text-danger">*</span></label>
 
                 </div>
-                <input
-                  type="text"
-                  id="client"
-                  class="form-control"
-                  formControlName="client"
-                  placeholder="Rechercher un client..."
-                />
+              <ng-select
+                class="form-control"
+                [items]="listRevendeurs"
+                (change)="onChange($event)"
+                bindLabel="raisonSocial"
+                bindValue="id"
+                formControlName="clientId"
+                [searchable]="true"
+              >
+              </ng-select>
               </div>
               <div class="">
                 <button class="btn btn-primary w-100" type="button" (click)="onSearchClient()">Rechercher</button>
@@ -122,7 +126,7 @@
           </div>
   
           <!-- Formulaire: Informations client -->
-          <form [formGroup]="commandClientForm">
+        
             <div class="border rounded p-3 mb-4">
               <h6 class="mb-4">Informations client</h6>
               <div class="row g-3">
@@ -183,16 +187,16 @@
                     </option>
                   </select>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                   <label for="quantite" class="form-label">Quantité<span class="text-danger">*</span></label>
                   <input type="number" class="form-control" id="quantite" formControlName="quantite" />
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                   <label for="fraisTransport" class="form-label">Frais transport<span class="text-danger">*</span></label>
                   <input type="number" class="form-control" id="fraisTransport" formControlName="fraisTransport" />
                 </div>
         
-                <div class="col-md-2">
+                <div class="col-md-3">
                   <label for="remise" class="form-label">Remise<span class="text-danger">*</span></label>
                   <select class="form-control" formControlName="remise">
                     <option value="" disabled>Choisir un nombre</option>
