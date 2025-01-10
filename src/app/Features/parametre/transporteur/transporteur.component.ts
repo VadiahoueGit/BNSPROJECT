@@ -30,9 +30,9 @@ export class TransporteurComponent {
     private _logistiqueService:LogistiqueService
   ) {
     this.transporteurForm = this.fb.group({
-      code: ['1234', [Validators.required]],
-      codeApplication: ['1234', [Validators.required]],
-      login: ['1234', [Validators.required]],
+      code: ['TRANS1234', [Validators.required]],
+      codeApplication: ['TRANS1234', [Validators.required]],
+      login: ['TRANS1234', [Validators.required]],
       nom: ['', [Validators.required]],
       prenoms: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
@@ -41,7 +41,7 @@ export class TransporteurComponent {
   }
 
   ngOnInit() {
-    // this.GetTransporteurList(1)
+    this.GetTransporteurList(1)
   }
 
   filterGlobal(event: any) {
@@ -52,10 +52,12 @@ export class TransporteurComponent {
   OnCloseModal() {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
+    this.transporteurForm.reset()
   }
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
+
     // this.GetListTypePrix(this.currentPage);
   }
 
@@ -91,7 +93,7 @@ export class TransporteurComponent {
     } else {
       this._spinner.show();
       this._logistiqueService.CreateTransporteur(this.transporteurForm.value).then((res:any) => {
-          // this.GetTransporteurList(1)
+          this.GetTransporteurList(1)
           this.transporteurForm.reset()
           this.toastr.success(res.message);
           this.isModalOpen = false;
@@ -130,6 +132,7 @@ export class TransporteurComponent {
           this._logistiqueService.DeleteTransporteur(Id).then((res: any) => {
             console.log('DATA:::>', res);
             // this.dataList = res.data;
+            this.GetTransporteurList(1)
             this._spinner.hide();
           });
         } else {

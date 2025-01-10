@@ -16,7 +16,6 @@
       <tr>
         <th style="color: var(--secondary-color);">Nom</th>
         <th style="color: var(--secondary-color);">Prénoms</th>
-        <th style="color: var(--secondary-color);">Produits</th>
         <th style="color: var(--secondary-color);">Téléphone</th>
         <th style="color: var(--secondary-color);">Login</th>
         <th style="color: var(--secondary-color);">Actions</th>
@@ -26,29 +25,21 @@
     <ng-template pTemplate="body" let-dataList>
       <tr>
         <td class="">
-          {{ dataList.Code }}
+          {{ dataList.nom }}
         </td>
         <td class="">
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.libelle }}
+                        {{ dataList.prenoms }}
                     </span>
         </td>
         <td class="">
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.createdAt | date }}
+                        {{ dataList.telephone }}
                     </span>
         </td>
-        <td>
         <td class="">
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.createdAt | date }}
-                    </span>
-        </td>
-        <td>
-        <td>
-        <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.createdAt | date }}
+                        {{ dataList.login }}
                     </span>
         </td>
         <td>

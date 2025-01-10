@@ -125,43 +125,9 @@
                 </div>
               </div>
               <div class="col-md-4">
-                <input type="text" placeholder="Recherche produit" class="form-control w-100"/>
-                <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
-                  <table class="table">
-                    <thead>
-                    </thead>
-                    <tbody>
-                    <tr>
-                      <td><input type="checkbox" class="select-row"></td>
-                      <td style="font-size: small;">jean@example.com</td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox" class="select-row"></td>
-                      <td style="font-size: small;">jean@example.com</td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox" class="select-row"></td>
-                      <td style="font-size: small;">jean@example.com</td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox" class="select-row"></td>
-                      <td style="font-size: small;">jean@example.com</td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox" class="select-row"></td>
-                      <td style="font-size: small;">jean@example.com</td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox" class="select-row"></td>
-                      <td style="font-size: small;">jean@example.com</td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox" class="select-row"></td>
-                      <td style="font-size: small;">jean@example.com</td>
-                    </tr>
-                    </tbody>
-                  </table>
-                </div>
+                <button type="button" class="btn btn-secondary"
+                        (click)="selectArticle()">Ajouter des articles
+                </button>
               </div>
             </fieldset>
 
@@ -180,70 +146,15 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <tr style="font-size: small;">
-                    <th scope="row">coco</th>
+                  <tr style="font-size: small;" *ngFor="let item of selectedArticles;let i=index">
+                    <td>{{ item.liquide.libelle }}</td>
                     <td class="editable-cell"><input type="text" class="form-control-custom" value="3"></td>
                     <td class="editable-cell"><input type="text" class="form-control-custom" value="3"></td>
                     <td>10 000</td>
                     <td>10 000</td>
                     <td>20 000</td>
                   </tr>
-                  <tr style="font-size: small;">
-                    <th scope="row">coco</th>
-                    <td class="editable-cell"><input type="text" class="form-control-custom" value="3"></td>
-                    <td>3</td>
-                    <td>10 000</td>
-                    <td>10 000</td>
-                    <td>20 000</td>
-                  </tr>
-                  <tr style="font-size: small;">
-                    <th scope="row">coco</th>
-                    <td class="editable-cell"><input type="text" class="form-control-custom" value="3"></td>
-                    <td>3</td>
-                    <td>10 000</td>
-                    <td>10 000</td>
-                    <td>20 000</td>
-                  </tr>
-                  <tr style="font-size: small;">
-                    <th scope="row">coco</th>
-                    <td class="editable-cell"><input type="text" class="form-control-custom" value="3"></td>
-                    <td>3</td>
-                    <td>10 000</td>
-                    <td>10 000</td>
-                    <td>20 000</td>
-                  </tr>
-                  <tr style="font-size: small;">
-                    <th scope="row">coco</th>
-                    <td class="editable-cell"><input type="text" class="form-control-custom" value="3"></td>
-                    <td>3</td>
-                    <td>10 000</td>
-                    <td>10 000</td>
-                    <td>20 000</td>
-                  </tr>
-                  <tr style="font-size: small;">
-                    <th scope="row">coco</th>
-                    <td class="editable-cell"><input type="text" class="form-control-custom" value="3"></td>
-                    <td>3</td>
-                    <td>10 000</td>
-                    <td>10 000</td>
-                    <td>20 000</td>
-                  </tr>
-                  <tr style="font-size: small;">
-                    <th scope="row">coco</th>
-                    <td class="editable-cell"><input type="text" class="form-control-custom" value="3"></td>
-                    <td>3</td>
-                    <td>10 000</td>
-                    <td>10 000</td>
-                    <td>20 000</td>
-                  </tr>
-                  <tr style="font-size: small;">
-                    <th scope="row">coco</th>
-                    <td class="editable-cell"><input type="text" class="form-control-custom" value="3"></td>
-                    <td>3</td>
-                    <td>10 000</td>
-                    <td>10 000</td>
-                    <td>20 000</td>
-                  </tr>
+
                   <!-- Ajoutez d'autres lignes si nécessaire -->
                   </tbody>
                 </table>
@@ -255,6 +166,68 @@
       <div class="modal-footer gap-3 px-4y">
         <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
         <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--CHOIX ARTICLE-->
+<div *ngIf="isChoiceModalOpen" class="custom-modal">
+  <div class="modal-dialog2  modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex align-items-center">
+        <div class="d-flex justify-content-center align-items-center"
+             style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
+          <i class="fas fa-box-check text-primary fs-3"></i>
+        </div>
+        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">Selection des articles</h1>
+      </div>
+
+      <div class="modal-body">
+        <form>
+          <div class="row">
+            <fieldset class="row border my-2">
+              <div class="p-3">
+                <!-- Champ de recherche -->
+                <input type="text" name="search" (input)="filterArticles()" [(ngModel)]="searchTerm"
+                       placeholder="Rechercher un produit" class="form-control mb-3">
+              </div>
+              <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+
+                <table class="table">
+                  <thead >
+                  <tr style="font-size: small;">
+                    <th scope="col" >Code</th>
+                    <th scope="col" >Produits</th>
+                    <th scope="col" >Choix</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let article of filteredArticleList; let i = index" style="font-size: small;">
+                    <th scope="row">{{ article.reference }}</th>
+                    <th scope="row">{{ article.libelle }}</th>
+                    <td class="">
+                      <input
+                        type="checkbox"
+                        class="form-control-custom"
+                        [name]="'checkbox_' + i"
+                        [(ngModel)]="article.isChecked"
+                        (change)="onCheckboxChange(article)"
+                      >
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+
+              </div>
+            </fieldset>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer gap-3 px-4y">
+        <button (click)="OnCloseChoiceModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
+        <button type="submit" (click)="onSubmitSelection()" class="btn btn-primary px-2">Valider</button>
 
       </div>
     </div>
