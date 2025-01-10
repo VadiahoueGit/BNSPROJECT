@@ -4,18 +4,19 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
+import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
 
 @Component({
   selector: 'app-saisie-commande',
   templateUrl: './saisie-commande.component.html',
-  styleUrls: ['./saisie-commande.component.scss']
+  styleUrls: ['./saisie-commande.component.scss'],
 })
 export class SaisieCommandeComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
-  commandClientForm!:FormGroup
+  commandClientForm!: FormGroup;
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
@@ -25,26 +26,29 @@ export class SaisieCommandeComponent {
   totalGlobal: string = '';
   totalQuantite: string = '';
   updateData: any = {};
+  detailPointDevente: any = {};
   articleId: any = 0;
   isEditMode: boolean = false;
   dataListFormats: any = [];
   dataListConditionnements: any = [];
-  dataListProduits: any= [];
-  dataListGroupeArticles: any =[];
-  dataListBouteilleVide: any=[];
-  dataListPlastiqueNu: any=[];
-  items: any=[];
+  dataListProduits: any = [];
+  dataListGroupeArticles: any = [];
+  dataListBouteilleVide: any = [];
+  dataListPlastiqueNu: any = [];
+  items: any = [];
   articles = [
     { id: 1, libelle: 'Article A', liquide: 500, emballage: 200, total: 700 },
     { id: 2, libelle: 'Article B', liquide: 800, emballage: 300, total: 1100 },
     { id: 3, libelle: 'Article C', liquide: 400, emballage: 100, total: 500 },
   ];
-  selectedArticle: any=[];
-  clients: any=[];
+  selectedArticle: any = [];
+  clients: any = [];
   currentPage: number;
   rowsPerPage: any;
+  listRevendeurs: any[] = [];
   constructor(
     private articleService: ArticleServiceService,
+    private _userSerive: UtilisateurResolveService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
@@ -52,9 +56,14 @@ export class SaisieCommandeComponent {
 
   ngOnInit() {
     this.commandClientForm = this.fb.group({
+      clientId: [null, Validators.required],
       numeroCompte: ['', Validators.required],
       raisonSociale: ['', Validators.required],
       montantCredit: ['', Validators.required],
+      enCours: ['', Validators.required],
+      soldeEmballage: ['', Validators.required],
+      numSap: ['', Validators.required],
+      remise: ['', Validators.required],
       contact: ['', Validators.required],
       soldeLiquide: ['', Validators.required],
       statutCompte: ['DÉSACTIVÉ', Validators.required],
@@ -75,7 +84,10 @@ export class SaisieCommandeComponent {
     this.articleService.ListBouteilleVide.subscribe((res: any) => {
       this.dataListBouteilleVide = res;
     });
-
+    this.articleService.ListRevendeurs.subscribe((res: any) => {
+      this.listRevendeurs = res;
+      console.log(this.listRevendeurs,'listRevendeurs')
+    });
     this.articleService.GetFormatList().then((res: any) => {
       this.dataListFormats = res;
       console.log('dataListFormats:::>', this.dataListFormats);
@@ -83,7 +95,10 @@ export class SaisieCommandeComponent {
 
     this.articleService.GetConditionnementList().then((res: any) => {
       this.dataListConditionnements = res;
-      console.log('dataListConditionnements:::>', this.dataListConditionnements);
+      console.log(
+        'dataListConditionnements:::>',
+        this.dataListConditionnements
+      );
     });
     this.articleService.ListTypeArticles.subscribe((res: any) => {
       this.dataListProduits = res;
@@ -92,10 +107,10 @@ export class SaisieCommandeComponent {
     this.articleService.ListGroupesArticles.subscribe((res: any) => {
       this.dataListGroupeArticles = res;
     });
-     this.GetArticleList(1);
+    this.GetArticleList(1);
   }
-  onDelete(item:any){
-console.log(item)
+  onDelete(item: any) {
+    console.log(item);
   }
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
@@ -119,7 +134,7 @@ console.log(item)
     console.log(this.isModalOpen);
   }
 
-  OnEdit(data:any) {
+  OnEdit(data: any) {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
@@ -129,10 +144,10 @@ console.log(item)
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetArticleList(page:number) {
+  GetArticleList(page: number) {
     let data = {
       paginate: false,
-      page:page,
+      page: page,
       limit: 8,
     };
     this._spinner.show();
@@ -143,7 +158,9 @@ console.log(item)
     });
   }
   onArticleChange(articleId: number): void {
-    this.selectedArticle = this.articles.find(article => article.id === articleId);
+    this.selectedArticle = this.articles.find(
+      (article) => article.id === articleId
+    );
   }
   onSubmit(): void {
     console.log(this.commandClientForm.value);
@@ -189,11 +206,10 @@ console.log(item)
       }
     }
   }
-  onSearchClient(): void {
-  }
+  onSearchClient(): void {}
   loadArticleDetails(): void {
     this.commandClientForm.patchValue({
-      photo: this.updateData.photo??"",
+      photo: this.updateData.photo ?? '',
       libelle: this.updateData.libelle,
       format: this.updateData.format,
       Conditionnement: this.updateData.Conditionnement,
@@ -209,9 +225,14 @@ console.log(item)
     this.rowsPerPage = event.rows;
     this.GetArticleList(this.currentPage);
   }
+  onChange(event: any): void {
+    this.detailPointDevente = event;
+    console.log(this.detailPointDevente,'detailPointDevente')
+  }
+
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
-      (res:any) => {
+      (res: any) => {
         if (res.isConfirmed == true) {
           this._spinner.show();
           this.articleService.DeletedArticle(Id).then((res: any) => {
@@ -226,5 +247,3 @@ console.log(item)
     );
   }
 }
-
-

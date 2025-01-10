@@ -20,6 +20,8 @@ export class ArticleServiceService {
   ListPlastiquesNu: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListEmballages: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListBouteilleVide: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
+  ListGroupeRevendeurs: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
+  ListRevendeurs: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListFormats: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListConditionnements: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
 
@@ -42,6 +44,8 @@ export class ArticleServiceService {
       this.ListPlastiquesNu.next([]);
       this.ListEmballages.next([]);
       this.ListBouteilleVide.next([]);
+      this.ListRevendeurs.next([]);
+      this.ListGroupeRevendeurs.next([]);
       this.ListFormats.next([]);
       this.ListConditionnements.next([]);
 
@@ -79,6 +83,12 @@ export class ArticleServiceService {
           : this.Nothing(),
         this.ListBouteilleVide.getValue().length === 0
           ? this.GetBouteilleVideList(data)
+          : this.Nothing(),
+        this.ListGroupeRevendeurs.getValue().length === 0
+          ? this.GetGroupeClientList(data)
+          : this.Nothing(),
+        this.ListRevendeurs.getValue().length === 0
+          ? this.GetListRevendeur(data)
           : this.Nothing(),
       ]).then(() => {
         resolve();
@@ -884,6 +894,9 @@ export class ArticleServiceService {
         )
         .subscribe(
           (res: any) => {
+            if (res.statusCode == 200) {
+              this.ListGroupeRevendeurs.next(res.data);
+            }
             console.log(res);
             resolve(res);
           },
@@ -1036,6 +1049,79 @@ export class ArticleServiceService {
         Authorization: `Bearer ${this.token}`
       });
       this._http.get(`${this.apiUrl}/v1/inventaire?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+  // REVENDEUR
+
+  GetListRevendeur(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.get(`${this.apiUrl}/v1/revendeur?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          if (res.statusCode === 200) {
+            this.ListRevendeurs.next(res.data)
+          }
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+  CreateRevendeur(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/revendeur`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+  UpdateRevendeur(id: number, data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/revendeur/${id}`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+  DeleteRevendeur(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/revendeur/${id}`,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);

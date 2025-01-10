@@ -22,7 +22,7 @@ export class ClientosrComponent {
   isModalOpen = false;
   operation: string = '';
   updateData: any = {};
-  articleId: any = 0;
+  id: any = 0;
   isEditMode: boolean = false;
   zoneLivraison!: any[];
   grpClient!: any[];
@@ -138,7 +138,7 @@ export class ClientosrComponent {
   OnPreview(data: any) {
     console.log(data);
     this.updateData = data;
-    this.articleId = data.id;
+    this.id = data.id;
     this.isModalOpen = true;
     this.loadClientDetails();
     this.clientosrForm.disable();
@@ -148,7 +148,7 @@ export class ClientosrComponent {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
-    this.articleId = data.id;
+    this.id = data.id;
     this.isModalOpen = true;
     this.loadClientDetails();
     this.operation = 'edit';
@@ -180,7 +180,7 @@ export class ClientosrComponent {
 
       if (this.isEditMode) {
         this.utilisateurService
-          .UpdatePointDeVente(this.articleId, formData)
+          .UpdatePointDeVente(this.id, formData)
           .then(
             (response: any) => {
               console.log('Article mis à jour avec succès', response);

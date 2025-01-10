@@ -6,12 +6,13 @@ import { VentechineComponent } from './ventechine/ventechine.component';
 import { CommandesClientsComponent } from './commandes-clients/commandes-clients.component';
 import { CommandeGratuiteComponent } from './commande-gratuite/commande-gratuite.component';
 import { GestionDesRetoursComponent } from './gestion-des-retours/gestion-des-retours.component';
+import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 
 const routes: Routes = [
     { path: '', component:ActivitesComponent },
     { path: 'visitecom', component: VisitecomComponent },
     { path: 'ventechine', component: VentechineComponent },
-    { path: 'commandes-clients', component: CommandesClientsComponent },
+    { path: 'commandes-clients', component: CommandesClientsComponent, resolve:{UtilisateurResolveService}},
     { path: 'commandes-gratuites', component: CommandeGratuiteComponent },
     { path: 'gestion-retour', component: GestionDesRetoursComponent },
 
