@@ -55,7 +55,7 @@ export class LogistiqueService {
   }
    CreateTransporteur(data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.post(`${this.apiUrl}/v1/group-article`, data).subscribe(
+      this._http.post(`${this.apiUrl}/v1/transporteur`, data).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -72,7 +72,7 @@ export class LogistiqueService {
     return new Promise((resolve: any, reject: any) => {
       this._http
         .get(
-          `${this.apiUrl}/v1/group-article?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/transporteur?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
         )
         .subscribe(
           (res: any) => {
@@ -89,7 +89,7 @@ export class LogistiqueService {
 
   UpdateTransporteur(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
-      this._http.put(`${this.apiUrl}/v1/group-article/${id}`, data).subscribe(
+      this._http.put(`${this.apiUrl}/v1/transporteur/${id}`, data).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -105,7 +105,7 @@ export class LogistiqueService {
   DeleteTransporteur(id: number) {
     return new Promise((resolve: any, reject: any) => {
       this._http
-        .delete(`${this.apiUrl}/v1/group-article/${id}`)
+        .delete(`${this.apiUrl}/v1/transporteur/${id}`)
         .subscribe(
           (res: any) => {
             console.log(res);

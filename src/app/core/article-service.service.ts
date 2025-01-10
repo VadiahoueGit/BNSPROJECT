@@ -240,6 +240,27 @@ export class ArticleServiceService {
     });
   }
 
+  GetPrixByProduit(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/prix/produit/${data.id}`,{headers}
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
   GetListTypePrix(data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({

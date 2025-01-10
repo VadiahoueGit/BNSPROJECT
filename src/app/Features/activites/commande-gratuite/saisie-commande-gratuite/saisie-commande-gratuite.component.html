@@ -131,35 +131,56 @@
             <!-- Première ligne d'en-tête -->
             <tr>
               <th scope="col" colspan="5">PRIX UNITAIRE H.T (FCFA)</th>
-              <th scope="col" colspan="5">MONTANT H.T (FCFA)</th>
+              <th scope="col" colspan="4">MONTANT H.T (FCFA)</th>
             </tr>
             <!-- Deuxième ligne d'en-tête -->
             <tr>
-              <th scope="col">Articles</th>
+              <th scope="col">Liquide</th>
               <th scope="col">Liquide (FCFA)</th>
               <th scope="col">Emballage (FCFA)</th>
               <th scope="col">Total (FCFA)</th>
               <th scope="col">Qte</th>
-              <th scope="col">Articles</th>
               <th scope="col">Liquide (FCFA)</th>
               <th scope="col">Emballage (FCFA)</th>
               <th scope="col">Total (FCFA)</th>
-              <th scope="col">Qte</th>
+              <th scope="col">Action</th>
             </tr>
             </thead>
 
               <tbody >
               <tr *ngFor="let item of selectedArticles">
-                <td>Article 1</td>
-                <td>500</td>
-                <td>50</td>
-                <td>550</td>
-                <td>10</td>
-                <td>Article 1</td>
-                <td>5000</td>
-                <td>500</td>
-                <td>5500</td>
-                <td>10</td>
+                <td>{{ item.liquide.libelle }}1</td>
+                <td>{{ prixLiquide[item.id] }}</td>
+                <td>{{ prixEmballage[item.id] }}</td>
+                <td>{{ prixEmballage[item.id] + prixLiquide[item.id] }}</td>
+                <td>
+                  <input
+                    type="number"
+                    class="form-control-custom"
+                    [(ngModel)]="item.quantite"
+                    [min]="0"
+                    [max]="stocksDisponibles[item.id]"
+                    [disabled]="stocksDisponibles[item.id] === 0"
+                    [ngClass]="{ 'invalid': item.quantite > stocksDisponibles[item.id] }"
+                    (blur)="validateQuantite(item)"
+                  >
+                </td>
+                <td>{{ prixLiquideTotal[item.id] }}</td>
+                <td>{{ prixEmballageTotal[item.id] }}</td>
+                <td>{{ montantTotal[item.id] }}</td>
+                <td class="d-flex justify-content-center">
+                  <button type="button" class="btn btn-danger btn-sm" (click)="removeArticle(item)">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr class="table-dark">
+                <th scope="col" colspan="4">Total :</th>
+                <td>{{totalQte}}</td>
+                <td>{{totalLiquide}}</td>
+                <td>{{totalEmballage}}</td>
+                <td>{{totalGlobal}}</td>
+                <td></td>
               </tr>
               </tbody>
 
