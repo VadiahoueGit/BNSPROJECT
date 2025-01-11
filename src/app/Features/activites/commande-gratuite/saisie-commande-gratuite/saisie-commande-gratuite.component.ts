@@ -269,6 +269,7 @@ export class SaisieCommandeGratuiteComponent {
 
     data.oldQuantite = data.quantite;
     console.log(data);
+    
   }
   async GetPrixByArticle(item: any): Promise<any> {
     let data = {

@@ -7,9 +7,7 @@
   padding: 1rem;
 }
 
-.modal-body {
-  padding: 1.5rem; /* Ajouter du padding dans la modal */
-}
+
 
 .form-control {
   margin-bottom: -0.5rem; /* Espacer les champs */
@@ -53,4 +51,19 @@
   }
   .label-fixed-width {
     min-width: 10px; 
+  }
+
+  input[type="radio"] {
+    accent-color: green; /* Sets the color of the selected radio button */
+  }
+  
+  /* Optional: Style the labels to add spacing and font customization */
+  label {
+    font-size: 1rem;
+    color: #333;
+    cursor: pointer;
+  }
+  
+  label + label {
+    margin-left: 15px; /* Adds space between the two labels */
   }
