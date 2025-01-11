@@ -267,39 +267,6 @@
             <h6 class="mb-4">Saisie commande</h6>
             <div class="row g-3">
               <div class="col-md-3">
-                <label for="numeroCommande" class="form-label"
-                  >Numéro commande<span class="text-danger">*</span></label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="numeroCommande"
-                  formControlName="numeroCommande"
-                />
-              </div>
-              <div class="col-md-3">
-                <label for="referenceArticle" class="form-label"
-                  >Référence article<span class="text-danger">*</span></label
-                >
-                <select class="form-control" formControlName="referenceArticle">
-                  <option value="" disabled>Choisir un article</option>
-                  <option *ngFor="let article of articles" [value]="article.id">
-                    {{ article.libelle }}
-                  </option>
-                </select>
-              </div>
-              <div class="col-md-3">
-                <label for="quantite" class="form-label"
-                  >Quantité<span class="text-danger">*</span></label
-                >
-                <input
-                  type="number"
-                  class="form-control"
-                  id="quantite"
-                  formControlName="quantite"
-                />
-              </div>
-              <div class="col-md-3">
                 <label for="fraisTransport" class="form-label"
                   >Frais transport<span class="text-danger">*</span></label
                 >
@@ -330,7 +297,7 @@
               </div>
             </div>
           </div>
-
+        </form>
           <div class="p-2 mt-3">
             <div style="max-height: 350px; overflow-y: auto;">
             <table class="table table-bordered">
@@ -394,55 +361,7 @@
             </table>
           </div>
           </div>
-          <!-- Section: Totaux -->
-          <!-- <div class="table-responsive">
-            <table class="table table-bordered text-center">
-              <thead class="table-success">
-                <tr>
-                  <th scope="col">Articles</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Quantité</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let item of items">
-                  <td>{{ item.article }}</td>
-                  <td>{{ item.prixLiquide }}</td>
-                  <td>{{ item.prixEmballage }}</td>
-                  <td>{{ item.prixTotal }}</td>
-                  <td>{{ item.quantite }}</td>
-                  <td>{{ item.montantLiquide }}</td>
-                  <td>{{ item.montantEmballage }}</td>
-                  <td>{{ item.montantTotal }}</td>
-                  <td>
-                    <button
-                      class="btn btn-danger btn-sm"
-                      (click)="onDelete(item)"
-                    >
-                      <i class="fa fa-trash"></i>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr class="fw-bold">
-                  <td colspan="4">Total:</td>
-                  <td>{{ totalQuantite }}</td>
-                  <td>{{ totalLiquide }}</td>
-                  <td>{{ totalEmballage }}</td>
-                  <td>{{ totalGlobal }}</td>
-                  <td></td>
-                </tr>
-              </tfoot>
-            </table>
-          </div> -->
-        </form>
+        
       </div>
 
       <!-- Modal Footer -->
@@ -477,7 +396,7 @@
       <div class="modal-body">
         <form action="" #articleForm >
           <div class="row">
-            <fieldset class="row border my-2">
+            <fieldset class="row border my-2" style="margin-left: .1rem;">
               <div class="p-3">
                 <!-- Champ de recherche -->
                 <input type="text" name="search" (input)="filterArticles()" [(ngModel)]="searchTerm"
