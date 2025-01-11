@@ -21,27 +21,39 @@ export class SaisieCommandeComponent {
   isModalOpen = false;
   activityValues: number[] = [0, 100];
   operation: string = '';
-  totalLiquide: string = '';
-  totalEmballage: string = '';
-  totalGlobal: string = '';
-  totalQuantite: string = '';
+  searchTerm: string = '';
   updateData: any = {};
   detailPointDevente: any = {};
   articleId: any = 0;
   isEditMode: boolean = false;
+  isChoiceModalOpen: boolean = false;
   dataListFormats: any = [];
   dataListConditionnements: any = [];
   dataListProduits: any = [];
   dataListGroupeArticles: any = [];
   dataListBouteilleVide: any = [];
   dataListPlastiqueNu: any = [];
+  selectedArticles: any = [];
   items: any = [];
+  filteredArticleList: any[] = [];
+
   articles = [
     { id: 1, libelle: 'Article A', liquide: 500, emballage: 200, total: 700 },
     { id: 2, libelle: 'Article B', liquide: 800, emballage: 300, total: 1100 },
     { id: 3, libelle: 'Article C', liquide: 400, emballage: 100, total: 500 },
   ];
   selectedArticle: any = [];
+  dataListLiquides: any = [];
+  stocksDisponibles: any = {};
+  prixLiquide: any = {};
+  prixEmballage: any = {};
+  prixLiquideTotal: any = {};
+  totalLiquide:number = 0;
+  totalEmballage:number = 0;
+  totalGlobal:number = 0;
+  totalQte:number = 0;
+  prixEmballageTotal: any = {};
+  montantTotal: any = {};
   clients: any = [];
   currentPage: number;
   rowsPerPage: any;
@@ -84,22 +96,7 @@ export class SaisieCommandeComponent {
     this.articleService.ListBouteilleVide.subscribe((res: any) => {
       this.dataListBouteilleVide = res;
     });
-    this.articleService.ListRevendeurs.subscribe((res: any) => {
-      this.listRevendeurs = res;
-      console.log(this.listRevendeurs,'listRevendeurs')
-    });
-    this.articleService.GetFormatList().then((res: any) => {
-      this.dataListFormats = res;
-      console.log('dataListFormats:::>', this.dataListFormats);
-    });
-
-    this.articleService.GetConditionnementList().then((res: any) => {
-      this.dataListConditionnements = res;
-      console.log(
-        'dataListConditionnements:::>',
-        this.dataListConditionnements
-      );
-    });
+  
     this.articleService.ListTypeArticles.subscribe((res: any) => {
       this.dataListProduits = res;
       console.log(this.dataListProduits, 'this.dataListProduits ');
@@ -108,6 +105,7 @@ export class SaisieCommandeComponent {
       this.dataListGroupeArticles = res;
     });
     this.GetArticleList(1);
+    this.GetRevendeurList(1);
   }
   onDelete(item: any) {
     console.log(item);
@@ -144,16 +142,30 @@ export class SaisieCommandeComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetArticleList(page: number) {
+  GetArticleList(page:number) {
+    let data = {
+      paginate: false,
+      page:page,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.articleService.GetArticleList(data).then((res: any) => {
+      console.log('DATATYPEPRIX:::>', res);
+      this.dataListLiquides = res.data;
+      this.filteredArticleList = this.dataListLiquides;
+      this._spinner.hide();
+    });
+  }
+  GetRevendeurList(page: number) {
     let data = {
       paginate: false,
       page: page,
       limit: 8,
     };
     this._spinner.show();
-    this.articleService.GetArticleList(data).then((res: any) => {
-      console.log('DATATYPEPRIX:::>', res);
-      this.dataList = [];
+    this.articleService.GetListRevendeur(data).then((res: any) => {
+      console.log('GetListRevendeur:::>', res);
+      this.listRevendeurs = res.data;
       this._spinner.hide();
     });
   }
@@ -163,50 +175,120 @@ export class SaisieCommandeComponent {
     );
   }
   onSubmit(): void {
-    console.log(this.commandClientForm.value);
-    if (this.commandClientForm.valid) {
-      // const formValues = this.commandClientForm.value;
-      const formValues = {
-        ...this.commandClientForm.value,
-        categorieId: +this.commandClientForm.value.categorieId,
-        groupeId: +this.commandClientForm.value.groupeId,
-        plastiquenuId: +this.commandClientForm.value.plastiquenuId,
-        bouteillevideId: +this.commandClientForm.value.bouteillevideId,
-        liquideId: +this.commandClientForm.value.liquideId,
-      };
-      console.log('formValues', formValues);
+    
+  }
+  selectArticle() {
+    this.isEditMode = false;
+    this.isChoiceModalOpen = true;
+    this.operation = 'create';
+    console.log(this.isModalOpen);
+  }
+  validateQuantite(data: any): void {
 
-      if (this.isEditMode) {
-        this.articleService.UpdateArticle(this.articleId, formValues).then(
-          (response: any) => {
-            console.log('article mis à jour avec succès', response);
-            this.toastr.success('Succès!', 'Article mis à jour avec succès.');
-            this.OnCloseModal();
-            this.GetArticleList(1);
-          },
-          (error: any) => {
-            this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
-            console.error('Erreur lors de la mise à jour', error);
-          }
-        );
-      } else {
-        this.articleService.CreateArticle(formValues).then(
-          (response: any) => {
-            this.OnCloseModal();
-            this.GetArticleList(1);
-            this.commandClientForm.reset();
-            this.toastr.success('Succès!', 'Article créé avec succès.');
-            console.log('Nouvel article créé avec succès', response);
-          },
-          (error: any) => {
-            this.toastr.error('Erreur!', 'Erreur lors de la création.');
-            console.error('Erreur lors de la création', error);
-          }
-        );
+    // Vérifier si la quantité saisie dépasse la quantité disponible
+    if (data.quantite > this.stocksDisponibles[data.id]) {
+      // Réinitialiser la quantité à la quantité disponible
+      data.quantite ='';
+      // Afficher un message de warning
+      this.toastr.warning('La quantité saisie dépasse la quantité disponible.');
+    }else{
+      this.calculatePrix(data)
+    }
+  }
+  calculatePrix(data:any) {
+
+
+    if (this.prixLiquideTotal[data.id]) {
+      this.totalEmballage -= this.prixEmballageTotal[data.id] || 0;
+      this.totalLiquide -= this.prixLiquideTotal[data.id] || 0;
+      this.totalGlobal -= this.montantTotal[data.id] || 0;
+      this.totalQte -= data.oldQuantite || 0
+    }
+    this.prixLiquideTotal[data.id] = data.quantite * this.prixLiquide[data.id];
+    this.prixEmballageTotal[data.id] = data.quantite * this.prixEmballage[data.id];
+    this.montantTotal[data.id] = this.prixLiquideTotal[data.id] + this.prixEmballageTotal[data.id];
+
+    this.totalEmballage += this.prixEmballageTotal[data.id];
+    this.totalLiquide  += this.prixLiquideTotal[data.id];
+    this.totalGlobal += this.montantTotal[data.id];
+    this.totalQte += data.quantite
+
+    data.oldQuantite = data.quantite;
+    console.log(data);
+    console.log(this.totalQte,'totalQte');
+    console.log(this.totalLiquide,"totalLiquide");
+    console.log(this.totalEmballage,"totalEmballage");
+    console.log(this.totalGlobal),"totalGlobal";
+  }
+  onCheckboxChange(article: any): void {
+    this.GetPrixByArticle(article)
+    // this.GetStockDisponibleByDepot(article)
+    if (article.isChecked) {
+      this.selectedArticles.push(article);
+      this.afficherArticlesSelectionnes()
+    } else {
+      delete article.quantite;
+      const indexToRemove = this.selectedArticles.findIndex(
+        (selectedArticle:any) => selectedArticle.libelle === article.libelle
+      );
+      if (indexToRemove !== -1) {
+        this.selectedArticles.splice(indexToRemove, 1);
+        this.afficherArticlesSelectionnes()
       }
     }
   }
-  onSearchClient(): void {}
+  async GetPrixByArticle(item: any): Promise<any> {
+    let data = {
+      id: item.id,
+    };
+
+    try {
+      // Attendre la réponse de la promesse
+      const response:any = await this.articleService.GetPrixByProduit(data);
+      console.log(response)
+      // Vérifier si le statusCode est 200
+      if (response.data) {
+        this.prixLiquide[item.id] = response.data.PrixLiquide;
+        this.prixEmballage[item.id] = response.data.PrixConsigne;
+        console.log('prixByArticle',this.prixLiquide[item.id])
+      }
+    } catch (error:any) {
+      console.log(error);
+    }
+  }
+  afficherArticlesSelectionnes() {
+    console.log(this.selectedArticles);
+  }
+  removeArticle(item: any): void {
+    item.isChecked = false;
+    this.onCheckboxChange(item);
+    const index = this.selectedArticles.findIndex((i: any) => i.id === item.id);
+
+    if (index !== -1) {
+      this.selectedArticles = this.selectedArticles.slice(0, index).concat(this.selectedArticles.slice(index + 1));
+    }
+
+  }
+  onSubmitSelection() {
+    this.isChoiceModalOpen = false;
+  }
+  OnCloseChoiceModal() {
+    this.deselectAllItems()
+    this.isChoiceModalOpen = false;
+    console.log(this.isModalOpen)
+  }
+  deselectAllItems(): void {
+    this.selectedArticles.forEach((item: any) => {
+      delete item.quantite;
+      this.onCheckboxChange(item);
+      item.isChecked = false;
+
+    });
+
+    this.selectedArticles = [];
+
+  }
+  // onSearchClient(): void {}
   loadArticleDetails(): void {
     this.commandClientForm.patchValue({
       photo: this.updateData.photo ?? '',
@@ -229,7 +311,18 @@ export class SaisieCommandeComponent {
     this.detailPointDevente = event;
     console.log(this.detailPointDevente,'detailPointDevente')
   }
-
+  filterArticles(): void {
+    console.log(this.searchTerm)
+    if (this.searchTerm) {
+      this.filteredArticleList = this.dataListLiquides.filter((article: any) =>
+        article.libelle.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        article.code.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+      console.log(this.filteredArticleList)
+    } else {
+      this.filteredArticleList = [...this.dataListLiquides];
+    }
+  }
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
       (res: any) => {
