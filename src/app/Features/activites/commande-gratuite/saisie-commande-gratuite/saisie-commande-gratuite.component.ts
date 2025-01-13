@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
@@ -15,7 +15,7 @@ import {UtilisateurResolveService} from "../../../../core/utilisateur-resolve.se
 export class SaisieCommandeGratuiteComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
-  dataList!: any[];
+  dataList : any[] = [];
   selectedArticles: any[] = [];
   pointDeVente!: any[];
   CommandeForm!:FormGroup
@@ -44,6 +44,9 @@ export class SaisieCommandeGratuiteComponent {
   prixEmballageTotal: any = {};
   montantTotal: any = {};
   selectedOption: string = 'gratuitClient';
+  listRevendeurs: any[] = [];
+  ListCommandeGratuites: any[] = [];
+
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -54,13 +57,28 @@ export class SaisieCommandeGratuiteComponent {
 
   ngOnInit() {
     this.CommandeForm = this.fb.group({
-      clientId: [null, Validators.required],
-      articles: [null, Validators.required],
+      revendeurId: [null, Validators.required],
+      depotId: [2, Validators.required],
+      articles: this.fb.array([]),
     });
     this.GetArticleList(1)
     this.LoadPdv()
+    this.GetRevendeurList(1)
+    this.GetListCommandeGratuite(1)
   }
-
+  GetRevendeurList(page: number) {
+    let data = {
+      paginate: false,
+      page: page,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.articleService.GetListRevendeur(data).then((res: any) => {
+      console.log('GetListRevendeur:::>', res);
+      this.listRevendeurs = res.data;
+      this._spinner.hide();
+    });
+  }
   GetArticleList(page:number) {
     let data = {
       paginate: false,
@@ -72,6 +90,19 @@ export class SaisieCommandeGratuiteComponent {
       console.log('DATATYPEPRIX:::>', res);
       this.dataListLiquides = res.data;
       this.filteredArticleList = this.dataListLiquides;
+      this._spinner.hide();
+    });
+  }
+  GetListCommandeGratuite(page:number) {
+    let data = {
+      paginate: false,
+      page:page,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.articleService.GetListCommandeGratuite(data).then((res: any) => {
+      console.log('ListCommandeGratuites:::>', res);
+      this.dataList = res.data;
       this._spinner.hide();
     });
   }
@@ -114,6 +145,20 @@ export class SaisieCommandeGratuiteComponent {
 
   onSubmit(): void {
     console.log(this.CommandeForm.value);
+    if (this.CommandeForm.valid) {
+      this._spinner.hide()
+      this.articleService.CreateCommandGratuite(this.CommandeForm.value).then((res: any) => {
+        console.log(res,'enregistré avec succes')
+        this._spinner.hide();
+        this.CommandeForm.reset();
+        this.OnCloseModal()
+        this.toastr.success(res.message);
+      }, (error: any) => {
+          this._spinner.hide();
+          this.toastr.info(error.error.message);
+          console.error('Erreur lors de la création', error);
+      })
+    }
 
   }
   LoadPdv() {
@@ -237,7 +282,6 @@ export class SaisieCommandeGratuiteComponent {
     }
   }
   validateQuantite(data: any): void {
-
     // Vérifier si la quantité saisie dépasse la quantité disponible
     if (data.quantite > this.stocksDisponibles[data.id]) {
       // Réinitialiser la quantité à la quantité disponible
@@ -247,6 +291,9 @@ export class SaisieCommandeGratuiteComponent {
     }else{
       this.calculatePrix(data)
     }
+  }
+  get articles(): FormArray {
+    return this.CommandeForm.get('articles') as FormArray;
   }
 
   calculatePrix(data:any) {
@@ -269,6 +316,16 @@ export class SaisieCommandeGratuiteComponent {
 
     data.oldQuantite = data.quantite;
     console.log(data);
+    this.articles.push(
+      this.fb.group({
+        codeArticleLiquide: data.liquide.code,
+        codeArticleEmballage: data.liquide.emballage.code,
+        prixUnitaireLiquide: this.prixLiquide[data.id],
+        prixUnitaireEmballage: this.prixEmballage[data.id],
+        quantite: data.quantite,
+        
+      })
+    );
     
   }
   async GetPrixByArticle(item: any): Promise<any> {
@@ -284,7 +341,8 @@ export class SaisieCommandeGratuiteComponent {
       if (response.data) {
         this.prixLiquide[item.id] = response.data.PrixLiquide;
         this.prixEmballage[item.id] = response.data.PrixConsigne;
-        console.log('prixByArticle',this.prixLiquide[item.id])
+        console.log('prixLiquide',this.prixLiquide[item.id])
+        console.log('prixEmballage',this.prixEmballage[item.id])
       }
     } catch (error:any) {
       console.log(error);
