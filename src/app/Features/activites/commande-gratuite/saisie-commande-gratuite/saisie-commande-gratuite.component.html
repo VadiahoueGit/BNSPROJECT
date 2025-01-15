@@ -27,7 +27,7 @@
   <p-table
     [styleClass]="'p-datatable-sm'"
     #dt2
-    [value]="dataList"
+    [value]="ListCommandeGratuites"
     dataKey="id"
     [rows]="8"
     [rowsPerPageOptions]="[10, 25, 50]"
@@ -47,55 +47,55 @@
         <th style="color: var(--secondary-color)">Actions</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-dataList>
+    <ng-template pTemplate="body" let-ListCommandeGratuites>
       <tr>
         <td>
-          {{ dataList.NumCommande }}
+          {{ ListCommandeGratuites.NumCommande }}
         </td>
 
         <td>
-          {{ dataList.revendeur.raisonSocial }}
+          {{ ListCommandeGratuites.revendeur.raisonSocial }}
         </td>
         <td>
-          {{ dataList.revendeur.depot.nomDepot }}
+          {{ ListCommandeGratuites.revendeur.depot.nomDepot }}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.montantEmballage }}
+            {{ ListCommandeGratuites.montantEmballage }}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.montantLiquide }}
+            {{ ListCommandeGratuites.montantLiquide }}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.prixUnitaireEmballage }}
+            {{ ListCommandeGratuites.prixUnitaireEmballage }}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.prixUnitaireLiquide }}
+            {{ ListCommandeGratuites.prixUnitaireLiquide }}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.quantite }}
+            {{ ListCommandeGratuites.quantite }}
           </span>
         </td>
         <td>
           <tr class="d-flex justify-content-center gap-3">
             <td>
               <i
-                (click)="OnEdit(dataList)"
+                (click)="OnEdit(ListCommandeGratuites)"
                 style="cursor: pointer"
                 class="fas fa-edit text-secondary"
               ></i>
             </td>
             <td>
               <i
-                (click)="OnDelete(dataList.id)"
+                (click)="OnDelete(ListCommandeGratuites.id)"
                 style="cursor: pointer"
                 class="fas fa-trash-alt text-danger"
               ></i>
@@ -319,10 +319,10 @@
                   </thead>
                   <tbody>
                     <tr
-                      *ngFor="let article of filteredArticleList; let i = index"
+                      *ngFor="let article of filteredArticleList ; let i = index"
                       style="font-size: small"
                     >
-                      <th scope="row">{{ article.reference }}</th>
+                      <th scope="row">{{ article.code }}</th>
                       <th scope="row">{{ article.libelle }}</th>
                       <td class="">
                         <input

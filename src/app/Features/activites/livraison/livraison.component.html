@@ -1,0 +1,542 @@
+<div
+  class="gap-2 d-flex align-items-center mb-3"
+  style="cursor: pointer"
+  (click)="goBack()"
+>
+  <i style="font-size: 18px" class="fas fw-bold fa-chevron-left me-2"></i>
+  <h4 class="fw-bold mb-0">Livraisons</h4>
+</div>
+
+<div class="card">
+  <div class="d-flex justify-content-end py-3">
+    <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
+      Saisir un regroupement
+    </button>
+  </div>
+  <p-table
+    [styleClass]="'p-datatable-sm'"
+    #dt2
+    [value]="dataList"
+    dataKey="id"
+    [rows]="8"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [paginator]="true"
+    (onPage)="onPage($event)"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="color: var(--secondary-color)">Réference client</th>
+        <th style="color: var(--secondary-color)">Raison sociale</th>
+        <th style="color: var(--secondary-color)">Entrepôt</th>
+        <th style="color: var(--secondary-color)">N° commande</th>
+        <th style="color: var(--secondary-color)">Montant (FCFA)</th>
+        <th style="color: var(--secondary-color)">Date</th>
+        <th style="color: var(--secondary-color)">Statut</th>
+        <th style="color: var(--secondary-color)">Localité à livrer</th>
+        <th style="color: var(--secondary-color)">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-dataList>
+      <tr>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            <!-- {{ dataList.image }} -->
+          </span>
+        </td>
+        <td>
+          <!-- {{ dataList.libelle }} -->
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            <!-- {{ dataList.format }} -->
+          </span>
+        </td>
+        <td>
+          <!-- {{ dataList.categorieproduit.libelle }} -->
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            <!-- {{ dataList.groupearticle.libelle }} -->
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            <!-- {{ dataList.Conditionnement }} -->
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            <!-- {{ dataList.plastiquenu.libelle }} -->
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            <!-- {{ dataList.bouteillevide.libelle }} -->
+          </span>
+        </td>
+        <td>
+          <!-- <span class="ml-1 vertical-align-middle">
+                          {{ dataList.plastiquenu.libelle }}
+                      </span> -->
+        </td>
+        <td>
+          <tr class="d-flex justify-content-center gap-3">
+            <td>
+              <i
+                (click)="OnEdit(dataList)"
+                style="cursor: pointer"
+                class="fas fa-edit text-secondary"
+              ></i>
+            </td>
+            <td>
+              <i
+                (click)="OnDelete(dataList.id)"
+                style="cursor: pointer"
+                class="fas fa-trash-alt text-danger"
+              ></i>
+            </td>
+          </tr>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">Aucune commande trouvé.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Modal creation -->
+<!-- Modal -->
+<!--   
+  <div *ngIf="isModalOpen" class="custom-modal">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+    
+        <div class="modal-header d-flex align-items-center">
+          <div
+            class="d-flex justify-content-center align-items-center"
+            style="
+              background-color: #dbffe8;
+              border-radius: 50%;
+              width: 3rem;
+              height: 3rem;
+            "
+          >
+            <i class="fas fa-box-check text-success fs-4"></i>
+          </div>
+          <h1 class="modal-title fs-5 ms-3">Gestion des commandes clients</h1>
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            (click)="OnCloseModal()"
+          ></button>
+        </div>
+  
+       
+        <div class="modal-body" style="max-height: 70vh; overflow-y: auto">
+          <form [formGroup]="livraisonForm">
+            <div class="mb-4 text-center">
+              <div class="d-flex justify-content-center gap-2">
+                <div class="d-flex">
+                  <div class="mr-2">
+                    <label for="client" class="form-label me-2 mb-0 pt-2"
+                      >Client<span class="text-danger">*</span></label
+                    >
+                  </div>
+                  <ng-select
+                    class="form-control"
+                    [items]="listRevendeurs"
+                    (change)="onChange($event)"
+                    bindLabel="raisonSocial"
+                    bindValue="id"
+                    formControlName="clientId"
+                    [searchable]="true"
+                  >
+                  </ng-select>
+                </div>
+              
+              </div>
+            </div>
+  
+           
+  
+            <div class="border rounded p-3 mb-4">
+              <h6 class="mb-4">Informations client</h6>
+              <div class="row g-3">
+                <div class="col-md-3">
+                  <label for="numeroCompte" class="form-label"
+                    >Numéro de compte<span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="numeroCompte"
+                    formControlName="numeroCompte"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label for="raisonSociale" class="form-label"
+                    >Raison sociale<span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="raisonSociale"
+                    formControlName="raisonSociale"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label for="contact" class="form-label"
+                    >Contact<span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="contact"
+                    formControlName="contact"
+                  />
+                </div>
+  
+                <div class="col-md-3">
+                  <label for="montantCredit" class="form-label"
+                    >Montant crédit<span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="montantCredit"
+                    formControlName="montantCredit"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label for="enCours" class="form-label"
+                    >En cours<span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="enCours"
+                    formControlName="enCours"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label for="soldeLiquide" class="form-label"
+                    >Solde liquide<span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="soldeLiquide"
+                    formControlName="soldeLiquide"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label for="soldeEmballage" class="form-label"
+                    >Solde emballage<span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="soldeEmballage"
+                    formControlName="soldeEmballage"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label for="statutCompte" class="form-label"
+                    >Statut du compte<span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="statutCompte"
+                    formControlName="statutCompte"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label for="numSap" class="form-label"
+                    >Numéro SAP<span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="numSap"
+                    formControlName="numSap"
+                  />
+                </div>
+              </div>
+            </div>
+  
+           
+            <div class="border rounded p-3 mb-4">
+              <h6 class="mb-4">Saisie commande</h6>
+              <div class="row g-3">
+                <div class="col-md-3">
+                  <label for="fraisTransport" class="form-label"
+                    >Frais transport<span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="fraisTransport"
+                    formControlName="fraisTransport"
+                  />
+                </div>
+  
+                <div class="col-md-3">
+                  <label for="remise" class="form-label"
+                    >Remise<span class="text-danger">*</span></label
+                  >
+                  <select class="form-control" formControlName="remise">
+                    <option value="" disabled>Choisir un nombre</option>
+                  </select>
+                </div>
+                <div class="col-md-3" style="margin-top: 3rem">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    (click)="selectArticle()"
+                  >
+                    Ajouter des articles
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+            <div class="p-2 mt-3">
+              <div style="max-height: 350px; overflow-y: auto;">
+              <table class="table table-bordered">
+                <thead class="table-success">
+        
+                <tr>
+                  <th scope="col" colspan="5">PRIX UNITAIRE H.T (FCFA)</th>
+                  <th scope="col" colspan="4">MONTANT H.T (FCFA)</th>
+                </tr>
+               
+                <tr>
+                  <th scope="col">Liquide</th>
+                  <th scope="col">Liquide (FCFA)</th>
+                  <th scope="col">Emballage (FCFA)</th>
+                  <th scope="col">Total (FCFA)</th>
+                  <th scope="col">Qte</th>
+                  <th scope="col">Liquide (FCFA)</th>
+                  <th scope="col">Emballage (FCFA)</th>
+                  <th scope="col">Total (FCFA)</th>
+                  <th scope="col">Actions</th>
+                </tr>
+                </thead>
+    
+                  <tbody >
+                  <tr *ngFor="let item of selectedArticles">
+                    <td>{{ item.liquide.libelle }}1</td>
+                    <td>{{ prixLiquide[item.id] }}</td>
+                    <td>{{ prixEmballage[item.id] }}</td>
+                    <td>{{ prixEmballage[item.id] + prixLiquide[item.id] }}</td>
+                    <td>
+                      <input
+                        type="number"
+                        class="form-control-custom"
+                        [(ngModel)]="item.quantite"
+                        [min]="0"
+                        [max]="stocksDisponibles[item.id]"
+                        [disabled]="stocksDisponibles[item.id] === 0"
+                        [ngClass]="{ 'invalid': item.quantite > stocksDisponibles[item.id] }"
+                        (blur)="validateQuantite(item)"
+                      >
+                    </td>
+                    <td>{{ prixLiquideTotal[item.id] }}</td>
+                    <td>{{ prixEmballageTotal[item.id] }}</td>
+                    <td>{{ montantTotal[item.id] }}</td>
+                    <td class="d-flex justify-content-center">
+                      <button type="button" class="btn btn-danger btn-sm" (click)="removeArticle(item)">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr class="table-dark">
+                    <th scope="col" colspan="4">Total :</th>
+                    <td>{{totalQte}}</td>
+                    <td>{{totalLiquide}}</td>
+                    <td>{{totalEmballage}}</td>
+                    <td>{{totalGlobal}}</td>
+                    <td></td>
+                  </tr>
+                  </tbody>
+    
+              </table>
+            </div>
+            </div>
+          
+        </div>
+  
+  
+        <div class="modal-footer gap-3 px-4">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="OnCloseModal()"
+          >
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-primary" (click)="onSubmit()">
+            Valider
+          </button>
+        </div>
+      </div>
+    </div>
+  </div> -->
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div
+    class="modal-dialog modal-dialog-centered"
+    style="width: 90%; max-width: 1200px"
+  >
+    <div class="modal-content">
+      <div
+        class="modal-header"
+       
+      >
+        <h5 class="modal-title ">Regroupement</h5>
+        <button type="button" class="btn-close" aria-label="Close"></button>
+      </div>
+
+      <div
+        class="modal-body"
+        style="padding: 20px; max-height: 70vh; overflow-y: auto"
+      >
+        <div class="row">
+          <div class="col-md-7">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="zone" class="form-label">Zone*</label>
+                <select id="zone" class="form-select">
+                  <option value="zone1">Zone Bingerville</option>
+                </select>
+              </div>
+            </div>
+
+            <table class="table table-bordered table-hover">
+              <thead class="table-success">
+                <tr>
+                  <th>Commande</th>
+                  <th>Raison sociale</th>
+                  <th>Casier</th>
+                  <th>Situation géographique</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>2846</td>
+                  <td>DEPOT WINNER KING YEO NAMOGO</td>
+                  <td>20</td>
+                  <td>Bingerville</td>
+                  <td>05/12/2024 13:30:32</td>
+                  <td>
+                    <input type="checkbox" checked />
+                  </td>
+                </tr>
+                <tr>
+                  <td>2845</td>
+                  <td>DEPOT WINNER KING YEO NAMOGO</td>
+                  <td>131</td>
+                  <td>Bingerville</td>
+                  <td>05/12/2024 13:27:38</td>
+                  <td>
+                    <input type="checkbox" checked />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col-md-5">
+            <div class="card">
+              <div class="card-header">
+                <h6 class="mb-0">Informations sur le regroupement</h6>
+              </div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label for="regroupement" class="form-label"
+                    >Regroupements*</label
+                  >
+                  <input
+                    type="text"
+                    id="regroupement"
+                    class="form-control"
+                    value="BL2785917334"
+                    readonly
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="zoneLivraison" class="form-label"
+                    >Zones de livraison</label
+                  >
+                  <input
+                    type="text"
+                    id="zoneLivraison"
+                    class="form-control"
+                    value="ZONE BINGERVILLE"
+                    readonly
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="palettes" class="form-label">Palettes</label>
+                  <input
+                    type="number"
+                    id="palettes"
+                    class="form-control"
+                    value="20"
+                    readonly
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="transporteur" class="form-label"
+                    >Transporteur</label
+                  >
+                  <select id="transporteur" class="form-select">
+                    <option>Sélectionner un transporteur</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="chauffeur" class="form-label">Chauffeur</label>
+                  <select id="chauffeur" class="form-select">
+                    <option>Sélectionner un véhicule</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="totalPalettes" class="form-label"
+                    >Total Palettes</label
+                  >
+                  <input
+                    type="number"
+                    id="totalPalettes"
+                    class="form-control"
+                    value="0"
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer gap-3 px-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="OnCloseModal()"
+        >
+          Annuler
+        </button>
+        <button type="submit" class="btn btn-primary" (click)="onSubmit()">
+          Valider
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
