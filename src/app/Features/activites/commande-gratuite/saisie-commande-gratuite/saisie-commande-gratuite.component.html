@@ -1,25 +1,6 @@
 <div class="card">
   <div class="d-flex justify-content-end py-3">
-    <div style="margin-right: 7rem; display: flex; gap: 20px">
-      <label>
-        <input
-          type="radio"
-          name="options"
-          [(ngModel)]="selectedOption"
-          value="gratuitClient"
-        />
-        Gratuit client
-      </label>
-      <label>
-        <input
-          type="radio"
-          name="options"
-          [(ngModel)]="selectedOption"
-          value="autresGratuits"
-        />
-        Autres gratuits
-      </label>
-    </div>
+
     <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
       Saisir une commande
     </button>
@@ -90,7 +71,7 @@
               <i
                 (click)="OnEdit(dataList)"
                 style="cursor: pointer"
-                class="fas fa-edit text-secondary"
+                class="fas fa-eye text-secondary"
               ></i>
             </td>
             <td>
@@ -141,7 +122,7 @@
           class="modal-title fs-5 ms-3"
           id="staticBackdropLabel"
         >
-          Modification de la commande
+          Détails de la commande
         </h1>
       </div>
       <div class="modal-body">
@@ -160,6 +141,7 @@
                   bindValue="id"
                   formControlName="revendeurId"
                   [searchable]="true"
+                  (change)="onRevendeurChange($event)"
                 >
                 </ng-select>
               </div>
@@ -167,6 +149,7 @@
                 <label for="" class="form-label"></label>
                 <button
                   type="button"
+                  [disabled]="CommandeForm.controls['revendeurId'].invalid"
                   class="btn btn-secondary"
                   (click)="selectArticle()"
                 >
@@ -218,6 +201,7 @@
                       }"
                       (blur)="validateQuantite(item)"
                     />
+                    / {{stocksDisponibles[item.liquide.id]}}
                   </td>
                   <td>{{ prixLiquideTotal[item.id] }}</td>
                   <td>{{ prixEmballageTotal[item.id] }}</td>
@@ -312,6 +296,7 @@
                     <tr style="font-size: small">
                       <th scope="col" class="text-secondary">Code</th>
                       <th scope="col" class="text-secondary">Produits</th>
+                      <th scope="col" class="text-secondary">Disponibilité</th>
                       <th scope="col" class="text-secondary text-center">
                         Choix
                       </th>
@@ -324,6 +309,7 @@
                     >
                       <th scope="row">{{ article.reference }}</th>
                       <th scope="row">{{ article.libelle }}</th>
+                      <th scope="row">{{stocksDisponibles[article.liquide.id]}}</th>
                       <td class="">
                         <input
                           type="checkbox"
@@ -331,7 +317,9 @@
                           [name]="'checkbox_' + i"
                           [(ngModel)]="article.isChecked"
                           (change)="onCheckboxChange(article)"
+                          [disabled]="stocksDisponibles[article.liquide.id] <=0"
                         />
+
                       </td>
                     </tr>
                   </tbody>

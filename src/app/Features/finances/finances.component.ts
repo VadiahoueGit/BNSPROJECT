@@ -13,11 +13,16 @@ export class FinancesComponent {
       title: 'Comptablité',
       url: 'feature/finances/comptabilite',
     },
-  
+    {
+      image: 'assets/icon/store.png',
+      title: 'Revendeurs',
+      url: 'feature/partenaire/revendeur',
+    }
+
   ]
   constructor(private _router: Router) { }
   ngOnInit(): void {
-    
+
   }
   displayItem(elt: any) {
     console.log(elt)

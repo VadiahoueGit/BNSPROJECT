@@ -46,7 +46,7 @@ export class SaisieCommandeGratuiteComponent {
   selectedOption: string = 'gratuitClient';
   listRevendeurs: any[] = [];
   ListCommandeGratuites: any[] = [];
-
+  depotId: any = 0;
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -58,10 +58,9 @@ export class SaisieCommandeGratuiteComponent {
   ngOnInit() {
     this.CommandeForm = this.fb.group({
       revendeurId: [null, Validators.required],
-      depotId: [2, Validators.required],
+      depotId: [null, Validators.required],
       articles: this.fb.array([]),
     });
-    this.GetArticleList(1)
     this.LoadPdv()
     this.GetRevendeurList(1)
     this.GetListCommandeGratuite(1)
@@ -89,6 +88,9 @@ export class SaisieCommandeGratuiteComponent {
     this.articleService.GetArticleList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.dataListLiquides = res.data;
+      this.dataListLiquides.forEach((item: any) => {
+        this.GetStockDisponibleByDepot(item)
+      })
       this.filteredArticleList = this.dataListLiquides;
       this._spinner.hide();
     });
@@ -144,13 +146,15 @@ export class SaisieCommandeGratuiteComponent {
   }
 
   onSubmit(): void {
+    this.CommandeForm.controls['depotId'].setValue(this.depotId);
     console.log(this.CommandeForm.value);
     if (this.CommandeForm.valid) {
-      this._spinner.hide()
+      this._spinner.show()
       this.articleService.CreateCommandGratuite(this.CommandeForm.value).then((res: any) => {
         console.log(res,'enregistré avec succes')
         this._spinner.hide();
         this.CommandeForm.reset();
+        this.GetListCommandeGratuite(1)
         this.OnCloseModal()
         this.toastr.success(res.message);
       }, (error: any) => {
@@ -158,6 +162,8 @@ export class SaisieCommandeGratuiteComponent {
           this.toastr.info(error.error.message);
           console.error('Erreur lors de la création', error);
       })
+    }else{
+      this.toastr.warning('Formulaire invalide');
     }
 
   }
@@ -176,7 +182,6 @@ export class SaisieCommandeGratuiteComponent {
   }
   onCheckboxChange(article: any): void {
     this.GetPrixByArticle(article)
-    // this.GetStockDisponibleByDepot(article)
     if (article.isChecked) {
       this.selectedArticles.push(article);
       this.afficherArticlesSelectionnes()
@@ -255,10 +260,15 @@ export class SaisieCommandeGratuiteComponent {
       }
     );
   }
+  onRevendeurChange(selectedItem: any): void {
+    console.log('Élément sélectionné :', selectedItem);
+    this.depotId = selectedItem.depot.id;
+    this.GetArticleList(1)
+  }
   async GetStockDisponibleByDepot(item: any): Promise<any> {
     let data = {
-      productId: item.code,
-      depotId: 0,
+      productId: item.liquide.code,
+      depotId:this.depotId
     };
 
     try {
@@ -267,17 +277,17 @@ export class SaisieCommandeGratuiteComponent {
       console.log(response)
       // Vérifier si le statusCode est 200
       if (response) {
-        this.stocksDisponibles[item.id] = response.quantiteDisponible;
-        console.log(this.stocksDisponibles)
+        this.stocksDisponibles[item.liquide.id] = response.quantiteDisponible;
+        console.log(this.stocksDisponibles[item.liquide.id])
       } else if (response.statusCode === 404) {
-        this.stocksDisponibles[item.id] =  0; // Si le code est 404, retourner 0
+        this.stocksDisponibles[item.liquide.id] =  0; // Si le code est 404, retourner 0
       } else {
         return null; // Si un autre code, retourner null ou une valeur par défaut
       }
     } catch (error:any) {
       console.log(error);
       if (error.status === 404) {
-        this.stocksDisponibles[item.id] = 0; // Si le code est 404, retourner 0
+        this.stocksDisponibles[item.liquide.id] = 0; // Si le code est 404, retourner 0
       }
     }
   }
@@ -323,10 +333,10 @@ export class SaisieCommandeGratuiteComponent {
         prixUnitaireLiquide: this.prixLiquide[data.id],
         prixUnitaireEmballage: this.prixEmballage[data.id],
         quantite: data.quantite,
-        
+
       })
     );
-    
+
   }
   async GetPrixByArticle(item: any): Promise<any> {
     let data = {
@@ -339,7 +349,7 @@ export class SaisieCommandeGratuiteComponent {
       console.log(response)
       // Vérifier si le statusCode est 200
       if (response.data) {
-        this.prixLiquide[item.id] = response.data.PrixLiquide;
+        this.prixLiquide[item.id] = 0;
         this.prixEmballage[item.id] = response.data.PrixConsigne;
         console.log('prixLiquide',this.prixLiquide[item.id])
         console.log('prixEmballage',this.prixEmballage[item.id])
