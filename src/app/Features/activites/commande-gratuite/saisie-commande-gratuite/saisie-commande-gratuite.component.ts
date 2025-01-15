@@ -30,6 +30,8 @@ export class SaisieCommandeGratuiteComponent {
   searchTerm: string = '';
   filteredArticleList: any[] = [];
   dataListLiquides: any=[];
+  dataListPlastiqueNu: any=[];
+  dataListEmballage: any=[];
   dataListArticlesProduits: any=[];
   currentPage: number;
   rowsPerPage: any;
@@ -61,9 +63,11 @@ export class SaisieCommandeGratuiteComponent {
       depotId: [null, Validators.required],
       articles: this.fb.array([]),
     });
+    this.GetArticleList(1)
     this.LoadPdv()
     this.GetRevendeurList(1)
     this.GetListCommandeGratuite(1)
+    // this.fetchData()
   }
   GetRevendeurList(page: number) {
     let data = {
@@ -104,7 +108,7 @@ export class SaisieCommandeGratuiteComponent {
     this._spinner.show();
     this.articleService.GetListCommandeGratuite(data).then((res: any) => {
       console.log('ListCommandeGratuites:::>', res);
-      this.dataList = res.data;
+      this.ListCommandeGratuites = res.data;
       this._spinner.hide();
     });
   }
@@ -117,7 +121,53 @@ export class SaisieCommandeGratuiteComponent {
   clear(table: Table) {
     table.clear();
   }
+  async fetchData() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    try {
+      // Effectuer les deux appels API en parallèle
+      const [plastiques, liquides, emballage]: [any, any, any]  = await Promise.all([
+        this.articleService.GetPlastiqueNuList(data),  // Remplacez par votre méthode API
+        this.articleService.GetLiquideList(data) ,
+        this.articleService.GetEmballageList(data)     // Remplacez par votre méthode API
+      ]);
 
+      console.log("Données plastiques:", plastiques);
+      console.log("Données liquides:", liquides);
+      console.log("Données emballage:", emballage);
+      // Vérifier si plastiques et liquides sont bien des tableaux
+      if (Array.isArray(plastiques.data)) {
+        this.dataListPlastiqueNu = plastiques.data;
+        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
+        this.dataList.push(...plastiques.data);
+      } else {
+        console.error("Les données de plastiques ne sont pas un tableau");
+      }
+
+      if (Array.isArray(liquides.data)) {
+        this.dataListLiquides = liquides.data;
+        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
+        this.dataList.push(...liquides.data);
+      } else {
+        console.error("Les données de liquides ne sont pas un tableau");
+      }
+      if (Array.isArray(emballage.data)) {
+        // this.dataListLiquides = emballage.data;
+        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
+        this.dataListEmballage.push(...emballage.data);
+      } else {
+        console.error("Les données de liquides ne sont pas un tableau");
+      }
+      this.filteredArticleList = this.dataList;
+      console.log('Données combinées dans dataList:', this.filteredArticleList);
+    } catch (error) {
+      // Gestion des erreurs
+      console.error('Erreur lors de la récupération des données:', error);
+    }
+  }
   OnCloseModal() {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
@@ -307,7 +357,6 @@ export class SaisieCommandeGratuiteComponent {
   }
 
   calculatePrix(data:any) {
-
 
     if (this.prixLiquideTotal[data.id]) {
       this.totalEmballage -= this.prixEmballageTotal[data.id] || 0;

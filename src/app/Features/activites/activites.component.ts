@@ -27,7 +27,7 @@ export class ActivitesComponent implements OnInit{
     {
       image: 'assets/icon/delivery.png',
       title: 'Livraisons',
-      url: 'feature/activites/logistique',
+      url: 'feature/activites/livraison',
     },
     {
       image: 'assets/icon/retour.png',
