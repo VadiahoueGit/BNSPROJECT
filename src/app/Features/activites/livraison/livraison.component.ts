@@ -16,7 +16,16 @@ import { Location } from '@angular/common';
 export class LivraisonComponent {
  @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
-  dataList!: any[];
+  dataList: any[] = [
+    {
+      refclient:'test',
+      raisonsociale:'test',
+      localite:'test',
+      statut:'test',
+      prenom:'test',
+      nom:'test'
+    }
+  ];
   livraisonForm!: FormGroup;
   loading: boolean = true;
   isModalOpen = false;
@@ -59,6 +68,7 @@ export class LivraisonComponent {
   currentPage: number;
   rowsPerPage: any;
   listRevendeurs: any[] = [];
+  isModalOpenDetail: boolean = false;
   constructor(
     private articleService: ArticleServiceService,
     private _userSerive: UtilisateurResolveService,
@@ -87,14 +97,11 @@ export class LivraisonComponent {
       fraisTransport: [0, Validators.required],
     });
 
-    // Par défaut, aucun article n'est sélectionné
     this.selectedArticle = this.articles[0];
     this.articleService.ListPlastiquesNu.subscribe((res: any) => {
       this.dataListPlastiqueNu = res;
     });
-    // this.articleService.ListLiquides.subscribe((res: any) => {
-    //   this.dataListLiquides = res;
-    // });
+
     this.articleService.ListBouteilleVide.subscribe((res: any) => {
       this.dataListBouteilleVide = res;
     });
@@ -108,6 +115,7 @@ export class LivraisonComponent {
     });
     this.GetArticleList(1);
     this.GetRevendeurList(1);
+    // this.dataList
   }
   onDelete(item: any) {
     console.log(item);
@@ -136,6 +144,14 @@ export class LivraisonComponent {
     console.log(this.isModalOpen);
   }
 
+  OnView(data: any) {
+    this.updateData = data;
+    this.isModalOpenDetail = true;
+  }
+  closeDetailModal(){
+    this.isModalOpenDetail = false;
+
+  }
   OnEdit(data: any) {
     this.isEditMode = true;
     console.log(data);
