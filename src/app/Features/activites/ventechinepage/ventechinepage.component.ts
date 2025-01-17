@@ -1,8 +1,12 @@
 import {Component} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {NgxSpinnerService} from 'ngx-spinner';
 import {ToastrService} from 'ngx-toastr';
 import {ArticleServiceService} from "../../../core/article-service.service";
+import {ActiviteService} from "../../../core/activite.service";
+import {UtilisateurResolveService} from "../../../core/utilisateur-resolve.service";
+import {CoreServiceService} from "../../../core/core-service.service";
+import {LogistiqueService} from "../../../core/logistique.service";
 
 @Component({
   selector: 'app-ventechinepage',
@@ -34,9 +38,15 @@ export class VentechinepageComponent {
   totalQte: number = 0;
   prixEmballageTotal: any = {};
   montantTotal: any = {};
-
+  dataListZone: any;
+  dataListCommercial: any;
+  dataListCamion: any;
+  depotId:number = 0;
   constructor(private _spinner: NgxSpinnerService,
               private articleService: ArticleServiceService,
+              private logistiqueService: LogistiqueService,
+              private coreService: CoreServiceService,
+              private utilisateurService: UtilisateurResolveService,
               private toastr: ToastrService,
               private fb: FormBuilder,
   ) {
@@ -52,18 +62,24 @@ export class VentechinepageComponent {
       zone: [null, Validators.required],
       date: [null, Validators.required],
       camion: [0, Validators.required],
-      produit: [0, Validators.required],
-      quantite: [0, Validators.required],
+      articles: this.fb.array([]),
     });
 
     this.GetArticleList(1)
+    this.GetCommercialList(1)
+    this.GetZoneList(1)
+    this.GetCamionList(1)
   }
 
   OnCloseModal() {
     this.isModalOpen = false;
     console.log(this.isModalOpen)
   }
-
+  onCommercialChange(selectedItem: any): void {
+    console.log('Élément sélectionné :', selectedItem);
+    this.depotId = selectedItem.depot.id;
+    this.GetArticleList(1)
+  }
   selectArticle() {
     this.isEditMode = false;
     this.isChoiceModalOpen = true;
@@ -82,7 +98,7 @@ export class VentechinepageComponent {
 
   onCheckboxChange(article: any): void {
     this.GetPrixByArticle(article)
-    // this.GetStockDisponibleByDepot(article)
+    this.GetStockDisponibleByDepot(article)
     if (article.isChecked) {
       this.selectedArticles.push(article);
       this.afficherArticlesSelectionnes()
@@ -94,6 +110,33 @@ export class VentechinepageComponent {
       if (indexToRemove !== -1) {
         this.selectedArticles.splice(indexToRemove, 1);
         this.afficherArticlesSelectionnes()
+      }
+    }
+  }
+
+  async GetStockDisponibleByDepot(item: any): Promise<any> {
+    let data = {
+      productId: item.liquide.code,
+      depotId:this.depotId
+    };
+
+    try {
+      // Attendre la réponse de la promesse
+      const response:any = await this.articleService.GetStockDisponibleByDepot(data);
+      console.log(response)
+      // Vérifier si le statusCode est 200
+      if (response) {
+        this.stocksDisponibles[item.liquide.id] = response.quantiteDisponible;
+        console.log(this.stocksDisponibles[item.liquide.id])
+      } else if (response.statusCode === 404) {
+        this.stocksDisponibles[item.liquide.id] =  0; // Si le code est 404, retourner 0
+      } else {
+        return null; // Si un autre code, retourner null ou une valeur par défaut
+      }
+    } catch (error:any) {
+      console.log(error);
+      if (error.status === 404) {
+        this.stocksDisponibles[item.liquide.id] = 0; // Si le code est 404, retourner 0
       }
     }
   }
@@ -152,6 +195,7 @@ export class VentechinepageComponent {
     // this.GetArticleList(this.currentPage);
   }
 
+
   GetArticleList(page:number) {
     let data = {
       paginate: false,
@@ -166,6 +210,99 @@ export class VentechinepageComponent {
       this._spinner.hide();
     });
   }
+
+  GetCommercialList(page:number) {
+    let data = {
+      paginate: false,
+      page:page,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.utilisateurService.GetCommercialList(data).then((res: any) => {
+      console.log('DATATYPEPRIX:::>', res);
+      this.dataListCommercial = res.data;
+      this.dataListCommercial = this.dataListCommercial.map((item:any) => ({
+        ...item,
+        fullLabel: `${item.nom} ${item.prenom}`
+      }));
+      this._spinner.hide();
+    });
+  }
+
+  GetZoneList(page:number) {
+    let data = {
+      paginate: false,
+      page:page,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.coreService.GetZoneList(data).then((res: any) => {
+      console.log('DATATYPEPRIX:::>', res);
+      this.dataListZone = res.data;
+      this._spinner.hide();
+    });
+  }
+
+  GetCamionList(page:number) {
+    let data = {
+      paginate: false,
+      page:page,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.logistiqueService.GetVehiculeList(data).then((res: any) => {
+      console.log('DATATYPEPRIX:::>', res);
+      this.dataListCamion = res.data;
+      this._spinner.hide();
+    });
+  }
+
+  validateQuantite(data: any): void {
+    // Vérifier si la quantité saisie dépasse la quantité disponible
+    if (data.quantite > this.stocksDisponibles[data.id]) {
+      // Réinitialiser la quantité à la quantité disponible
+      data.quantite ='';
+      // Afficher un message de warning
+      this.toastr.warning('La quantité saisie dépasse la quantité disponible.');
+    }else{
+      this.calculatePrix(data)
+    }
+  }
+  get articles(): FormArray {
+    return this.VenteForm.get('articles') as FormArray;
+  }
+  calculatePrix(data:any) {
+
+    if (this.prixLiquideTotal[data.id]) {
+      this.totalEmballage -= this.prixEmballageTotal[data.id] || 0;
+      this.totalLiquide -= this.prixLiquideTotal[data.id] || 0;
+      this.totalGlobal -= this.montantTotal[data.id] || 0;
+      this.totalQte -= data.oldQuantite || 0
+    }
+    this.prixLiquideTotal[data.id] = data.quantite * this.prixLiquide[data.id];
+    this.prixEmballageTotal[data.id] = data.quantite * this.prixEmballage[data.id];
+    this.montantTotal[data.id] = this.prixLiquideTotal[data.id] + this.prixEmballageTotal[data.id];
+
+    this.totalEmballage += this.prixEmballageTotal[data.id];
+    this.totalLiquide  += this.prixLiquideTotal[data.id];
+    this.totalGlobal += this.montantTotal[data.id];
+    this.totalQte += data.quantite
+
+    data.oldQuantite = data.quantite;
+    console.log(data);
+    this.articles.push(
+      this.fb.group({
+        codeArticleLiquide: data.liquide.code,
+        codeArticleEmballage: data.liquide.emballage.code,
+        prixUnitaireLiquide: this.prixLiquide[data.id],
+        prixUnitaireEmballage: this.prixEmballage[data.id],
+        quantite: data.quantite,
+
+      })
+    );
+
+  }
+
   async GetPrixByArticle(item: any): Promise<any> {
     let data = {
       id: item.id,
