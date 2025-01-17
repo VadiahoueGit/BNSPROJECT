@@ -30,9 +30,6 @@
         <th style="color: var(--secondary-color)">Entrepôt</th>
         <th style="color: var(--secondary-color)">N° commande</th>
         <th style="color: var(--secondary-color)">Montant (FCFA)</th>
-        <th style="color: var(--secondary-color)">Date</th>
-        <th style="color: var(--secondary-color)">Statut</th>
-        <th style="color: var(--secondary-color)">Localité à livrer</th>
         <th style="color: var(--secondary-color)">Actions</th>
       </tr>
     </ng-template>
@@ -40,52 +37,33 @@
       <tr>
         <td>
           <span class="ml-1 vertical-align-middle">
-            <!-- {{ dataList.image }} -->
+            {{ dataList.refclient }}
           </span>
         </td>
         <td>
-          <!-- {{ dataList.libelle }} -->
+          {{ dataList.raisonsociale }}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            <!-- {{ dataList.format }} -->
+            {{ dataList.localite }}
           </span>
         </td>
         <td>
-          <!-- {{ dataList.categorieproduit.libelle }} -->
+          {{ dataList.statut }}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            <!-- {{ dataList.groupearticle.libelle }} -->
+            {{ dataList.prenom }}
           </span>
         </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            <!-- {{ dataList.Conditionnement }} -->
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            <!-- {{ dataList.plastiquenu.libelle }} -->
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            <!-- {{ dataList.bouteillevide.libelle }} -->
-          </span>
-        </td>
-        <td>
-          <!-- <span class="ml-1 vertical-align-middle">
-                          {{ dataList.plastiquenu.libelle }}
-                      </span> -->
-        </td>
+
         <td>
           <tr class="d-flex justify-content-center gap-3">
             <td>
               <i
-                (click)="OnEdit(dataList)"
+                (click)="OnView(dataList)"
                 style="cursor: pointer"
-                class="fas fa-edit text-secondary"
+                class="fas fa-eye text-secondary"
               ></i>
             </td>
             <td>
@@ -109,295 +87,15 @@
 
 <!-- Modal creation -->
 <!-- Modal -->
-<!--   
-  <div *ngIf="isModalOpen" class="custom-modal">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-    
-        <div class="modal-header d-flex align-items-center">
-          <div
-            class="d-flex justify-content-center align-items-center"
-            style="
-              background-color: #dbffe8;
-              border-radius: 50%;
-              width: 3rem;
-              height: 3rem;
-            "
-          >
-            <i class="fas fa-box-check text-success fs-4"></i>
-          </div>
-          <h1 class="modal-title fs-5 ms-3">Gestion des commandes clients</h1>
-          <button
-            type="button"
-            class="btn-close"
-            aria-label="Close"
-            (click)="OnCloseModal()"
-          ></button>
-        </div>
-  
-       
-        <div class="modal-body" style="max-height: 70vh; overflow-y: auto">
-          <form [formGroup]="livraisonForm">
-            <div class="mb-4 text-center">
-              <div class="d-flex justify-content-center gap-2">
-                <div class="d-flex">
-                  <div class="mr-2">
-                    <label for="client" class="form-label me-2 mb-0 pt-2"
-                      >Client<span class="text-danger">*</span></label
-                    >
-                  </div>
-                  <ng-select
-                    class="form-control"
-                    [items]="listRevendeurs"
-                    (change)="onChange($event)"
-                    bindLabel="raisonSocial"
-                    bindValue="id"
-                    formControlName="clientId"
-                    [searchable]="true"
-                  >
-                  </ng-select>
-                </div>
-              
-              </div>
-            </div>
-  
-           
-  
-            <div class="border rounded p-3 mb-4">
-              <h6 class="mb-4">Informations client</h6>
-              <div class="row g-3">
-                <div class="col-md-3">
-                  <label for="numeroCompte" class="form-label"
-                    >Numéro de compte<span class="text-danger">*</span></label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="numeroCompte"
-                    formControlName="numeroCompte"
-                  />
-                </div>
-                <div class="col-md-3">
-                  <label for="raisonSociale" class="form-label"
-                    >Raison sociale<span class="text-danger">*</span></label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="raisonSociale"
-                    formControlName="raisonSociale"
-                  />
-                </div>
-                <div class="col-md-3">
-                  <label for="contact" class="form-label"
-                    >Contact<span class="text-danger">*</span></label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="contact"
-                    formControlName="contact"
-                  />
-                </div>
-  
-                <div class="col-md-3">
-                  <label for="montantCredit" class="form-label"
-                    >Montant crédit<span class="text-danger">*</span></label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="montantCredit"
-                    formControlName="montantCredit"
-                  />
-                </div>
-                <div class="col-md-3">
-                  <label for="enCours" class="form-label"
-                    >En cours<span class="text-danger">*</span></label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="enCours"
-                    formControlName="enCours"
-                  />
-                </div>
-                <div class="col-md-3">
-                  <label for="soldeLiquide" class="form-label"
-                    >Solde liquide<span class="text-danger">*</span></label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="soldeLiquide"
-                    formControlName="soldeLiquide"
-                  />
-                </div>
-                <div class="col-md-3">
-                  <label for="soldeEmballage" class="form-label"
-                    >Solde emballage<span class="text-danger">*</span></label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="soldeEmballage"
-                    formControlName="soldeEmballage"
-                  />
-                </div>
-                <div class="col-md-3">
-                  <label for="statutCompte" class="form-label"
-                    >Statut du compte<span class="text-danger">*</span></label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="statutCompte"
-                    formControlName="statutCompte"
-                  />
-                </div>
-                <div class="col-md-3">
-                  <label for="numSap" class="form-label"
-                    >Numéro SAP<span class="text-danger">*</span></label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="numSap"
-                    formControlName="numSap"
-                  />
-                </div>
-              </div>
-            </div>
-  
-           
-            <div class="border rounded p-3 mb-4">
-              <h6 class="mb-4">Saisie commande</h6>
-              <div class="row g-3">
-                <div class="col-md-3">
-                  <label for="fraisTransport" class="form-label"
-                    >Frais transport<span class="text-danger">*</span></label
-                  >
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="fraisTransport"
-                    formControlName="fraisTransport"
-                  />
-                </div>
-  
-                <div class="col-md-3">
-                  <label for="remise" class="form-label"
-                    >Remise<span class="text-danger">*</span></label
-                  >
-                  <select class="form-control" formControlName="remise">
-                    <option value="" disabled>Choisir un nombre</option>
-                  </select>
-                </div>
-                <div class="col-md-3" style="margin-top: 3rem">
-                  <button
-                    type="submit"
-                    class="btn btn-primary"
-                    (click)="selectArticle()"
-                  >
-                    Ajouter des articles
-                  </button>
-                </div>
-              </div>
-            </div>
-          </form>
-            <div class="p-2 mt-3">
-              <div style="max-height: 350px; overflow-y: auto;">
-              <table class="table table-bordered">
-                <thead class="table-success">
-        
-                <tr>
-                  <th scope="col" colspan="5">PRIX UNITAIRE H.T (FCFA)</th>
-                  <th scope="col" colspan="4">MONTANT H.T (FCFA)</th>
-                </tr>
-               
-                <tr>
-                  <th scope="col">Liquide</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Qte</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Actions</th>
-                </tr>
-                </thead>
-    
-                  <tbody >
-                  <tr *ngFor="let item of selectedArticles">
-                    <td>{{ item.liquide.libelle }}1</td>
-                    <td>{{ prixLiquide[item.id] }}</td>
-                    <td>{{ prixEmballage[item.id] }}</td>
-                    <td>{{ prixEmballage[item.id] + prixLiquide[item.id] }}</td>
-                    <td>
-                      <input
-                        type="number"
-                        class="form-control-custom"
-                        [(ngModel)]="item.quantite"
-                        [min]="0"
-                        [max]="stocksDisponibles[item.id]"
-                        [disabled]="stocksDisponibles[item.id] === 0"
-                        [ngClass]="{ 'invalid': item.quantite > stocksDisponibles[item.id] }"
-                        (blur)="validateQuantite(item)"
-                      >
-                    </td>
-                    <td>{{ prixLiquideTotal[item.id] }}</td>
-                    <td>{{ prixEmballageTotal[item.id] }}</td>
-                    <td>{{ montantTotal[item.id] }}</td>
-                    <td class="d-flex justify-content-center">
-                      <button type="button" class="btn btn-danger btn-sm" (click)="removeArticle(item)">
-                        <i class="fas fa-trash"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr class="table-dark">
-                    <th scope="col" colspan="4">Total :</th>
-                    <td>{{totalQte}}</td>
-                    <td>{{totalLiquide}}</td>
-                    <td>{{totalEmballage}}</td>
-                    <td>{{totalGlobal}}</td>
-                    <td></td>
-                  </tr>
-                  </tbody>
-    
-              </table>
-            </div>
-            </div>
-          
-        </div>
-  
-  
-        <div class="modal-footer gap-3 px-4">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            (click)="OnCloseModal()"
-          >
-            Annuler
-          </button>
-          <button type="submit" class="btn btn-primary" (click)="onSubmit()">
-            Valider
-          </button>
-        </div>
-      </div>
-    </div>
-  </div> -->
+
 <div *ngIf="isModalOpen" class="custom-modal">
   <div
     class="modal-dialog modal-dialog-centered"
     style="width: 90%; max-width: 1200px"
   >
     <div class="modal-content">
-      <div
-        class="modal-header"
-       
-      >
-        <h5 class="modal-title ">Regroupement</h5>
+      <div class="modal-header">
+        <h5 class="modal-title">Regroupement</h5>
         <button type="button" class="btn-close" aria-label="Close"></button>
       </div>
 
@@ -536,6 +234,208 @@
         <button type="submit" class="btn btn-primary" (click)="onSubmit()">
           Valider
         </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal détail -->
+<!-- Modal -->
+<div *ngIf="isModalOpenDetail" class="custom-modal">
+  <div
+    class="modal-dialog modal-dialog-centered"
+    style="width: 90%; max-width: 1200px"
+  >
+    <div class="modal-content">
+      <!-- Header -->
+      <div
+        class="modal-header"
+      >
+        <h5 class="modal-title text-success">Regroupement</h5>
+        <button type="button" class="btn-close" aria-label="Close"></button>
+      </div>
+
+      <!-- Body -->
+      <div
+        class="modal-body"
+        style="padding: 20px; max-height: 70vh; overflow-y: auto"
+      >
+        <div class="row">
+          <!-- Regroupement et Zone -->
+          <div class="col-md-12 d-flex mb-3">
+            <div class="me-3">
+              <label for="numRegroupement" class="form-label"
+                >N° Regroupement</label
+              >
+              <input
+                type="text"
+                id="numRegroupement"
+                class="form-control"
+                value="cBL81380173349686311Z"
+                readonly
+              />
+            </div>
+            <div>
+              <label for="zoneRegroupement" class="form-label">Zone</label>
+              <input
+                type="text"
+                id="zoneRegroupement"
+                class="form-control"
+                value="ZONE ANONO"
+                readonly
+              />
+            </div>
+          </div>
+
+          <!-- Palette et Casier -->
+          <div class="col-md-12 d-flex mb-3">
+            <div class="me-3">
+              <input type="number" class="form-control" value="1" readonly />
+              <small>Palette et 12</small>
+            </div>
+            <div class="me-3">
+              <input type="number" class="form-control" value="1" readonly />
+              <small>Palette et 53</small>
+            </div>
+            <div class="me-3">
+              <input type="number" class="form-control" value="0" readonly />
+              <small>Palette et 1</small>
+            </div>
+          </div>
+
+          <!-- Table des commandes -->
+          <div class="col-md-12">
+            <table class="table table-bordered">
+              <thead class="table-success">
+                <tr>
+                  <th>Raison sociale</th>
+                  <th>DESPERADOS 33 CL</th>
+                  <th>COCA COLA RGB 60 CL</th>
+                  <th>HEINEKEN 33 CL</th>
+                  <th>IVOIRE 60 CL</th>
+                  <th>RHINO ENERGY 33 CL</th>
+                  <th>IVOIRE BLACK 60 CL</th>
+                  <th>HEINEKEN 50 CL</th>
+                  <th>FANTA RGB 60 CL</th>
+                  <th>COCA COLA 30 CL</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>NDRI AUDREY</td>
+                  <td>5</td>
+                  <td>3</td>
+                  <td>8</td>
+                  <td>11</td>
+                  <td>7</td>
+                  <td>9</td>
+                  <td>1</td>
+                  <td>1</td>
+                  <td>0</td>
+                  <td>45</td>
+                </tr>
+                <tr>
+                  <td>ELOISE EASD</td>
+                  <td>0</td>
+                  <td>5</td>
+                  <td>7</td>
+                  <td>0</td>
+                  <td>5</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td>2</td>
+                  <td>19</td>
+                </tr>
+                <tr>
+                  <td>S/D MARIE GRACE</td>
+                  <td>15</td>
+                  <td>0</td>
+                  <td>15</td>
+                  <td>15</td>
+                  <td>10</td>
+                  <td>10</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td>65</td>
+                </tr>
+                <tr>
+                  <td>REHOBOTH ANONO</td>
+                  <td>7</td>
+                  <td>0</td>
+                  <td>7</td>
+                  <td>4</td>
+                  <td>3</td>
+                  <td>3</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td>29</td>
+                </tr>
+                <tr>
+                  <td>LOUISE BAMBA</td>
+                  <td>5</td>
+                  <td>4</td>
+                  <td>8</td>
+                  <td>5</td>
+                  <td>7</td>
+                  <td>5</td>
+                  <td>0</td>
+                  <td>1</td>
+                  <td>0</td>
+                  <td>37</td>
+                </tr>
+              </tbody>
+              <tfoot class="table-success">
+                <tr>
+                  <td>Total</td>
+                  <td>32</td>
+                  <td>12</td>
+                  <td>45</td>
+                  <td>35</td>
+                  <td>32</td>
+                  <td>30</td>
+                  <td>1</td>
+                  <td>1</td>
+                  <td>7</td>
+                  <td>195</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- Footer -->
+          <div class="col-md-12 d-flex mt-3">
+            <div class="me-3">
+              <label for="camion" class="form-label">Camion</label>
+              <input
+                type="text"
+                id="camion"
+                class="form-control"
+                value="734LJO1"
+                readonly
+              />
+            </div>
+            <div>
+              <label for="chauffeur" class="form-label">Chauffeur</label>
+              <input
+                type="text"
+                id="chauffeur"
+                class="form-control"
+                value="SEVERIN"
+                readonly
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer gap-3 px-4">
+        <button type="button" class="btn btn-secondary" (click)="closeDetailModal()">Annuler</button>
+        <button type="button" class="btn btn-primary">Valider</button>
       </div>
     </div>
   </div>
