@@ -111,6 +111,7 @@ export class CommercialComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
+
     this.GetCommercialList(this.currentPage);
   }
   onSubmit(): void {
@@ -193,6 +194,7 @@ export class CommercialComponent {
     this._spinner.show()
     this.utilisateurService.GetCommercialList(data).then((res:any)=>{
       this.dataList = res.data
+      console.log('currentPage',this.currentPage);
       this._spinner.hide()
       console.log(this.dataList)
     })

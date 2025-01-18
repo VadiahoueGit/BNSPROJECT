@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { ALERT_QUESTION } from '../../shared-component/utils';
+import {UtilisateurResolveService} from "../../../core/utilisateur-resolve.service";
 
 @Component({
   selector: 'app-suivi-comptes',
@@ -15,7 +16,8 @@ export class SuiviComptesComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
-  ArticleForm!: FormGroup;
+  dataClient: any[] = [];
+  CreditForm!: FormGroup;
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
@@ -28,64 +30,28 @@ export class SuiviComptesComponent {
   dataListProduits: any = [];
   dataListGroupeArticles: any = [];
   dataListBouteilleVide: any = [];
-  dataListPlastiqueNu: any = [];
-  dataListLiquides: any = [];
+  dataRevendeur: any[] = [];
+  dataPointDeVente: any[] = [];
   dataListArticlesProduits: any = [];
   currentPage: number;
   rowsPerPage: any;
   constructor(
     private articleService: ArticleServiceService,
+    private utilisateurService: UtilisateurResolveService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
   ) {}
 
   ngOnInit() {
-    this.ArticleForm = this.fb.group({
-      photo: [null, Validators.required],
-      libelle: [null, Validators.required],
-      format: [null, Validators.required],
-      Conditionnement: [null, Validators.required],
-      categorieId: [0, Validators.required],
-      groupeId: [0, Validators.required],
-      plastiquenuId: [0, Validators.required],
-      bouteillevideId: [0, Validators.required],
-      liquideId: [0, Validators.required],
+    this.CreditForm = this.fb.group({
+      revendeurId: [null, Validators.required],
+      creditLiquide: [null, Validators.required],
+      creditEmballage: [null, Validators.required],
+      creditTotal: [null]
     });
-    this.articleService.ListPlastiquesNu.subscribe((res: any) => {
-      this.dataListPlastiqueNu = res;
-    });
-    this.articleService.ListLiquides.subscribe((res: any) => {
-      console.log('dataListLiquides:::>', this.dataListLiquides);
-
-      this.dataListLiquides = res;
-    });
-    this.articleService.ListBouteilleVide.subscribe((res: any) => {
-      this.dataListBouteilleVide = res;
-    });
-    this.articleService.ListArticles.subscribe((res: any) => {
-      this.dataList = res;
-      console.log('dataList:::>', this.dataList);
-    });
-    this.articleService.GetFormatList().then((res: any) => {
-      this.dataListFormats = res;
-      console.log('dataListFormats:::>', this.dataListFormats);
-    });
-
-    this.articleService.GetConditionnementList().then((res: any) => {
-      this.dataListConditionnements = res;
-      console.log(
-        'dataListConditionnements:::>',
-        this.dataListConditionnements
-      );
-    });
-    this.articleService.ListTypeArticles.subscribe((res: any) => {
-      this.dataListProduits = res;
-      console.log(this.dataListProduits, 'this.dataListProduits ');
-    });
-    this.articleService.ListGroupesArticles.subscribe((res: any) => {
-      this.dataListGroupeArticles = res;
-    });
+this.CreditForm.controls['creditTotal'].disable();
+    this.fetchData()
     this.GetArticleList(1);
   }
 
@@ -116,7 +82,7 @@ export class SuiviComptesComponent {
     this.updateData = data;
     this.articleId = data.id;
     this.isModalOpen = true;
-    this.loadArticleDetails();
+    // this.loadArticleDetails();
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
@@ -139,45 +105,37 @@ export class SuiviComptesComponent {
     this.GetArticleList(this.currentPage);
   }
   onSubmit(): void {
-   
-    console.log(this.ArticleForm.value);
-    if (this.ArticleForm.valid) {
-      // const formValues = this.ArticleForm.value; 
+
+    console.log(this.CreditForm.value);
+    if (this.CreditForm.valid) {
+      // const formValues = this.ArticleForm.value;
       this._spinner.show();
-      const formValues = {
-        ...this.ArticleForm.value,
-        categorieId: +this.ArticleForm.value.categorieId,
-        groupeId: +this.ArticleForm.value.groupeId,
-        plastiquenuId: +this.ArticleForm.value.plastiquenuId,
-        bouteillevideId: +this.ArticleForm.value.bouteillevideId,
-        liquideId: +this.ArticleForm.value.liquideId,
-      };
       console.log('this.isEditMode', this.isEditMode);
 
       if (this.isEditMode) {
-        this.articleService.UpdateArticle(this.articleId, formValues).then(
-          (response: any) => {
-            console.log('article mis à jour avec succès', response);
-            this._spinner.hide();
-            this.OnCloseModal();
-            this.GetArticleList(1);
-            this.toastr.success(response.message);
-          },
-          (error: any) => {
-            this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
-            console.error('Erreur lors de la mise à jour', error);
-          }
-        );
+        // this.articleService.UpdateArticle(this.articleId, formValues).then(
+        //   (response: any) => {
+        //     console.log('article mis à jour avec succès', response);
+        //     this._spinner.hide();
+        //     this.OnCloseModal();
+        //     this.GetArticleList(1);
+        //     this.toastr.success(response.message);
+        //   },
+        //   (error: any) => {
+        //     this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
+        //     console.error('Erreur lors de la mise à jour', error);
+        //   }
+        // );
       } else {
-        this.articleService.CreateArticle(formValues).then(
+        this.articleService.CreateArticle(this.CreditForm.value).then(
           (response: any) => {
             this.OnCloseModal();
             this._spinner.hide();
-            this.GetArticleList(1);
-            this.ArticleForm.reset();
+            // this.GetArticleList(1);
+            this.CreditForm.reset();
             this.toastr.success(response.message);
 
-            console.log('Nouvel article créé avec succès', response);
+            console.log('Crédit créé avec succès', response);
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la création.');
@@ -187,19 +145,19 @@ export class SuiviComptesComponent {
       }
     }
   }
-  loadArticleDetails(): void {
-    this.ArticleForm.patchValue({
-      photo: this.updateData.photo ?? '',
-      libelle: this.updateData.libelle,
-      format: this.updateData.format,
-      Conditionnement: this.updateData.Conditionnement,
-      categorieId: this.updateData.categorieproduit.id,
-      groupeId: this.updateData.groupearticle.id,
-      plastiquenuId: this.updateData.plastiquenu.id,
-      bouteillevideId: this.updateData.bouteillevide.id,
-      liquideId: 1,
-    });
-  }
+  // loadArticleDetails(): void {
+  //   this.ArticleForm.patchValue({
+  //     photo: this.updateData.photo ?? '',
+  //     libelle: this.updateData.libelle,
+  //     format: this.updateData.format,
+  //     Conditionnement: this.updateData.Conditionnement,
+  //     categorieId: this.updateData.categorieproduit.id,
+  //     groupeId: this.updateData.groupearticle.id,
+  //     plastiquenuId: this.updateData.plastiquenu.id,
+  //     bouteillevideId: this.updateData.bouteillevide.id,
+  //     liquideId: 1,
+  //   });
+  // }
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
       (res) => {
@@ -215,5 +173,47 @@ export class SuiviComptesComponent {
         }
       }
     );
+  }
+
+  async fetchData() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    try {
+      // Effectuer les deux appels API en parallèle
+      const [revendeur, pointDeVente]: [any, any] = await Promise.all([
+        this.articleService.GetListRevendeur(data),  // Remplacez par votre méthode API
+        this.utilisateurService.GetCommercialList(data),
+      ]);
+
+      console.log("Données revendeur:", revendeur);
+      console.log("Données pointDeVente:", pointDeVente);
+      // Vérifier si plastiques et liquides sont bien des tableaux
+      if (Array.isArray(revendeur.data)) {
+        this.dataRevendeur = revendeur.data;
+        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
+        this.dataClient.push(...revendeur.data);
+      } else {
+        console.error("Les données de plastiques ne sont pas un tableau");
+      }
+
+      if (Array.isArray(pointDeVente.data)) {
+        this.dataPointDeVente = pointDeVente.data;
+        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
+        this.dataClient.push(...pointDeVente.data);
+      } else {
+        console.error("Les données de liquides ne sont pas un tableau");
+      }
+      this.dataClient = this.dataClient.map(client => ({
+        ...client,
+        displayName: client.raisonSocial || client.nom+' '+client.prenom || 'N/A'
+      }));
+      console.log('Données combinées dans dataList:', this.dataClient);
+    } catch (error) {
+      // Gestion des erreurs
+      console.error('Erreur lors de la récupération des données:', error);
+    }
   }
 }

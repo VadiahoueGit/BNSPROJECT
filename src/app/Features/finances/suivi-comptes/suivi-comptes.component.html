@@ -80,17 +80,25 @@
                     l'article</h1>
             </div>
             <div class="modal-body">
-                <form [formGroup]="ArticleForm">
+                <form [formGroup]="CreditForm">
                   <div class="row">
                     <div class="col-md-6">
                       <div class="mb-3">
                         <label for="photo" class="form-label">Clients <span class="text-danger">*</span></label>
-                        <input type="file" class="form-control" id="photo" formControlName="photo" placeholder="Entrez la photo de l'article">
-                      </div>
+                        <ng-select
+                          class="form-control"
+                          [items]="dataClient"
+                          bindLabel="displayName"
+                          bindValue="id"
+                          formControlName="revendeurId"
+                          [searchable]="true"
+                        >
+                        </ng-select>
+                        </div>
 
                       <div class="mb-3">
                         <label for="libelle" class="form-label">Crédit liquide <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="libelle" formControlName="libelle" placeholder="Entrez le libellé">
+                        <input type="number" class="form-control" id="libelle" formControlName="creditLiquide" placeholder="Entrez le montant">
                       </div>
 
 
@@ -100,18 +108,12 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="format" class="form-label">Crédit emballage <span class="text-danger">*</span></label>
-                            <select class="form-control form-select form-select-sm" formControlName="format" aria-label=".form-select-sm example">
-                              <option value="" disabled selected>Choisir le format</option>
-                              <option [value]="item" *ngFor="let item of dataListFormats">{{item}}</option>
-                            </select>
+                          <input type="number" class="form-control"  formControlName="creditEmballage" placeholder="Entrez le montant">
                           </div>
 
                           <div class="mb-3">
                             <label for="categorieId" class="form-label">Total crédit <span class="text-danger">*</span></label>
-                            <select class="form-control form-select form-select-sm" formControlName="categorieId" aria-label=".form-select-sm example">
-                              <option value="" disabled selected>Choisir le produit</option>
-                              <option [value]="item.id" *ngFor="let item of dataListProduits">{{item.libelle}}</option>
-                            </select>
+                            <input type="number" class="form-control"  formControlName="creditTotal">
                           </div>
                     </div>
                   </div>
@@ -121,7 +123,7 @@
 
             <div class="modal-footer gap-3 px-4">
                 <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-                <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
+                <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2" [disabled]="CreditForm.invalid">Valider</button>
             </div>
         </div>
     </div>

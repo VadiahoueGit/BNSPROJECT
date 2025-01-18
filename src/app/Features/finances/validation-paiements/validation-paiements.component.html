@@ -107,14 +107,14 @@
                     <div class="col-md-6">
                       <div class="mb-3">
                         <label for="photo" class="form-label">Réf paiement<span class="text-danger">*</span></label>
-                        <input type="file" class="form-control" id="photo" formControlName="photo" placeholder="Entrez la photo de l'article">
+                        <input type="text" class="form-control" id="photo" formControlName="ref" placeholder="Entrez la photo de l'article">
                       </div>
-              
+
                       <div class="mb-3">
                         <label for="libelle" class="form-label">Raison sociale <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="libelle" formControlName="libelle" placeholder="Entrez le libellé">
+                        <input type="text" class="form-control" id="libelle" formControlName="raisonSociale" placeholder="Entrez la raison sociale">
                       </div>
-              
+
                       <div class="mb-3">
                         <label for="format" class="form-label">Commande <span class="text-danger">*</span></label>
                         <select class="form-control form-select form-select-sm" formControlName="format" aria-label=".form-select-sm example">
@@ -122,7 +122,7 @@
                           <option [value]="item" *ngFor="let item of dataListFormats">{{item}}</option>
                         </select>
                       </div>
-              
+
                       <div class="mb-3">
                         <label for="categorieId" class="form-label">En cours <span class="text-danger">*</span></label>
                         <select class="form-control form-select form-select-sm" formControlName="categorieId" aria-label=".form-select-sm example">
@@ -131,9 +131,9 @@
                         </select>
                       </div>
 
-                    
+
                     </div>
-              
+
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="liquideId" class="form-label">Montant de la commande <span class="text-danger">*</span></label>
@@ -149,7 +149,7 @@
                           <option [value]="item.id" *ngFor="let item of dataListGroupeArticles">{{item.libelle}}</option>
                         </select>
                       </div>
-              
+
                       <div class="mb-3">
                         <label for="Conditionnement" class="form-label">Paiement <span class="text-danger">*</span></label>
                         <select class="form-control form-select form-select-sm" formControlName="Conditionnement" aria-label=".form-select-sm example">
@@ -157,7 +157,7 @@
                           <option [value]="item" *ngFor="let item of dataListConditionnements">{{item}}</option>
                         </select>
                       </div>
-              
+
                       <div class="mb-3">
                         <label for="plastiquenuId" class="form-label">Reste<span class="text-danger">*</span></label>
                         <select class="form-control form-select form-select-sm" formControlName="plastiquenuId" aria-label=".form-select-sm example">
@@ -165,16 +165,16 @@
                           <option [value]="item.id" *ngFor="let item of dataListPlastiqueNu">{{item.libelle}}</option>
                         </select>
                       </div>
-              
-                    
-              
-                    
+
+
+
+
                     </div>
                   </div>
                 </form>
               </div>
-              
-              
+
+
             <div class="modal-footer gap-3 px-4">
                 <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
                 <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>

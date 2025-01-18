@@ -42,8 +42,8 @@ export class ValidationPaiementsComponent {
 
   ngOnInit() {
     this.ArticleForm = this.fb.group({
-      photo: [null, Validators.required],
-      libelle: [null, Validators.required],
+      ref: [null, Validators.required],
+      raisonSociale: [null, Validators.required],
       format: [null, Validators.required],
       Conditionnement: [null, Validators.required],
       categorieId: [0, Validators.required],
@@ -139,10 +139,10 @@ export class ValidationPaiementsComponent {
     this.GetArticleList(this.currentPage);
   }
   onSubmit(): void {
-   
+
     console.log(this.ArticleForm.value);
     if (this.ArticleForm.valid) {
-      // const formValues = this.ArticleForm.value; 
+      // const formValues = this.ArticleForm.value;
       this._spinner.show();
       const formValues = {
         ...this.ArticleForm.value,

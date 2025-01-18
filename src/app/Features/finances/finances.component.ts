@@ -13,11 +13,11 @@ export class FinancesComponent {
       title: 'Comptablité',
       url: 'feature/finances/comptabilite',
     },
-    {
-      image: 'assets/icon/store.png',
-      title: 'Revendeurs',
-      url: 'feature/partenaire/revendeur',
-    }
+    // {
+    //   image: 'assets/icon/store.png',
+    //   title: 'Revendeurs',
+    //   url: 'feature/partenaire/revendeur',
+    // }
 
   ]
   constructor(private _router: Router) { }

@@ -17,6 +17,17 @@
                 <th style="color: var(--secondary-color);">Contact</th>
                 <th style="color: var(--secondary-color);">Actions</th>
             </tr>
+          <tr>
+            <th>
+              <p-columnFilter  type="text" field="nom" placeholder="" />
+            </th>
+            <th>
+              <p-columnFilter type="text" field="prenom" placeholder="" />
+            </th>
+            <th>
+<!--              <p-columnFilter type="text" field="nomDepot" placeholder="" />-->
+            </th>
+          </tr>
         </ng-template>
         <ng-template pTemplate="body" let-dataList>
             <tr>
@@ -96,7 +107,7 @@
                                 <input type="text" class="form-control" id="idCommercialBNS"
                                     formControlName="idCommercialBNS" placeholder="Entrez l'id du commercial">
                             </div>
-                            
+
                         </div>
 
                         <div class="col-md-6">
