@@ -47,7 +47,7 @@
   padding-right: 0; /* Supprime l'espace réservé à l'icône */
 }
 .label-fixed-width {
-  min-width: 10px; 
+  min-width: 10px;
 }
 
 // .modal {
@@ -164,4 +164,11 @@
 .custom-modal .btn-secondary {
   background-color: #6c757d;
   border-color: #6c757d;
+}
+
+strong{
+  font-size: 13px;
+}
+span{
+  font-size: 13px;
 }

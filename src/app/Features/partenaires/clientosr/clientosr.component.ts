@@ -51,7 +51,7 @@ export class ClientosrComponent {
 
   ngOnInit() {
     this.clientosrForm = this.fb.group({
-      photo: [null, Validators.required],
+      photo: [null],
       nom: ['', Validators.required],
       prenom: ['', Validators.required],
       latitude: ['', [Validators.required]],
@@ -217,7 +217,7 @@ export class ClientosrComponent {
 
   loadClientDetails(): void {
     this.clientosrForm.patchValue({
-      photo: this.updateData.photo,
+      photo: null,
       nomEtablissement: this.updateData.nomEtablissement,
       nom: this.updateData.nom,
       prenom: this.updateData.prenom,
@@ -236,14 +236,14 @@ export class ClientosrComponent {
     console.log(data, 'client Osr details');
     this.isModalDetail = true;
     this.ClientOsrDetail = data;
-  
+
     if (this.docUrl && data?.photo) {
       this.imageUrl = `${this.docUrl.replace(/\/$/, '')}/${data.photo.replace(/^\//, '')}`;
     } else {
       console.log('docUrl ou data.photo est null ou undefined.');
-      this.imageUrl = ''; 
+      this.imageUrl = '';
     }
-  
+
     console.log(this.imageUrl, 'imageUrl');
   }
 

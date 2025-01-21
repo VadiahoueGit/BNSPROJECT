@@ -22,8 +22,12 @@ gmp-map {
   padding: 2rem;
 }
 
-
-
+.gray-filter {
+  filter: grayscale(100%);
+}
+.valid-class{
+  filter:none;
+}
 /* Contenu du panneau */
 .panel-content {
   padding: 20px;

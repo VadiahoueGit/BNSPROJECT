@@ -17,6 +17,10 @@
             <p class="mb-0 me-2" style="font-size: smaller;">Client OSR</p>
             <img width="21px" src="assets/icon/prospect.png" alt="Dépôt">
         </div>
+      <div class="d-flex align-items-center">
+        <p class="mb-0 me-2" style="font-size: smaller;">Revendeur</p>
+        <img width="21px" src="assets/icon/store.png" alt="Dépôt">
+      </div>
         <div class="d-flex align-items-center">
             <p class="mb-0 me-2" style="font-size: smaller;">Vehicules</p>
             <img width="21px" src="assets/icon/delivery.png" alt="Dépôt">
@@ -32,6 +36,8 @@
                 (mouseout)="closeInfoWindowDepot()"></gmp-advanced-marker>
             <gmp-advanced-marker *ngFor="let marker of markersVehicule" [position]="marker.position"
                 [title]="marker.title" [content]="marker.content" title="My location"></gmp-advanced-marker>
+          <gmp-advanced-marker  (mouseout)="closeInfoWindowRevendeur()" (mouseover)="openInfoWindowRevendeur(marker)"*ngFor="let marker of markersRevendeur" [position]="marker.position"
+                               [title]="marker.title" [content]="marker.content" title="My location"></gmp-advanced-marker>
             <!-- Info Window -->
 
 
@@ -100,7 +106,67 @@
 
     </div>
 
+  <!-- SLIDE REVENDEUR -->
+  <div class="sliding-panel" [ngClass]="{'open': panelOpenRevendeur}">
+    <div class="row mb-3">
+      <label class="fw-bold text-primary fs-3 text-center">Informations</label>
+    </div>
+    <div class="row mb-3 d-flex align-items-center justify-content-center">
+      <img src="assets/icon/store.png" style="width: 10em;" alt="">
+    </div>
 
+    <div *ngIf="slideDetails && panelOpenRevendeur">
+      <div class="row mb-5">
+        <h6 class="fw-bold text-center">{{slideDetails.raisonSocial}}</h6>
+        <label class="info text-center text-secondary fs-7">{{slideDetails.groupeClient.nomGroupe}}</label>
+      </div>
+      <div class="row">
+
+      </div>
+      <div class="row my-2">
+        <div class="col-6">
+          <label class="fw-bold info">Gerant:</label>
+        </div>
+        <div class="col-6">
+          <label class="info info">{{slideDetails.nomGerant}}</label>
+        </div>
+      </div>
+      <div class="row my-2">
+        <div class="col-6">
+          <label class="fw-bold info">Contact Gerant:</label>
+        </div>
+        <div class="col-6">
+          <label class="info info">{{slideDetails.telephoneGerant}}</label>
+        </div>
+      </div>
+      <div class="row my-2">
+        <div class="col-6">
+          <label class="fw-bold info">Tel proprietaire:</label>
+        </div>
+        <div class="col-6">
+          <label class="info">{{slideDetails.telephoneProprietaire}}</label>
+        </div>
+      </div>
+      <div class="row my-2">
+        <div class="col-6">
+          <label class="fw-bold info">Dépot:</label>
+        </div>
+        <div class="col-6">
+          <label class="info">{{slideDetails.depot.nomDepot}}</label>
+        </div>
+      </div>
+      <div class="row my-2">
+        <div class="col-6">
+          <label class="fw-bold info">Zone:</label>
+        </div>
+        <div class="col-6">
+          <label class="info">{{slideDetails.zoneDeLivraison.nomZone}}</label>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
     <!-- SLIDE DEPOT -->
     <div class="sliding-panel" [ngClass]="{'open': panelOpenDepot}">
         <div class="row mb-3">

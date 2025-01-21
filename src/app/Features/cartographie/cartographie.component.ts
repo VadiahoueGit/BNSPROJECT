@@ -6,6 +6,7 @@ import {CoreServiceService} from 'src/app/core/core-service.service';
 import {LogistiqueService} from 'src/app/core/logistique.service';
 import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
 import {WebsocketService} from 'src/app/core/webSocket.service';
+import {ArticleServiceService} from "../../core/article-service.service";
 
 @Component({
   selector: 'app-cartographie',
@@ -15,13 +16,16 @@ import {WebsocketService} from 'src/app/core/webSocket.service';
 export class CartographieComponent {
   panelOpenOsr: boolean = false;
   panelOpenDepot: boolean = false;
+  panelOpenRevendeur: boolean = false;
   depotList!: []
   private messageSubscription: Subscription;
   messages: string[] = [];
   clientList!: []
   vehiculeList!: []
+  revendeurList!: []
   tokenGoogle: string
   markersClient: any[] = [];
+  markersRevendeur: any[] = [];
   address: string
   slideDetails: any = null
   markersDepot: any[] = [];
@@ -47,7 +51,7 @@ export class CartographieComponent {
   coordinates: any[] = [];
   private gpsSubscription: Subscription;
 
-  constructor(private websocketService: WebsocketService, private cdr: ChangeDetectorRef, private _coreService: CoreServiceService, private logisiticService: LogistiqueService, private utilisateurService: UtilisateurResolveService, private _spinner: NgxSpinnerService,) {
+  constructor(private _articleService:ArticleServiceService,private websocketService: WebsocketService, private cdr: ChangeDetectorRef, private _coreService: CoreServiceService, private logisiticService: LogistiqueService, private utilisateurService: UtilisateurResolveService, private _spinner: NgxSpinnerService,) {
   }
 
   ngOnInit() {
@@ -62,7 +66,7 @@ export class CartographieComponent {
 //         console.error('Error receiving message:', error);
 //       }
 //     );
-
+    this.GetRevendeurList(1)
     this.GetClientOSRList();
     this.getPosition();
     this.GetDepotList();
@@ -114,13 +118,28 @@ export class CartographieComponent {
         const marker = new AdvancedMarkerElement({
           position: positions, // Correction ici (le champ est "position", pas "positions")
           content: this.createCustomPinContent(type), // Élément DOM du marqueur
-          title: (position.id).toString()
+          title: (position.id).toString(),
         });
         // console.log('container', marker)
         return marker;
       });
 
-    } else if (type == 'vehicule') {
+    } else if (type == 'revendeur') {
+      this.markersRevendeur = data.map((position: any, i: number) => {
+        // console.log(position);
+        const positions = {
+          lat: parseFloat(position.latitude),
+          lng: parseFloat(position.longitude),
+        };
+        const marker = new AdvancedMarkerElement({
+          position: positions, // Correction ici (le champ est "position", pas "positions")
+          content: this.createCustomPinContent(type), // Élément DOM du marqueur
+          title: (position.id).toString()
+        });
+        // console.log('container', marker)
+        return marker;
+      });
+    }else if (type == 'vehicule') {
       this.markersVehicule = data.map((position: any, i: number) => {
         // console.log(position);
         const positions = {
@@ -166,6 +185,8 @@ export class CartographieComponent {
       icon.src = 'assets/icon/delivery.png';
     } else if (iconType == 'depot') {
       icon.src = 'assets/icon/depot.png';
+    } else if (iconType == 'revendeur') {
+      icon.src = 'assets/icon/store.png';
     }
 
     icon.style.width = '25px';
@@ -195,6 +216,15 @@ export class CartographieComponent {
 
   }
 
+  togglePanelRevendeur(data: any) {
+    this.panelOpenRevendeur = !this.panelOpenRevendeur;
+    if (data != null) {
+
+      this.slideDetails = this.revendeurList.find((client: any) => client.id === parseInt(data.title))
+      this.getAdress(this.slideDetails.latitude, this.slideDetails.longitude)
+    }
+
+  }
   openInfoWindowOsr(marker: any) {
     this.togglePanelOsr(marker)
   }
@@ -211,6 +241,13 @@ export class CartographieComponent {
     this.togglePanelDepot(null)
   }
 
+  openInfoWindowRevendeur(marker: any) {
+    this.togglePanelRevendeur(marker)
+  }
+
+  closeInfoWindowRevendeur() {
+    this.togglePanelRevendeur(null)
+  }
 
   getPosition(): void {
     this._spinner.show();
@@ -231,6 +268,20 @@ export class CartographieComponent {
     );
   }
 
+  GetRevendeurList(page: number) {
+    let data = {
+      paginate: false,
+      page: page,
+      limit: 8,
+    };
+    this._spinner.show();
+    this._articleService.GetListRevendeur(data).then((res: any) => {
+      console.log('GetListRevendeur:::>', res);
+      this.revendeurList = res.data;
+      this.addMarker(res.data, 'revendeur')
+      this._spinner.hide();
+    });
+  }
 
   GetClientOSRList() {
     let data = {

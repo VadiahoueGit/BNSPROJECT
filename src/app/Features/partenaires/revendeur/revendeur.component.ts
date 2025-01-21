@@ -29,7 +29,10 @@ export class RevendeurComponent {
   operation: string = '';
   isModalOpen: boolean = false;
   isEditMode: boolean = false;
-
+  imageUrl : any
+  docUrl : any
+  isModalDetail: boolean = false;
+  RevendeurDetail:any
   constructor(
     private cd: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -42,11 +45,8 @@ export class RevendeurComponent {
   ngOnInit(): void {
     this.revendeurForm = this.fb.group({
       groupeClientId: [null, Validators.required],
-      codeClient: [null,Validators.required],
-      userLogin: [null, Validators.required],
       numeroRegistre: [null,Validators.required],
       raisonSocial: [null, Validators.required],
-      agentCommercial: [null,Validators.required],
       contact: [null,Validators.required],
       longitude: [null, Validators.required],
       latitude: [null, Validators.required],
@@ -111,11 +111,8 @@ export class RevendeurComponent {
   loadClientDetails(): void {
     this.revendeurForm.patchValue({
       groupeClientId:this.updateData.groupeClient.id,
-      codeClient:this.updateData.codeClient,
-      userLogin:this.updateData.userLogin,
       numeroRegistre: this.updateData.numeroRegistre,
       raisonSocial:this.updateData.raisonSocial,
-      agentCommercial: this.updateData.agentCommercial,
       contact:this.updateData.contact,
       longitude:this.updateData.longitude,
       latitude:this.updateData.latitude,
@@ -130,8 +127,56 @@ export class RevendeurComponent {
       quantiteMinimumACommander: this.updateData.quantiteMinimumACommander,
       numeroCompteContribuable:this.updateData.numeroCompteContribuable,
       familleProduitId:this.updateData.familleProduitId,
-     
+
     });
+  }
+
+  OnValidate(data: any) {
+    console.log(data, 'client Osr details');
+    this.isModalDetail = true;
+    this.RevendeurDetail = data;
+
+    if (this.docUrl && data?.photo) {
+      this.imageUrl = `${this.docUrl.replace(/\/$/, '')}/${data.photo.replace(/^\//, '')}`;
+    } else {
+      console.log('docUrl ou data.photo est null ou undefined.');
+      this.imageUrl = '';
+    }
+
+    console.log(this.imageUrl, 'imageUrl');
+  }
+
+  OnCloseDetailModal() {
+    this.isModalDetail = false;
+    console.log(this.isModalOpen);
+  }
+  confirmValidateOperation(data: any) {
+    if (!data.isValide) {
+      ALERT_QUESTION(
+        'warning',
+        'Attention !',
+        'Voulez-vous valider ce client?'
+      ).then((res) => {
+        if (res.isConfirmed == true) {
+          // const dataRequest = {
+          //   id: data.id,
+          //   isValide: true,
+          // };
+          // this._spinner.show();
+          // this.utilisateurService
+          //   .ValidatePointDeVente(dataRequest)
+          //   .then((res: any) => {
+          //     console.log('VALIDEEEEEEEEEE:::>', res);
+          //     this.toastr.success(res.message);
+          //     this.OnCloseDetailModal()
+          //     this._spinner.hide();
+          //     this.GetClientOSRList(1);
+          //   });
+        }else {
+          this.isModalDetail = false
+        }
+      });
+    }
   }
   OnCloseModal() {
     this.isModalOpen = false;
