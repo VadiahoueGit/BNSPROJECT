@@ -19,16 +19,13 @@
       <tr>
         <th style="color: var(--secondary-color)">N° commande</th>
         <th style="color: var(--secondary-color)">Raison sociale</th>
-        <th style="color: var(--secondary-color)">Depôt</th>
-        <th style="color: var(--secondary-color)">Montant emballage</th>
-        <th style="color: var(--secondary-color)">Montant liquide</th>
-        <th style="color: var(--secondary-color)">Prix unitaire emballage</th>
-        <th style="color: var(--secondary-color)">Prix unitaire liquide</th>
+<!--        <th style="color: var(&#45;&#45;secondary-color)">Depôt</th>-->
         <th style="color: var(--secondary-color)">Quantité</th>
+        <th style="color: var(--secondary-color)">Montant</th>
         <th style="color: var(--secondary-color)">Actions</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-ListCommandeGratuites>
+    <ng-template pTemplate="body" let-ListCommandeGratuites let-i="index">
       <tr>
         <td>
           {{ ListCommandeGratuites.NumCommande }}
@@ -37,32 +34,18 @@
         <td>
           {{ ListCommandeGratuites.revendeur.raisonSocial }}
         </td>
-        <td>
-          {{ ListCommandeGratuites.revendeur.depot.nomDepot }}
-        </td>
+<!--        <td>-->
+<!--          {{ ListCommandeGratuites.revendeur.depot.nomDepot }}-->
+<!--        </td>-->
+
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ ListCommandeGratuites.montantEmballage }}
+<!--            {{ ListCommandeGratuites.articles[i].quantite }}-->
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ ListCommandeGratuites.montantLiquide }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ ListCommandeGratuites.prixUnitaireEmballage }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ ListCommandeGratuites.prixUnitaireLiquide }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ ListCommandeGratuites.quantite }}
+<!--            {{ ListCommandeGratuites.articles[i].quantite }}-->
           </span>
         </td>
         <td>
@@ -126,7 +109,7 @@
         </h1>
       </div>
       <div class="modal-body">
-        <form [formGroup]="CommandeForm">
+        <form [formGroup]="CommandeForm" *ngIf="operation == 'create'">
           <div class="row">
             <div
               class="col-12 d-flex align-items-center justify-content-between"
@@ -159,9 +142,53 @@
             </div>
           </div>
         </form>
+        <fieldset class="row border my-1"  *ngIf="operation == 'edit'">
+          <legend style="font-size: 14px;" class="text-secondary">Numero Commande : {{updateData.NumCommande}} du {{updateData.createdAt | date}}</legend>
+        </fieldset>
+        <fieldset class="row border my-2"  *ngIf="operation == 'edit'">
+          <legend style="font-size: 14px;" class="text-secondary">Informations du client</legend>
+          <div class="row">
+            <div class="col-md-4">
+              <strong>Groupe de client :</strong>
+              <span></span>
+            </div>
+            <div class="col-md-4">
+              <strong>Type de client :</strong>
+              <span>{{updateData.revendeur.role}}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Propriétaire :</strong>
+              <span>{{ updateData.revendeur.nomProprietaire }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Gérant :</strong>
+              <span>{{ updateData.revendeur.nomGerant }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Établissement :</strong>
+              <span>{{ updateData.revendeur.nomEtablissement ? updateData.revendeur.nomEtablissement : updateData.revendeur.raisonSocial }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Numero de registre :</strong>
+              <span>{{ updateData.revendeur.numeroRegistre }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Numero contribuable :</strong>
+              <span>{{ updateData.revendeur.numeroCompteContribuable }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Contact Gérant :</strong>
+              <span>{{ updateData.revendeur.telephoneGerant }}</span>
+            </div>
+            <div class="col-md-4 mb-4">
+              <strong>Téléphone :</strong>
+              <span>{{ updateData.revendeur.telephoneProprietaire }}</span>
+            </div>
+          </div>
+        </fieldset>
         <div class="p-2 mt-3">
           <div style="max-height: 350px; overflow-y: auto">
-            <table class="table table-bordered">
+            <table  *ngIf="operation == 'create'" class="table table-bordered">
               <thead class="table-success">
                 <!-- Première ligne d'en-tête -->
                 <tr>
@@ -226,6 +253,47 @@
                 </tr>
               </tbody>
             </table>
+            <table  *ngIf="operation == 'edit'" class="table table-bordered">
+              <thead class="table-success">
+              <!-- Première ligne d'en-tête -->
+              <tr>
+                <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
+                <th scope="col" colspan="3">MONTANT TTC(FCFA)</th>
+              </tr>
+              <!-- Deuxième ligne d'en-tête -->
+              <tr>
+                <th scope="col">Liquide</th>
+                <th scope="col">Liquide (FCFA)</th>
+                <th scope="col">Emballage (FCFA)</th>
+                <th scope="col">Total (FCFA)</th>
+                <th scope="col">Qte</th>
+                <th scope="col">Liquide (FCFA)</th>
+                <th scope="col">Emballage (FCFA)</th>
+                <th scope="col">Total (FCFA)</th>
+              </tr>
+              </thead>
+
+              <tbody>
+              <tr *ngFor="let item of updateData.articles">
+                <td>{{ item.liquide.libelle }}1</td>
+                <td>{{ item.prixUnitaireLiquide }}</td>
+                <td>{{ item.prixUnitaireEmballage}}</td>
+                <td>{{  Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) }}</td>
+                <td>{{ item.quantite }}</td>
+                <td>{{ item.montantLiquide }}</td>
+                <td>{{ item.montantEmballage }}</td>
+                <td>{{Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) }}</td>
+
+              </tr>
+              <tr class="table-dark">
+                <th scope="col" colspan="4">Total :</th>
+                <td>{{ totalQte }}</td>
+                <td>{{ totalLiquide }}</td>
+                <td>{{ totalEmballage }}</td>
+                <td>{{ totalGlobal }}</td>
+              </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -240,6 +308,7 @@
         </button>
         <button
           type="submit"
+          *ngIf="operation == 'create'"
           [disabled]="totalQte === 0"
           (click)="onSubmit()"
           class="btn btn-primary px-2"
@@ -338,6 +407,7 @@
           Annuler
         </button>
         <button
+
           type="submit"
           (click)="onSubmitSelection()"
           class="btn btn-primary px-2"
