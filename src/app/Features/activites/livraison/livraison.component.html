@@ -91,7 +91,7 @@
 <div *ngIf="isModalOpen" class="custom-modal">
   <div
     class="modal-dialog modal-dialog-centered"
-    style="width: 90%; max-width: 1200px"
+   
   >
     <div class="modal-content">
       <div class="modal-header">
@@ -156,69 +156,71 @@
                 <h6 class="mb-0">Informations sur le regroupement</h6>
               </div>
               <div class="card-body">
-                <div class="mb-3">
-                  <label for="regroupement" class="form-label"
-                    >Regroupements*</label
-                  >
-                  <input
-                    type="text"
-                    id="regroupement"
-                    class="form-control"
-                    value="BL2785917334"
-                    readonly
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="zoneLivraison" class="form-label"
-                    >Zones de livraison</label
-                  >
-                  <input
-                    type="text"
-                    id="zoneLivraison"
-                    class="form-control"
-                    value="ZONE BINGERVILLE"
-                    readonly
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="palettes" class="form-label">Palettes</label>
-                  <input
-                    type="number"
-                    id="palettes"
-                    class="form-control"
-                    value="20"
-                    readonly
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="transporteur" class="form-label"
-                    >Transporteur</label
-                  >
-                  <select id="transporteur" class="form-select">
-                    <option>Sélectionner un transporteur</option>
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label for="chauffeur" class="form-label">Chauffeur</label>
-                  <select id="chauffeur" class="form-select">
-                    <option>Sélectionner un véhicule</option>
-                  </select>
-                </div>
-                <div>
-                  <label for="totalPalettes" class="form-label"
-                    >Total Palettes</label
-                  >
-                  <input
-                    type="number"
-                    id="totalPalettes"
-                    class="form-control"
-                    value="0"
-                    readonly
-                  />
+                <div class="row">
+                  <!-- Première colonne -->
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="regroupement" class="form-label">Regroupements*</label>
+                      <input
+                        type="text"
+                        id="regroupement"
+                        class="form-control"
+                        value="BL2785917334"
+                        readonly
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label for="zoneLivraison" class="form-label">Zones de livraison</label>
+                      <input
+                        type="text"
+                        id="zoneLivraison"
+                        class="form-control"
+                        value="ZONE BINGERVILLE"
+                        readonly
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label for="palettes" class="form-label">Palettes</label>
+                      <input
+                        type="number"
+                        id="palettes"
+                        class="form-control"
+                        value="20"
+                        readonly
+                      />
+                    </div>
+                  </div>
+          
+                  <!-- Deuxième colonne -->
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="transporteur" class="form-label">Transporteur</label>
+                      <select id="transporteur" class="form-select">
+                        <option>Sélectionner un transporteur</option>
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <label for="chauffeur" class="form-label">Chauffeur</label>
+                      <select id="chauffeur" class="form-select">
+                        <option>Sélectionner un véhicule</option>
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <label for="totalPalettes" class="form-label">Total Palettes</label>
+                      <input
+                        type="number"
+                        id="totalPalettes"
+                        class="form-control"
+                        value="0"
+                        readonly
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          
         </div>
       </div>
 
@@ -248,9 +250,7 @@
   >
     <div class="modal-content">
       <!-- Header -->
-      <div
-        class="modal-header"
-      >
+      <div class="modal-header">
         <h5 class="modal-title text-success">Regroupement</h5>
         <button type="button" class="btn-close" aria-label="Close"></button>
       </div>
@@ -434,7 +434,13 @@
 
       <!-- Footer -->
       <div class="modal-footer gap-3 px-4">
-        <button type="button" class="btn btn-secondary" (click)="closeDetailModal()">Annuler</button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="closeDetailModal()"
+        >
+          Annuler
+        </button>
         <button type="button" class="btn btn-primary">Valider</button>
       </div>
     </div>

@@ -12,8 +12,7 @@ input[type="radio"] {
   label + label {
     margin-left: 15px; /* Adds space between the two labels */
   }
-  
-  
+
   .custom-modal {
     position: fixed;
     top: 0;
@@ -30,10 +29,10 @@ input[type="radio"] {
   .modal-dialog {
     background-color: white;
     border-radius: 0.3rem;
-    width: 90%;
-    min-width: 45em;
+    width: 95%;
     padding: 1rem;
   }
+  
   
   .modal-dialog2 {
     background-color: white;
@@ -65,8 +64,8 @@ input[type="radio"] {
   .p-column-filter {
     padding-right: 0; /* Supprime l'espace réservé à l'icône */
   }
-  .form-control-custom{
-    width: 80px;
+  .form-control{
+    width: 60px;
   }
   .label-fixed-width {
     min-width: 10px;
