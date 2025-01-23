@@ -15,7 +15,7 @@ export class ValidationPaiementsComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
-  ArticleForm!: FormGroup;
+  validatedPaiementForm!: FormGroup;
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
@@ -23,14 +23,8 @@ export class ValidationPaiementsComponent {
   updateData: any = {};
   articleId: any = 0;
   isEditMode: boolean = false;
-  dataListFormats: any = [];
-  dataListConditionnements: any = [];
-  dataListProduits: any = [];
-  dataListGroupeArticles: any = [];
-  dataListBouteilleVide: any = [];
-  dataListPlastiqueNu: any = [];
-  dataListLiquides: any = [];
-  dataListArticlesProduits: any = [];
+  ListCLients: any = [];
+
   currentPage: number;
   rowsPerPage: any;
   constructor(
@@ -41,51 +35,20 @@ export class ValidationPaiementsComponent {
   ) {}
 
   ngOnInit() {
-    this.ArticleForm = this.fb.group({
-      ref: [null, Validators.required],
-      raisonSociale: [null, Validators.required],
-      format: [null, Validators.required],
-      Conditionnement: [null, Validators.required],
-      categorieId: [0, Validators.required],
-      groupeId: [0, Validators.required],
-      plastiquenuId: [0, Validators.required],
-      bouteillevideId: [0, Validators.required],
-      liquideId: [0, Validators.required],
+    this.validatedPaiementForm = this.fb.group({
+      raisonSociale: [null],
+      encours: [{value: 0,disabled: true }],
+      reste: [{value: 0,disabled: true }],
+      montant: [{ value: 0,disabled: true  }],
     });
-    this.articleService.ListPlastiquesNu.subscribe((res: any) => {
-      this.dataListPlastiqueNu = res;
-    });
-    this.articleService.ListLiquides.subscribe((res: any) => {
-      console.log('dataListLiquides:::>', this.dataListLiquides);
 
-      this.dataListLiquides = res;
-    });
-    this.articleService.ListBouteilleVide.subscribe((res: any) => {
-      this.dataListBouteilleVide = res;
-    });
+   
     this.articleService.ListArticles.subscribe((res: any) => {
       this.dataList = res;
       console.log('dataList:::>', this.dataList);
     });
-    this.articleService.GetFormatList().then((res: any) => {
-      this.dataListFormats = res;
-      console.log('dataListFormats:::>', this.dataListFormats);
-    });
 
-    this.articleService.GetConditionnementList().then((res: any) => {
-      this.dataListConditionnements = res;
-      console.log(
-        'dataListConditionnements:::>',
-        this.dataListConditionnements
-      );
-    });
-    this.articleService.ListTypeArticles.subscribe((res: any) => {
-      this.dataListProduits = res;
-      console.log(this.dataListProduits, 'this.dataListProduits ');
-    });
-    this.articleService.ListGroupesArticles.subscribe((res: any) => {
-      this.dataListGroupeArticles = res;
-    });
+
     this.GetArticleList(1);
   }
 
@@ -140,17 +103,17 @@ export class ValidationPaiementsComponent {
   }
   onSubmit(): void {
 
-    console.log(this.ArticleForm.value);
-    if (this.ArticleForm.valid) {
-      // const formValues = this.ArticleForm.value;
+    console.log(this.validatedPaiementForm.value);
+    if (this.validatedPaiementForm.valid) {
+      // const formValues = this.validatedPaiementForm.value;
       this._spinner.show();
       const formValues = {
-        ...this.ArticleForm.value,
-        categorieId: +this.ArticleForm.value.categorieId,
-        groupeId: +this.ArticleForm.value.groupeId,
-        plastiquenuId: +this.ArticleForm.value.plastiquenuId,
-        bouteillevideId: +this.ArticleForm.value.bouteillevideId,
-        liquideId: +this.ArticleForm.value.liquideId,
+        ...this.validatedPaiementForm.value,
+        categorieId: +this.validatedPaiementForm.value.categorieId,
+        groupeId: +this.validatedPaiementForm.value.groupeId,
+        plastiquenuId: +this.validatedPaiementForm.value.plastiquenuId,
+        bouteillevideId: +this.validatedPaiementForm.value.bouteillevideId,
+        liquideId: +this.validatedPaiementForm.value.liquideId,
       };
       console.log('this.isEditMode', this.isEditMode);
 
@@ -174,7 +137,7 @@ export class ValidationPaiementsComponent {
             this.OnCloseModal();
             this._spinner.hide();
             this.GetArticleList(1);
-            this.ArticleForm.reset();
+            this.validatedPaiementForm.reset();
             this.toastr.success(response.message);
 
             console.log('Nouvel article créé avec succès', response);
@@ -188,7 +151,7 @@ export class ValidationPaiementsComponent {
     }
   }
   loadArticleDetails(): void {
-    this.ArticleForm.patchValue({
+    this.validatedPaiementForm.patchValue({
       photo: this.updateData.photo ?? '',
       libelle: this.updateData.libelle,
       format: this.updateData.format,

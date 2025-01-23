@@ -21,19 +21,13 @@ export class SuiviComptesComponent {
   CreditForm!: FormGroup;
   loading: boolean = true;
   isModalOpen = false;
-  activityValues: number[] = [0, 100];
   operation: string = '';
   updateData: any = {};
   creditId: any = 0;
   isEditMode: boolean = false;
-  dataListFormats: any = [];
-  dataListConditionnements: any = [];
-  dataListProduits: any = [];
-  dataListGroupeArticles: any = [];
-  dataListBouteilleVide: any = [];
+
   dataRevendeur: any[] = [];
   dataPointDeVente: any[] = [];
-  dataListArticlesProduits: any = [];
   currentPage: number;
   rowsPerPage: any;
   constructor(
