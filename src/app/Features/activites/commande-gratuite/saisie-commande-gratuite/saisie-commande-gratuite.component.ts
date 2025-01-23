@@ -169,6 +169,10 @@ export class SaisieCommandeGratuiteComponent {
     }
   }
   OnCloseModal() {
+    this.totalEmballage = 0;
+    this.totalLiquide  = 0;
+    this.totalGlobal = 0;
+    this.totalQte = 0;
     this.isModalOpen = false;
     console.log(this.isModalOpen);
   }
@@ -186,9 +190,20 @@ export class SaisieCommandeGratuiteComponent {
     console.log(this.isModalOpen);
   }
   OnEdit(data:any) {
+    this.totalEmballage = 0;
+    this.totalLiquide  = 0;
+    this.totalGlobal = 0;
+    this.totalQte = 0;
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
+    data.articles.forEach((article:any) => {
+      this.totalEmballage += Number(article.montantEmballage);
+      this.totalLiquide  += Number(article.montantLiquide);
+      this.totalGlobal = this.totalLiquide + this.totalEmballage
+      this.totalQte += article.quantite
+    })
+
     this.articleId = data.id;
     this.isModalOpen = true;
     this.operation = 'edit';
@@ -407,4 +422,7 @@ export class SaisieCommandeGratuiteComponent {
       console.log(error);
     }
   }
+
+  protected readonly parseInt = parseInt;
+  protected readonly Number = Number;
 }
