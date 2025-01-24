@@ -176,14 +176,17 @@
                   placeholder="Entrez la raison sociale"
                 />
               </div>
+
               <div class="col-md-6 mt-3">
-                <label for="contact" class="form-label">Contact</label>
+                <label for="compteContribuable" class="form-label"
+                >N° Compte contribuable</label
+                >
                 <input
                   type="text"
                   class="form-control"
-                  id="contact"
-                  formControlName="contact"
-                  placeholder="Entrez le contact"
+                  id="compteContribuable"
+                  formControlName="numeroCompteContribuable"
+                  placeholder="Entrez le numéro"
                 />
               </div>
             </div>
@@ -304,6 +307,16 @@
                 />
               </div>
               <div class="col-md-6 mt-3">
+                <label for="contact" class="form-label">Tel du propriétaire</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="contact"
+                  formControlName="contact"
+                  placeholder="Entrez le contact"
+                />
+              </div>
+              <div class="col-md-6 mt-3">
                 <label for="nomGerant" class="form-label">Nom du gérant</label>
                 <input
                   type="text"
@@ -340,18 +353,6 @@
                   id="quantiteMinimum"
                   formControlName="quantiteMinimumACommander"
                   placeholder="Entrez la quantité"
-                />
-              </div>
-              <div class="col-md-6">
-                <label for="compteContribuable" class="form-label"
-                >N° Compte contribuable</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="compteContribuable"
-                  formControlName="numeroCompteContribuable"
-                  placeholder="Entrez le numéro"
                 />
               </div>
               <div class="col-md-6 mt-3">
