@@ -1133,6 +1133,49 @@ export class ArticleServiceService {
       );
     });
   }
+  // ValidateRevendeur(id: number, data: any){
+  //   return new Promise((resolve: any, reject: any) => {
+  //     const headers = new HttpHeaders({
+  //       Authorization: `Bearer ${this.token}`
+  //     });
+  //     this._http.patch(`${this.apiUrl}/v1/revendeur/${id}/validate`,{data},{headers}).subscribe(
+  //       (res: any) => {
+  //         console.log(res);
+  //         resolve(res);
+  //       },
+  //       (err) => {
+  //         console.log(err);
+  //         reject(err);
+  //       }
+  //     );
+  //   });
+  //  }
+  ValidateRevendeur(id: number, data: any, file: File): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+  
+      const formData = new FormData();
+  
+      formData.append('isValide', data.isValide);
+      formData.append('commentaire', data.commentaire);
+  
+      formData.append('registreDeCommerce', file, file.name);
+  
+      this._http.patch(`${this.apiUrl}/v1/revendeur/${id}/validate`, formData, { headers })
+        .subscribe(
+          (res: any) => {
+            console.log('Réponse du serveur :', res);
+            resolve(res);
+          },
+          (err) => {
+            console.error('Erreur lors de la validation :', err);
+            reject(err);
+          }
+        );
+    });
+  }
   // COMMANDE GRATUITE
 
   CreateCommandGratuite(data: any) {

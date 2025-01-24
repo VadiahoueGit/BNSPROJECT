@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { CoreServiceService } from 'src/app/core/core-service.service';
 import { ALERT_QUESTION } from '../../shared-component/utils';
+import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 
 @Component({
   selector: 'app-revendeur',
@@ -40,6 +41,7 @@ export class RevendeurComponent {
     private coreService: CoreServiceService,
     private _articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
+    private utilisateurService: UtilisateurResolveService,
     private toastr: ToastrService
   ) {}
   ngOnInit(): void {
@@ -150,34 +152,81 @@ export class RevendeurComponent {
     this.isModalDetail = false;
     console.log(this.isModalOpen);
   }
-  confirmValidateOperation(data: any) {
-    if (!data.isValide) {
+  selectedFile: File | null = null;
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0]; // Récupérer le fichier sélectionné
+  }
+  confirmValidateOperation(revendeur: any) {
+    if (!this.selectedFile) {
+      this.toastr.error('Erreur!', 'Veuillez sélectionner un fichier.');
+      return;
+    }
+  
+    if (!revendeur.isValide) {
       ALERT_QUESTION(
         'warning',
         'Attention !',
-        'Voulez-vous valider ce client?'
+        'Voulez-vous valider ce revendeur?'
       ).then((res) => {
-        if (res.isConfirmed == true) {
-          // const dataRequest = {
-          //   id: data.id,
-          //   isValide: true,
-          // };
-          // this._spinner.show();
-          // this.utilisateurService
-          //   .ValidatePointDeVente(dataRequest)
-          //   .then((res: any) => {
-          //     console.log('VALIDEEEEEEEEEE:::>', res);
-          //     this.toastr.success(res.message);
-          //     this.OnCloseDetailModal()
-          //     this._spinner.hide();
-          //     this.GetClientOSRList(1);
-          //   });
-        }else {
-          this.isModalDetail = false
+        if (res.isConfirmed) {
+          this._spinner.show();
+  
+          // Constitution de l'objet `data`
+          const data = {
+            isValide: true, // Le revendeur est validé
+            commentaire: 'Revendeur validé avec succès', // Optionnel
+          };
+  
+          // Appel de la méthode `ValidateRevendeur` avec le fichier
+          this._articleService.ValidateRevendeur(revendeur.id, data, this.selectedFile!)
+            .then(
+              (response: any) => {
+                console.log('VALIDEEEEEEEEEE:::>', response);
+                this.toastr.success(response.message);
+                this.OnCloseDetailModal();
+                this._spinner.hide();
+                this.GetRevendeurList(1); // Rafraîchir la liste des revendeurs
+              },
+              (error: any) => {
+                this._spinner.hide();
+                this.toastr.error('Erreur!', 'Erreur lors de la validation.');
+                console.error('Erreur lors de la validation', error);
+              }
+            );
+        } else {
+          this.isModalDetail = false; // Fermer le modal si l'utilisateur annule
         }
       });
     }
   }
+  // confirmValidateOperation(data: any) {
+  //   if (!data.isValide) {
+  //     ALERT_QUESTION(
+  //       'warning',
+  //       'Attention !',
+  //       'Voulez-vous valider ce revendeur?'
+  //     ).then((res) => {
+  //       if (res.isConfirmed == true) {
+  //         this._spinner.show();
+  //         this._articleService.ValidateRevendeur( data.id,data)
+  //           .then((res: any) => {
+  //             console.log('VALIDEEEEEEEEEE:::>', res);
+  //             this.toastr.success(res.message);
+  //             this.OnCloseDetailModal()
+  //             this._spinner.hide();
+  //             this.GetRevendeurList(1);
+  //           },
+  //           (error: any) => {
+  //             this._spinner.hide();
+  //             this.toastr.error('Erreur!', 'Erreur lors de la validation.');
+  //             console.error('Erreur lors de la validation', error);
+  //           });
+  //       }else {
+  //         this.isModalDetail = false
+  //       }
+  //     });
+  //   }
+  // }
   OnCloseModal() {
     this.isModalOpen = false;
   }
