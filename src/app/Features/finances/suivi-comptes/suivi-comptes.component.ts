@@ -61,7 +61,7 @@ export class SuiviComptesComponent {
     const creditEmballage = this.CreditForm.get('creditEmballage')?.value || 0;
     const total = creditLiquide + creditEmballage;
 
-    this.CreditForm.get('totalCredit')?.setValue(total, { emitEvent: false }); 
+    this.CreditForm.get('totalCredit')?.setValue(total, { emitEvent: false });
 
     const updatedtotalCredit = this.CreditForm.get('totalCredit')?.value;
     console.log(updatedtotalCredit, 'totalCredit');
@@ -87,6 +87,7 @@ export class SuiviComptesComponent {
 
   OnCloseModal() {
     this.isModalOpen = false;
+    this.CreditForm.reset()
     console.log(this.isModalOpen);
   }
   OnCreate() {
@@ -125,7 +126,7 @@ export class SuiviComptesComponent {
     this.GetCreditList(this.currentPage);
   }
   onSubmit(): void {
-    this.CreditForm.get('totalCredit')?.enable(); 
+    this.CreditForm.get('totalCredit')?.enable();
     console.log(this.CreditForm.value);
     if (this.CreditForm.valid) {
       const formValues = this.CreditForm.value;
@@ -133,7 +134,7 @@ export class SuiviComptesComponent {
       console.log('this.isEditMode', this.isEditMode);
 
       if (this.isEditMode) {
-      
+
         this._financeService.UpdateCredit(this.creditId, formValues).then(
           (response: any) => {
             console.log('article mis à jour avec succès', response);
@@ -205,7 +206,7 @@ export class SuiviComptesComponent {
       // Effectuer les deux appels API en parallèle
       const [revendeur, pointDeVente]: [any, any] = await Promise.all([
         this._articleService.GetListRevendeur(data), // Remplacez par votre méthode API
-        this.utilisateurService.GetCommercialList(data),
+        this.utilisateurService.GetPointDeVenteList(data),
       ]);
 
       console.log('Données revendeur:', revendeur);
@@ -226,10 +227,12 @@ export class SuiviComptesComponent {
       } else {
         console.error('Les données de liquides ne sont pas un tableau');
       }
-      this.dataClient = this.dataClient.map((client) => ({
+      this.dataClient = this.dataClient
+        .filter((client) => client.credits == null)
+        .map((client) => ({
         ...client,
         displayName:
-          client.raisonSocial || client.nom + ' ' + client.prenom || 'N/A',
+          client.raisonSocial || client.nomEtablissement || 'N/A',
       }));
       console.log('Données combinées dans dataList:', this.dataClient);
     } catch (error) {
