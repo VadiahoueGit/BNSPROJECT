@@ -175,15 +175,14 @@ export class RevendeurComponent {
     if (
       !this.selectedRccmFile ||
       !this.selectedCniFile ||
-      !this.selectedDfeFile
+      !this.selectedDfeFile || this.numeroSap
     ) {
-      this.toastr.error(
+      this.toastr.warning(
         'Erreur!',
-        'Veuillez sélectionner tous les fichiers requis.'
+        'Veuillez sélectionner tous les fichiers requis et le numéro SAP'
       );
       return;
     }
-
     if (!revendeur.isValide) {
       ALERT_QUESTION(
         'warning',
