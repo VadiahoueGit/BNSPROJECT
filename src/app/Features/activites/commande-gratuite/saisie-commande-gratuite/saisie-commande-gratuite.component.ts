@@ -47,6 +47,8 @@ export class SaisieCommandeGratuiteComponent {
   montantTotal: any = {};
   selectedOption: string = 'gratuitClient';
   listRevendeurs: any[] = [];
+  dataRevendeur: any[] = [];
+  dataPointDeVente: any[] = [];
   ListCommandeGratuites: any[] = [];
   depotId: any = 0;
   constructor(
@@ -67,7 +69,7 @@ export class SaisieCommandeGratuiteComponent {
     this.LoadPdv()
     this.GetRevendeurList(1)
     this.GetListCommandeGratuite(1)
-    // this.fetchData()
+    this.fetchData()
   }
   GetRevendeurList(page: number) {
     let data = {
@@ -121,53 +123,7 @@ export class SaisieCommandeGratuiteComponent {
   clear(table: Table) {
     table.clear();
   }
-  async fetchData() {
-    let data = {
-      paginate: false,
-      page: 1,
-      limit: 8,
-    };
-    try {
-      // Effectuer les deux appels API en parallèle
-      const [plastiques, liquides, emballage]: [any, any, any]  = await Promise.all([
-        this.articleService.GetPlastiqueNuList(data),  // Remplacez par votre méthode API
-        this.articleService.GetLiquideList(data) ,
-        this.articleService.GetEmballageList(data)     // Remplacez par votre méthode API
-      ]);
 
-      console.log("Données plastiques:", plastiques);
-      console.log("Données liquides:", liquides);
-      console.log("Données emballage:", emballage);
-      // Vérifier si plastiques et liquides sont bien des tableaux
-      if (Array.isArray(plastiques.data)) {
-        this.dataListPlastiqueNu = plastiques.data;
-        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
-        this.dataList.push(...plastiques.data);
-      } else {
-        console.error("Les données de plastiques ne sont pas un tableau");
-      }
-
-      if (Array.isArray(liquides.data)) {
-        this.dataListLiquides = liquides.data;
-        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
-        this.dataList.push(...liquides.data);
-      } else {
-        console.error("Les données de liquides ne sont pas un tableau");
-      }
-      if (Array.isArray(emballage.data)) {
-        // this.dataListLiquides = emballage.data;
-        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
-        this.dataListEmballage.push(...emballage.data);
-      } else {
-        console.error("Les données de liquides ne sont pas un tableau");
-      }
-      this.filteredArticleList = this.dataList;
-      console.log('Données combinées dans dataList:', this.filteredArticleList);
-    } catch (error) {
-      // Gestion des erreurs
-      console.error('Erreur lors de la récupération des données:', error);
-    }
-  }
   OnCloseModal() {
     this.totalEmballage = 0;
     this.totalLiquide  = 0;
@@ -401,6 +357,56 @@ export class SaisieCommandeGratuiteComponent {
       })
     );
 
+  }
+
+  async fetchData() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    try {
+      // Effectuer les deux appels API en parallèle
+      const [revendeur, pointDeVente]: [any, any] = await Promise.all([
+        this.articleService.GetListRevendeur(data), // Remplacez par votre méthode API
+        this.utilisateurService.GetPointDeVenteList(data),
+      ]);
+
+      console.log('Données revendeur:', revendeur);
+      console.log('Données pointDeVente:', pointDeVente);
+      // Vérifier si plastiques et liquides sont bien des tableaux
+      if (Array.isArray(revendeur.data)) {
+        this.dataRevendeur = revendeur.data;
+        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
+        this.listRevendeurs.push(...revendeur.data);
+      } else {
+        console.error('Les données de plastiques ne sont pas un tableau');
+      }
+
+      if (Array.isArray(pointDeVente.data)) {
+        this.dataPointDeVente = pointDeVente.data;
+        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
+        this.listRevendeurs.push(...pointDeVente.data);
+      } else {
+        console.error('Les données de liquides ne sont pas un tableau');
+      }
+
+      this.listRevendeurs = this.listRevendeurs
+        .filter((client:any) => client.credits != null)
+        .map((client:any) => ({
+          ...client,
+          displayName:
+            client.raisonSocial || client.nomEtablissement || 'N/A',
+        }))
+        .filter(
+          (client: any, index: number, self: any[]) =>
+            self.findIndex((c: any) => c.id === client.id) === index
+        );;
+      console.log('Données combinées dans dataList:', this.listRevendeurs);
+    } catch (error) {
+      // Gestion des erreurs
+      console.error('Erreur lors de la récupération des données:', error);
+    }
   }
   async GetPrixByArticle(item: any): Promise<any> {
     let data = {

@@ -71,23 +71,23 @@
                     </span> -->
         </td>
         <td>
-          <tr class="d-flex justify-content-center gap-3">
-            <td>
-              <i
-                (click)="OnEdit(dataList)"
-                style="cursor: pointer"
-                class="fas fa-edit text-secondary"
-              ></i>
-            </td>
-            <td>
-              <i
-                (click)="OnDelete(dataList.id)"
-                style="cursor: pointer"
-                class="fas fa-trash-alt text-danger"
-              ></i>
-            </td>
-          </tr>
+      <tr class="d-flex justify-content-center gap-3">
+        <td>
+          <i
+            (click)="OnEdit(dataList)"
+            style="cursor: pointer"
+            class="fas fa-edit text-secondary"
+          ></i>
         </td>
+        <td>
+          <i
+            (click)="OnDelete(dataList.id)"
+            style="cursor: pointer"
+            class="fas fa-trash-alt text-danger"
+          ></i>
+        </td>
+      </tr>
+      </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
@@ -134,14 +134,14 @@
               <div class="d-flex">
                 <div class="mr-2">
                   <label for="client" class="form-label me-2 mb-0 pt-2"
-                    >Client<span class="text-danger">*</span></label
+                  >Client<span class="text-danger">*</span></label
                   >
                 </div>
                 <ng-select
                   class="form-control"
                   [items]="listRevendeurs"
-                  (change)="onChange($event)"
-                  bindLabel="raisonSocial"
+                  (change)="onRevendeurChange($event)"
+                  bindLabel="displayName"
                   bindValue="id"
                   formControlName="clientId"
                   [searchable]="true"
@@ -159,9 +159,9 @@
           <div class="border rounded p-3 mb-4">
             <h6 class="mb-4">Informations client</h6>
             <div class="row g-3">
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <label for="numeroCompte" class="form-label"
-                  >Numéro de compte<span class="text-danger">*</span></label
+                >Numéro de compte<span class="text-danger">*</span></label
                 >
                 <input
                   type="text"
@@ -170,9 +170,9 @@
                   formControlName="numeroCompte"
                 />
               </div>
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <label for="raisonSociale" class="form-label"
-                  >Raison sociale<span class="text-danger">*</span></label
+                >Raison sociale<span class="text-danger">*</span></label
                 >
                 <input
                   type="text"
@@ -181,21 +181,22 @@
                   formControlName="raisonSociale"
                 />
               </div>
-              <div class="col-md-3">
-                <label for="contact" class="form-label"
-                  >Contact<span class="text-danger">*</span></label
+
+              <div class="col-md-4">
+                <label for="numSap" class="form-label"
+                >Numéro SAP<span class="text-danger">*</span></label
                 >
                 <input
                   type="text"
                   class="form-control"
-                  id="contact"
-                  formControlName="contact"
+                  id="numSap"
+                  formControlName="numSap"
                 />
               </div>
 
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <label for="montantCredit" class="form-label"
-                  >Montant crédit<span class="text-danger">*</span></label
+                >Montant crédit<span class="text-danger">*</span></label
                 >
                 <input
                   type="text"
@@ -204,31 +205,9 @@
                   formControlName="montantCredit"
                 />
               </div>
-              <div class="col-md-3">
-                <label for="enCours" class="form-label"
-                  >En cours<span class="text-danger">*</span></label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="enCours"
-                  formControlName="enCours"
-                />
-              </div>
-              <div class="col-md-3">
-                <label for="soldeLiquide" class="form-label"
-                  >Solde liquide<span class="text-danger">*</span></label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="soldeLiquide"
-                  formControlName="soldeLiquide"
-                />
-              </div>
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <label for="soldeEmballage" class="form-label"
-                  >Solde emballage<span class="text-danger">*</span></label
+                >Solde emballage<span class="text-danger">*</span></label
                 >
                 <input
                   type="text"
@@ -237,9 +216,32 @@
                   formControlName="soldeEmballage"
                 />
               </div>
-              <div class="col-md-3">
+              <div class="col-md-4">
+                <label for="soldeLiquide" class="form-label"
+                >Solde liquide<span class="text-danger">*</span></label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="soldeLiquide"
+                  formControlName="soldeLiquide"
+                />
+              </div>
+
+              <div class="col-md-4">
+                <label for="enCours" class="form-label"
+                >En cours<span class="text-danger">*</span></label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="enCours"
+                  formControlName="enCours"
+                />
+              </div>
+              <div class="col-md-4">
                 <label for="statutCompte" class="form-label"
-                  >Statut du compte<span class="text-danger">*</span></label
+                >Statut du compte<span class="text-danger">*</span></label
                 >
                 <input
                   type="text"
@@ -248,15 +250,15 @@
                   formControlName="statutCompte"
                 />
               </div>
-              <div class="col-md-3">
-                <label for="numSap" class="form-label"
-                  >Numéro SAP<span class="text-danger">*</span></label
+              <div class="col-md-4">
+                <label for="contact" class="form-label"
+                >Contact<span class="text-danger">*</span></label
                 >
                 <input
                   type="text"
                   class="form-control"
-                  id="numSap"
-                  formControlName="numSap"
+                  id="contact"
+                  formControlName="contact"
                 />
               </div>
             </div>
@@ -266,9 +268,9 @@
           <div class="border rounded p-3 mb-4">
             <h6 class="mb-4">Saisie commande</h6>
             <div class="row g-3">
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <label for="fraisTransport" class="form-label"
-                  >Frais transport<span class="text-danger">*</span></label
+                >Frais transport<span class="text-danger">*</span></label
                 >
                 <input
                   type="number"
@@ -278,18 +280,23 @@
                 />
               </div>
 
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <label for="remise" class="form-label"
-                  >Remise<span class="text-danger">*</span></label
+                >Remise<span class="text-danger">*</span></label
                 >
-                <select class="form-control" formControlName="remise">
-                  <option value="" disabled>Choisir un nombre</option>
-                </select>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="remise"
+                  [max]="100"
+                  formControlName="remise"
+                />
               </div>
-              <div class="col-md-3" style="margin-top: 3rem">
+              <div class="col-md-4" style="margin-top: 3rem">
                 <button
                   type="submit"
                   class="btn btn-primary"
+                  [disabled]="commandClientForm.controls['clientId'].invalid"
                   (click)="selectArticle()"
                 >
                   Ajouter des articles
@@ -298,14 +305,14 @@
             </div>
           </div>
         </form>
-          <div class="p-2 mt-3">
-            <div style="max-height: 350px; overflow-y: auto;">
-            <table class="table table-bordered">
+        <div class="p-2 mt-3">
+          <div style="max-height: 350px; overflow-y: auto">
+            <table  *ngIf="operation == 'create'" class="table table-bordered">
               <thead class="table-success">
               <!-- Première ligne d'en-tête -->
               <tr>
-                <th scope="col" colspan="5">PRIX UNITAIRE H.T (FCFA)</th>
-                <th scope="col" colspan="4">MONTANT H.T (FCFA)</th>
+                <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
+                <th scope="col" colspan="4">MONTANT TTC(FCFA)</th>
               </tr>
               <!-- Deuxième ligne d'en-tête -->
               <tr>
@@ -320,48 +327,94 @@
                 <th scope="col">Actions</th>
               </tr>
               </thead>
-  
-                <tbody >
-                <tr *ngFor="let item of selectedArticles">
-                  <td>{{ item.liquide.libelle }}1</td>
-                  <td>{{ prixLiquide[item.id] }}</td>
-                  <td>{{ prixEmballage[item.id] }}</td>
-                  <td>{{ prixEmballage[item.id] + prixLiquide[item.id] }}</td>
-                  <td>
-                    <input
-                      type="number"
-                      class="form-control-custom"
-                      [(ngModel)]="item.quantite"
-                      [min]="0"
-                      [max]="stocksDisponibles[item.id]"
-                      [disabled]="stocksDisponibles[item.id] === 0"
-                      [ngClass]="{ 'invalid': item.quantite > stocksDisponibles[item.id] }"
-                      (blur)="validateQuantite(item)"
-                    >
-                  </td>
-                  <td>{{ prixLiquideTotal[item.id] }}</td>
-                  <td>{{ prixEmballageTotal[item.id] }}</td>
-                  <td>{{ montantTotal[item.id] }}</td>
-                  <td class="d-flex justify-content-center">
-                    <button type="button" class="btn btn-danger btn-sm" (click)="removeArticle(item)">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr class="table-dark">
-                  <th scope="col" colspan="4">Total :</th>
-                  <td>{{totalQte}}</td>
-                  <td>{{totalLiquide}}</td>
-                  <td>{{totalEmballage}}</td>
-                  <td>{{totalGlobal}}</td>
-                  <td></td>
-                </tr>
-                </tbody>
-  
+
+              <tbody>
+              <tr *ngFor="let item of selectedArticles">
+                <td>{{ item.liquide.libelle }}1</td>
+                <td>{{ prixLiquide[item.id] }}</td>
+                <td>{{ prixEmballage[item.id] }}</td>
+                <td>{{ prixEmballage[item.id] + prixLiquide[item.id] }}</td>
+                <td>
+                  <input
+                    type="number"
+                    class="form-control-custom"
+                    [(ngModel)]="item.quantite"
+                    [min]="0"
+                    [max]="stocksDisponibles[item.id]"
+                    [disabled]="stocksDisponibles[item.id] === 0"
+                    [ngClass]="{
+                        invalid: item.quantite > stocksDisponibles[item.id]
+                      }"
+                    (blur)="validateQuantite(item)"
+                  />
+                  / {{stocksDisponibles[item.liquide.id]}}
+                </td>
+                <td>{{ prixLiquideTotal[item.id] }}</td>
+                <td>{{ prixEmballageTotal[item.id] }}</td>
+                <td>{{ montantTotal[item.id] }}</td>
+                <td class="d-flex justify-content-center">
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm"
+                    (click)="removeArticle(item)"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr class="table-dark">
+                <th scope="col" colspan="4">Total :</th>
+                <td>{{ totalQte }}</td>
+                <td>{{ totalLiquide }}</td>
+                <td>{{ totalEmballage }}</td>
+                <td>{{ totalGlobal }}</td>
+                <td></td>
+              </tr>
+              </tbody>
+            </table>
+            <table  *ngIf="operation == 'edit'" class="table table-bordered">
+              <thead class="table-success">
+              <!-- Première ligne d'en-tête -->
+              <tr>
+                <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
+                <th scope="col" colspan="3">MONTANT TTC(FCFA)</th>
+              </tr>
+              <!-- Deuxième ligne d'en-tête -->
+              <tr>
+                <th scope="col">Liquide</th>
+                <th scope="col">Liquide (FCFA)</th>
+                <th scope="col">Emballage (FCFA)</th>
+                <th scope="col">Total (FCFA)</th>
+                <th scope="col">Qte</th>
+                <th scope="col">Liquide (FCFA)</th>
+                <th scope="col">Emballage (FCFA)</th>
+                <th scope="col">Total (FCFA)</th>
+              </tr>
+              </thead>
+
+              <tbody>
+              <tr *ngFor="let item of updateData.articles">
+                <td>{{ item.liquide.libelle }}1</td>
+                <td>{{ item.prixUnitaireLiquide }}</td>
+                <td>{{ item.prixUnitaireEmballage}}</td>
+                <td>{{  Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) }}</td>
+                <td>{{ item.quantite }}</td>
+                <td>{{ item.montantLiquide }}</td>
+                <td>{{ item.montantEmballage }}</td>
+                <td>{{Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) }}</td>
+
+              </tr>
+              <tr class="table-dark">
+                <th scope="col" colspan="4">Total :</th>
+                <td>{{ totalQte }}</td>
+                <td>{{ totalLiquide }}</td>
+                <td>{{ totalEmballage }}</td>
+                <td>{{ totalGlobal }}</td>
+              </tr>
+              </tbody>
             </table>
           </div>
-          </div>
-        
+        </div>
       </div>
 
       <!-- Modal Footer -->
@@ -383,39 +436,61 @@
 
 <!--CHOIX ARTICLE-->
 <div *ngIf="isChoiceModalOpen" class="custom-modal">
-  <div class="modal-dialog2  modal-dialog-centered">
+  <div class="modal-dialog2 modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header d-flex align-items-center">
-        <div class="d-flex justify-content-center align-items-center"
-             style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
+        <div
+          class="d-flex justify-content-center align-items-center"
+          style="
+            background-color: rgb(219, 255, 232);
+            border-radius: 3rem;
+            width: 3rem;
+            height: 3rem;
+          "
+        >
           <i class="fas fa-box-check text-primary fs-3"></i>
         </div>
-        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">Selection des articles</h1>
+        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
+          Selection des articles
+        </h1>
       </div>
 
       <div class="modal-body">
-        <form action="" #articleForm >
+        <form>
           <div class="row">
-            <fieldset class="row border my-2" style="margin-left: .1rem;">
+            <fieldset class="row border my-2">
               <div class="p-3">
                 <!-- Champ de recherche -->
-                <input type="text" name="search" (input)="filterArticles()" [(ngModel)]="searchTerm"
-                       placeholder="Rechercher un produit" class="form-control mb-3">
+                <input
+                  type="text"
+                  name="search"
+                  (input)="filterArticles()"
+                  [(ngModel)]="searchTerm"
+                  placeholder="Rechercher un produit"
+                  class="form-control mb-3"
+                />
               </div>
-              <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
-
+              <div
+                class="table-responsive"
+                style="max-height: 200px; overflow-y: auto"
+              >
                 <table class="table">
                   <thead>
-                  <tr style="font-size: small;">
-                    <th scope="col" class="text-secondary">Code</th>
+                  <tr style="font-size: small">
                     <th scope="col" class="text-secondary">Produits</th>
-                    <th scope="col" class="text-secondary text-center">Choix</th>
+                    <th scope="col" class="text-secondary">Disponibilité</th>
+                    <th scope="col" class="text-secondary text-center">
+                      Choix
+                    </th>
                   </tr>
                   </thead>
                   <tbody>
-                  <tr *ngFor="let article of filteredArticleList; let i = index" style="font-size: small;">
-                    <th scope="row">{{ article.reference }}</th>
+                  <tr
+                    *ngFor="let article of filteredArticleList ; let i = index"
+                    style="font-size: small"
+                  >
                     <th scope="row">{{ article.libelle }}</th>
+                    <th scope="row">{{ stocksDisponibles[article.liquide.id] }}</th>
                     <td class="">
                       <input
                         type="checkbox"
@@ -423,21 +498,34 @@
                         [name]="'checkbox_' + i"
                         [(ngModel)]="article.isChecked"
                         (change)="onCheckboxChange(article)"
-                      >
+                        [disabled]="stocksDisponibles[article.liquide.id] <=0"
+                      />
+
                     </td>
                   </tr>
                   </tbody>
                 </table>
-
               </div>
             </fieldset>
           </div>
         </form>
       </div>
       <div class="modal-footer gap-3 px-4y">
-        <button (click)="OnCloseChoiceModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-        <button type="submit" (click)="onSubmitSelection()" class="btn btn-primary px-2">Valider</button>
+        <button
+          (click)="OnCloseChoiceModal()"
+          type="button"
+          class="btn btn-secondary px-2"
+        >
+          Annuler
+        </button>
+        <button
 
+          type="submit"
+          (click)="onSubmitSelection()"
+          class="btn btn-primary px-2"
+        >
+          Valider
+        </button>
       </div>
     </div>
   </div>

@@ -14,6 +14,9 @@
 .form-control {
   margin-bottom: -0.5rem; /* Espacer les champs */
 }
+.form-control-custom{
+  width: 50px;
+}
 .custom-modal {
     position: fixed;
     top: 0;
@@ -27,12 +30,12 @@
     z-index: 1050;
   }
 
- 
-  
+
+
   .modal-header, .modal-body, .modal-footer {
     padding: 1rem;
   }
-  
+
   .btn-close {
     background: transparent;
     border: none;
@@ -46,26 +49,26 @@
 .p-column-filter-menu-button {
     display: none; /* Masquer l'icône de filtre */
   }
-  
+
   /* Ajuster l'espacement si nécessaire après suppression de l'icône */
   .p-column-filter {
     padding-right: 0; /* Supprime l'espace réservé à l'icône */
   }
   .label-fixed-width {
-    min-width: 10px; 
+    min-width: 10px;
   }
 
   input[type="radio"] {
     accent-color: green; /* Sets the color of the selected radio button */
   }
-  
+
   /* Optional: Style the labels to add spacing and font customization */
   label {
     font-size: 1rem;
     color: #333;
     cursor: pointer;
   }
-  
+
   label + label {
     margin-left: 15px; /* Adds space between the two labels */
   }

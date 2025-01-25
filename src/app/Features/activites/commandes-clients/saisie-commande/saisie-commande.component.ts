@@ -34,9 +34,12 @@ export class SaisieCommandeComponent {
   dataListBouteilleVide: any = [];
   dataListPlastiqueNu: any = [];
   selectedArticles: any = [];
+  dataRevendeur: any = [];
+  dataClient: any = [];
+  dataPointDeVente: any = [];
   items: any = [];
   filteredArticleList: any[] = [];
-
+  depotId:number=0;
   articles = [
     { id: 1, libelle: 'Article A', liquide: 500, emballage: 200, total: 700 },
     { id: 2, libelle: 'Article B', liquide: 800, emballage: 300, total: 1100 },
@@ -60,7 +63,7 @@ export class SaisieCommandeComponent {
   listRevendeurs: any[] = [];
   constructor(
     private articleService: ArticleServiceService,
-    private _userSerive: UtilisateurResolveService,
+    private utilisateurService: UtilisateurResolveService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
@@ -69,15 +72,15 @@ export class SaisieCommandeComponent {
   ngOnInit() {
     this.commandClientForm = this.fb.group({
       clientId: [null, Validators.required],
-      numeroCompte: ['', Validators.required],
-      raisonSociale: ['', Validators.required],
-      montantCredit: ['', Validators.required],
+      numeroCompte: [{value:'', disabled: true}, Validators.required],
+      raisonSociale: [{value:'', disabled: true}, Validators.required],
+      montantCredit: [{value:'', disabled: true}, Validators.required],
       enCours: ['', Validators.required],
-      soldeEmballage: ['', Validators.required],
-      numSap: ['', Validators.required],
+      soldeEmballage: [{value:'', disabled: true}, Validators.required],
+      numSap: [{value:'', disabled: true}, Validators.required],
       remise: ['', Validators.required],
-      contact: ['', Validators.required],
-      soldeLiquide: ['', Validators.required],
+      contact: [{value:'', disabled: true}, Validators.required],
+      soldeLiquide: [{value:'', disabled: true}, Validators.required],
       statutCompte: ['DÉSACTIVÉ', Validators.required],
       numeroCommande: ['', Validators.required],
       referenceArticle: ['', Validators.required],
@@ -85,6 +88,7 @@ export class SaisieCommandeComponent {
       fraisTransport: [0, Validators.required],
     });
 
+    this.fetchData()
     // Par défaut, aucun article n'est sélectionné
     this.selectedArticle = this.articles[0];
     this.articleService.ListPlastiquesNu.subscribe((res: any) => {
@@ -96,7 +100,7 @@ export class SaisieCommandeComponent {
     this.articleService.ListBouteilleVide.subscribe((res: any) => {
       this.dataListBouteilleVide = res;
     });
-  
+
     this.articleService.ListTypeArticles.subscribe((res: any) => {
       this.dataListProduits = res;
       console.log(this.dataListProduits, 'this.dataListProduits ');
@@ -104,8 +108,6 @@ export class SaisieCommandeComponent {
     this.articleService.ListGroupesArticles.subscribe((res: any) => {
       this.dataListGroupeArticles = res;
     });
-    this.GetArticleList(1);
-    this.GetRevendeurList(1);
   }
   onDelete(item: any) {
     console.log(item);
@@ -120,6 +122,21 @@ export class SaisieCommandeComponent {
     table.clear();
   }
 
+  onRevendeurChange(selectedItem: any): void {
+    this.detailPointDevente = selectedItem;
+    this.commandClientForm.controls['numeroCompte'].setValue(this.detailPointDevente.numeroCompteContribuable);
+    this.commandClientForm.controls['raisonSociale'].setValue(this.detailPointDevente.raisonSocial);
+    this.commandClientForm.controls['contact'].setValue(this.detailPointDevente.telephoneGerant);
+    this.commandClientForm.controls['numSap'].setValue(this.detailPointDevente.numeroSAP);
+
+    this.commandClientForm.controls['montantCredit'].setValue(this.detailPointDevente.credits.totalCredit);
+    this.commandClientForm.controls['soldeLiquide'].setValue(this.detailPointDevente.credits.creditLiquide);
+    this.commandClientForm.controls['soldeEmballage'].setValue(this.detailPointDevente.credits.creditEmballage);
+    console.log(this.detailPointDevente,'detailPointDevente')
+    console.log('Élément sélectionné :', selectedItem);
+    this.depotId = selectedItem.depot.id;
+    this.GetArticleList(1)
+  }
   OnCloseModal() {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
@@ -152,30 +169,48 @@ export class SaisieCommandeComponent {
     this.articleService.GetArticleList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.dataListLiquides = res.data;
+      this.dataListLiquides.forEach((item: any) => {
+        this.GetStockDisponibleByDepot(item)
+      })
       this.filteredArticleList = this.dataListLiquides;
       this._spinner.hide();
     });
   }
-  GetRevendeurList(page: number) {
+
+  async GetStockDisponibleByDepot(item: any): Promise<any> {
     let data = {
-      paginate: false,
-      page: page,
-      limit: 8,
+      productId: item.liquide.code,
+      depotId:this.depotId
     };
-    this._spinner.show();
-    this.articleService.GetListRevendeur(data).then((res: any) => {
-      console.log('GetListRevendeur:::>', res);
-      this.listRevendeurs = res.data;
-      this._spinner.hide();
-    });
+
+    try {
+      // Attendre la réponse de la promesse
+      const response:any = await this.articleService.GetStockDisponibleByDepot(data);
+      console.log(response)
+      // Vérifier si le statusCode est 200
+      if (response) {
+        this.stocksDisponibles[item.liquide.id] = response.quantiteDisponible;
+        console.log(this.stocksDisponibles[item.liquide.id])
+      } else if (response.statusCode === 404) {
+        this.stocksDisponibles[item.liquide.id] =  0; // Si le code est 404, retourner 0
+      } else {
+        return null; // Si un autre code, retourner null ou une valeur par défaut
+      }
+    } catch (error:any) {
+      console.log(error);
+      if (error.status === 404) {
+        this.stocksDisponibles[item.liquide.id] = 0; // Si le code est 404, retourner 0
+      }
+    }
   }
+
   onArticleChange(articleId: number): void {
     this.selectedArticle = this.articles.find(
       (article) => article.id === articleId
     );
   }
   onSubmit(): void {
-    
+
   }
   selectArticle() {
     this.isEditMode = false;
@@ -307,10 +342,7 @@ export class SaisieCommandeComponent {
     this.rowsPerPage = event.rows;
     this.GetArticleList(this.currentPage);
   }
-  onChange(event: any): void {
-    this.detailPointDevente = event;
-    console.log(this.detailPointDevente,'detailPointDevente')
-  }
+
   filterArticles(): void {
     console.log(this.searchTerm)
     if (this.searchTerm) {
@@ -339,4 +371,50 @@ export class SaisieCommandeComponent {
       }
     );
   }
+
+  async fetchData() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    try {
+      // Effectuer les deux appels API en parallèle
+      const [revendeur, pointDeVente]: [any, any] = await Promise.all([
+        this.articleService.GetListRevendeur(data), // Remplacez par votre méthode API
+        this.utilisateurService.GetPointDeVenteList(data),
+      ]);
+
+      console.log('Données revendeur:', revendeur);
+      console.log('Données pointDeVente:', pointDeVente);
+      // Vérifier si plastiques et liquides sont bien des tableaux
+      if (Array.isArray(revendeur.data)) {
+        this.dataRevendeur = revendeur.data;
+        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
+        this.listRevendeurs.push(...revendeur.data);
+      } else {
+        console.error('Les données de plastiques ne sont pas un tableau');
+      }
+
+      if (Array.isArray(pointDeVente.data)) {
+        this.dataPointDeVente = pointDeVente.data;
+        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
+        this.listRevendeurs.push(...pointDeVente.data);
+      } else {
+        console.error('Les données de liquides ne sont pas un tableau');
+      }
+      this.listRevendeurs = this.listRevendeurs
+        .filter((client:any) => client.credits != null)
+        .map((client:any) => ({
+          ...client,
+          displayName:
+            client.raisonSocial || client.nomEtablissement || 'N/A',
+        }));
+      console.log('Données combinées dans dataList:', this.listRevendeurs);
+    } catch (error) {
+      // Gestion des erreurs
+      console.error('Erreur lors de la récupération des données:', error);
+    }
+  }
+  protected readonly Number = Number;
 }
