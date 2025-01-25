@@ -15,7 +15,8 @@
 
 /* --- Affichage du logo en petite taille sur tablette --- */
 #sidebar .sidebar-header img {
-  height: 90px; /* Taille par défaut du logo */
+  margin-top:2rem;
+  height: 70px; /* Taille par défaut du logo */
 }
 
 /* --- Sur les petits écrans (tablette ou mobile) --- */

@@ -17,10 +17,10 @@
     <ng-template pTemplate="header">
       <tr>
         <th style="color: var(--secondary-color)">Type client</th>
+        <th style="color: var(--secondary-color)">Groupe client</th>
+        <th style="color: var(--secondary-color)">Client</th>
         <th style="color: var(--secondary-color)">Credit emballage</th>
         <th style="color: var(--secondary-color)">Crédit liquide</th>
-        <th style="color: var(--secondary-color)">Groupe client</th>
-        <th style="color: var(--secondary-color)">Revendeur</th>
         <th style="color: var(--secondary-color)">Total crédit</th>
         <th style="color: var(--secondary-color)">Actions</th>
       </tr>
@@ -33,19 +33,19 @@
           </span>
         </td>
         <td>
+          {{ dataList.revendeur?.groupeClient?.nomGroupe ? dataList.revendeur?.groupeClient?.nomGroupe : dataList.pointDeVente?.groupeClient?.nomGroupe }}
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.revendeur?.raisonSocial ? dataList.revendeur?.raisonSocial : dataList.pointDeVente.nomEtablissement }}
+          </span>
+        </td>
+        <td>
           {{ dataList.creditEmballage }}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
             {{ dataList.creditLiquide }}
-          </span>
-        </td>
-        <td>
-          {{ dataList.revendeur?.groupeClient?.nomGroupe }}
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.revendeur?.agentCommercial }}
           </span>
         </td>
         <td>

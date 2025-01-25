@@ -86,6 +86,7 @@ export class SuiviComptesComponent {
   }
 
   OnCloseModal() {
+    this.CreditForm.controls['clientId'].enable();
     this.isModalOpen = false;
     this.CreditForm.reset()
     console.log(this.isModalOpen);
@@ -104,6 +105,7 @@ export class SuiviComptesComponent {
     this.creditId = data.id;
     this.isModalOpen = true;
     this.loadUpdateData()
+    this.CreditForm.controls['clientId'].disable();
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
