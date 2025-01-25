@@ -30,10 +30,14 @@ export class RevendeurComponent {
   operation: string = '';
   isModalOpen: boolean = false;
   isEditMode: boolean = false;
-  imageUrl : any
-  docUrl : any
+  imageUrl: any;
+  docUrl: any;
   isModalDetail: boolean = false;
-  RevendeurDetail:any
+  RevendeurDetail: any;
+  selectedRccmFile: File | null = null;
+  selectedCniFile: File | null = null;
+  selectedDfeFile: File | null = null;
+  numeroSap: string | Blob;
   constructor(
     private cd: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -47,22 +51,19 @@ export class RevendeurComponent {
   ngOnInit(): void {
     this.revendeurForm = this.fb.group({
       groupeClientId: [null, Validators.required],
-      numeroRegistre: [null,Validators.required],
+      numeroRegistre: [null, Validators.required],
       raisonSocial: [null, Validators.required],
-      contact: [null,Validators.required],
+      contact: [null, Validators.required],
       longitude: [null, Validators.required],
       latitude: [null, Validators.required],
-      telephone: [
-        null,
-        [Validators.required,],
-      ],
-      localiteId: [null,Validators.required],
+      telephone: [null, [Validators.required]],
+      localiteId: [null, Validators.required],
       depotId: [null, Validators.required],
       zoneDeLivraisonId: [null, Validators.required],
       nomProprietaire: [null, Validators.required],
-      telephoneProprietaire: [null, Validators.required,],
+      telephoneProprietaire: [null, Validators.required],
       nomGerant: [null, Validators.required],
-      telephoneGerant: [null, Validators.required,],
+      telephoneGerant: [null, Validators.required],
       quantiteMinimumACommander: [null, Validators.min(0)],
       numeroCompteContribuable: [null, Validators.required],
       familleProduitId: [null, Validators.required],
@@ -84,7 +85,18 @@ export class RevendeurComponent {
     // this.GetLocaliteList();
     this.GetDepotList();
     this.GetZoneList();
-    this.GetRevendeurList(1)
+    this.GetRevendeurList(1);
+  }
+  onRccmSelected(event: any) {
+    this.selectedRccmFile = event.target.files[0];
+  }
+
+  onCniSelected(event: any) {
+    this.selectedCniFile = event.target.files[0];
+  }
+
+  onDfeSelected(event: any) {
+    this.selectedDfeFile = event.target.files[0];
   }
   goBack() {
     this.location.back();
@@ -112,24 +124,23 @@ export class RevendeurComponent {
   }
   loadClientDetails(): void {
     this.revendeurForm.patchValue({
-      groupeClientId:this.updateData.groupeClient.id,
+      groupeClientId: this.updateData.groupeClient.id,
       numeroRegistre: this.updateData.numeroRegistre,
-      raisonSocial:this.updateData.raisonSocial,
-      contact:this.updateData.contact,
-      longitude:this.updateData.longitude,
-      latitude:this.updateData.latitude,
-      telephone:this.updateData.telephone,
-      localiteId:this.updateData.localite.id,
-      depotId:this.updateData.depot.id,
-      zoneDeLivraisonId:this.updateData.zoneDeLivraison.id,
-      nomProprietaire:this.updateData.nomProprietaire,
-      telephoneProprietaire:this.updateData.telephoneProprietaire,
-      nomGerant:this.updateData.nomGerant,
+      raisonSocial: this.updateData.raisonSocial,
+      contact: this.updateData.contact,
+      longitude: this.updateData.longitude,
+      latitude: this.updateData.latitude,
+      telephone: this.updateData.telephone,
+      localiteId: this.updateData.localite.id,
+      depotId: this.updateData.depot.id,
+      zoneDeLivraisonId: this.updateData.zoneDeLivraison.id,
+      nomProprietaire: this.updateData.nomProprietaire,
+      telephoneProprietaire: this.updateData.telephoneProprietaire,
+      nomGerant: this.updateData.nomGerant,
       telephoneGerant: this.updateData.telephoneGerant,
       quantiteMinimumACommander: this.updateData.quantiteMinimumACommander,
-      numeroCompteContribuable:this.updateData.numeroCompteContribuable,
-      familleProduitId:this.updateData.familleProduitId,
-
+      numeroCompteContribuable: this.updateData.numeroCompteContribuable,
+      familleProduitId: this.updateData.familleProduitId,
     });
   }
 
@@ -139,7 +150,10 @@ export class RevendeurComponent {
     this.RevendeurDetail = data;
 
     if (this.docUrl && data?.photo) {
-      this.imageUrl = `${this.docUrl.replace(/\/$/, '')}/${data.photo.replace(/^\//, '')}`;
+      this.imageUrl = `${this.docUrl.replace(/\/$/, '')}/${data.photo.replace(
+        /^\//,
+        ''
+      )}`;
     } else {
       console.log('docUrl ou data.photo est null ou undefined.');
       this.imageUrl = '';
@@ -157,11 +171,19 @@ export class RevendeurComponent {
     this.selectedFile = event.target.files[0]; // Récupérer le fichier sélectionné
   }
   confirmValidateOperation(revendeur: any) {
-    if (!this.selectedFile) {
-      this.toastr.error('Erreur!', 'Veuillez sélectionner un fichier.');
+    // Vérifier que tous les fichiers sont sélectionnés
+    if (
+      !this.selectedRccmFile ||
+      !this.selectedCniFile ||
+      !this.selectedDfeFile
+    ) {
+      this.toastr.error(
+        'Erreur!',
+        'Veuillez sélectionner tous les fichiers requis.'
+      );
       return;
     }
-  
+
     if (!revendeur.isValide) {
       ALERT_QUESTION(
         'warning',
@@ -170,31 +192,30 @@ export class RevendeurComponent {
       ).then((res) => {
         if (res.isConfirmed) {
           this._spinner.show();
-  
-          // Constitution de l'objet `data`
-          const data = {
-            isValide: true, // Le revendeur est validé
-            commentaire: 'Revendeur validé avec succès', // Optionnel
-          };
-  
-          // Appel de la méthode `ValidateRevendeur` avec le fichier
-          this._articleService.ValidateRevendeur(revendeur.id, data, this.selectedFile!)
-            .then(
-              (response: any) => {
-                console.log('VALIDEEEEEEEEEE:::>', response);
-                this.toastr.success(response.message);
-                this.OnCloseDetailModal();
-                this._spinner.hide();
-                this.GetRevendeurList(1); // Rafraîchir la liste des revendeurs
-              },
-              (error: any) => {
-                this._spinner.hide();
-                this.toastr.error('Erreur!', 'Erreur lors de la validation.');
-                console.error('Erreur lors de la validation', error);
-              }
-            );
+
+          const formData = new FormData();
+
+          formData.append('cni', this.selectedCniFile!);
+          formData.append('registre', this.selectedRccmFile!);
+          formData.append('dfe', this.selectedDfeFile!);
+          formData.append('cni', this.numeroSap);
+
+          this._articleService.ValidateRevendeur(revendeur.id, formData).then(
+            (response: any) => {
+              console.log('VALIDEEEEEEEEEE:::>', response);
+              this.toastr.success(response.message);
+              this.OnCloseDetailModal();
+              this._spinner.hide();
+              this.GetRevendeurList(1);
+            },
+            (error: any) => {
+              this._spinner.hide();
+              this.toastr.error('Erreur!', 'Erreur lors de la validation.');
+              console.error('Erreur lors de la validation', error);
+            }
+          );
         } else {
-          this.isModalDetail = false; // Fermer le modal si l'utilisateur annule
+          this.isModalDetail = false;
         }
       });
     }
@@ -334,28 +355,28 @@ export class RevendeurComponent {
     }
   }
   OnDelete(id: number) {
-     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
-       (res) => {
-         if (res.isConfirmed) {
-           this._spinner.show();
-           this._articleService
-             .DeleteRevendeur(id)
-             .then((res: any) => {
-               console.log('DATA:::>', res);
-               this.toastr.success(res.message);
-               this.GetRevendeurList(1)
-               this._spinner.hide();
-             })
-             .catch((err) => {
-               console.error(err);
-               this.toastr.error(
-                 'Erreur!',
-                 'Une erreur est survenue lors de la suppression.'
-               );
-               this._spinner.hide();
-             });
-         }
-       }
-     );
-   }
+    ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
+      (res) => {
+        if (res.isConfirmed) {
+          this._spinner.show();
+          this._articleService
+            .DeleteRevendeur(id)
+            .then((res: any) => {
+              console.log('DATA:::>', res);
+              this.toastr.success(res.message);
+              this.GetRevendeurList(1);
+              this._spinner.hide();
+            })
+            .catch((err) => {
+              console.error(err);
+              this.toastr.error(
+                'Erreur!',
+                'Une erreur est survenue lors de la suppression.'
+              );
+              this._spinner.hide();
+            });
+        }
+      }
+    );
+  }
 }
