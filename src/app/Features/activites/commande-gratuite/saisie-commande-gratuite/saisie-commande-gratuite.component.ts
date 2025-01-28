@@ -61,7 +61,8 @@ export class SaisieCommandeGratuiteComponent {
 
   ngOnInit() {
     this.CommandeForm = this.fb.group({
-      revendeurId: [null, Validators.required],
+      clientId: [null, Validators.required],
+      clientType: [null, Validators.required],
       depotId: [null, Validators.required],
       articles: this.fb.array([]),
     });
@@ -284,6 +285,7 @@ export class SaisieCommandeGratuiteComponent {
   onRevendeurChange(selectedItem: any): void {
     console.log('Élément sélectionné :', selectedItem);
     this.depotId = selectedItem.depot.id;
+    this.CommandeForm.controls["clientType"].setValue(selectedItem.role);
     this.GetArticleList(1)
   }
   async GetStockDisponibleByDepot(item: any): Promise<any> {
