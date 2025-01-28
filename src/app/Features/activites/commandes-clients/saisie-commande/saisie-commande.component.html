@@ -346,10 +346,10 @@
                       class="form-control-custom"
                       [(ngModel)]="item.quantite"
                       [min]="0"
-                      [max]="stocksDisponibles[item.id]"
-                      [disabled]="stocksDisponibles[item.id] === 0"
+                      [max]="stocksDisponibles[item.liquide.id]"
+                      [disabled]="stocksDisponibles[item.liquide.id] === 0"
                       [ngClass]="{
-                        invalid: item.quantite > stocksDisponibles[item.id]
+                        invalid: item.quantite > stocksDisponibles[item.liquide.id]
                       }"
                       (blur)="validateQuantite(item)"
                     />

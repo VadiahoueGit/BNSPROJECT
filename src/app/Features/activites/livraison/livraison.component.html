@@ -91,7 +91,7 @@
 <div *ngIf="isModalOpen" class="custom-modal">
   <div
     class="modal-dialog modal-dialog-centered"
-   
+
   >
     <div class="modal-content">
       <div class="modal-header">
@@ -107,10 +107,16 @@
           <div class="col-md-7">
             <div class="row mb-3">
               <div class="col-md-6">
-                <label for="zone" class="form-label">Zone*</label>
-                <select id="zone" class="form-select">
-                  <option value="zone1">Zone Bingerville</option>
-                </select>
+                <label for="zone" class="form-label">Zone de livraison*</label>
+                <ng-select
+                  class="form-control"
+                  [items]="listZone"
+                  bindLabel="nomZone"
+                  bindValue="id"
+                  [searchable]="true"
+                  (change)="onZoneChange($event)"
+                >
+                </ng-select>
               </div>
             </div>
 
@@ -120,107 +126,92 @@
                   <th>Commande</th>
                   <th>Raison sociale</th>
                   <th>Casier</th>
-                  <th>Situation géographique</th>
+                  <th>Zone livraison</th>
                   <th>Date</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>2846</td>
-                  <td>DEPOT WINNER KING YEO NAMOGO</td>
-                  <td>20</td>
-                  <td>Bingerville</td>
-                  <td>05/12/2024 13:30:32</td>
-                  <td>
-                    <input type="checkbox" checked />
-                  </td>
-                </tr>
-                <tr>
-                  <td>2845</td>
-                  <td>DEPOT WINNER KING YEO NAMOGO</td>
-                  <td>131</td>
-                  <td>Bingerville</td>
-                  <td>05/12/2024 13:27:38</td>
-                  <td>
-                    <input type="checkbox" checked />
+                <tr *ngFor="let item of filteredList; let i = index">
+                  <td>{{ item.NumCommande }}</td>
+                  <td>{{ item.client.raisonSocial }}</td>
+                  <td>{{ getTotalQuantite(item.articles) }}</td>
+                  <td>{{ item.client.zoneDeLivraison.nomZone }}</td>
+                  <td>{{ item.createdAt|date }}</td>
+                  <td class="">
+                    <input
+                      type="checkbox"
+                      class="form-control-custom"
+                      [name]="'checkbox_' + i"
+                      [(ngModel)]="item.isChecked"
+                      (change)="onCheckboxChange(item)"
+                    />
+
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <div class="col-md-5">
-            <div class="card">
-              <div class="card-header">
-                <h6 class="mb-0">Informations sur le regroupement</h6>
-              </div>
-              <div class="card-body">
-                <div class="row">
-                  <!-- Première colonne -->
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="regroupement" class="form-label">Regroupements*</label>
-                      <input
-                        type="text"
-                        id="regroupement"
-                        class="form-control"
-                        value="BL2785917334"
-                        readonly
-                      />
-                    </div>
-                    <div class="mb-3">
-                      <label for="zoneLivraison" class="form-label">Zones de livraison</label>
-                      <input
-                        type="text"
-                        id="zoneLivraison"
-                        class="form-control"
-                        value="ZONE BINGERVILLE"
-                        readonly
-                      />
-                    </div>
-                    <div class="mb-3">
-                      <label for="palettes" class="form-label">Palettes</label>
-                      <input
-                        type="number"
-                        id="palettes"
-                        class="form-control"
-                        value="20"
-                        readonly
-                      />
+            <div class="col-md-5">
+              <div class="card">
+                <div class="card-header">
+                  <h6 class="mb-0">Informations sur le regroupement</h6>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <!-- Première colonne -->
+                    <div class="col-12">
+                      <form [formGroup]="livraisonForm">
+                        <div class="mb-3">
+                          <label for="transporteur" class="form-label">Transporteur</label>
+                          <ng-select
+                            class="form-control"
+                            [items]="listTransporteur"
+                            bindLabel="displayName"
+                            formControlName="transporteur"
+                            bindValue="id"
+                            [searchable]="true"
+                          >
+                          </ng-select>
+                        </div>
+                        <div class="mb-3">
+                          <label for="chauffeur" class="form-label">Véhicule</label>
+                          <ng-select
+                            class="form-control"
+                            [items]="listVehicule"
+                            bindLabel="displayName"
+                            formControlName="vehicule"
+                            bindValue="id"
+                            [searchable]="true"
+                          >
+                          </ng-select>
+                        </div>
+                      </form>
+
                     </div>
                   </div>
-          
-                  <!-- Deuxième colonne -->
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="transporteur" class="form-label">Transporteur</label>
-                      <select id="transporteur" class="form-select">
-                        <option>Sélectionner un transporteur</option>
-                      </select>
-                    </div>
-                    <div class="mb-3">
-                      <label for="chauffeur" class="form-label">Chauffeur</label>
-                      <select id="chauffeur" class="form-select">
-                        <option>Sélectionner un véhicule</option>
-                      </select>
-                    </div>
-                    <div class="mb-3">
-                      <label for="totalPalettes" class="form-label">Total Palettes</label>
-                      <input
-                        type="number"
-                        id="totalPalettes"
-                        class="form-control"
-                        value="0"
-                        readonly
-                      />
-                    </div>
+                  <div class="row">
+                    <table class="table table-bordered table-hover">
+                      <thead class="table-success">
+                      <tr>
+                        <th>Format</th>
+                        <th>Palette</th>
+                        <th>Casier</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let item of regroupementFinal | keyvalue">
+                        <td>{{ item.key }}</td>
+                        <td>{{item.value.palettes }}</td>
+                        <td>{{item.value.casier }}</td>
+                      </tr>
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          
         </div>
       </div>
 

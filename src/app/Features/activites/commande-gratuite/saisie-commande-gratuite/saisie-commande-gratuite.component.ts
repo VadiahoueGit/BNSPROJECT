@@ -61,7 +61,8 @@ export class SaisieCommandeGratuiteComponent {
 
   ngOnInit() {
     this.CommandeForm = this.fb.group({
-      revendeurId: [null, Validators.required],
+      clientId: [null, Validators.required],
+      clientType: [null, Validators.required],
       depotId: [null, Validators.required],
       articles: this.fb.array([]),
     });
@@ -284,6 +285,7 @@ export class SaisieCommandeGratuiteComponent {
   onRevendeurChange(selectedItem: any): void {
     console.log('Élément sélectionné :', selectedItem);
     this.depotId = selectedItem.depot.id;
+    this.CommandeForm.controls["clientType"].setValue(selectedItem.role);
     this.GetArticleList(1)
   }
   async GetStockDisponibleByDepot(item: any): Promise<any> {
@@ -299,7 +301,6 @@ export class SaisieCommandeGratuiteComponent {
       // Vérifier si le statusCode est 200
       if (response) {
         this.stocksDisponibles[item.liquide.id] = response.quantiteDisponible;
-        console.log(this.stocksDisponibles[item.liquide.id])
       } else if (response.statusCode === 404) {
         this.stocksDisponibles[item.liquide.id] =  0; // Si le code est 404, retourner 0
       } else {
@@ -314,7 +315,7 @@ export class SaisieCommandeGratuiteComponent {
   }
   validateQuantite(data: any): void {
     // Vérifier si la quantité saisie dépasse la quantité disponible
-    if (data.quantite > this.stocksDisponibles[data.id]) {
+    if (data.quantite > this.stocksDisponibles[data.liquide.id]) {
       // Réinitialiser la quantité à la quantité disponible
       data.quantite ='';
       // Afficher un message de warning
@@ -348,6 +349,7 @@ export class SaisieCommandeGratuiteComponent {
     console.log(data);
     this.articles.push(
       this.fb.group({
+        groupeArticleId: data.groupearticle.id,
         codeArticleLiquide: data.liquide.code,
         codeArticleEmballage: data.liquide.emballage.code,
         prixUnitaireLiquide: this.prixLiquide[data.id],

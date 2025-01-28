@@ -113,7 +113,7 @@ export class SaisieCommandeComponent {
       this.dataListGroupeArticles = res;
     });
     this.GetListCommandeClient(1);
-    
+
   }
   onDelete(item: any) {
     console.log(item);
@@ -302,7 +302,7 @@ export class SaisieCommandeComponent {
       numeroCompte: this.detailPointDevente.numeroCompteContribuable,
       raisonSociale: this.detailPointDevente.raisonSocial,
       contact: this.detailPointDevente.telephoneGerant,
-      montantCredit: parseInt(this.detailPointDevente.credits.totalCredit), 
+      montantCredit: parseInt(this.detailPointDevente.credits.totalCredit),
       soldeLiquide: parseInt(this.detailPointDevente.credits.creditLiquide),
       soldeEmballage: parseInt(this.detailPointDevente.credits.creditEmballage),
       statutCompte: formData.statutCompte,
@@ -358,7 +358,7 @@ export class SaisieCommandeComponent {
     console.log(data, 'validateQuantiteData');
 
     // Vérifier si la quantité saisie dépasse la quantité disponible
-    if (data.quantite > this.stocksDisponibles[data.id]) {
+    if (data.quantite > this.stocksDisponibles[data.liquide.id]) {
       // Réinitialiser la quantité à la quantité disponible
       data.quantite = '';
 
