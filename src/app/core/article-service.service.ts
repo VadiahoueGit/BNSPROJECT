@@ -1188,4 +1188,45 @@ export class ArticleServiceService {
       );
     });
   }
-}
+
+  // COMMANDE CLIENT
+
+  CreateCommandClient(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/commandes-client`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+  GetListCommandeClient(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.get(`${this.apiUrl}/v1/commandes-client?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          if (res.statusCode === 200) {
+            this.ListRevendeurs.next(res.data)
+          }
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+  }
+

@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
@@ -39,28 +39,33 @@ export class SaisieCommandeComponent {
   dataPointDeVente: any = [];
   items: any = [];
   filteredArticleList: any[] = [];
-  depotId:number=0;
-  articles = [
-    { id: 1, libelle: 'Article A', liquide: 500, emballage: 200, total: 700 },
-    { id: 2, libelle: 'Article B', liquide: 800, emballage: 300, total: 1100 },
-    { id: 3, libelle: 'Article C', liquide: 400, emballage: 100, total: 500 },
-  ];
+  depotId: number = 0;
+  // articles = [
+  //   { id: 1, libelle: 'Article A', liquide: 500, emballage: 200, total: 700 },
+  //   { id: 2, libelle: 'Article B', liquide: 800, emballage: 300, total: 1100 },
+  //   { id: 3, libelle: 'Article C', liquide: 400, emballage: 100, total: 500 },
+  // ];
   selectedArticle: any = [];
   dataListLiquides: any = [];
   stocksDisponibles: any = {};
   prixLiquide: any = {};
   prixEmballage: any = {};
   prixLiquideTotal: any = {};
-  totalLiquide:number = 0;
-  totalEmballage:number = 0;
-  totalGlobal:number = 0;
-  totalQte:number = 0;
+  totalLiquide: number = 0;
+  totalEmballage: number = 0;
+  totalGlobal: number = 0;
+  totalGlobalBeforeRemise: number = 0;
+  totalQte: number = 0;
   prixEmballageTotal: any = {};
   montantTotal: any = {};
   clients: any = [];
   currentPage: number;
   rowsPerPage: any;
   listRevendeurs: any[] = [];
+  totalGlobalAfterRemise: number = 0;
+  prixLiquideArticleSelected: any;
+  prixEmballageArticleSelected: any;
+  ListCommandeClient: any;
   constructor(
     private articleService: ArticleServiceService,
     private utilisateurService: UtilisateurResolveService,
@@ -72,31 +77,30 @@ export class SaisieCommandeComponent {
   ngOnInit() {
     this.commandClientForm = this.fb.group({
       clientId: [null, Validators.required],
-      numeroCompte: [{value:'', disabled: true}, Validators.required],
-      raisonSociale: [{value:'', disabled: true}, Validators.required],
-      montantCredit: [{value:'', disabled: true}, Validators.required],
-      enCours: ['', Validators.required],
-      soldeEmballage: [{value:'', disabled: true}, Validators.required],
-      numSap: [{value:'', disabled: true}, Validators.required],
-      remise: ['', Validators.required],
-      contact: [{value:'', disabled: true}, Validators.required],
-      soldeLiquide: [{value:'', disabled: true}, Validators.required],
-      statutCompte: ['DÉSACTIVÉ', Validators.required],
-      numeroCommande: ['', Validators.required],
-      referenceArticle: ['', Validators.required],
-      quantite: [0, [Validators.required, Validators.min(1)]],
-      fraisTransport: [0, Validators.required],
+      clientType: ['revendeur', ],
+      numeroCompte: [{ value: '', disabled: true }, ],
+      raisonSociale: [{ value: '', disabled: true }, ],
+      montantCredit: [{ value: '', disabled: true }, ],
+      enCours: ['', ],
+      soldeEmballage: [{ value: '', disabled: true }, ],
+      numeroSAP: [{ value: '', disabled: true }, ],
+      remise: [
+        0,
+        [Validators.required, Validators.min(0), Validators.max(100)],
+      ],
+      contact: [{ value: '', disabled: true }, ],
+      soldeLiquide: [{ value: '', disabled: true }, ],
+      statutCompte: ['Ok', ],
+      fraisTransport: [0,Validators.required ],
+      articles: this.fb.array([]),
     });
 
-    this.fetchData()
-    // Par défaut, aucun article n'est sélectionné
-    this.selectedArticle = this.articles[0];
+    this.fetchData();
+
     this.articleService.ListPlastiquesNu.subscribe((res: any) => {
       this.dataListPlastiqueNu = res;
     });
-    // this.articleService.ListLiquides.subscribe((res: any) => {
-    //   this.dataListLiquides = res;
-    // });
+
     this.articleService.ListBouteilleVide.subscribe((res: any) => {
       this.dataListBouteilleVide = res;
     });
@@ -108,6 +112,8 @@ export class SaisieCommandeComponent {
     this.articleService.ListGroupesArticles.subscribe((res: any) => {
       this.dataListGroupeArticles = res;
     });
+    this.GetListCommandeClient(1);
+    
   }
   onDelete(item: any) {
     console.log(item);
@@ -124,22 +130,38 @@ export class SaisieCommandeComponent {
 
   onRevendeurChange(selectedItem: any): void {
     this.detailPointDevente = selectedItem;
-    this.commandClientForm.controls['numeroCompte'].setValue(this.detailPointDevente.numeroCompteContribuable);
-    this.commandClientForm.controls['raisonSociale'].setValue(this.detailPointDevente.raisonSocial);
-    this.commandClientForm.controls['contact'].setValue(this.detailPointDevente.telephoneGerant);
-    this.commandClientForm.controls['numSap'].setValue(this.detailPointDevente.numeroSAP);
+    this.commandClientForm.controls['numeroCompte'].setValue(
+      this.detailPointDevente.numeroCompteContribuable
+    );
+    this.commandClientForm.controls['raisonSociale'].setValue(
+      this.detailPointDevente.raisonSocial
+    );
+    this.commandClientForm.controls['contact'].setValue(
+      this.detailPointDevente.telephoneGerant
+    );
+    this.commandClientForm.controls['numeroSAP'].setValue(
+      this.detailPointDevente.numeroSAP
+    );
 
-    this.commandClientForm.controls['montantCredit'].setValue(this.detailPointDevente.credits.totalCredit);
-    this.commandClientForm.controls['soldeLiquide'].setValue(this.detailPointDevente.credits.creditLiquide);
-    this.commandClientForm.controls['soldeEmballage'].setValue(this.detailPointDevente.credits.creditEmballage);
-    console.log(this.detailPointDevente,'detailPointDevente')
+    this.commandClientForm.controls['montantCredit'].setValue(
+      this.detailPointDevente.credits.totalCredit
+    );
+    this.commandClientForm.controls['soldeLiquide'].setValue(
+      this.detailPointDevente.credits.creditLiquide
+    );
+    this.commandClientForm.controls['soldeEmballage'].setValue(
+      this.detailPointDevente.credits.creditEmballage
+    );
+    console.log(this.detailPointDevente, 'detailPointDevente');
     console.log('Élément sélectionné :', selectedItem);
+    console.log('commandClientForm:', this.commandClientForm.value);
     this.depotId = selectedItem.depot.id;
-    this.GetArticleList(1)
+    this.GetArticleList(1);
   }
   OnCloseModal() {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
+    this.filteredArticleList = [];
   }
   OnCreate() {
     this.isEditMode = false;
@@ -159,10 +181,10 @@ export class SaisieCommandeComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetArticleList(page:number) {
+  GetArticleList(page: number) {
     let data = {
       paginate: false,
-      page:page,
+      page: page,
       limit: 8,
     };
     this._spinner.show();
@@ -170,33 +192,95 @@ export class SaisieCommandeComponent {
       console.log('DATATYPEPRIX:::>', res);
       this.dataListLiquides = res.data;
       this.dataListLiquides.forEach((item: any) => {
-        this.GetStockDisponibleByDepot(item)
-      })
+        this.GetStockDisponibleByDepot(item);
+      });
       this.filteredArticleList = this.dataListLiquides;
       this._spinner.hide();
     });
   }
 
+  applyRemise() {
+    const remise = this.commandClientForm.get('remise')?.value || 0;
+    const fraisTransport =
+      this.commandClientForm.get('fraisTransport')?.value || 0;
+
+    this.totalGlobalAfterRemise =
+      this.totalGlobalBeforeRemise * (1 - remise / 100);
+
+    this.totalGlobal = this.totalGlobalAfterRemise + fraisTransport;
+
+    console.log('Montant global après remise :', this.totalGlobalAfterRemise);
+    console.log('Montant final après frais de transport :', this.totalGlobal);
+  }
+
+  applyFraisTransport() {
+    const remise = this.commandClientForm.get('remise')?.value || 0;
+    const fraisTransport =
+      this.commandClientForm.get('fraisTransport')?.value || 0;
+
+    this.totalGlobalAfterRemise =
+      this.totalGlobalBeforeRemise * (1 - remise / 100);
+
+    this.totalGlobal = this.totalGlobalAfterRemise + fraisTransport;
+
+    console.log('Montant final après frais de transport :', this.totalGlobal);
+  }
+
+  calculatePrix(data: any) {
+    if (this.prixLiquideTotal[data.id]) {
+      this.totalEmballage -= this.prixEmballageTotal[data.id] || 0;
+      this.totalLiquide -= this.prixLiquideTotal[data.id] || 0;
+      this.totalGlobalBeforeRemise -= this.montantTotal[data.id] || 0;
+      this.totalQte -= data.oldQuantite || 0;
+    }
+
+    this.prixLiquideTotal[data.id] = data.quantite * this.prixLiquide[data.id];
+    this.prixEmballageTotal[data.id] =
+      data.quantite * this.prixEmballage[data.id];
+    this.montantTotal[data.id] =
+      this.prixLiquideTotal[data.id] + this.prixEmballageTotal[data.id];
+
+    this.totalEmballage += this.prixEmballageTotal[data.id];
+    this.totalLiquide += this.prixLiquideTotal[data.id];
+    this.totalGlobalBeforeRemise += this.montantTotal[data.id];
+    this.totalQte += data.quantite;
+
+    this.applyRemise();
+
+    data.oldQuantite = data.quantite;
+    this.articles.push(
+      this.fb.group({
+        codeArticleLiquide: data.liquide.code,
+        codeArticleEmballage: data.liquide.emballage.code,
+        prixUnitaireLiquide: this.prixLiquide[data.id],
+        prixUnitaireEmballage: this.prixEmballage[data.id],
+        quantite: data.quantite,
+      })
+    );
+  }
+
   async GetStockDisponibleByDepot(item: any): Promise<any> {
     let data = {
       productId: item.liquide.code,
-      depotId:this.depotId
+      depotId: this.depotId,
     };
 
     try {
       // Attendre la réponse de la promesse
-      const response:any = await this.articleService.GetStockDisponibleByDepot(data);
-      console.log(response)
+      const response: any = await this.articleService.GetStockDisponibleByDepot(
+        data
+      );
+      console.log(response);
       // Vérifier si le statusCode est 200
       if (response) {
         this.stocksDisponibles[item.liquide.id] = response.quantiteDisponible;
-        console.log(this.stocksDisponibles[item.liquide.id])
+        console.log(this.stocksDisponibles[item.liquide.id]);
       } else if (response.statusCode === 404) {
-        this.stocksDisponibles[item.liquide.id] =  0; // Si le code est 404, retourner 0
+        this.stocksDisponibles[item.liquide.id] = 0; // Si le code est 404, retourner 0
       } else {
         return null; // Si un autre code, retourner null ou une valeur par défaut
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.log(error);
       if (error.status === 404) {
         this.stocksDisponibles[item.liquide.id] = 0; // Si le code est 404, retourner 0
@@ -204,13 +288,64 @@ export class SaisieCommandeComponent {
     }
   }
 
-  onArticleChange(articleId: number): void {
-    this.selectedArticle = this.articles.find(
-      (article) => article.id === articleId
-    );
+  get articles(): FormArray {
+    return this.commandClientForm.get('articles') as FormArray;
   }
   onSubmit(): void {
+    const formData = this.commandClientForm.value;
 
+    // Construire l'objet JSON attendu par le service
+    const payload = {
+      clientType: this.detailPointDevente.credits.clientType,
+      clientId: this.detailPointDevente.id,
+      numeroCompte: this.detailPointDevente.numeroCompteContribuable,
+      raisonSociale: this.detailPointDevente.raisonSocial,
+      contact: this.detailPointDevente.telephoneGerant,
+      montantCredit: parseInt(this.detailPointDevente.credits.totalCredit), 
+      soldeLiquide: parseInt(this.detailPointDevente.credits.creditLiquide),
+      soldeEmballage: parseInt(this.detailPointDevente.credits.creditEmballage),
+      statutCompte: formData.statutCompte,
+      numeroSAP: this.detailPointDevente.numeroSAP,
+      fraisTransport: formData.fraisTransport,
+      enCours: parseInt(formData.enCours),
+      remise: formData.remise,
+      articles: formData.articles,
+    };
+
+    console.log('Données à envoyer au service :', payload);
+    if (this.commandClientForm.valid) {
+      this._spinner.show();
+      this.articleService.CreateCommandClient(payload).then(
+        (res: any) => {
+          console.log(res, 'enregistré avec succes');
+          this._spinner.hide();
+          this.commandClientForm.reset();
+          this.GetListCommandeClient(1);
+          this.OnCloseModal();
+          this.toastr.success(res.message);
+        },
+        (error: any) => {
+          this._spinner.hide();
+          this.toastr.info(error.error.message);
+          console.error('Erreur lors de la création', error);
+        }
+      );
+    } else {
+      this.toastr.warning('Formulaire invalide');
+    }
+  }
+  GetListCommandeClient(page: number) {
+    let data = {
+      paginate: false,
+      page: page,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.articleService.GetListCommandeClient(data).then((res: any) => {
+      console.log('dataList:::>', res);
+      this.dataList = res.data;
+      this._spinner.hide();
+    });
   }
   selectArticle() {
     this.isEditMode = false;
@@ -219,58 +354,37 @@ export class SaisieCommandeComponent {
     console.log(this.isModalOpen);
   }
   validateQuantite(data: any): void {
+    console.log(data, 'validateQuantiteData');
 
     // Vérifier si la quantité saisie dépasse la quantité disponible
     if (data.quantite > this.stocksDisponibles[data.id]) {
       // Réinitialiser la quantité à la quantité disponible
-      data.quantite ='';
+      data.quantite = '';
+
       // Afficher un message de warning
       this.toastr.warning('La quantité saisie dépasse la quantité disponible.');
-    }else{
-      this.calculatePrix(data)
+    } else {
+      this.calculatePrix(data);
     }
   }
-  calculatePrix(data:any) {
 
-
-    if (this.prixLiquideTotal[data.id]) {
-      this.totalEmballage -= this.prixEmballageTotal[data.id] || 0;
-      this.totalLiquide -= this.prixLiquideTotal[data.id] || 0;
-      this.totalGlobal -= this.montantTotal[data.id] || 0;
-      this.totalQte -= data.oldQuantite || 0
-    }
-    this.prixLiquideTotal[data.id] = data.quantite * this.prixLiquide[data.id];
-    this.prixEmballageTotal[data.id] = data.quantite * this.prixEmballage[data.id];
-    this.montantTotal[data.id] = this.prixLiquideTotal[data.id] + this.prixEmballageTotal[data.id];
-
-    this.totalEmballage += this.prixEmballageTotal[data.id];
-    this.totalLiquide  += this.prixLiquideTotal[data.id];
-    this.totalGlobal += this.montantTotal[data.id];
-    this.totalQte += data.quantite
-
-    data.oldQuantite = data.quantite;
-    console.log(data);
-    console.log(this.totalQte,'totalQte');
-    console.log(this.totalLiquide,"totalLiquide");
-    console.log(this.totalEmballage,"totalEmballage");
-    console.log(this.totalGlobal),"totalGlobal";
-  }
   onCheckboxChange(article: any): void {
-    this.GetPrixByArticle(article)
+    this.GetPrixByArticle(article);
     // this.GetStockDisponibleByDepot(article)
     if (article.isChecked) {
       this.selectedArticles.push(article);
-      this.afficherArticlesSelectionnes()
+      this.afficherArticlesSelectionnes();
     } else {
       delete article.quantite;
       const indexToRemove = this.selectedArticles.findIndex(
-        (selectedArticle:any) => selectedArticle.libelle === article.libelle
+        (selectedArticle: any) => selectedArticle.libelle === article.libelle
       );
       if (indexToRemove !== -1) {
         this.selectedArticles.splice(indexToRemove, 1);
-        this.afficherArticlesSelectionnes()
+        this.afficherArticlesSelectionnes();
       }
     }
+    console.log(this.selectedArticles, 'selectedArticles');
   }
   async GetPrixByArticle(item: any): Promise<any> {
     let data = {
@@ -279,15 +393,17 @@ export class SaisieCommandeComponent {
 
     try {
       // Attendre la réponse de la promesse
-      const response:any = await this.articleService.GetPrixByProduit(data);
-      console.log(response)
+      const response: any = await this.articleService.GetPrixByProduit(data);
+      console.log(response);
       // Vérifier si le statusCode est 200
       if (response.data) {
         this.prixLiquide[item.id] = response.data.PrixLiquide;
         this.prixEmballage[item.id] = response.data.PrixConsigne;
-        console.log('prixByArticle',this.prixLiquide[item.id])
+        // this.prixLiquideArticleSelected =  this.prixEmballage[item.id]
+        // this.prixEmballageArticleSelected =  this.prixLiquide[item.id]
+        console.log('prixByArticle', this.prixLiquide[item.id]);
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.log(error);
     }
   }
@@ -300,28 +416,27 @@ export class SaisieCommandeComponent {
     const index = this.selectedArticles.findIndex((i: any) => i.id === item.id);
 
     if (index !== -1) {
-      this.selectedArticles = this.selectedArticles.slice(0, index).concat(this.selectedArticles.slice(index + 1));
+      this.selectedArticles = this.selectedArticles
+        .slice(0, index)
+        .concat(this.selectedArticles.slice(index + 1));
     }
-
   }
   onSubmitSelection() {
     this.isChoiceModalOpen = false;
   }
   OnCloseChoiceModal() {
-    this.deselectAllItems()
+    this.deselectAllItems();
     this.isChoiceModalOpen = false;
-    console.log(this.isModalOpen)
+    console.log(this.isModalOpen);
   }
   deselectAllItems(): void {
     this.selectedArticles.forEach((item: any) => {
       delete item.quantite;
       this.onCheckboxChange(item);
       item.isChecked = false;
-
     });
 
     this.selectedArticles = [];
-
   }
   // onSearchClient(): void {}
   loadArticleDetails(): void {
@@ -344,13 +459,16 @@ export class SaisieCommandeComponent {
   }
 
   filterArticles(): void {
-    console.log(this.searchTerm)
+    console.log(this.searchTerm);
     if (this.searchTerm) {
-      this.filteredArticleList = this.dataListLiquides.filter((article: any) =>
-        article.libelle.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        article.code.toLowerCase().includes(this.searchTerm.toLowerCase())
+      this.filteredArticleList = this.dataListLiquides.filter(
+        (article: any) =>
+          article.libelle
+            .toLowerCase()
+            .includes(this.searchTerm.toLowerCase()) ||
+          article.code.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
-      console.log(this.filteredArticleList)
+      console.log(this.filteredArticleList);
     } else {
       this.filteredArticleList = [...this.dataListLiquides];
     }
@@ -404,11 +522,10 @@ export class SaisieCommandeComponent {
         console.error('Les données de liquides ne sont pas un tableau');
       }
       this.listRevendeurs = this.listRevendeurs
-        .filter((client:any) => client.credits != null)
-        .map((client:any) => ({
+        .filter((client: any) => client.credits != null)
+        .map((client: any) => ({
           ...client,
-          displayName:
-            client.raisonSocial || client.nomEtablissement || 'N/A',
+          displayName: client.raisonSocial || client.nomEtablissement || 'N/A',
         }));
       console.log('Données combinées dans dataList:', this.listRevendeurs);
     } catch (error) {
