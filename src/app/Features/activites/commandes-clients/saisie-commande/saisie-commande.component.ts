@@ -246,10 +246,11 @@ export class SaisieCommandeComponent {
     this.totalQte += data.quantite;
 
     this.applyRemise();
-
+    console.log(data,'data article');
     data.oldQuantite = data.quantite;
     this.articles.push(
       this.fb.group({
+        groupeArticleId: data.groupearticle.id,
         codeArticleLiquide: data.liquide.code,
         codeArticleEmballage: data.liquide.emballage.code,
         prixUnitaireLiquide: this.prixLiquide[data.id],
@@ -294,7 +295,7 @@ export class SaisieCommandeComponent {
   onSubmit(): void {
     const formData = this.commandClientForm.value;
 
-    // Construire l'objet JSON attendu par le service
+   
     const payload = {
       clientType: this.detailPointDevente.credits.clientType,
       clientId: this.detailPointDevente.id,
