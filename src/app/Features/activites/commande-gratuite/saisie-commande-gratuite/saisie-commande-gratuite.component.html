@@ -211,7 +211,7 @@
 
               <tbody>
                 <tr *ngFor="let item of selectedArticles">
-                  <td>{{ item.liquide.libelle }}1</td>
+                  <td>{{ item.liquide.libelle }}</td>
                   <td>{{ prixLiquide[item.id] }}</td>
                   <td>{{ prixEmballage[item.id] }}</td>
                   <td>{{ prixEmballage[item.id] + prixLiquide[item.id] }}</td>
@@ -221,10 +221,10 @@
                       class="form-control-custom"
                       [(ngModel)]="item.quantite"
                       [min]="0"
-                      [max]="stocksDisponibles[item.id]"
-                      [disabled]="stocksDisponibles[item.id] === 0"
+                      [max]="stocksDisponibles[item.liquide.id]"
+                      [disabled]="stocksDisponibles[item.liquide.id] === 0"
                       [ngClass]="{
-                        invalid: item.quantite > stocksDisponibles[item.id]
+                        invalid: item.quantite > stocksDisponibles[item.liquide.id]
                       }"
                       (blur)="validateQuantite(item)"
                     />

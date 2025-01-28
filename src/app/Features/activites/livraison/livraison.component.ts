@@ -9,12 +9,17 @@ import {ALERT_QUESTION} from '../../shared-component/utils';
 import {Location} from '@angular/common';
 import {CoreServiceService} from "../../../core/core-service.service";
 import {LogistiqueService} from "../../../core/logistique.service";
-
+interface RegroupementItem {
+  palettes: number;
+  casier: number;
+  type: string;
+}
 @Component({
   selector: 'app-livraison',
   templateUrl: './livraison.component.html',
   styleUrls: ['./livraison.component.scss']
 })
+
 export class LivraisonComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
@@ -28,6 +33,7 @@ export class LivraisonComponent {
       nom: 'test'
     }
   ];
+
   livraisonForm!: FormGroup;
   loading: boolean = true;
   isModalOpen = false;
@@ -69,10 +75,13 @@ export class LivraisonComponent {
   totalCasiers: number = 0;
   format: number = 33;
   result: { palettes: number; casier: number } | null = null;
-  casiersPerPalette: Record<number, number> = {
-    33: 63,
-    50: 66,
-    60: 66
+  regroupementList: any[] = [];
+  regroupementFinal: Record<string, RegroupementItem>;
+  casiersPerPalette: Record<number, { casiers: number; type: string }> = {
+    33: { casiers: 63, type: 'biere' },
+    25: { casiers: 63, type: 'biere' },
+    50: { casiers: 66, type: 'plastique' },
+    60: { casiers: 66, type: 'métal' },
   };
   constructor(
     private articleService: ArticleServiceService,
@@ -108,19 +117,89 @@ export class LivraisonComponent {
     // this.dataList
   }
 
-  calculate(commande:any): void {
-    console.log('commande',commande);
-    // const casiersParPalette = this.casiersPerPalette[commande.articles.liquide.format];
-    // if (!casiersParPalette) {
-    //   this.result = null; // Format invalide
-    //   return;
-    // }
-    // const totalCasiers = articles.reduce((total, article) => total + Number(article.quantite || 0), 0);
-    // const palettes = Math.floor(totalCasiers / casiersParPalette);
-    // const casier = totalCasiers % casiersParPalette;
-    //
-    // this.result = { palettes, casier };
+  calculate(commande: any): void {
+    console.log('commande', commande);
+
+    // Regrouper les articles par format
+    const articlesParFormat = commande.articles.reduce((acc: any, article: any) => {
+      const format = Number(article?.liquide?.format); // S'assurer que le format est un nombre
+
+      if (!format) {
+        console.warn('Article sans format ou format non numérique détecté, ignoré:', article);
+        return acc;
+      }
+
+      if (!acc[format]) {
+        acc[format] = [];
+      }
+
+      acc[format].push(article);
+      return acc;
+    }, {});
+
+    console.log('Articles regroupés par format:', articlesParFormat);
+
+    // Calcul des palettes et des casiers pour chaque format
+    this.result = Object.keys(articlesParFormat).reduce((result: any, formatStr: string) => {
+      const format = Number(formatStr); // Convertir la clé (string) en nombre
+      const totalCasiers = articlesParFormat[format].reduce(
+        (total: number, article: any) => total + Number(article.quantite || 0),
+        0
+      );
+
+      const paletteInfo = this.casiersPerPalette[format];
+      if (!paletteInfo) {
+        console.warn(`Format invalide ou non trouvé : ${format}`);
+        result[format] = null;
+        return result;
+      }
+
+      const { casiers, type } = paletteInfo;
+
+      const palettes = Math.floor(totalCasiers / casiers);
+      const casier = totalCasiers % casiers;
+
+      result[format] = { palettes, casier, type };
+      return result;
+    }, {});
+    this.regroupementList.push(this.result);
+    console.log('Résultat final', this.result);
+    console.log('regroupementList', this.regroupementList);
+    this.regrouperParFormat()
   }
+
+  regrouperParFormat(): void {
+    const regroupement = this.regroupementList.reduce((acc: any, item: any) => {
+      Object.entries(item).forEach(([format, details]: [string, any]) => {
+        if (!acc[format]) {
+          acc[format] = {
+            palettes: 0,
+            casier: 0,
+            type: details.type,
+          };
+        }
+
+        // Ajouter les palettes et casiers au format correspondant
+        acc[format].palettes += details.palettes;
+        acc[format].casier += details.casier;
+
+        // Gérer les casiers excédentaires pour compléter une palette
+        const casiersParPalette = this.casiersPerPalette[Number(format)]?.casiers || 0;
+        if (casiersParPalette && acc[format].casier >= casiersParPalette) {
+          const palettesSupplementaires = Math.floor(acc[format].casier / casiersParPalette);
+          acc[format].palettes += palettesSupplementaires;
+          acc[format].casier %= casiersParPalette;
+        }
+      });
+
+      return acc;
+    }, {});
+
+    console.log('Regroupement par format:', regroupement);
+    this.regroupementFinal = regroupement; // Stocker le résultat si nécessaire
+    console.log('regroupementFinal:', regroupement);
+  }
+
 
   onZoneChange(zone: any | null): void {
     console.log('zoneId', zone.id);
@@ -283,7 +362,7 @@ export class LivraisonComponent {
 
   onCheckboxChange(commande: any): void {
     if (commande.isChecked) {
-      this.calculate(commande.articles.liquide.format);
+      this.calculate(commande);
     } else {
 
     }
