@@ -164,6 +164,7 @@ export class RevendeurComponent {
 
   OnCloseDetailModal() {
     this.isModalDetail = false;
+    this.numeroSap = '';
     console.log(this.isModalOpen);
   }
   selectedFile: File | null = null;
@@ -171,18 +172,15 @@ export class RevendeurComponent {
     this.selectedFile = event.target.files[0]; // Récupérer le fichier sélectionné
   }
   confirmValidateOperation(revendeur: any) {
-    // Vérifier que tous les fichiers sont sélectionnés
-    if (
-      !this.selectedRccmFile ||
-      !this.selectedCniFile ||
-      !this.selectedDfeFile || this.numeroSap
-    ) {
+    // Vérifier que la CNI et le numéro SAP sont sélectionnés
+    if (!this.selectedCniFile || !this.numeroSap) {
       this.toastr.warning(
         'Erreur!',
-        'Veuillez sélectionner tous les fichiers requis et le numéro SAP'
+        'Veuillez sélectionner la CNI et le numéro SAP.'
       );
       return;
     }
+
     if (!revendeur.isValide) {
       ALERT_QUESTION(
         'warning',
@@ -195,8 +193,8 @@ export class RevendeurComponent {
           const formData = new FormData();
 
           formData.append('cni', this.selectedCniFile!);
-          formData.append('registre', this.selectedRccmFile!);
-          formData.append('dfe', this.selectedDfeFile!);
+          formData.append('registre', this.selectedRccmFile!);  // Ce champ n'est plus requis
+          formData.append('dfe', this.selectedDfeFile!);  // Ce champ n'est plus requis
           formData.append('cni', this.numeroSap);
 
           this._articleService.ValidateRevendeur(revendeur.id, formData).then(
@@ -219,6 +217,7 @@ export class RevendeurComponent {
       });
     }
   }
+
   // confirmValidateOperation(data: any) {
   //   if (!data.isValide) {
   //     ALERT_QUESTION(
