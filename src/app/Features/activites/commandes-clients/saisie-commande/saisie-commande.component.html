@@ -76,7 +76,7 @@
               <i
                 (click)="OnEdit(dataList)"
                 style="cursor: pointer"
-                class="fas fa-edit text-secondary"
+                class="fas fa-eye text-secondary"
               ></i>
             </td>
             <td>
@@ -128,7 +128,7 @@
 
       <!-- Barre de recherche client centrée -->
       <div class="modal-body" style="max-height: 70vh; overflow-y: auto">
-        <form [formGroup]="commandClientForm">
+        <form [formGroup]="commandClientForm" *ngIf="operation == 'create'">
           <div class="mb-4 text-center">
             <div class="d-flex justify-content-center gap-2">
               <div class="d-flex">
@@ -311,6 +311,59 @@
             </div>
           </div>
         </form>
+        <fieldset class="row border my-1" *ngIf="operation == 'edit'">
+          <legend style="font-size: 14px" class="text-secondary">
+            Numero Commande : {{ updateData.NumCommande }} du
+            {{ updateData.dateCreation | date }}
+          </legend>
+        </fieldset>
+        <fieldset class="row border my-2" *ngIf="operation == 'edit'">
+          <legend style="font-size: 14px" class="text-secondary">
+            Informations du client
+          </legend>
+          <div class="row">
+            <div class="col-md-4">
+              <strong>Groupe de client :</strong>
+              <span>{{ updateData.client.groupeClient.nomGroupe }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Type de client :</strong>
+              <span>{{ updateData.client.role }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Propriétaire :</strong>
+              <span>{{ updateData.client.nomProprietaire }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Gérant :</strong>
+              <span>{{ updateData.client.nomGerant }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Établissement :</strong>
+              <span>{{
+                updateData.client.nomEtablissement
+                  ? updateData.client.nomEtablissement
+                  : updateData.client.raisonSocial
+              }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Numero de registre :</strong>
+              <span>{{ updateData.client.numeroRegistre }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Numero contribuable :</strong>
+              <span>{{ updateData.client.numeroCompteContribuable }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Contact Gérant :</strong>
+              <span>{{ updateData.client.telephoneGerant }}</span>
+            </div>
+            <div class="col-md-4 mb-4">
+              <strong>Téléphone :</strong>
+              <span>{{ updateData.client.telephoneProprietaire }}</span>
+            </div>
+          </div>
+        </fieldset>
         <div class="p-2 mt-3">
           <div style="max-height: 350px; overflow-y: auto">
             <table *ngIf="operation == 'create'" class="table table-bordered">
@@ -349,7 +402,8 @@
                       [max]="stocksDisponibles[item.liquide.id]"
                       [disabled]="stocksDisponibles[item.liquide.id] === 0"
                       [ngClass]="{
-                        invalid: item.quantite > stocksDisponibles[item.liquide.id]
+                        invalid:
+                          item.quantite > stocksDisponibles[item.liquide.id]
                       }"
                       (blur)="validateQuantite(item)"
                     />
@@ -441,7 +495,13 @@
         >
           Annuler
         </button>
-        <button type="submit" class="btn btn-primary" (click)="onSubmit()">
+        <button
+          type="submit"
+          *ngIf="operation == 'create'"
+          class="btn btn-primary"
+          (click)="onSubmit()"
+          [disabled]="totalQte === 0"
+        >
           Valider
         </button>
       </div>

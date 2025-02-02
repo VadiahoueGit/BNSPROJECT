@@ -42,6 +42,8 @@ export class VentechinepageComponent {
   dataListCommercial: any;
   dataListCamion: any;
   depotId: number = 0;
+  updateData: any = {};
+  venteId: any = 0;
   constructor(
     private _spinner: NgxSpinnerService,
     private articleService: ArticleServiceService,
@@ -235,7 +237,31 @@ export class VentechinepageComponent {
       this._spinner.hide();
     });
   }
-  OnEdit(data: any) {}
+  OnEdit(data:any) {
+    this.totalEmballage = 0;
+    this.totalLiquide  = 0;
+    this.totalGlobal = 0;
+    this.totalQte = 0;
+    this.isEditMode = true;
+    console.log(data,'updateData');
+    this.updateData = data;
+    this.updateData.articles.map((article:any) =>{
+      article.prixTotal = parseInt(article.prixUnitaireLiquide )+ parseInt(article.prixUnitaireEmballage);
+    })
+    console.log(this.updateData.articles,'this.updateData.articles');
+
+    data.articles.forEach((article:any) => {
+      this.totalEmballage += Number(article.montantEmballage);
+      this.totalLiquide  += Number(article.montantLiquide);
+      this.totalGlobal = this.totalLiquide + this.totalEmballage
+      this.totalQte += article.quantite
+    })
+
+    this.venteId = data.id;
+    this.isModalOpen = true;
+    this.operation = 'edit';
+    console.log(this.isModalOpen);
+  }
   OnDelete(id: number) {}
   GetVenteChineList(page: number) {
     let data = {

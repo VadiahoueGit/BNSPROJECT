@@ -171,13 +171,23 @@ export class SaisieCommandeComponent {
     console.log(this.isModalOpen);
   }
 
-  OnEdit(data: any) {
+  OnEdit(data:any) {
+    this.totalEmballage = 0;
+    this.totalLiquide  = 0;
+    this.totalGlobal = 0;
+    this.totalQte = 0;
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
+    data.articles.forEach((article:any) => {
+      this.totalEmballage += Number(article.montantEmballage);
+      this.totalLiquide  += Number(article.montantLiquide);
+      this.totalGlobal = this.totalLiquide + this.totalEmballage
+      this.totalQte += article.quantite
+    })
+
     this.articleId = data.id;
     this.isModalOpen = true;
-    this.loadArticleDetails();
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
@@ -515,13 +525,13 @@ export class SaisieCommandeComponent {
         console.error('Les données de plastiques ne sont pas un tableau');
       }
 
-      if (Array.isArray(pointDeVente.data)) {
-        this.dataPointDeVente = pointDeVente.data;
-        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
-        this.listRevendeurs.push(...pointDeVente.data);
-      } else {
-        console.error('Les données de liquides ne sont pas un tableau');
-      }
+      // if (Array.isArray(pointDeVente.data)) {
+      //   this.dataPointDeVente = pointDeVente.data;
+      //   // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
+      //   this.listRevendeurs.push(...pointDeVente.data);
+      // } else {
+      //   console.error('Les données de liquides ne sont pas un tableau');
+      // }
       this.listRevendeurs = this.listRevendeurs
         .filter((client: any) => client.credits != null)
         .map((client: any) => ({
