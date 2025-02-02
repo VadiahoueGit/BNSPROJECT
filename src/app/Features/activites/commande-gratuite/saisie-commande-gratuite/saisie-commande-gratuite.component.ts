@@ -146,6 +146,7 @@ export class SaisieCommandeGratuiteComponent {
     this.operation = 'create';
     console.log(this.isModalOpen);
   }
+  
   OnEdit(data:any) {
     this.totalEmballage = 0;
     this.totalLiquide  = 0;

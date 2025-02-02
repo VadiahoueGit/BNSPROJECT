@@ -44,7 +44,7 @@
               <i
                 (click)="OnEdit(dataList)"
                 style="cursor: pointer"
-                class="fas fa-edit text-secondary"
+                class="fas fa-eye text-secondary"
               ></i>
             </td>
             <td>
@@ -95,13 +95,13 @@
           class="modal-title fs-5 ms-3"
           id="staticBackdropLabel"
         >
-          Modification vente chine
+          Détail vente chine
         </h1>
       </div>
 
       <div class="modal-body">
         <div class="row">
-          <form [formGroup]="VenteForm">
+          <form [formGroup]="VenteForm" *ngIf="operation == 'create'">
             <fieldset class="row border my-2">
               <legend class="fs-6 text-primary">Ressources & chargement</legend>
               <div class="col-md-4">
@@ -171,9 +171,98 @@
               </div>
             </fieldset>
           </form>
+          <fieldset class="row border my-1" *ngIf="operation == 'edit'">
+            <legend style="font-size: 14px" class="text-secondary">
+              Information Livraison
+            </legend>
+
+             <div class="row">
+              <div class="col-md-4">
+                <strong>Zone: </strong>
+                <span>{{ updateData.zoneDeLivraison.nomZone }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Localité : </strong>
+                <span>{{ updateData.zoneDeLivraison.localite.nomLocalite }}</span>
+              </div>
+             </div>
+          </fieldset>
+          <fieldset class="row border my-2" *ngIf="operation == 'edit'">
+            <legend style="font-size: 14px" class="text-secondary">
+              Informations du véhicule
+            </legend>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Marque: </strong>
+                <span>{{ updateData.vehicule.marque }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Immatriculation : </strong>
+                <span>{{ updateData.vehicule.immatriculation }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Energie : </strong>
+                <span>{{ updateData.vehicule.energie }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Capacité : </strong>
+                <span>{{ updateData.vehicule.capacite }}</span>
+              </div>
+            </div>
+          </fieldset>
           <fieldset class="row border my-2">
             <legend class="fs-6 text-primary">Cargaison</legend>
             <div
+              *ngIf="operation == 'edit'"
+              class="table-responsive"
+              style="max-height: 300px; overflow-y: auto"
+            >
+              <table class="table">
+                <thead>
+                  <tr style="font-size: small">
+                    <th scope="col">Produits</th>
+                    <th scope="col">Qte liquide</th>
+                    <th scope="col">Prix liquide</th>
+                    <th scope="col">Prix emballage</th>
+                    <th scope="col">Prix total</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    style="font-size: small"
+                    *ngFor="let item of updateData.articles; let i = index"
+                  >
+                    <td>{{ item.liquide.libelle }}</td>
+                    <td>{{ item.quantite }}</td>
+                 
+                    <td>{{  item.prixUnitaireLiquide}}</td>
+                    <td>{{ item.prixUnitaireEmballage}}</td>
+                    <td>{{ item.prixTotal}}</td>
+                    <td class="d-flex justify-content-center">
+                      <button
+                        type="button"
+                        class="btn btn-danger btn-sm"
+                        (click)="removeArticle(item)"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr class="table-dark" *ngIf="updateData.articles.length > 0">
+                    <th scope="col" colspan="1">Total :</th>
+                    <td>{{ totalQte }}</td>
+                    <td>{{ totalLiquide }}</td>
+                    <td>{{ totalEmballage }}</td>
+                    <td>{{ totalGlobal }}</td>
+                    <td></td>
+                  </tr>
+                  <!-- Ajoutez d'autres lignes si nécessaire -->
+                </tbody>
+              </table>
+            </div>
+            <div
+              *ngIf="operation == 'create'"
               class="table-responsive"
               style="max-height: 300px; overflow-y: auto"
             >
@@ -245,7 +334,13 @@
         >
           Annuler
         </button>
-        <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">
+        <button
+          type="submit"
+          *ngIf="operation == 'create'"
+          [disabled]="totalQte === 0"
+          (click)="onSubmit()"
+          class="btn btn-primary px-2"
+        >
           Valider
         </button>
       </div>
