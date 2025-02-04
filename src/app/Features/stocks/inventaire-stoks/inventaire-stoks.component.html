@@ -1,70 +1,83 @@
-<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
-  <i style="font-size: 18px;" class="fas fw-bold fa-chevron-left me-2"></i>
+<div
+  class="gap-2 d-flex align-items-center mb-3"
+  style="cursor: pointer"
+  (click)="goBack()"
+>
+  <i style="font-size: 18px" class="fas fw-bold fa-chevron-left me-2"></i>
   <h4 class="fw-bold mb-0">Suivi inventaire</h4>
 </div>
 <div class="card">
-  <div class=" d-flex justify-content-end py-3">
-    <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Nouvel inventaire</button>
+  <div class="d-flex justify-content-end py-3">
+    <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
+      Nouvel inventaire
+    </button>
   </div>
-  <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
-           [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
-
+  <p-table
+    [styleClass]="'p-datatable-sm'"
+    #dt2
+    [value]="dataList"
+    dataKey="id"
+    [rows]="8"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [paginator]="true"
+    (onPage)="onPage($event)"
+  >
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color);">Dépot</th>
-        <th style="color: var(--secondary-color);">Date de comptage</th>
-        <th style="color: var(--secondary-color);">Code article</th>
-        <th style="color: var(--secondary-color);">Article</th>
-        <th style="color: var(--secondary-color);">Qte théorique</th>
-        <th style="color: var(--secondary-color);">Qte physique</th>
-        <th style="color: var(--secondary-color);">Ecart</th>
-        <th style="color: var(--secondary-color);">Ecart %</th>
-        <th style="color: var(--secondary-color);">Date d'enr...</th>
+        <th style="color: var(--secondary-color)">Dépot</th>
+        <th style="color: var(--secondary-color)">Date de comptage</th>
+        <th style="color: var(--secondary-color)">Code article</th>
+        <th style="color: var(--secondary-color)">Article</th>
+        <th style="color: var(--secondary-color)">Qte théorique</th>
+        <th style="color: var(--secondary-color)">Qte physique</th>
+        <th style="color: var(--secondary-color)">Ecart</th>
+        <th style="color: var(--secondary-color)">Ecart %</th>
+        <th style="color: var(--secondary-color)">Date d'enr...</th>
         <!--                <th style="color: var(&#45;&#45;secondary-color);">Actions</th>-->
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList>
       <tr>
         <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.depot.nomDepot }}
-                    </span>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.depot.nomDepot }}
+          </span>
         </td>
         <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.dateComptage | date }}
-                    </span>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.dateComptage | date }}
+          </span>
         </td>
         <td>
           {{ dataList.codeArticle }}
         </td>
         <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.description }}
-                    </span>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.description }}
+          </span>
         </td>
         <td>
           {{ dataList.stockTheorique }}
         </td>
         <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.stockPhysique }}
-                    </span>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.stockPhysique }}
+          </span>
         </td>
         <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.ecart }}
-                    </span>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.ecart }}
+          </span>
         </td>
         <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.pourcentageEcart }}
-                    </span>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.pourcentageEcart }}
+          </span>
         </td>
         <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.createdAt | date }}
-                    </span>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.createdAt | date }}
+          </span>
         </td>
 
         <td>
@@ -74,7 +87,6 @@
           <!--                <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"-->
           <!--                        class="fas fa-trash-alt text-danger"></i></td>-->
           <!--            </tr>-->
-
         </td>
       </tr>
     </ng-template>
@@ -86,54 +98,91 @@
   </p-table>
 </div>
 
-
 <!-- Modal creation -->
 <!-- Modal -->
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div class="modal-dialog  modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header d-flex align-items-center">
-        <div class="d-flex justify-content-center align-items-center"
-             style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
+        <div
+          class="d-flex justify-content-center align-items-center"
+          style="
+            background-color: rgb(219, 255, 232);
+            border-radius: 3rem;
+            width: 3rem;
+            height: 3rem;
+          "
+        >
           <i class="fas fa-box-check text-primary fs-3"></i>
         </div>
-        <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création
-          d'inventaire</h1>
-        <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification
-          d'inventaire</h1>
+        <h1
+          *ngIf="operation == 'create'"
+          class="modal-title fs-5 ms-3"
+          id="staticBackdropLabel"
+        >
+          Création d'inventaire
+        </h1>
+        <h1
+          *ngIf="operation == 'edit'"
+          class="modal-title fs-5 ms-3"
+          id="staticBackdropLabel"
+        >
+          Modification d'inventaire
+        </h1>
       </div>
       <div class="modal-body">
         <form [formGroup]="InventaireForm">
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
-                <label for="dateComptage" class="form-label">Date comptage <span
-                  class="text-danger">*</span></label>
-                <input type="date" class="form-control" id="dateComptage" formControlName="dateComptage"
-                       placeholder="Entrez la date ">
+                <label for="dateComptage" class="form-label"
+                  >Date comptage <span class="text-danger">*</span></label
+                >
+                <input
+                  type="date"
+                  class="form-control"
+                  id="dateComptage"
+                  formControlName="dateComptage"
+                  placeholder="Entrez la date "
+                />
               </div>
               <div class="mb-3">
-                <label for="inventoriste" class="form-label">Inventoriste <span
-                  class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="inventoriste" formControlName="inventeur"
-                       placeholder="Nom et prénoms ">
+                <label for="inventoriste" class="form-label"
+                  >Inventoriste <span class="text-danger">*</span></label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="inventoriste"
+                  formControlName="inventeur"
+                  placeholder="Nom et prénoms "
+                />
               </div>
               <div class="mb-3">
-                <button type="button" class="btn btn-secondary mb-3"
-                        [disabled]="InventaireForm.controls['depotId'].invalid"
-                        (click)="ArticleModal()">Ajouter des articles
+                <button
+                  type="button"
+                  class="btn btn-secondary mb-3"
+                  [disabled]="InventaireForm.controls['depotId'].invalid"
+                  (click)="ArticleModal()"
+                >
+                  Ajouter des articles
                 </button>
-
               </div>
             </div>
 
             <div class="col-md-6">
-
               <div class="mb-3">
-                <label for="magasin" class="form-label">Dépot <span
-                  class="text-danger">*</span></label>
-                <ng-select class="form-control" [items]="depotList" bindLabel="nomDepot" bindValue="id"
-                           formControlName="depotId" [searchable]="true">
+                <label for="magasin" class="form-label"
+                  >Dépot <span class="text-danger">*</span></label
+                >
+                <ng-select
+                  class="form-control"
+                  [items]="depotList"
+                  bindLabel="nomDepot"
+                  bindValue="id"
+                  formControlName="depotId"
+                  [searchable]="true"
+                >
                 </ng-select>
               </div>
               <!--                            <div class="mb-3">-->
@@ -141,64 +190,79 @@
               <!--                                <textarea style="width: 95% !important;" id="description" class="form-control"-->
               <!--                                    formControlName="description" rows="3"></textarea>-->
               <!--                            </div>-->
-
-
             </div>
           </div>
         </form>
-        <div style="max-height: 300px; overflow-y: auto; border: 1px solid #dee2e6;">
+        <div
+          style="max-height: 300px; overflow-y: auto; border: 1px solid #dee2e6"
+        >
           <table class="table table-bordered">
             <thead class="table-light">
-            <tr>
-              <th scope="col">Code</th>
-              <th scope="col">Description</th>
-              <th scope="col">stock physique</th>
-              <th scope="col">Stock théorique</th>
-              <th scope="col">Écart</th>
-              <th scope="col">Actions</th>
-            </tr>
+              <tr>
+                <th scope="col">Code</th>
+                <th scope="col">Description</th>
+                <th scope="col">stock physique</th>
+                <th scope="col">Stock théorique</th>
+                <th scope="col">Écart</th>
+                <th scope="col">Actions</th>
+              </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let data of selectedArticles; let i = index">
-              <td><p>{{ data.code }}</p></td>
-              <td><p>{{ data.libelle }}</p></td>
-              <td>
-                <input
-                  type="number"
-                  class="form-control-custom"
-                  [(ngModel)]="data.quantite"
-                  [min]="0"
-                  value="0"
-                  (input)="validateQuantite(data,stocksDisponibles[data.id])"
-                >
-              </td>
-              <td>{{ stocksDisponibles[data.id] }}</td>
-              <td>{{ ecart[data.id] }}
-                <input
-                  hidden="true"
-                  type="text"
-                  class="form-control-custom"
-                  [(ngModel)]="ecartPercent[data.id]"
-                  [min]="0"
-                  value="0"
-                >
-              </td>
-              <td class="d-flex justify-content-center">
-                <button type="button" class="btn btn-danger btn-sm" (click)="removeArticle(data)">
-                  <i class="fas fa-trash fs-6"></i>
-                </button>
-              </td>
-            </tr>
+              <tr *ngFor="let data of selectedArticles; let i = index">
+                <td>
+                  <p>{{ data.code }}</p>
+                </td>
+                <td>
+                  <p>{{ data.libelle }}</p>
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="form-control-custom"
+                    [(ngModel)]="data.quantite"
+                    [min]="0"
+                    value="0"
+                    (input)="validateQuantite(data, stocksDisponibles[data.id])"
+                  />
+                </td>
+                <td>{{ stocksDisponibles[data.id] }}</td>
+                <td>
+                  {{ ecart[data.id] }}
+                  <input
+                    hidden="true"
+                    type="text"
+                    class="form-control-custom"
+                    [(ngModel)]="ecartPercent[data.id]"
+                    [min]="0"
+                    value="0"
+                  />
+                </td>
+                <td class="d-flex justify-content-center">
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm"
+                    (click)="removeArticle(data)"
+                  >
+                    <i class="fas fa-trash fs-6"></i>
+                  </button>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
-
       </div>
 
-
       <div class="modal-footer gap-3 px-4">
-        <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-        <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
+        <button
+          (click)="OnCloseModal()"
+          type="button"
+          class="btn btn-secondary px-2"
+        >
+          Annuler
+        </button>
+        <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">
+          Valider
+        </button>
       </div>
     </div>
   </div>
@@ -206,14 +270,23 @@
 
 <!-- Modal -->
 <div *ngIf="isArticleModalOpen" class="custom-modal">
-  <div class="modal-dialog2  modal-dialog-centered">
+  <div class="modal-dialog2 modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header d-flex align-items-center">
-        <div class="d-flex justify-content-center align-items-center"
-             style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
+        <div
+          class="d-flex justify-content-center align-items-center"
+          style="
+            background-color: rgb(219, 255, 232);
+            border-radius: 3rem;
+            width: 3rem;
+            height: 3rem;
+          "
+        >
           <i class="fas fa-box-check text-primary fs-3"></i>
         </div>
-        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">Selection des articles</h1>
+        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
+          Selection des articles
+        </h1>
       </div>
 
       <div class="modal-body">
@@ -222,45 +295,77 @@
             <fieldset class="row border my-2">
               <div class="p-3">
                 <!-- Champ de recherche -->
-                <input type="text" name="search" (input)="filterArticles()" [(ngModel)]="searchTerm"
-                       placeholder="Rechercher un produit" class="form-control mb-3">
+                <input
+                  type="text"
+                  name="search"
+                  (input)="filterArticles()"
+                  [(ngModel)]="searchTerm"
+                  placeholder="Rechercher un produit"
+                  class="form-control mb-3"
+                />
               </div>
-              <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
-
+              <div class="d-flex gap-2 justify-content-end">
+                <span class="fw-bold text-primary">Tout choisir</span>
+                <input
+                  type="checkbox"
+                  (change)="toggleAllSelection($event)"
+                  [checked]="isAllSelected"
+                />
+              </div>
+              <div
+                class="table-responsive"
+                style="max-height: 200px; overflow-y: auto"
+              >
                 <table class="table">
                   <thead>
-                  <tr style="font-size: small;">
-                    <th scope="col" class="text-secondary">Code</th>
-                    <th scope="col" class="text-secondary">Produits</th>
-                    <th scope="col" class="text-secondary text-center">Choix</th>
-                  </tr>
+                    <tr style="font-size: small">
+                      <th scope="col" class="text-secondary">Code</th>
+                      <th scope="col" class="text-secondary">Produits</th>
+                      <th scope="col" class="text-secondary text-center">
+                        Choix
+                      </th>
+                      <th scope="col" class="text-secondary text-center"></th>
+                    </tr>
                   </thead>
                   <tbody>
-                  <tr *ngFor="let article of filteredArticleList; let i = index" style="font-size: small;">
-                    <th scope="row">{{ article.code }}</th>
-                    <th scope="row">{{ article.libelle }}</th>
-                    <td class="">
-                      <input
-                        type="checkbox"
-                        class="form-control-custom"
-                        [name]="'checkbox_' + i"
-                        [(ngModel)]="article.isChecked"
-                        (change)="onCheckboxChange(article)"
-                      >
-                    </td>
-                  </tr>
+                    <tr
+                      *ngFor="let article of filteredArticleList; let i = index"
+                      style="font-size: small"
+                    >
+                      <th scope="row">{{ article.code }}</th>
+                      <th scope="row">{{ article.libelle }}</th>
+                      <td class="">
+                        <input
+                          type="checkbox"
+                          class="form-control-custom"
+                          [name]="'checkbox_' + i"
+                          [(ngModel)]="article.isChecked"
+                          (change)="onCheckboxChange(article)"
+                        />
+                      </td>
+                    </tr>
                   </tbody>
                 </table>
-
               </div>
             </fieldset>
           </div>
         </form>
       </div>
       <div class="modal-footer gap-3 px-4y">
-        <button (click)="CloseArticleModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-        <button type="submit" (click)="onSubmitSelection()" class="btn btn-primary px-2">Valider</button>
-
+        <button
+          (click)="CloseArticleModal()"
+          type="button"
+          class="btn btn-secondary px-2"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          (click)="onSubmitSelection()"
+          class="btn btn-primary px-2"
+        >
+          Valider
+        </button>
       </div>
     </div>
   </div>

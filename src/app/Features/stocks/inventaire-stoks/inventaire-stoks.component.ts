@@ -46,6 +46,7 @@ export class InventaireStoksComponent {
   dataListArticlesProduits: any = [];
   currentPage: number;
   rowsPerPage: any;
+  isAllSelected: boolean = false;
   now = new Date().toISOString().split('T')[0];
   UserInfo:any
   constructor(
@@ -109,7 +110,20 @@ export class InventaireStoksComponent {
   onSubmitSelection() {
     this.isArticleModalOpen = false;
   }
-
+  toggleAllSelection(event: any): void {
+    this.isAllSelected = event.target.checked; // Met à jour l'état global
+    this.selectedArticles = []; // Réinitialise la liste des articles sélectionnés
+  
+    this.filteredArticleList.forEach(article => {
+      article.isChecked = this.isAllSelected; // Applique l'état à tous les articles
+      if (this.isAllSelected) {
+        this.selectedArticles.push(article);
+      }
+      this.GetStockDisponibleByDepot(article)
+    });
+  
+    this.afficherArticlesSelectionnes();
+  }
   OnEdit(data: any) {
     this.isEditMode = true;
     console.log(data);
@@ -171,9 +185,11 @@ export class InventaireStoksComponent {
       );
       if (indexToRemove !== -1) {
         this.selectedArticles.splice(indexToRemove, 1);
-        this.afficherArticlesSelectionnes()
       }
     }
+    this.isAllSelected = this.filteredArticleList.every(a => a.isChecked);
+    this.afficherArticlesSelectionnes()
+
   }
 
   afficherArticlesSelectionnes() {
