@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {ChangeDetectorRef, Component} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
@@ -45,6 +45,7 @@ export class VentechinepageComponent {
   updateData: any = {};
   venteId: any = 0;
   constructor(
+    private cdr: ChangeDetectorRef,
     private _spinner: NgxSpinnerService,
     private articleService: ArticleServiceService,
     private logistiqueService: LogistiqueService,
@@ -67,7 +68,7 @@ export class VentechinepageComponent {
       articles: this.fb.array([]),
     });
 
-    this.GetArticleList(1);
+    // this.GetArticleList(1);
     this.GetCommercialList(1);
     this.GetZoneList(1);
     this.GetCamionList(1);
@@ -76,6 +77,7 @@ export class VentechinepageComponent {
 
   OnCloseModal() {
     this.isModalOpen = false;
+    this.selectedArticles = []
     console.log(this.isModalOpen);
   }
   onCommercialChange(selectedItem: any): void {
@@ -122,7 +124,7 @@ export class VentechinepageComponent {
 
   onCheckboxChange(article: any): void {
     this.GetPrixByArticle(article);
-    this.GetStockDisponibleByDepot(article);
+
     if (article.isChecked) {
       this.selectedArticles.push(article);
       this.afficherArticlesSelectionnes();
@@ -141,42 +143,48 @@ export class VentechinepageComponent {
   async GetStockDisponibleByDepot(item: any): Promise<any> {
     let data = {
       productId: item.liquide.code,
-      depotId: this.depotId,
+      depotId:this.depotId
     };
 
     try {
       // Attendre la réponse de la promesse
-      const response: any = await this.articleService.GetStockDisponibleByDepot(
-        data
-      );
-      console.log(response);
+      const response:any = await this.articleService.GetStockDisponibleByDepot(data);
+      console.log(response)
       // Vérifier si le statusCode est 200
       if (response) {
         this.stocksDisponibles[item.liquide.id] = response.quantiteDisponible;
-        console.log(this.stocksDisponibles[item.liquide.id]);
       } else if (response.statusCode === 404) {
-        this.stocksDisponibles[item.liquide.id] = 0; // Si le code est 404, retourner 0
+        this.stocksDisponibles[item.liquide.id] =  0; // Si le code est 404, retourner 0
       } else {
         return null; // Si un autre code, retourner null ou une valeur par défaut
       }
-    } catch (error: any) {
+    } catch (error:any) {
       console.log(error);
       if (error.status === 404) {
         this.stocksDisponibles[item.liquide.id] = 0; // Si le code est 404, retourner 0
       }
     }
+    console.log('totalite',this.stocksDisponibles);
   }
 
   removeArticle(item: any): void {
+    console.log(item);
+    const data = {
+      ...item,
+      quantite: 0,
+      groupearticle: { id: item.groupearticle.id },
+      id: item.groupearticle.id, // Assurez-vous que l'ID correspond
+    };
+
     item.isChecked = false;
+    this.calculatePrix(data);
     this.onCheckboxChange(item);
     const index = this.selectedArticles.findIndex((i: any) => i.id === item.id);
 
     if (index !== -1) {
-      this.selectedArticles = this.selectedArticles
-        .slice(0, index)
-        .concat(this.selectedArticles.slice(index + 1));
+      this.selectedArticles = this.selectedArticles.slice(0, index).concat(this.selectedArticles.slice(index + 1));
     }
+
   }
 
   onSubmitSelection() {
@@ -233,6 +241,9 @@ export class VentechinepageComponent {
     this.articleService.GetArticleList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.dataListLiquides = res.data;
+      this.dataListLiquides.forEach((item: any) => {
+        this.GetStockDisponibleByDepot(item)
+      })
       this.filteredArticleList = this.dataListLiquides;
       this._spinner.hide();
     });
@@ -324,8 +335,8 @@ export class VentechinepageComponent {
   }
 
   validateQuantite(data: any): void {
-    // Vérifier si la quantité saisie dépasse la quantité disponible
-    if (data.quantite > this.stocksDisponibles[data.id]) {
+    console.log('data.quantite',data.quantite,'stocksDisponibles',this.stocksDisponibles[data.liquide.id])
+    if (data.quantite > this.stocksDisponibles[data.liquide.id]) {
       // Réinitialiser la quantité à la quantité disponible
       data.quantite = '';
       // Afficher un message de warning
@@ -338,36 +349,91 @@ export class VentechinepageComponent {
     return this.VenteForm.get('articles') as FormArray;
   }
   calculatePrix(data: any) {
-    if (this.prixLiquideTotal[data.id]) {
-      this.totalEmballage -= this.prixEmballageTotal[data.id] || 0;
-      this.totalLiquide -= this.prixLiquideTotal[data.id] || 0;
-      this.totalGlobal -= this.montantTotal[data.id] || 0;
-      this.totalQte -= data.oldQuantite || 0;
-    }
-    this.prixLiquideTotal[data.id] = data.quantite * this.prixLiquide[data.id];
-    this.prixEmballageTotal[data.id] =
-      data.quantite * this.prixEmballage[data.id];
-    this.montantTotal[data.id] =
-      this.prixLiquideTotal[data.id] + this.prixEmballageTotal[data.id];
+    console.log('DATA:::>', data);
 
-    this.totalEmballage += this.prixEmballageTotal[data.id];
-    this.totalLiquide += this.prixLiquideTotal[data.id];
-    this.totalGlobal += this.montantTotal[data.id];
-    this.totalQte += data.quantite;
+    const prixLiquide = this.prixLiquide[data.id] || 0;
+    const prixEmballage = this.prixEmballage[data.id] || 0;
+    const quantite = data.quantite || 0;
 
-    data.oldQuantite = data.quantite;
-    console.log(data);
-    this.articles.push(
-      this.fb.group({
-        codeArticleLiquide: data.liquide.code,
-        codeArticleEmballage: data.liquide.emballage.code,
-        prixUnitaireLiquide: this.prixLiquide[data.id],
-        prixUnitaireEmballage: this.prixEmballage[data.id],
-        quantite: data.quantite,
-      })
+    console.log('groupearticle:::>',  data.groupearticle.id);
+    const existingArticleIndex = this.articles.controls.findIndex(
+      (control: any) => control.value.codeArticleLiquide === data.liquide.code
     );
-  }
 
+    if (existingArticleIndex !== -1) {
+      const existingArticle = this.articles.at(existingArticleIndex).value;
+      const oldQuantite = existingArticle.quantite || 0;
+      const differenceQuantite = quantite - oldQuantite;
+
+      // ✅ Décrémentation des anciens totaux
+      this.totalEmballage -= oldQuantite * prixEmballage;
+      console.log(this.totalEmballage, oldQuantite, '*', prixEmballage);
+      this.totalLiquide -= oldQuantite * prixLiquide;
+      console.log(this.totalLiquide, oldQuantite, '*', prixLiquide);
+      this.totalQte -= oldQuantite;
+      console.log(this.totalQte);
+
+      // ✅ Suppression si la quantité est 0
+      if (quantite === 0) {
+        console.log('off')
+        this.articles.removeAt(existingArticleIndex);
+        delete this.prixEmballageTotal[data.id];
+        delete this.prixLiquideTotal[data.id];
+        delete this.montantTotal[data.id];
+      } else {
+        // ✅ Mise à jour des totaux avec les nouvelles quantités
+        this.prixLiquideTotal[data.id] = quantite * prixLiquide;
+        this.prixEmballageTotal[data.id] = quantite * prixEmballage;
+
+        this.totalEmballage += this.prixEmballageTotal[data.id];
+        this.totalLiquide += this.prixLiquideTotal[data.id];
+        this.totalQte += quantite;
+
+        this.articles.at(existingArticleIndex).patchValue({
+          quantite: quantite,
+        });
+      }
+    } else {
+      // ✅ Ajout d'un nouvel article
+      this.prixLiquideTotal[data.id] = quantite * prixLiquide;
+      this.prixEmballageTotal[data.id] = quantite * prixEmballage;
+
+      this.totalEmballage += this.prixEmballageTotal[data.id];
+      this.totalLiquide += this.prixLiquideTotal[data.id];
+      this.totalQte += quantite;
+
+      this.articles.push(
+        this.fb.group({
+          groupeArticleId: data.groupearticle.id,
+          codeArticleLiquide: data.liquide.code,
+          codeArticleEmballage: data.liquide.emballage.code,
+          prixUnitaireLiquide: prixLiquide,
+          prixUnitaireEmballage: prixEmballage,
+          quantite: quantite,
+        })
+      );
+    }
+
+    // ✅ Recalcul des montants
+    this.montantTotal[data.id] = (this.prixLiquideTotal[data.id] || 0) + (this.prixEmballageTotal[data.id] || 0);
+
+    // ✅ Mise à jour des totaux globaux
+    this.totalEmballage = this.articles.controls.reduce((acc, control) => acc + (control.value.prixUnitaireEmballage * control.value.quantite), 0);
+    this.totalLiquide = this.articles.controls.reduce((acc, control) => acc + (control.value.prixUnitaireLiquide * control.value.quantite), 0);
+    this.totalQte = this.articles.controls.reduce((acc, control) => acc + control.value.quantite, 0);
+    this.totalGlobal = this.totalEmballage + this.totalLiquide;
+
+    console.log('Totaux:', {
+      totalLiquide: this.totalLiquide,
+      totalEmballage: this.totalEmballage,
+      montantTotal: this.montantTotal[data.id],
+      totalGlobal: this.totalGlobal,
+      totalQte: this.totalQte
+    });
+
+    // Forcer le rafraîchissement de l'interface
+    // this.cdr.detectChanges();
+  }
   async GetPrixByArticle(item: any): Promise<any> {
     let data = {
       id: item.id,

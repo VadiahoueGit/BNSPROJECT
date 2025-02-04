@@ -1,11 +1,11 @@
-import { Component, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
-import { Table } from 'primeng/table';
-import { ArticleServiceService } from 'src/app/core/article-service.service';
-import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
-import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
+import {ChangeDetectorRef, Component, ViewChild} from '@angular/core';
+import {FormGroup, FormBuilder, Validators, FormArray} from '@angular/forms';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {ToastrService} from 'ngx-toastr';
+import {Table} from 'primeng/table';
+import {ArticleServiceService} from 'src/app/core/article-service.service';
+import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
+import {ALERT_QUESTION} from 'src/app/Features/shared-component/utils';
 
 @Component({
   selector: 'app-saisie-commande',
@@ -66,32 +66,35 @@ export class SaisieCommandeComponent {
   prixLiquideArticleSelected: any;
   prixEmballageArticleSelected: any;
   ListCommandeClient: any;
+
   constructor(
+    private cdr: ChangeDetectorRef,
     private articleService: ArticleServiceService,
     private utilisateurService: UtilisateurResolveService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.commandClientForm = this.fb.group({
       clientId: [null, Validators.required],
-      clientType: ['revendeur', ],
-      numeroCompte: [{ value: '', disabled: true }, ],
-      raisonSociale: [{ value: '', disabled: true }, ],
-      montantCredit: [{ value: '', disabled: true }, ],
-      enCours: ['', ],
-      soldeEmballage: [{ value: '', disabled: true }, ],
-      numeroSAP: [{ value: '', disabled: true }, ],
+      clientType: ['revendeur',],
+      numeroCompte: [{value: '', disabled: true},],
+      raisonSociale: [{value: '', disabled: true},],
+      montantCredit: [{value: '', disabled: true},],
+      enCours: ['',],
+      soldeEmballage: [{value: '', disabled: true},],
+      numeroSAP: [{value: '', disabled: true},],
       remise: [
         0,
         [Validators.required, Validators.min(0), Validators.max(100)],
       ],
-      contact: [{ value: '', disabled: true }, ],
-      soldeLiquide: [{ value: '', disabled: true }, ],
-      statutCompte: ['Ok', ],
-      fraisTransport: [0,Validators.required ],
+      contact: [{value: '', disabled: true},],
+      soldeLiquide: [{value: '', disabled: true},],
+      statutCompte: ['Ok',],
+      fraisTransport: [0, Validators.required],
       articles: this.fb.array([]),
     });
 
@@ -115,9 +118,11 @@ export class SaisieCommandeComponent {
     this.GetListCommandeClient(1);
 
   }
+
   onDelete(item: any) {
     console.log(item);
   }
+
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -158,11 +163,17 @@ export class SaisieCommandeComponent {
     this.depotId = selectedItem.depot.id;
     this.GetArticleList(1);
   }
+
   OnCloseModal() {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
+    this.totalEmballage = 0;
+    this.totalLiquide = 0;
+    this.totalGlobalBeforeRemise = 0;
+    this.totalQte = 0;
     this.filteredArticleList = [];
   }
+
   OnCreate() {
     this.isEditMode = false;
     this.isModalOpen = true;
@@ -171,17 +182,17 @@ export class SaisieCommandeComponent {
     console.log(this.isModalOpen);
   }
 
-  OnEdit(data:any) {
+  OnEdit(data: any) {
     this.totalEmballage = 0;
-    this.totalLiquide  = 0;
+    this.totalLiquide = 0;
     this.totalGlobal = 0;
     this.totalQte = 0;
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
-    data.articles.forEach((article:any) => {
+    data.articles.forEach((article: any) => {
       this.totalEmballage += Number(article.montantEmballage);
-      this.totalLiquide  += Number(article.montantLiquide);
+      this.totalLiquide += Number(article.montantLiquide);
       this.totalGlobal = this.totalLiquide + this.totalEmballage
       this.totalQte += article.quantite
     })
@@ -191,6 +202,7 @@ export class SaisieCommandeComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
+
   GetArticleList(page: number) {
     let data = {
       paginate: false,
@@ -237,38 +249,90 @@ export class SaisieCommandeComponent {
   }
 
   calculatePrix(data: any) {
-    if (this.prixLiquideTotal[data.id]) {
-      this.totalEmballage -= this.prixEmballageTotal[data.id] || 0;
-      this.totalLiquide -= this.prixLiquideTotal[data.id] || 0;
-      this.totalGlobalBeforeRemise -= this.montantTotal[data.id] || 0;
-      this.totalQte -= data.oldQuantite || 0;
+    console.log('DATA:::>', data);
+
+    const prixLiquide = this.prixLiquide[data.id] || 0;
+    const prixEmballage = this.prixEmballage[data.id] || 0;
+    const quantite = data.quantite || 0;
+
+    // 🔍 Vérification de l'article existant
+    const existingArticleIndex = this.articles.controls.findIndex(
+      (control: any) => control.value.codeArticleLiquide === data.liquide.code
+    );
+
+    if (existingArticleIndex !== -1) {
+      // ✅ Si l'article existe déjà
+      if (quantite === 0) {
+        // 🗑️ Suppression de l'article si la quantité est 0
+        this.articles.removeAt(existingArticleIndex);
+        delete this.prixEmballageTotal[data.id];
+        delete this.prixLiquideTotal[data.id];
+        delete this.montantTotal[data.id];
+      } else {
+        // ✏️ Mise à jour des quantités et des prix
+        this.articles.at(existingArticleIndex).patchValue({
+          quantite: quantite,
+          prixUnitaireLiquide: prixLiquide,
+          prixUnitaireEmballage: prixEmballage,
+        });
+
+        this.prixLiquideTotal[data.id] = quantite * prixLiquide;
+        this.prixEmballageTotal[data.id] = quantite * prixEmballage;
+      }
+    } else {
+      // ➕ Ajout d'un nouvel article
+      if (quantite > 0) {  // Vérifier qu'on n'ajoute pas un article avec 0 quantité
+        this.prixLiquideTotal[data.id] = quantite * prixLiquide;
+        this.prixEmballageTotal[data.id] = quantite * prixEmballage;
+
+        this.articles.push(
+          this.fb.group({
+            groupeArticleId: data.groupearticle.id,
+            codeArticleLiquide: data.liquide.code,
+            codeArticleEmballage: data.liquide.emballage.code,
+            prixUnitaireLiquide: prixLiquide,
+            prixUnitaireEmballage: prixEmballage,
+            quantite: quantite,
+          })
+        );
+      }
     }
 
-    this.prixLiquideTotal[data.id] = data.quantite * this.prixLiquide[data.id];
-    this.prixEmballageTotal[data.id] =
-      data.quantite * this.prixEmballage[data.id];
+    // 🧮 Recalcul des montants par article
     this.montantTotal[data.id] =
-      this.prixLiquideTotal[data.id] + this.prixEmballageTotal[data.id];
+      (this.prixLiquideTotal[data.id] || 0) + (this.prixEmballageTotal[data.id] || 0);
 
-    this.totalEmballage += this.prixEmballageTotal[data.id];
-    this.totalLiquide += this.prixLiquideTotal[data.id];
-    this.totalGlobalBeforeRemise += this.montantTotal[data.id];
-    this.totalQte += data.quantite;
-
-    this.applyRemise();
-    console.log(data,'data article');
-    data.oldQuantite = data.quantite;
-    this.articles.push(
-      this.fb.group({
-        groupeArticleId: data.groupearticle.id,
-        codeArticleLiquide: data.liquide.code,
-        codeArticleEmballage: data.liquide.emballage.code,
-        prixUnitaireLiquide: this.prixLiquide[data.id],
-        prixUnitaireEmballage: this.prixEmballage[data.id],
-        quantite: data.quantite,
-      })
+    // ✅ Recalcul des totaux globaux
+    this.totalEmballage = this.articles.controls.reduce(
+      (acc, control) => acc + (control.value.prixUnitaireEmballage * control.value.quantite),
+      0
     );
+
+    this.totalLiquide = this.articles.controls.reduce(
+      (acc, control) => acc + (control.value.prixUnitaireLiquide * control.value.quantite),
+      0
+    );
+
+    this.totalQte = this.articles.controls.reduce(
+      (acc, control) => acc + control.value.quantite,
+      0
+    );
+
+    this.totalGlobal = this.totalEmballage + this.totalLiquide;
+
+    console.log('✅ Totaux mis à jour:', {
+      totalLiquide: this.totalLiquide,
+      totalEmballage: this.totalEmballage,
+      montantTotal: this.montantTotal[data.id],
+      totalGlobal: this.totalGlobal,
+      totalQte: this.totalQte,
+      articles: this.articles.value
+    });
+
+    // 🔄 Forcer le rafraîchissement de l'interface
+    this.cdr.detectChanges();
   }
+
 
   async GetStockDisponibleByDepot(item: any): Promise<any> {
     let data = {
@@ -302,10 +366,11 @@ export class SaisieCommandeComponent {
   get articles(): FormArray {
     return this.commandClientForm.get('articles') as FormArray;
   }
+
   onSubmit(): void {
     const formData = this.commandClientForm.value;
 
-   
+
     const payload = {
       clientType: this.detailPointDevente.credits.clientType,
       clientId: this.detailPointDevente.id,
@@ -345,6 +410,7 @@ export class SaisieCommandeComponent {
       this.toastr.warning('Formulaire invalide');
     }
   }
+
   GetListCommandeClient(page: number) {
     let data = {
       paginate: false,
@@ -358,12 +424,14 @@ export class SaisieCommandeComponent {
       this._spinner.hide();
     });
   }
+
   selectArticle() {
     this.isEditMode = false;
     this.isChoiceModalOpen = true;
     this.operation = 'create';
     console.log(this.isModalOpen);
   }
+
   validateQuantite(data: any): void {
     console.log(data, 'validateQuantiteData');
 
@@ -381,7 +449,6 @@ export class SaisieCommandeComponent {
 
   onCheckboxChange(article: any): void {
     this.GetPrixByArticle(article);
-    // this.GetStockDisponibleByDepot(article)
     if (article.isChecked) {
       this.selectedArticles.push(article);
       this.afficherArticlesSelectionnes();
@@ -397,6 +464,7 @@ export class SaisieCommandeComponent {
     }
     console.log(this.selectedArticles, 'selectedArticles');
   }
+
   async GetPrixByArticle(item: any): Promise<any> {
     let data = {
       id: item.id,
@@ -418,28 +486,41 @@ export class SaisieCommandeComponent {
       console.log(error);
     }
   }
+
   afficherArticlesSelectionnes() {
     console.log(this.selectedArticles);
   }
+
   removeArticle(item: any): void {
+    const data = {
+      ...item,
+      quantite: 0,
+      groupearticle: { id: item.groupearticle.id },
+      id: item.groupearticle.id, // Assurez-vous que l'ID correspond
+    };
+
     item.isChecked = false;
+    this.calculatePrix(data);
     this.onCheckboxChange(item);
     const index = this.selectedArticles.findIndex((i: any) => i.id === item.id);
 
     if (index !== -1) {
-      this.selectedArticles = this.selectedArticles
-        .slice(0, index)
-        .concat(this.selectedArticles.slice(index + 1));
+      this.selectedArticles = this.selectedArticles.slice(0, index).concat(this.selectedArticles.slice(index + 1));
     }
+
   }
+
   onSubmitSelection() {
     this.isChoiceModalOpen = false;
   }
+
   OnCloseChoiceModal() {
     this.deselectAllItems();
+    this.selectedArticles = []
     this.isChoiceModalOpen = false;
     console.log(this.isModalOpen);
   }
+
   deselectAllItems(): void {
     this.selectedArticles.forEach((item: any) => {
       delete item.quantite;
@@ -449,6 +530,7 @@ export class SaisieCommandeComponent {
 
     this.selectedArticles = [];
   }
+
   // onSearchClient(): void {}
   loadArticleDetails(): void {
     this.commandClientForm.patchValue({
@@ -463,6 +545,7 @@ export class SaisieCommandeComponent {
       liquideId: 1,
     });
   }
+
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
@@ -484,6 +567,7 @@ export class SaisieCommandeComponent {
       this.filteredArticleList = [...this.dataListLiquides];
     }
   }
+
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
       (res: any) => {
@@ -544,5 +628,6 @@ export class SaisieCommandeComponent {
       console.error('Erreur lors de la récupération des données:', error);
     }
   }
+
   protected readonly Number = Number;
 }
