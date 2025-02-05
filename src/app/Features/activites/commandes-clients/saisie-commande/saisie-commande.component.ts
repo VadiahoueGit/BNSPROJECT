@@ -162,6 +162,7 @@ export class SaisieCommandeComponent {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
     this.filteredArticleList = [];
+    this.selectedArticles = [];
   }
   OnCreate() {
     this.isEditMode = false;
@@ -439,6 +440,7 @@ export class SaisieCommandeComponent {
     this.deselectAllItems();
     this.isChoiceModalOpen = false;
     console.log(this.isModalOpen);
+    this.filteredArticleList = []
   }
   deselectAllItems(): void {
     this.selectedArticles.forEach((item: any) => {

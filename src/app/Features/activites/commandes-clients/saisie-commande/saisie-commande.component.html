@@ -282,6 +282,7 @@
                   type="number"
                   class="form-control"
                   id="fraisTransport"
+                  [min]="0"
                   formControlName="fraisTransport"
                   (blur)="applyFraisTransport()"
                 />
@@ -295,6 +296,7 @@
                   type="number"
                   class="form-control"
                   id="remise"
+                  [min]="0"
                   [max]="100"
                   formControlName="remise"
                   (blur)="applyRemise()"
