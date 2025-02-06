@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
@@ -71,7 +71,8 @@ export class SaisieCommandeComponent {
     private utilisateurService: UtilisateurResolveService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -114,7 +115,9 @@ export class SaisieCommandeComponent {
     });
     this.GetListCommandeClient(1);
 
+
   }
+
   onDelete(item: any) {
     console.log(item);
   }
@@ -306,7 +309,7 @@ export class SaisieCommandeComponent {
   onSubmit(): void {
     const formData = this.commandClientForm.value;
 
-   
+
     const payload = {
       clientType: this.detailPointDevente.credits.clientType,
       clientId: this.detailPointDevente.id,
@@ -363,7 +366,16 @@ export class SaisieCommandeComponent {
     this.isEditMode = false;
     this.isChoiceModalOpen = true;
     this.operation = 'create';
-    console.log(this.isModalOpen);
+    if(!this.commandClientForm.controls['fraisTransport'].value)
+    {
+      this.commandClientForm.patchValue({ fraisTransport: 0 });
+    }
+    if (!this.commandClientForm.controls['remise'].value)
+    {
+      this.commandClientForm.patchValue({ remise: 0 });
+    }
+    this.cdr.detectChanges();
+    console.log(this.isChoiceModalOpen);
   }
   validateQuantite(data: any): void {
     console.log(data, 'validateQuantiteData');
@@ -440,7 +452,7 @@ export class SaisieCommandeComponent {
     this.deselectAllItems();
     this.isChoiceModalOpen = false;
     console.log(this.isModalOpen);
-    this.filteredArticleList = []
+    // this.filteredArticleList = []
   }
   deselectAllItems(): void {
     this.selectedArticles.forEach((item: any) => {

@@ -63,7 +63,7 @@
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
- 
+
           </span>
         </td>
         <!-- <td>
@@ -276,7 +276,7 @@
             <div class="row g-3">
               <div class="col-md-4">
                 <label for="fraisTransport" class="form-label"
-                  >Frais transport<span class="text-danger">*</span></label
+                  >Frais transport</label
                 >
                 <input
                   type="number"
@@ -290,7 +290,7 @@
 
               <div class="col-md-4">
                 <label for="remise" class="form-label"
-                  >Remise<span class="text-danger">*</span></label
+                  >Remise</label
                 >
                 <input
                   type="number"
@@ -307,9 +307,7 @@
                   type="submit"
                   class="btn btn-primary"
                   [disabled]="
-                    commandClientForm.controls['clientId'].invalid ||
-                    commandClientForm.controls['remise'].invalid ||
-                    commandClientForm.controls['fraisTransport'].invalid
+                    commandClientForm.controls['clientId'].invalid
                   "
                   (click)="selectArticle()"
                 >
@@ -541,7 +539,7 @@
       <div class="modal-body">
         <form>
           <div class="row">
-            <fieldset class="row border my-2">
+            <fieldset class="row my-2">
               <div class="p-3">
                 <!-- Champ de recherche -->
                 <input
