@@ -40,7 +40,12 @@
           {{ dataList.statut}}
         </td>
         <td>
-          <tr class="d-flex justify-content-center">
+          <tr class="d-flex justify-content-center gap-3">
+            <td>
+              <i [ngStyle]="{
+                            'color': dataList.statut !== 'Attente de Validation' ? 'gray' : '#08AD36',
+                          }" (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-check fw-bold"></i>
+            </td>
             <td>
               <i
                 (click)="OnEdit(dataList)"
@@ -48,6 +53,7 @@
                 class="fas fa-eye text-secondary"
               ></i>
             </td>
+            
           </tr>
         </td>
       </tr>
@@ -174,12 +180,16 @@
 
              <div class="row">
               <div class="col-md-4">
-                <strong>Zone: </strong>
-                <span>{{ updateData.zoneDeLivraison.nomZone }}</span>
+                <strong>Commercial: </strong>
+                <span>{{ updateData.commercial.nom }} {{ updateData.commercial.nom }}</span>
               </div>
               <div class="col-md-4">
-                <strong>Localité : </strong>
-                <span>{{ updateData.zoneDeLivraison.localite.nomLocalite }}</span>
+                <strong>Localité: </strong>
+                <span>{{ updateData.localite.nomLocalite }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Dépot: </strong>
+                <span>{{ updateData.commercial.depot.nomDepot }}</span>
               </div>
              </div>
           </fieldset>
@@ -317,6 +327,8 @@
         >
           Annuler
         </button>
+        <button *ngIf="updateData.statut === 'Attente de Validation'" (click)="ApprouverVente(updateData.id)" class="btn btn-success">Approuver</button>
+        <button *ngIf="updateData.statut !== 'Attente de Validation'" (click)="DesApprouverdVente(updateData.id)" class="btn btn-success">Désapprouver</button>
         <button
           type="submit"
           *ngIf="operation == 'create'"

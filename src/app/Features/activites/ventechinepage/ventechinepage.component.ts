@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component} from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
@@ -7,6 +7,7 @@ import { ActiviteService } from '../../../core/activite.service';
 import { UtilisateurResolveService } from '../../../core/utilisateur-resolve.service';
 import { CoreServiceService } from '../../../core/core-service.service';
 import { LogistiqueService } from '../../../core/logistique.service';
+import { ALERT_QUESTION } from '../../shared-component/utils';
 
 @Component({
   selector: 'app-ventechinepage',
@@ -20,6 +21,7 @@ export class VentechinepageComponent {
   loading: boolean = true;
   isModalOpen = false;
   isChoiceModalOpen: boolean;
+  validateMode: boolean;
   isEditMode: boolean;
   operation: string = '';
   currentPage: number;
@@ -78,7 +80,7 @@ export class VentechinepageComponent {
 
   OnCloseModal() {
     this.isModalOpen = false;
-    this.selectedArticles = []
+    this.selectedArticles = [];
     console.log(this.isModalOpen);
   }
   onCommercialChange(selectedItem: any): void {
@@ -100,7 +102,7 @@ export class VentechinepageComponent {
   }
 
   onSubmit() {
-    console.log(this.VenteForm.value,'venteForm')
+    console.log(this.VenteForm.value, 'venteForm');
     if (this.VenteForm.valid) {
       this._spinner.show();
       this.utilisateurService.CreateVenteChine(this.VenteForm.value).then(
@@ -144,28 +146,30 @@ export class VentechinepageComponent {
   async GetStockDisponibleByDepot(item: any): Promise<any> {
     let data = {
       productId: item.liquide.code,
-      depotId:this.depotId
+      depotId: this.depotId,
     };
 
     try {
       // Attendre la réponse de la promesse
-      const response:any = await this.articleService.GetStockDisponibleByDepot(data);
-      console.log(response)
+      const response: any = await this.articleService.GetStockDisponibleByDepot(
+        data
+      );
+      console.log(response);
       // Vérifier si le statusCode est 200
       if (response) {
         this.stocksDisponibles[item.liquide.id] = response.quantiteDisponible;
       } else if (response.statusCode === 404) {
-        this.stocksDisponibles[item.liquide.id] =  0; // Si le code est 404, retourner 0
+        this.stocksDisponibles[item.liquide.id] = 0; // Si le code est 404, retourner 0
       } else {
         return null; // Si un autre code, retourner null ou une valeur par défaut
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.log(error);
       if (error.status === 404) {
         this.stocksDisponibles[item.liquide.id] = 0; // Si le code est 404, retourner 0
       }
     }
-    console.log('totalite',this.stocksDisponibles);
+    console.log('totalite', this.stocksDisponibles);
   }
 
   removeArticle(item: any): void {
@@ -183,9 +187,10 @@ export class VentechinepageComponent {
     const index = this.selectedArticles.findIndex((i: any) => i.id === item.id);
 
     if (index !== -1) {
-      this.selectedArticles = this.selectedArticles.slice(0, index).concat(this.selectedArticles.slice(index + 1));
+      this.selectedArticles = this.selectedArticles
+        .slice(0, index)
+        .concat(this.selectedArticles.slice(index + 1));
     }
-
   }
 
   onSubmitSelection() {
@@ -231,7 +236,55 @@ export class VentechinepageComponent {
     this.rowsPerPage = event.rows;
     // this.GetArticleList(this.currentPage);
   }
-
+  DesApprouverdVente(data: any) {
+    if (data) {
+      ALERT_QUESTION(
+        'warning',
+        'Attention !',
+        'Voulez-vous désapprouver cette vente?'
+      ).then((res) => {
+        if (res.isConfirmed == true) {
+     
+          this._spinner.show();
+          this.utilisateurService
+            .DesApprouverVente(data.id)
+            .then((res: any) => {
+              console.log('VALIDEEEEEEEEEE:::>', res);
+              this.toastr.success(res.message);
+              this.OnCloseModal();
+              this._spinner.hide();
+              this.GetVenteChineList(1);
+            });
+        } else {
+          this.isModalOpen = false;
+        }
+      });
+    }
+  }
+  ApprouverVente(data: any) {
+    if (data) {
+      ALERT_QUESTION(
+        'warning',
+        'Attention !',
+        'Voulez-vous approuver cette vente?'
+      ).then((res) => {
+        if (res.isConfirmed == true) {
+          this._spinner.show();
+          this.utilisateurService
+            .ApprouverVente(data.id)
+            .then((res: any) => {
+              console.log('VALIDEEEEEEEEEE:::>', res);
+              this.toastr.success(res.message);
+              this.OnCloseModal();
+              this._spinner.hide();
+              this.GetVenteChineList(1);
+            });
+        } else {
+          this.isModalOpen = false;
+        }
+      });
+    }
+  }
   GetArticleList(page: number) {
     let data = {
       paginate: false,
@@ -243,31 +296,33 @@ export class VentechinepageComponent {
       console.log('DATATYPEPRIX:::>', res);
       this.dataListLiquides = res.data;
       this.dataListLiquides.forEach((item: any) => {
-        this.GetStockDisponibleByDepot(item)
-      })
+        this.GetStockDisponibleByDepot(item);
+      });
       this.filteredArticleList = this.dataListLiquides;
       this._spinner.hide();
     });
   }
-  OnEdit(data:any) {
+  OnEdit(data: any) {
     this.totalEmballage = 0;
-    this.totalLiquide  = 0;
+    this.totalLiquide = 0;
     this.totalGlobal = 0;
     this.totalQte = 0;
     this.isEditMode = true;
-    console.log(data,'updateData');
+    console.log(data, 'updateData');
     this.updateData = data;
-    this.updateData.articles.map((article:any) =>{
-      article.prixTotal = parseInt(article.prixUnitaireLiquide )+ parseInt(article.prixUnitaireEmballage);
-    })
-    console.log(this.updateData.articles,'this.updateData.articles');
+    this.updateData.articles.map((article: any) => {
+      article.prixTotal =
+        parseInt(article.prixUnitaireLiquide) +
+        parseInt(article.prixUnitaireEmballage);
+    });
+    console.log(this.updateData.articles, 'this.updateData.articles');
 
-    data.articles.forEach((article:any) => {
+    data.articles.forEach((article: any) => {
       this.totalEmballage += Number(article.montantEmballage);
-      this.totalLiquide  += Number(article.montantLiquide);
-      this.totalGlobal = this.totalLiquide + this.totalEmballage
-      this.totalQte += article.quantite
-    })
+      this.totalLiquide += Number(article.montantLiquide);
+      this.totalGlobal = this.totalLiquide + this.totalEmballage;
+      this.totalQte += article.quantite;
+    });
 
     this.venteId = data.id;
     this.isModalOpen = true;
@@ -336,7 +391,12 @@ export class VentechinepageComponent {
   }
 
   validateQuantite(data: any): void {
-    console.log('data.quantite',data.quantite,'stocksDisponibles',this.stocksDisponibles[data.liquide.id])
+    console.log(
+      'data.quantite',
+      data.quantite,
+      'stocksDisponibles',
+      this.stocksDisponibles[data.liquide.id]
+    );
     if (data.quantite > this.stocksDisponibles[data.liquide.id]) {
       // Réinitialiser la quantité à la quantité disponible
       data.quantite = '';
@@ -356,7 +416,7 @@ export class VentechinepageComponent {
     const prixEmballage = this.prixEmballage[data.id] || 0;
     const quantite = data.quantite || 0;
 
-    console.log('groupearticle:::>',  data.groupearticle.id);
+    console.log('groupearticle:::>', data.groupearticle.id);
     const existingArticleIndex = this.articles.controls.findIndex(
       (control: any) => control.value.codeArticleLiquide === data.liquide.code
     );
@@ -376,7 +436,7 @@ export class VentechinepageComponent {
 
       // ✅ Suppression si la quantité est 0
       if (quantite === 0) {
-        console.log('off')
+        console.log('off');
         this.articles.removeAt(existingArticleIndex);
         delete this.prixEmballageTotal[data.id];
         delete this.prixLiquideTotal[data.id];
@@ -416,12 +476,25 @@ export class VentechinepageComponent {
     }
 
     // ✅ Recalcul des montants
-    this.montantTotal[data.id] = (this.prixLiquideTotal[data.id] || 0) + (this.prixEmballageTotal[data.id] || 0);
+    this.montantTotal[data.id] =
+      (this.prixLiquideTotal[data.id] || 0) +
+      (this.prixEmballageTotal[data.id] || 0);
 
     // ✅ Mise à jour des totaux globaux
-    this.totalEmballage = this.articles.controls.reduce((acc, control) => acc + (control.value.prixUnitaireEmballage * control.value.quantite), 0);
-    this.totalLiquide = this.articles.controls.reduce((acc, control) => acc + (control.value.prixUnitaireLiquide * control.value.quantite), 0);
-    this.totalQte = this.articles.controls.reduce((acc, control) => acc + control.value.quantite, 0);
+    this.totalEmballage = this.articles.controls.reduce(
+      (acc, control) =>
+        acc + control.value.prixUnitaireEmballage * control.value.quantite,
+      0
+    );
+    this.totalLiquide = this.articles.controls.reduce(
+      (acc, control) =>
+        acc + control.value.prixUnitaireLiquide * control.value.quantite,
+      0
+    );
+    this.totalQte = this.articles.controls.reduce(
+      (acc, control) => acc + control.value.quantite,
+      0
+    );
     this.totalGlobal = this.totalEmballage + this.totalLiquide;
 
     console.log('Totaux:', {
@@ -429,7 +502,7 @@ export class VentechinepageComponent {
       totalEmballage: this.totalEmballage,
       montantTotal: this.montantTotal[data.id],
       totalGlobal: this.totalGlobal,
-      totalQte: this.totalQte
+      totalQte: this.totalQte,
     });
 
     // Forcer le rafraîchissement de l'interface
