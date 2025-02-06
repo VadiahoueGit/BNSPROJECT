@@ -63,14 +63,9 @@
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-
+            {{ dataList.client.depot.nomDepot }}
           </span>
         </td>
-        <!-- <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.statutCompte }}
-          </span>
-        </td> -->
         <!-- <td>
           <span class="ml-1 vertical-align-middle">
                         {{ dataList.plastiquenu.libelle }}
@@ -276,7 +271,7 @@
             <div class="row g-3">
               <div class="col-md-4">
                 <label for="fraisTransport" class="form-label"
-                  >Frais transport</label
+                  >Frais transport<span class="text-danger">*</span></label
                 >
                 <input
                   type="number"
@@ -290,7 +285,7 @@
 
               <div class="col-md-4">
                 <label for="remise" class="form-label"
-                  >Remise</label
+                  >Remise<span class="text-danger">*</span></label
                 >
                 <input
                   type="number"
@@ -307,7 +302,9 @@
                   type="submit"
                   class="btn btn-primary"
                   [disabled]="
-                    commandClientForm.controls['clientId'].invalid
+                    commandClientForm.controls['clientId'].invalid ||
+                    commandClientForm.controls['remise'].invalid ||
+                    commandClientForm.controls['fraisTransport'].invalid
                   "
                   (click)="selectArticle()"
                 >
@@ -539,7 +536,7 @@
       <div class="modal-body">
         <form>
           <div class="row">
-            <fieldset class="row my-2">
+            <fieldset class="row border my-2">
               <div class="p-3">
                 <!-- Champ de recherche -->
                 <input

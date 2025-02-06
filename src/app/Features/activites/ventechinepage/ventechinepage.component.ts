@@ -39,6 +39,7 @@ export class VentechinepageComponent {
   prixEmballageTotal: any = {};
   montantTotal: any = {};
   dataListZone: any;
+  dataListLocalite: any;
   dataListCommercial: any;
   dataListCamion: any;
   depotId: number = 0;
@@ -62,7 +63,7 @@ export class VentechinepageComponent {
     });
     this.VenteForm = this.fb.group({
       commercialId: [null, Validators.required],
-      zoneDeLivraisonId: [null, Validators.required],
+      localiteId: [null, Validators.required],
       venteDate: [null, Validators.required],
       vehiculeId: [0, Validators.required],
       articles: this.fb.array([]),
@@ -70,7 +71,7 @@ export class VentechinepageComponent {
 
     // this.GetArticleList(1);
     this.GetCommercialList(1);
-    this.GetZoneList(1);
+    this.GetLocaliteList(1);
     this.GetCamionList(1);
     this.GetVenteChineList(1);
   }
@@ -306,16 +307,16 @@ export class VentechinepageComponent {
     });
   }
 
-  GetZoneList(page: number) {
+  GetLocaliteList(page: number) {
     let data = {
       paginate: false,
       page: page,
       limit: 8,
     };
     this._spinner.show();
-    this.coreService.GetZoneList(data).then((res: any) => {
-      console.log('DATATYPEPRIX:::>', res);
-      this.dataListZone = res.data;
+    this.coreService.GetLocaliteList(data).then((res: any) => {
+      console.log('dataListLocalite:::>', res);
+      this.dataListLocalite = res.data;
       this._spinner.hide();
     });
   }
