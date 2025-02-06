@@ -107,6 +107,10 @@ import { SharedComponentModule } from '../shared-component/shared-component.modu
 import { ValidationPaiementsComponent } from './validation-paiements/validation-paiements.component';
 import { CommandePayesPartiellementComponent } from './commande-payes-partiellement/commande-payes-partiellement.component';
 import { CommandePayesComponent } from './commande-payes/commande-payes.component';
+import { ValidationVenteChineComponent } from './validation/validation-vente-chine/validation-vente-chine.component';
+import { ValidationCommandeClientComponent } from './validation/validation-commande-client/validation-commande-client.component';
+import { ValidationCommandeGratuiteComponent } from './validation/validation-commande-gratuite/validation-commande-gratuite.component';
+import { ValidationComponent } from './validation/validation/validation.component';
 
 
 @NgModule({
@@ -116,7 +120,11 @@ import { CommandePayesComponent } from './commande-payes/commande-payes.componen
     SuiviComptesComponent,
     ValidationPaiementsComponent,
     CommandePayesPartiellementComponent,
-    CommandePayesComponent
+    CommandePayesComponent,
+    ValidationVenteChineComponent,
+    ValidationCommandeClientComponent,
+    ValidationCommandeGratuiteComponent,
+    ValidationComponent
   ],
   imports: [
     CommonModule,

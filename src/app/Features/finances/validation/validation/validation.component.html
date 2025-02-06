@@ -1,0 +1,30 @@
+
+<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
+    <i style="font-size: 18px; " class="fas fw-bold fa-chevron-left me-2 "></i>
+    <h4 class="fw-bold mb-0">Validation</h4>
+  </div>
+  <nav class="nav nav-pills flex-column flex-sm-row gap-1 border-bottom">
+  
+    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'validationVenteChine'"
+      (click)="activeElement('validationVenteChine')">Validation des ventes chine</a>
+    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'validationCommandeGratuite'"
+      (click)="activeElement('validationCommandeGratuite')">Validation des commandes gratuite</a>
+    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'validationCommandeClient'"
+      (click)="activeElement('validationCommandeClient')">Validation des commandes client</a>
+  
+      
+  </nav>
+  
+  <div class="tab-content mt-3">
+    <div *ngIf="activeTab === 'validationVenteChine'" class="tab-pane fade show active">
+       <app-validation-vente-chine></app-validation-vente-chine> 
+    </div>
+    <div *ngIf="activeTab === 'validationCommandeGratuite'" class="tab-pane fade show active">
+       <app-validation-commande-gratuite></app-validation-commande-gratuite> 
+    </div>
+    <div *ngIf="activeTab === 'validationCommandeClient'" class="tab-pane fade show active">
+       <app-validation-commande-client></app-validation-commande-client> 
+    </div>
+   
+  
+  </div>

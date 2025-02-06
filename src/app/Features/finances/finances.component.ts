@@ -13,6 +13,11 @@ export class FinancesComponent {
       title: 'Comptablité',
       url: 'feature/finances/comptabilite',
     },
+    {
+      image: 'assets/icon/compta.png',
+      title: 'Validation',
+      url: 'feature/finances/validation',
+    },
     // {
     //   image: 'assets/icon/store.png',
     //   title: 'Revendeurs',
