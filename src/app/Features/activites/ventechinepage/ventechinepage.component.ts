@@ -18,10 +18,8 @@ export class VentechinepageComponent {
   groupeProduitForm!: FormGroup;
   dataList: [];
   VenteForm: FormGroup;
-  loading: boolean = true;
   isModalOpen = false;
   isChoiceModalOpen: boolean;
-  validateMode: boolean;
   isEditMode: boolean;
   operation: string = '';
   currentPage: number;
@@ -236,55 +234,8 @@ export class VentechinepageComponent {
     this.rowsPerPage = event.rows;
     // this.GetArticleList(this.currentPage);
   }
-  DesApprouverdVente(data: any) {
-    if (data) {
-      ALERT_QUESTION(
-        'warning',
-        'Attention !',
-        'Voulez-vous désapprouver cette vente?'
-      ).then((res) => {
-        if (res.isConfirmed == true) {
-     
-          this._spinner.show();
-          this.utilisateurService
-            .DesApprouverVente(data.id)
-            .then((res: any) => {
-              console.log('VALIDEEEEEEEEEE:::>', res);
-              this.toastr.success(res.message);
-              this.OnCloseModal();
-              this._spinner.hide();
-              this.GetVenteChineList(1);
-            });
-        } else {
-          this.isModalOpen = false;
-        }
-      });
-    }
-  }
-  ApprouverVente(data: any) {
-    if (data) {
-      ALERT_QUESTION(
-        'warning',
-        'Attention !',
-        'Voulez-vous approuver cette vente?'
-      ).then((res) => {
-        if (res.isConfirmed == true) {
-          this._spinner.show();
-          this.utilisateurService
-            .ApprouverVente(data.id)
-            .then((res: any) => {
-              console.log('VALIDEEEEEEEEEE:::>', res);
-              this.toastr.success(res.message);
-              this.OnCloseModal();
-              this._spinner.hide();
-              this.GetVenteChineList(1);
-            });
-        } else {
-          this.isModalOpen = false;
-        }
-      });
-    }
-  }
+ 
+ 
   GetArticleList(page: number) {
     let data = {
       paginate: false,

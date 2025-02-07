@@ -1,0 +1,75 @@
+.modal-dialog {
+    background-color: white;
+    border-radius: 0.3rem;
+    width: auto;
+    min-width: 60em; /* Augmenter la largeur minimale */
+    max-width: 90%; /* S'assurer qu'elle ne dépasse pas trop l'écran */
+    padding: 1rem;
+  }
+  
+  .modal-content{
+    background-color:white ;
+  }
+  
+  .form-control {
+    margin-bottom: -0.5rem; /* Espacer les champs */
+  }
+  .form-control-custom{
+    width: 50px;
+  }
+  .custom-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1050;
+    }
+  
+  
+  
+    .modal-header, .modal-body, .modal-footer {
+      padding: 1rem;
+    }
+  
+    .btn-close {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+    }
+    .p-fluid .p-inputtext {
+      width: 8em !important;
+      height: 2.5rem;
+  }
+  
+  .p-column-filter-menu-button {
+      display: none; /* Masquer l'icône de filtre */
+    }
+  
+    /* Ajuster l'espacement si nécessaire après suppression de l'icône */
+    .p-column-filter {
+      padding-right: 0; /* Supprime l'espace réservé à l'icône */
+    }
+    .label-fixed-width {
+      min-width: 10px;
+    }
+  
+    input[type="radio"] {
+      accent-color: green; /* Sets the color of the selected radio button */
+    }
+  
+    /* Optional: Style the labels to add spacing and font customization */
+    label {
+      font-size: 1rem;
+      color: #333;
+      cursor: pointer;
+    }
+  
+    label + label {
+      margin-left: 15px; /* Adds space between the two labels */
+    }
+  

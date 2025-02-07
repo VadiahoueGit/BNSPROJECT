@@ -105,6 +105,62 @@ export class FinanceService {
     });
   }
 
+  // COMPTABILITE
+
+  
+   ApprouverVenteChine(id: any){
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.patch(`${this.apiUrl}/v1/comptabilite/approuver/commandechine/${id}`,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+   }
+   ApprouverCommandeClient(id: any){
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.patch(`${this.apiUrl}/v1/comptabilite/approuver/commandeclient/${id}`,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+   }
+
+   ApprouverCommandeGratuite(id: any){
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.patch(`${this.apiUrl}/v1/comptabilite/approuver/commandegratuit/${id}`,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+   }
+
    
  
 }

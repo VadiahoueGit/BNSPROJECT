@@ -42,11 +42,6 @@
         <td>
           <tr class="d-flex justify-content-center gap-3">
             <td>
-              <i [ngStyle]="{
-                            'color': dataList.statut !== 'Attente de Validation' ? 'gray' : '#08AD36',
-                          }" (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-check fw-bold"></i>
-            </td>
-            <td>
               <i
                 (click)="OnEdit(dataList)"
                 style="cursor: pointer"
@@ -327,8 +322,6 @@
         >
           Annuler
         </button>
-        <button *ngIf="updateData.statut === 'Attente de Validation'" (click)="ApprouverVente(updateData.id)" class="btn btn-success">Approuver</button>
-        <button *ngIf="updateData.statut !== 'Attente de Validation'" (click)="DesApprouverdVente(updateData.id)" class="btn btn-success">Désapprouver</button>
         <button
           type="submit"
           *ngIf="operation == 'create'"
