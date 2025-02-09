@@ -40,7 +40,7 @@
           {{ dataList.statut}}
         </td>
         <td>
-          <tr class="d-flex justify-content-center">
+          <tr class="d-flex justify-content-center gap-3">
             <td>
               <i
                 (click)="OnEdit(dataList)"
@@ -48,6 +48,7 @@
                 class="fas fa-eye text-secondary"
               ></i>
             </td>
+            
           </tr>
         </td>
       </tr>
@@ -174,12 +175,16 @@
 
              <div class="row">
               <div class="col-md-4">
-                <strong>Zone: </strong>
-                <span>{{ updateData.zoneDeLivraison.nomZone }}</span>
+                <strong>Commercial: </strong>
+                <span>{{ updateData.commercial.nom }} {{ updateData.commercial.nom }}</span>
               </div>
               <div class="col-md-4">
-                <strong>Localité : </strong>
-                <span>{{ updateData.zoneDeLivraison.localite.nomLocalite }}</span>
+                <strong>Localité: </strong>
+                <span>{{ updateData.localite.nomLocalite }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Dépot: </strong>
+                <span>{{ updateData.commercial.depot.nomDepot }}</span>
               </div>
              </div>
           </fieldset>
