@@ -37,7 +37,7 @@ export class ActiviteService {
     });
   }
 
-  //TYPE VISITE 
+  //TYPE VISITE
   CreateTypeVisite(data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -157,7 +157,7 @@ export class ActiviteService {
   }
 
   UpdateVisite(id: number, data: any) {
-    
+
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
@@ -238,7 +238,7 @@ export class ActiviteService {
   }
 
   UpdateQuestion(id: number, data: any) {
-    
+
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
@@ -263,6 +263,47 @@ export class ActiviteService {
       });
       this._http
         .delete(`${this.apiUrl}/v1/question/${id}`,{headers})
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+  //LIVRAISON
+  CreationRegroupement(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/regroupements`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  GetRegroupementList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/regroupements?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+        )
         .subscribe(
           (res: any) => {
             console.log(res);

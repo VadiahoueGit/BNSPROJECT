@@ -16,7 +16,7 @@
   <p-table
     [styleClass]="'p-datatable-sm'"
     #dt2
-    [value]="dataList"
+    [value]="listRegroupements"
     dataKey="id"
     [rows]="8"
     [rowsPerPageOptions]="[10, 25, 50]"
@@ -25,11 +25,11 @@
   >
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color)">Réference client</th>
-        <th style="color: var(--secondary-color)">Raison sociale</th>
-        <th style="color: var(--secondary-color)">Entrepôt</th>
-        <th style="color: var(--secondary-color)">N° commande</th>
+        <th style="color: var(--secondary-color)">N° Regroupement</th>
+        <th style="color: var(--secondary-color)">Nbre commandes</th>
+        <th style="color: var(--secondary-color)">Conducteur</th>
         <th style="color: var(--secondary-color)">Montant (FCFA)</th>
+        <th style="color: var(--secondary-color)">Statut</th>
         <th style="color: var(--secondary-color)">Actions</th>
       </tr>
     </ng-template>
@@ -37,23 +37,23 @@
       <tr>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.refclient }}
+            {{ dataList.numRegroupement }}
           </span>
         </td>
         <td>
-          {{ dataList.raisonsociale }}
+          {{ dataList.commandes.length }}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.localite }}
+            {{ dataList.transporteur.nom }}  {{ dataList.transporteur.prenoms }}
           </span>
         </td>
         <td>
-          {{ dataList.statut }}
+          {{ getTotalGeneral(dataList.commandes) | number:'1.0-0' }}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.prenom }}
+             {{ dataList.statut }}
           </span>
         </td>
 
@@ -66,13 +66,13 @@
                 class="fas fa-eye text-secondary"
               ></i>
             </td>
-            <td>
-              <i
-                (click)="OnDelete(dataList.id)"
-                style="cursor: pointer"
-                class="fas fa-trash-alt text-danger"
-              ></i>
-            </td>
+<!--            <td>-->
+<!--              <i-->
+<!--                (click)="OnDelete(dataList.id)"-->
+<!--                style="cursor: pointer"-->
+<!--                class="fas fa-trash-alt text-danger"-->
+<!--              ></i>-->
+<!--            </td>-->
           </tr>
         </td>
       </tr>
@@ -119,9 +119,12 @@
                 </ng-select>
               </div>
             </div>
-
-            <table class="table table-bordered table-hover">
-              <thead class="table-success">
+            <div
+              class="table-responsive"
+              style="max-height: 400px; overflow-y: auto"
+            >
+              <table class="table table-bordered table-hover">
+                <thead class="table-success">
                 <tr>
                   <th>Commande</th>
                   <th>Raison sociale</th>
@@ -130,8 +133,8 @@
                   <th>Date</th>
                   <th>Actions</th>
                 </tr>
-              </thead>
-              <tbody>
+                </thead>
+                <tbody>
                 <tr *ngFor="let item of filteredList; let i = index">
                   <td>{{ item.NumCommande }}</td>
                   <td>{{ item.client.raisonSocial }}</td>
@@ -149,8 +152,10 @@
 
                   </td>
                 </tr>
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
+
           </div>
 
             <div class="col-md-5">
@@ -299,17 +304,17 @@
             <table class="table table-bordered">
               <thead class="table-success">
                 <tr>
-                  <th>Raison sociale</th>
-                  <th>DESPERADOS 33 CL</th>
-                  <th>COCA COLA RGB 60 CL</th>
-                  <th>HEINEKEN 33 CL</th>
-                  <th>IVOIRE 60 CL</th>
-                  <th>RHINO ENERGY 33 CL</th>
-                  <th>IVOIRE BLACK 60 CL</th>
-                  <th>HEINEKEN 50 CL</th>
-                  <th>FANTA RGB 60 CL</th>
-                  <th>COCA COLA 30 CL</th>
-                  <th>Total</th>
+                  <th style="font-size: 12px">Raison sociale</th>
+                  <th style="font-size: 11px">DESPERADOS 33 CL</th>
+                  <th style="font-size: 12px">COCA COLA RGB 60 CL</th>
+                  <th style="font-size: 12px">HEINEKEN 33 CL</th>
+                  <th style="font-size: 12px">IVOIRE 60 CL</th>
+                  <th style="font-size: 12px">RHINO ENERGY 33 CL</th>
+                  <th style="font-size: 12px">IVOIRE BLACK 60 CL</th>
+                  <th style="font-size: 12px">HEINEKEN 50 CL</th>
+                  <th style="font-size: 12px">FANTA RGB 60 CL</th>
+                  <th style="font-size: 12px">COCA COLA 30 CL</th>
+                  <th style="font-size: 12px">Total</th>
                 </tr>
               </thead>
               <tbody>

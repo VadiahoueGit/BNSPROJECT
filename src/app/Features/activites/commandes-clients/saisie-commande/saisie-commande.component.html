@@ -18,7 +18,6 @@
       <tr>
         <th style="color: var(--secondary-color)">Date</th>
         <th style="color: var(--secondary-color)">Numéro de commande</th>
-        <th style="color: var(--secondary-color)">Numéro SAP</th>
         <th style="color: var(--secondary-color)">Raison sociale</th>
         <th style="color: var(--secondary-color)">Remise</th>
         <th style="color: var(--secondary-color)">Solde liquide</th>
@@ -32,16 +31,13 @@
       <tr>
         <td>
           <span class="ml-1 vertical-align-middle">
-            <!-- {{ dataList.Date }} -->
+        {{ dataList.dateCreation |date }}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
             {{ dataList.NumCommande }}
           </span>
-        </td>
-        <td>
-          {{ dataList.numeroSAP }}
         </td>
         <td>
           {{ dataList.raisonSociale }}
@@ -72,23 +68,23 @@
                     </span>
         </td> -->
         <td>
-          <tr class="d-flex justify-content-center gap-3">
-            <td>
-              <i
-                (click)="OnEdit(dataList)"
-                style="cursor: pointer"
-                class="fas fa-eye text-secondary"
-              ></i>
-            </td>
-            <td>
-              <i
-                (click)="OnDelete(dataList.id)"
-                style="cursor: pointer"
-                class="fas fa-trash-alt text-danger"
-              ></i>
-            </td>
-          </tr>
+      <tr class="d-flex justify-content-center gap-3">
+        <td>
+          <i
+            (click)="OnEdit(dataList)"
+            style="cursor: pointer"
+            class="fas fa-eye text-secondary"
+          ></i>
         </td>
+        <td>
+          <i
+            (click)="OnDelete(dataList.id)"
+            style="cursor: pointer"
+            class="fas fa-trash-alt text-danger"
+          ></i>
+        </td>
+      </tr>
+      </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
@@ -135,7 +131,7 @@
               <div class="d-flex">
                 <div class="mr-2">
                   <label for="client" class="form-label me-2 mb-0 pt-2"
-                    >Client<span class="text-danger">*</span></label
+                  >Client<span class="text-danger">*</span></label
                   >
                 </div>
                 <ng-select
@@ -162,7 +158,7 @@
             <div class="row g-3">
               <div class="col-md-4">
                 <label for="numeroCompte" class="form-label"
-                  >Numéro de compte<span class="text-danger">*</span></label
+                >Numéro de compte<span class="text-danger">*</span></label
                 >
                 <input
                   type="text"
@@ -173,7 +169,7 @@
               </div>
               <div class="col-md-4">
                 <label for="raisonSociale" class="form-label"
-                  >Raison sociale<span class="text-danger">*</span></label
+                >Raison sociale<span class="text-danger">*</span></label
                 >
                 <input
                   type="text"
@@ -185,7 +181,7 @@
 
               <div class="col-md-4">
                 <label for="numeroSAP" class="form-label"
-                  >Numéro SAP<span class="text-danger">*</span></label
+                >Numéro SAP<span class="text-danger">*</span></label
                 >
                 <input
                   type="text"
@@ -197,7 +193,7 @@
 
               <div class="col-md-4">
                 <label for="montantCredit" class="form-label"
-                  >Montant crédit<span class="text-danger">*</span></label
+                >Montant crédit<span class="text-danger">*</span></label
                 >
                 <input
                   type="text"
@@ -208,7 +204,7 @@
               </div>
               <div class="col-md-4">
                 <label for="soldeEmballage" class="form-label"
-                  >Solde emballage<span class="text-danger">*</span></label
+                >Solde emballage<span class="text-danger">*</span></label
                 >
                 <input
                   type="text"
@@ -219,7 +215,7 @@
               </div>
               <div class="col-md-4">
                 <label for="soldeLiquide" class="form-label"
-                  >Solde liquide<span class="text-danger">*</span></label
+                >Solde liquide<span class="text-danger">*</span></label
                 >
                 <input
                   type="text"
@@ -231,7 +227,7 @@
 
               <div class="col-md-4">
                 <label for="enCours" class="form-label"
-                  >En cours<span class="text-danger">*</span></label
+                >En cours<span class="text-danger">*</span></label
                 >
                 <input
                   type="text"
@@ -242,7 +238,7 @@
               </div>
               <div class="col-md-4">
                 <label for="statutCompte" class="form-label"
-                  >Statut du compte<span class="text-danger">*</span></label
+                >Statut du compte<span class="text-danger">*</span></label
                 >
                 <input
                   type="text"
@@ -253,7 +249,7 @@
               </div>
               <div class="col-md-4">
                 <label for="contact" class="form-label"
-                  >Contact<span class="text-danger">*</span></label
+                >Contact<span class="text-danger">*</span></label
                 >
                 <input
                   type="text"
@@ -271,7 +267,7 @@
             <div class="row g-3">
               <div class="col-md-4">
                 <label for="fraisTransport" class="form-label"
-                  >Frais transport<span class="text-danger">*</span></label
+                >Frais transport<span class="text-danger">*</span></label
                 >
                 <input
                   type="number"
@@ -285,7 +281,7 @@
 
               <div class="col-md-4">
                 <label for="remise" class="form-label"
-                  >Remise<span class="text-danger">*</span></label
+                >Remise<span class="text-danger">*</span></label
                 >
                 <input
                   type="number"
@@ -344,10 +340,10 @@
             <div class="col-md-4">
               <strong>Établissement :</strong>
               <span>{{
-                updateData.client.nomEtablissement
-                  ? updateData.client.nomEtablissement
-                  : updateData.client.raisonSocial
-              }}</span>
+                  updateData.client.nomEtablissement
+                    ? updateData.client.nomEtablissement
+                    : updateData.client.raisonSocial
+                }}</span>
             </div>
             <div class="col-md-4">
               <strong>Numero de registre :</strong>
@@ -365,124 +361,128 @@
               <strong>Téléphone :</strong>
               <span>{{ updateData.client.telephoneProprietaire }}</span>
             </div>
+            <div class="col-md-4 mb-4">
+              <strong>Numero SAP :</strong>
+              <span>{{ updateData.client.numeroSAP }}</span>
+            </div>
           </div>
         </fieldset>
         <div class="p-2 mt-3">
           <div style="max-height: 350px; overflow-y: auto">
             <table *ngIf="operation == 'create'" class="table table-bordered">
               <thead class="table-success">
-                <!-- Première ligne d'en-tête -->
-                <tr>
-                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
-                  <th scope="col" colspan="4">MONTANT TTC(FCFA)</th>
-                </tr>
-                <!-- Deuxième ligne d'en-tête -->
-                <tr>
-                  <th scope="col">Liquide</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Qte</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Actions</th>
-                </tr>
+              <!-- Première ligne d'en-tête -->
+              <tr>
+                <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
+                <th scope="col" colspan="4">MONTANT TTC(FCFA)</th>
+              </tr>
+              <!-- Deuxième ligne d'en-tête -->
+              <tr>
+                <th scope="col">Liquide</th>
+                <th scope="col">Liquide (FCFA)</th>
+                <th scope="col">Emballage (FCFA)</th>
+                <th scope="col">Total (FCFA)</th>
+                <th scope="col">Qte</th>
+                <th scope="col">Liquide (FCFA)</th>
+                <th scope="col">Emballage (FCFA)</th>
+                <th scope="col">Total (FCFA)</th>
+                <th scope="col">Actions</th>
+              </tr>
               </thead>
 
               <tbody>
-                <tr *ngFor="let item of selectedArticles">
-                  <td>{{ item.liquide.libelle }}</td>
-                  <td>{{ prixLiquide[item.id] }}</td>
-                  <td>{{ prixEmballage[item.id] }}</td>
-                  <td>{{ prixEmballage[item.id] + prixLiquide[item.id] }}</td>
-                  <td>
-                    <input
-                      type="number"
-                      class="form-control-custom"
-                      [(ngModel)]="item.quantite"
-                      [min]="0"
-                      [max]="stocksDisponibles[item.liquide.id]"
-                      [disabled]="stocksDisponibles[item.liquide.id] === 0"
-                      [ngClass]="{
+              <tr *ngFor="let item of selectedArticles">
+                <td>{{ item.liquide.libelle }}</td>
+                <td>{{ prixLiquide[item.id] }}</td>
+                <td>{{ prixEmballage[item.id] }}</td>
+                <td>{{ prixEmballage[item.id] + prixLiquide[item.id] }}</td>
+                <td>
+                  <input
+                    type="number"
+                    class="form-control-custom"
+                    [(ngModel)]="item.quantite"
+                    [min]="0"
+                    [max]="stocksDisponibles[item.liquide.id]"
+                    [disabled]="stocksDisponibles[item.liquide.id] === 0"
+                    [ngClass]="{
                         invalid:
                           item.quantite > stocksDisponibles[item.liquide.id]
                       }"
-                      (blur)="validateQuantite(item)"
-                    />
-                    / {{ stocksDisponibles[item.liquide.id] }}
-                  </td>
-                  <td>{{ prixLiquideTotal[item.id] }}</td>
-                  <td>{{ prixEmballageTotal[item.id] }}</td>
-                  <td>{{ montantTotal[item.id] }}</td>
-                  <td class="d-flex justify-content-center">
-                    <button
-                      type="button"
-                      class="btn btn-danger btn-sm"
-                      (click)="removeArticle(item)"
-                    >
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr class="table-dark">
-                  <th scope="col" colspan="4">Total :</th>
-                  <td>{{ totalQte }}</td>
-                  <td>{{ totalLiquide }}</td>
-                  <td>{{ totalEmballage }}</td>
-                  <td>{{ totalGlobal }}</td>
-                  <td></td>
-                </tr>
+                    (blur)="validateQuantite(item)"
+                  />
+                  / {{ stocksDisponibles[item.liquide.id] }}
+                </td>
+                <td>{{ prixLiquideTotal[item.id] }}</td>
+                <td>{{ prixEmballageTotal[item.id] }}</td>
+                <td>{{ montantTotal[item.id] }}</td>
+                <td class="d-flex justify-content-center">
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm"
+                    (click)="removeArticle(item)"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr class="table-dark">
+                <th scope="col" colspan="4">Total :</th>
+                <td>{{ totalQte }}</td>
+                <td>{{ totalLiquide }}</td>
+                <td>{{ totalEmballage }}</td>
+                <td>{{ totalGlobal }}</td>
+                <td></td>
+              </tr>
               </tbody>
             </table>
             <table *ngIf="operation == 'edit'" class="table table-bordered">
               <thead class="table-success">
-                <!-- Première ligne d'en-tête -->
-                <tr>
-                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
-                  <th scope="col" colspan="3">MONTANT TTC(FCFA)</th>
-                </tr>
-                <!-- Deuxième ligne d'en-tête -->
-                <tr>
-                  <th scope="col">Liquide</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Qte</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                </tr>
+              <!-- Première ligne d'en-tête -->
+              <tr>
+                <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
+                <th scope="col" colspan="3">MONTANT TTC(FCFA)</th>
+              </tr>
+              <!-- Deuxième ligne d'en-tête -->
+              <tr>
+                <th scope="col">Liquide</th>
+                <th scope="col">Liquide (FCFA)</th>
+                <th scope="col">Emballage (FCFA)</th>
+                <th scope="col">Total (FCFA)</th>
+                <th scope="col">Qte</th>
+                <th scope="col">Liquide (FCFA)</th>
+                <th scope="col">Emballage (FCFA)</th>
+                <th scope="col">Total (FCFA)</th>
+              </tr>
               </thead>
 
               <tbody>
-                <tr *ngFor="let item of updateData.articles">
-                  <td>{{ item.liquide.libelle }}1</td>
-                  <td>{{ item.prixUnitaireLiquide }}</td>
-                  <td>{{ item.prixUnitaireEmballage }}</td>
-                  <td>
-                    {{
-                      Number(item.prixUnitaireLiquide ?? 0) +
-                        Number(item.prixUnitaireEmballage ?? 0)
-                    }}
-                  </td>
-                  <td>{{ item.quantite }}</td>
-                  <td>{{ item.montantLiquide }}</td>
-                  <td>{{ item.montantEmballage }}</td>
-                  <td>
-                    {{
-                      Number(item.montantLiquide ?? 0) +
-                        Number(item.montantEmballage ?? 0)
-                    }}
-                  </td>
-                </tr>
-                <tr class="table-dark">
-                  <th scope="col" colspan="4">Total :</th>
-                  <td>{{ totalQte }}</td>
-                  <td>{{ totalLiquide }}</td>
-                  <td>{{ totalEmballage }}</td>
-                  <td>{{ totalGlobal }}</td>
-                </tr>
+              <tr *ngFor="let item of updateData.articles">
+                <td>{{ item.liquide.libelle }}1</td>
+                <td>{{ item.prixUnitaireLiquide }}</td>
+                <td>{{ item.prixUnitaireEmballage }}</td>
+                <td>
+                  {{
+                    Number(item.prixUnitaireLiquide ?? 0) +
+                    Number(item.prixUnitaireEmballage ?? 0)
+                  }}
+                </td>
+                <td>{{ item.quantite }}</td>
+                <td>{{ item.montantLiquide }}</td>
+                <td>{{ item.montantEmballage }}</td>
+                <td>
+                  {{
+                    Number(item.montantLiquide ?? 0) +
+                    Number(item.montantEmballage ?? 0)
+                  }}
+                </td>
+              </tr>
+              <tr class="table-dark">
+                <th scope="col" colspan="4">Total :</th>
+                <td>{{ totalQte }}</td>
+                <td>{{ totalLiquide }}</td>
+                <td>{{ totalEmballage }}</td>
+                <td>{{ totalGlobal }}</td>
+              </tr>
               </tbody>
             </table>
           </div>
@@ -554,36 +554,36 @@
               >
                 <table class="table">
                   <thead>
-                    <tr style="font-size: small">
-                      <th scope="col" class="text-secondary">Produits</th>
-                      <th scope="col" class="text-secondary">Disponibilité</th>
-                      <th scope="col" class="text-secondary text-center">
-                        Choix
-                      </th>
-                    </tr>
+                  <tr style="font-size: small">
+                    <th scope="col" class="text-secondary">Produits</th>
+                    <th scope="col" class="text-secondary">Disponibilité</th>
+                    <th scope="col" class="text-secondary text-center">
+                      Choix
+                    </th>
+                  </tr>
                   </thead>
                   <tbody>
-                    <tr
-                      *ngFor="let article of filteredArticleList; let i = index"
-                      style="font-size: small"
-                    >
-                      <th scope="row">{{ article.libelle }}</th>
-                      <th scope="row">
-                        {{ stocksDisponibles[article.liquide.id] }}
-                      </th>
-                      <td class="">
-                        <input
-                          type="checkbox"
-                          class="form-control-custom"
-                          [name]="'checkbox_' + i"
-                          [(ngModel)]="article.isChecked"
-                          (change)="onCheckboxChange(article)"
-                          [disabled]="
+                  <tr
+                    *ngFor="let article of filteredArticleList; let i = index"
+                    style="font-size: small"
+                  >
+                    <th scope="row">{{ article.libelle }}</th>
+                    <th scope="row">
+                      {{ stocksDisponibles[article.liquide.id] }}
+                    </th>
+                    <td class="">
+                      <input
+                        type="checkbox"
+                        class="form-control-custom"
+                        [name]="'checkbox_' + i"
+                        [(ngModel)]="article.isChecked"
+                        (change)="onCheckboxChange(article)"
+                        [disabled]="
                             stocksDisponibles[article.liquide.id] <= 0
                           "
-                        />
-                      </td>
-                    </tr>
+                      />
+                    </td>
+                  </tr>
                   </tbody>
                 </table>
               </div>

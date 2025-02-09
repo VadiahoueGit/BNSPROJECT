@@ -7,27 +7,27 @@
 
     <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'saisiecommande'"
       (click)="activeElement('saisiecommande')">Saisie commande</a>
-  
-      <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'validationcommande'"
-      (click)="activeElement('validationcommande')">Validation commande</a>
-  
-      <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'suivicommmande'"
-      (click)="activeElement('suivicommmande')">Suivi commande</a>
-  
+
+<!--      <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'validationcommande'"-->
+<!--      (click)="activeElement('validationcommande')">Validation commande</a>-->
+<!--  -->
+<!--      <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'suivicommmande'"-->
+<!--      (click)="activeElement('suivicommmande')">Suivi commande</a>-->
+
   </nav>
-  
+
   <div class="tab-content mt-3">
     <div *ngIf="activeTab === 'saisiecommande'" class="tab-pane fade show active">
-     <app-saisie-commande></app-saisie-commande> 
+     <app-saisie-commande></app-saisie-commande>
     </div>
-  
+
     <div *ngIf="activeTab === 'validationcommande'" class="tab-pane fade show active">
       <app-suivi-commande></app-suivi-commande>
     </div>
-  
+
     <div *ngIf="activeTab === 'suivicommmande'" class="tab-pane fade show active">
         <app-validation-commande></app-validation-commande>
-     </div> 
-  
-     
+     </div>
+
+
   </div>

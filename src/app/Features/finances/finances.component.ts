@@ -14,8 +14,8 @@ export class FinancesComponent {
       url: 'feature/finances/comptabilite',
     },
     {
-      image: 'assets/icon/compta.png',
-      title: 'Validation',
+      image: 'assets/icon/validation.png',
+      title: 'Validations',
       url: 'feature/finances/validation',
     },
     // {
