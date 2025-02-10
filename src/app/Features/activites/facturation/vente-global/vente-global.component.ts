@@ -159,12 +159,12 @@ export class VenteGlobalComponent {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
-    data.articles.forEach((article:any) => {
-      this.totalEmballage += Number(article.montantEmballage);
-      this.totalLiquide  += Number(article.montantLiquide);
-      this.totalGlobal = this.totalLiquide + this.totalEmballage
-      this.totalQte += article.quantite
-    })
+    // data.articles.forEach((article:any) => {
+    //   this.totalEmballage += Number(article.montantEmballage);
+    //   this.totalLiquide  += Number(article.montantLiquide);
+    //   this.totalGlobal = this.totalLiquide + this.totalEmballage
+    //   this.totalQte += article.quantite
+    // })
 
     this.articleId = data.id;
     this.isModalOpen = true;
