@@ -10,6 +10,7 @@ import {Location} from '@angular/common';
 import {CoreServiceService} from "../../../core/core-service.service";
 import {LogistiqueService} from "../../../core/logistique.service";
 import {ActiviteService} from "../../../core/activite.service";
+import {StatutCommande} from "../../../utils/utils";
 
 interface RegroupementItem {
   palettes: number;
@@ -307,7 +308,7 @@ export class LivraisonComponent {
     // Unifier les deux objets dans un seul tableau
     this.ListCommande = [...commandeClient.data, ...commandeGratuite.data];
     console.log('ListCommande', this.ListCommande);
-    this.filteredList = this.ListCommande.filter((commande:any) => commande.statut === "Attente de Validation");
+    this.filteredList = this.ListCommande.filter((commande:any) => commande.statut === StatutCommande.ATTENTE_VALIDATION);
     console.log('filteredList', this.filteredList);
 
     this._spinner.hide();
