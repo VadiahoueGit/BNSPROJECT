@@ -9,11 +9,14 @@ import {ALERT_QUESTION} from '../../shared-component/utils';
 import {Location} from '@angular/common';
 import {CoreServiceService} from "../../../core/core-service.service";
 import {LogistiqueService} from "../../../core/logistique.service";
+import {ActiviteService} from "../../../core/activite.service";
+
 interface RegroupementItem {
   palettes: number;
   casier: number;
   type: string;
 }
+
 @Component({
   selector: 'app-livraison',
   templateUrl: './livraison.component.html',
@@ -45,7 +48,7 @@ export class LivraisonComponent {
   articleId: any = 0;
   isEditMode: boolean = false;
   isChoiceModalOpen: boolean = false;
-  ListCommandeGratuites: any = [];
+  ListCommande: any = [];
   filteredList: any = [];
   dataListProduits: any = [];
   listZone: any = [];
@@ -54,7 +57,7 @@ export class LivraisonComponent {
   selectedArticles: any = [];
   items: any = [];
   filteredArticleList: any[] = [];
-
+  commandeList: any[] = [];
   selectedArticle: any = [];
   dataListLiquides: any = [];
   stocksDisponibles: any = {};
@@ -71,20 +74,24 @@ export class LivraisonComponent {
   currentPage: number;
   rowsPerPage: any;
   listRevendeurs: any[] = [];
+  listRegroupements: any[] = [];
   isModalOpenDetail: boolean = false;
   totalCasiers: number = 0;
   format: number = 33;
   result: { palettes: number; casier: number } | null = null;
   regroupementList: any[] = [];
+  regroupementTable: any[] = [];
   regroupementFinal: Record<string, RegroupementItem>;
   casiersPerPalette: Record<number, { casiers: number; type: string }> = {
-    33: { casiers: 63, type: 'biere' },
-    25: { casiers: 63, type: 'biere' },
-    50: { casiers: 66, type: 'plastique' },
-    60: { casiers: 66, type: 'métal' },
+    33: {casiers: 63, type: 'biere'},
+    25: {casiers: 63, type: 'biere'},
+    50: {casiers: 66, type: 'plastique'},
+    60: {casiers: 66, type: 'métal'},
   };
+
   constructor(
     private articleService: ArticleServiceService,
+    private activiteService: ActiviteService,
     private logistiqueService: LogistiqueService,
     private _userSerive: UtilisateurResolveService,
     private coreService: CoreServiceService,
@@ -106,7 +113,8 @@ export class LivraisonComponent {
     this.GetRegroupementRules()
     this.GetTransporteurList();
     this.GetVehiculeList();
-    this.GetListCommandeGratuite(1)
+    this.GetListCommande(1)
+    this.GetRegroupementList()
     this.articleService.ListTypeArticles.subscribe((res: any) => {
       this.dataListProduits = res;
       console.log(this.dataListProduits, 'this.dataListProduits ');
@@ -117,9 +125,73 @@ export class LivraisonComponent {
     // this.dataList
   }
 
+  getTotalGeneral(commandes:any): number {
+    return commandes.reduce((total:any, commande:any) => total + commande.montantTotal, 0);
+  }
+  removeCommande(commande: any): void {
+    console.log('Retrait de la commande', commande);
+
+    // Vérification que `this.regroupementTable` n'est pas vide
+    if (!this.regroupementTable || this.regroupementTable.length === 0) {
+      console.warn("Aucune donnée dans regroupementTable.");
+      return;
+    }
+
+    // Regrouper les articles de la commande par format
+    const articlesParFormat = commande.articles.reduce((acc: any, article: any) => {
+      const format = Number(article?.liquide?.format);
+      if (!format) return acc;
+
+      if (!acc[format]) {
+        acc[format] = [];
+      }
+
+      acc[format].push(article);
+      return acc;
+    }, {});
+
+    console.log('Articles à retirer:', articlesParFormat);
+
+    // Mettre à jour regroupementTable en retirant les quantités de la commande décochée
+    this.regroupementTable = this.regroupementTable.map((regroupement) => {
+      let updatedRegroupement = {...regroupement}; // Copie pour éviter la mutation directe
+      let hasData = false; // Vérifier si ce regroupement contient encore des données après modification
+
+      Object.keys(articlesParFormat).forEach((format) => {
+        if (updatedRegroupement[format]) {
+          const totalCasiersToRemove = articlesParFormat[format].reduce(
+            (total: number, article: any) => total + Number(article.quantite || 0),
+            0
+          );
+
+          updatedRegroupement[format] = {...updatedRegroupement[format]}; // Copie pour éviter la mutation directe
+          updatedRegroupement[format].casier -= totalCasiersToRemove;
+
+          // Vérifier si on doit aussi enlever une palette
+          const casiersParPalette = this.casiersPerPalette[Number(format)]?.casiers || 0;
+          while (updatedRegroupement[format].casier < 0 && updatedRegroupement[format].palettes > 0) {
+            updatedRegroupement[format].palettes -= 1;
+            updatedRegroupement[format].casier += casiersParPalette;
+          }
+
+          // Vérifier si cet élément doit être supprimé
+          if (updatedRegroupement[format].palettes <= 0 && updatedRegroupement[format].casier <= 0) {
+            delete updatedRegroupement[format];
+          } else {
+            hasData = true; // Il reste des données
+          }
+        }
+      });
+
+      return hasData ? updatedRegroupement : null; // Si l'objet est vide après suppression, retourner null
+    }).filter(regroupement => regroupement !== null); // Nettoyer les objets complètement vides
+
+    console.log('regroupementTable après suppression:', this.regroupementTable);
+    this.regrouperParFormat(); // Recalculer après suppression
+  }
+
   calculate(commande: any): void {
     console.log('commande', commande);
-
     // Regrouper les articles par format
     const articlesParFormat = commande.articles.reduce((acc: any, article: any) => {
       const format = Number(article?.liquide?.format); // S'assurer que le format est un nombre
@@ -154,22 +226,22 @@ export class LivraisonComponent {
         return result;
       }
 
-      const { casiers, type } = paletteInfo;
+      const {casiers, type} = paletteInfo;
 
       const palettes = Math.floor(totalCasiers / casiers);
       const casier = totalCasiers % casiers;
 
-      result[format] = { palettes, casier, type };
+      result[format] = {palettes, casier, type};
       return result;
     }, {});
-    this.regroupementList.push(this.result);
+    this.regroupementTable.push(this.result);
     console.log('Résultat final', this.result);
-    console.log('regroupementList', this.regroupementList);
+    console.log('regroupementList', this.regroupementTable);
     this.regrouperParFormat()
   }
 
   regrouperParFormat(): void {
-    const regroupement = this.regroupementList.reduce((acc: any, item: any) => {
+    const regroupement = this.regroupementTable.reduce((acc: any, item: any) => {
       Object.entries(item).forEach(([format, details]: [string, any]) => {
         if (!acc[format]) {
           acc[format] = {
@@ -196,8 +268,10 @@ export class LivraisonComponent {
     }, {});
 
     console.log('Regroupement par format:', regroupement);
-    this.regroupementFinal = regroupement; // Stocker le résultat si nécessaire
-    console.log('regroupementFinal:', regroupement);
+    this.regroupementFinal = regroupement;
+
+    console.log('test', this.regroupementTable)
+    console.log('regroupementFinal:', this.regroupementFinal);
   }
 
 
@@ -205,12 +279,12 @@ export class LivraisonComponent {
     console.log('zoneId', zone.id);
     if (zone.id) {
       // Filtrer selon l'ID de la zone
-      this.filteredList = this.ListCommandeGratuites.filter(
+      this.filteredList = this.ListCommande.filter(
         (item: any) => item.client.zoneDeLivraison.id === zone.id
       );
     } else {
       // Si aucune zone n'est sélectionnée, afficher toute la liste
-      this.filteredList = [...this.ListCommandeGratuites];
+      this.filteredList = [...this.ListCommande];
     }
   }
 
@@ -218,19 +292,26 @@ export class LivraisonComponent {
     return articles.reduce((total, article) => total + Number(article.quantite || 0), 0);
   }
 
-  GetListCommandeGratuite(page: number) {
+
+  async GetListCommande(page: number) {
     let data = {
       paginate: false,
       page: page,
       limit: 8,
     };
     this._spinner.show();
-    this.articleService.GetListCommandeGratuite(data).then((res: any) => {
-      console.log('ListCommandeGratuites:::>', res);
-      this.ListCommandeGratuites = res.data;
-      this.filteredList = [...this.ListCommandeGratuites];
-      this._spinner.hide();
-    });
+    const [commandeClient, commandeGratuite]: [any, any] = await Promise.all([
+      this.articleService.GetListCommandeGratuite(data),
+      this.articleService.GetListCommandeClient(data),
+    ]);
+    // Unifier les deux objets dans un seul tableau
+    this.ListCommande = [...commandeClient.data, ...commandeGratuite.data];
+    console.log('ListCommande', this.ListCommande);
+    this.filteredList = this.ListCommande.filter((commande:any) => commande.statut === "Attente de Validation");
+    console.log('filteredList', this.filteredList);
+
+    this._spinner.hide();
+
   }
 
   onFilterGlobal(event: Event) {
@@ -249,6 +330,8 @@ export class LivraisonComponent {
 
   OnCloseModal() {
     this.isModalOpen = false;
+    this.regroupementTable = [];
+    // this.deselectAllItems()
     console.log(this.isModalOpen);
   }
 
@@ -310,8 +393,31 @@ export class LivraisonComponent {
     });
   }
 
+  GetRegroupementList() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.activiteService.GetRegroupementList(data).then((res: any) => {
+      console.log('GetRegroupementList:::>', res);
+      this.listRegroupements = res.data;
+      this._spinner.hide();
+    });
+  }
   onSubmit(): void {
-
+    this._spinner.show();
+    let data = {
+      "vehiculeId": this.livraisonForm.controls['vehicule'].value,
+      "transporteurId": this.livraisonForm.controls['transporteur'].value,
+      "commandes": this.commandeList
+    }
+    this.activiteService.CreationRegroupement(data).then((res: any) => {
+      this._spinner.hide();
+      this.isModalOpen = false;
+      console.log(res.data);
+    })
   }
 
   selectArticle() {
@@ -362,11 +468,16 @@ export class LivraisonComponent {
 
   onCheckboxChange(commande: any): void {
     if (commande.isChecked) {
+      this.commandeList.push(commande.NumCommande);
+      console.log('Ajout de la commande:', this.commandeList);
       this.calculate(commande);
     } else {
-
+      this.commandeList = this.commandeList.filter(num => num !== commande.NumCommande);
+      console.log('Suppression de la commande:', this.commandeList);
+      this.removeCommande(commande);
     }
   }
+
 
   async GetPrixByArticle(item: any): Promise<any> {
     let data = {
@@ -415,7 +526,6 @@ export class LivraisonComponent {
 
   deselectAllItems(): void {
     this.selectedArticles.forEach((item: any) => {
-      delete item.quantite;
       this.onCheckboxChange(item);
       item.isChecked = false;
 
@@ -519,17 +629,17 @@ export class LivraisonComponent {
 
   GetRegroupementRules() {
     let data = [{
-      "33":{
-        unit:60,
-        type:'biere',
+      "33": {
+        unit: 60,
+        type: 'biere',
       },
-      "60":{
-        unit:66,
-        type:'biere',
+      "60": {
+        unit: 66,
+        type: 'biere',
       },
-      "25":{
-        unit:60,
-        type:'sucrerie',
+      "25": {
+        unit: 60,
+        type: 'sucrerie',
       }
     }]
   }
