@@ -8,6 +8,7 @@ import { CommandeGratuiteComponent } from './commande-gratuite/commande-gratuite
 import { GestionDesRetoursComponent } from './gestion-des-retours/gestion-des-retours.component';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { LivraisonComponent } from './livraison/livraison.component';
+import { FacturationComponent } from './facturation/facturation.component';
 
 const routes: Routes = [
     { path: '', component:ActivitesComponent },
@@ -17,6 +18,7 @@ const routes: Routes = [
     { path: 'commandes-clients', component: CommandesClientsComponent, resolve:{UtilisateurResolveService}},
     { path: 'commandes-gratuites', component: CommandeGratuiteComponent },
     { path: 'gestion-retour', component: GestionDesRetoursComponent },
+    { path: 'facturation', component: FacturationComponent },
 
 ];
 

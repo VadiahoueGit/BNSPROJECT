@@ -1,1 +1,24 @@
-<p>facturation works!</p>
+<!-- Navigation -->
+<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
+    <i style="font-size: 18px;" class="fas fw-bold fa-chevron-left me-2"></i>
+    <h4 class="fw-bold mb-0">Facturation</h4>
+  </div>
+  <nav class="nav nav-pills flex-column flex-sm-row gap-1 border-bottom">
+  
+      <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'listeVenteGlobal'"
+        (click)="activeElement('listeVenteGlobal')">Vente global</a>
+    
+        <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'listeVentesGlobalFactures'"
+        (click)="activeElement('listeVentesGlobalFactures')">Vente global facturés</a>
+    
+    </nav>
+    
+    <div class="tab-content mt-3">
+      <div *ngIf="activeTab === 'listeVenteGlobal'" class="tab-pane fade show active">
+       <app-vente-global></app-vente-global> 
+      </div>
+    
+      <div *ngIf="activeTab === 'listeVentesGlobalFactures'" class="tab-pane fade show active">
+        <app-vente-global-factures></app-vente-global-factures>
+      </div>  
+    </div>
