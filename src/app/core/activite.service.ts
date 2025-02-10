@@ -316,4 +316,66 @@ export class ActiviteService {
         );
     });
   }
+  //FACTURES
+  CreateVenteGlobal(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/ventes_global`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  GetVenteGlobalList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/ventes_global?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+  GetVenteGlobalFactures(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/ventes_global/factures?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+ 
 }
