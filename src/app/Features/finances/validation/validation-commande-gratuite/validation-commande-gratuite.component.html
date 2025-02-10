@@ -1,6 +1,6 @@
 <div class="card">
     <div class="d-flex justify-content-end py-3">
-  
+
       <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
         Saisir une commande
       </button>
@@ -30,14 +30,14 @@
           <td>
             {{ ListCommandeGratuites.NumCommande }}
           </td>
-  
+
           <td>
             {{ ListCommandeGratuites.client.raisonSocial }}
           </td>
   <!--        <td>-->
   <!--          {{ ListCommandeGratuites.revendeur.depot.nomDepot }}-->
   <!--        </td>-->
-  
+
           <td>
             <span class="ml-1 vertical-align-middle">
   <!--            {{ ListCommandeGratuites.articles[i].quantite }}-->
@@ -57,13 +57,6 @@
                   class="fas fa-eye text-secondary"
                 ></i>
               </td>
-              <td>
-                <i
-                  (click)="OnDelete(ListCommandeGratuites.id)"
-                  style="cursor: pointer"
-                  class="fas fa-trash-alt text-danger"
-                ></i>
-              </td>
             </tr>
           </td>
         </tr>
@@ -75,7 +68,7 @@
       </ng-template>
     </p-table>
   </div>
-  
+
   <!-- Modal creation -->
   <!-- Modal -->
   <div *ngIf="isModalOpen" class="custom-modal">
@@ -109,7 +102,7 @@
           </h1>
         </div>
         <div class="modal-body">
-         
+
           <fieldset class="row border my-1"  *ngIf="operation == 'edit'">
             <legend style="font-size: 14px;" class="text-secondary">Numero Commande : {{updateData.NumCommande}} du {{updateData.createdAt | date}}</legend>
           </fieldset>
@@ -176,7 +169,7 @@
                     <th scope="col">Actions</th>
                   </tr>
                 </thead>
-  
+
                 <tbody>
                   <tr *ngFor="let item of selectedArticles">
                     <td>{{ item.liquide.libelle }}</td>
@@ -240,7 +233,7 @@
                   <th scope="col">Total (FCFA)</th>
                 </tr>
                 </thead>
-  
+
                 <tbody>
                 <tr *ngFor="let item of updateData.articles">
                   <td>{{ item.liquide.libelle }}1</td>
@@ -251,7 +244,7 @@
                   <td>{{ item.montantLiquide }}</td>
                   <td>{{ item.montantEmballage }}</td>
                   <td>{{Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) }}</td>
-  
+
                 </tr>
                 <tr class="table-dark">
                   <th scope="col" colspan="4">Total :</th>
@@ -265,7 +258,7 @@
             </div>
           </div>
         </div>
-  
+
         <div class="modal-footer gap-3 px-4">
           <button
             (click)="OnCloseModal()"
@@ -280,7 +273,7 @@
       </div>
     </div>
   </div>
-  
+
   <!--CHOIX ARTICLE-->
   <div *ngIf="isChoiceModalOpen" class="custom-modal">
     <div class="modal-dialog2 modal-dialog-centered">
@@ -301,7 +294,7 @@
             Selection des articles
           </h1>
         </div>
-  
+
         <div class="modal-body">
           <form>
             <div class="row">
@@ -349,7 +342,7 @@
                             (change)="onCheckboxChange(article)"
                             [disabled]="stocksDisponibles[article.liquide.id] <=0"
                           />
-  
+
                         </td>
                       </tr>
                     </tbody>
@@ -368,7 +361,7 @@
             Annuler
           </button>
           <button
-  
+
             type="submit"
             (click)="onSubmitSelection()"
             class="btn btn-primary px-2"
@@ -379,4 +372,3 @@
       </div>
     </div>
   </div>
-  
