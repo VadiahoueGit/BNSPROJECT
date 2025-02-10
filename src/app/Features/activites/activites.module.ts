@@ -123,6 +123,8 @@ import { RegroupementEmballagesComponent } from './gestion-des-retours/regroupem
 import { ReceptionsEmballagesComponent } from './gestion-des-retours/receptions-emballages/receptions-emballages.component';
 import { FacturationComponent } from './facturation/facturation.component';
 import { LivraisonComponent } from './livraison/livraison.component';
+import { VenteGlobalComponent } from './facturation/vente-global/vente-global.component';
+import { VenteGlobalFacturesComponent } from './facturation/vente-global-factures/vente-global-factures.component';
 registerLocaleData(localeFr, 'fr');
 @NgModule({
   declarations: [
@@ -147,7 +149,9 @@ registerLocaleData(localeFr, 'fr');
     RegroupementEmballagesComponent,
     ReceptionsEmballagesComponent,
     FacturationComponent,
-    LivraisonComponent
+    LivraisonComponent,
+    VenteGlobalComponent,
+    VenteGlobalFacturesComponent
   ],
   imports: [
     TableModule,
