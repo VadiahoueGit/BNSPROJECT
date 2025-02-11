@@ -8,7 +8,7 @@ import { Customer } from 'src/domain/customer';
   styleUrls: ['./facturation.component.scss']
 })
 export class FacturationComponent {
-  public activeTab: string = 'listeVenteGlobal';
+  public activeTab: string = 'listeVentesGlobalFactures';
   customers!: Customer[];
   loading: boolean = true;
   selected = [];
