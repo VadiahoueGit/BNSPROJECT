@@ -91,7 +91,7 @@ export class SaisieCommandeComponent {
       ],
       contact: [{ value: '', disabled: true }, ],
       soldeLiquide: [{ value: '', disabled: true }, ],
-      statutCompte: ['Ok', ],
+      statutCompte: [{ value: '', disabled: true }, ],
       fraisTransport: [0,Validators.required ],
       articles: this.fb.array([]),
     });
@@ -136,6 +136,7 @@ export class SaisieCommandeComponent {
     this.commandClientForm.controls['numeroCompte'].setValue(
       this.detailPointDevente.numeroCompteContribuable
     );
+    this.commandClientForm.controls['statutCompte'].setValue( this.detailPointDevente.isValide ? 'ACTIF' : 'INACTIF')
     this.commandClientForm.controls['raisonSociale'].setValue(
       this.detailPointDevente.raisonSocial
     );
