@@ -1,206 +1,211 @@
 <div class="card">
-    <div class="d-flex justify-content-end py-3">
-
-      <!-- <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
+  <div class="d-flex justify-content-end py-3">
+    <!-- <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
         Saisir une vente globale
       </button> -->
-    </div>
-    <p-table
-      [styleClass]="'p-datatable-sm'"
-      #dt2
-      [value]="dataList"
-      dataKey="id"
-      [rows]="8"
-      [rowsPerPageOptions]="[10, 25, 50]"
-      [paginator]="true"
-      (onPage)="onPage($event)"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th style="color: var(--secondary-color)">Point de vente</th>
-          <th style="color: var(--secondary-color)">Commercial</th>
-         <th style="color: var(--secondary-color)">Date facture</th>
-          <!-- <th style="color: var(--secondary-color)">Facture</th> -->
-          <th style="color: var(--secondary-color)">Montant total</th>
-          <th style="color: var(--secondary-color)">Est payé?</th>
-          <th style="color: var(--secondary-color)">Actions</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-dataList let-i="index">
-        <tr>
-          <td>
-            {{ dataList.vente.pointdevente.nomEtablissement }}
-          </td>
+  </div>
+  <p-table
+    [styleClass]="'p-datatable-sm'"
+    #dt2
+    [value]="dataList"
+    dataKey="id"
+    [rows]="8"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [paginator]="true"
+    (onPage)="onPage($event)"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="color: var(--secondary-color)">Point de vente</th>
+        <th style="color: var(--secondary-color)">Commercial</th>
+        <th style="color: var(--secondary-color)">Date facture</th>
+        <!-- <th style="color: var(--secondary-color)">Facture</th> -->
+        <th style="color: var(--secondary-color)">Montant total</th>
+        <th style="color: var(--secondary-color)">Est payé?</th>
+        <th style="color: var(--secondary-color)">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-dataList let-i="index">
+      <tr>
+        <td>
+          {{ dataList.vente.pointdevente.nomEtablissement }}
+        </td>
 
-          <td>
-            {{ dataList.vente.commercial.nom }} {{ dataList.vente.commercial.prenom }}
-          </td>
-         <td>
-           {{ dataList.dateFacture | date}}
-       </td>
+        <td>
+          {{ dataList.vente.commercial.nom }}
+          {{ dataList.vente.commercial.prenom }}
+        </td>
+        <td>
+          {{ dataList.dateFacture | date }}
+        </td>
 
-       <!-- <td>
+        <!-- <td>
          <span class="ml-1 vertical-align-middle">
           {{ dataList?.facture?.montantTotal }}
          </span>
        </td> -->
-          <td>
-            <span class="ml-1 vertical-align-middle">
-             {{ dataList.montantTotal }}
-            </span>
-          </td>
-          <td>
-            <span class="ml-1 vertical-align-middle">
-                {{ dataList.estValidee ? 'Oui' : 'Non' }}
-            </span>
-          </td>
-          <td>
-            <tr class=" gap-3">
-              <td>
-                <i
-                  (click)="OnEdit(dataList)"
-                  style="cursor: pointer"
-                  class="fas fa-eye text-secondary"
-                ></i>
-              </td>
-            </tr>
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="5">Aucune commande trouvé.</td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </div>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.montantTotal }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.estValidee ? "Oui" : "Non" }}
+          </span>
+        </td>
+        <td>
+          <tr class="d-flex justify-content-center gap-3">
+            <td>
+              <i
+                (click)="OnEdit(dataList)"
+                style="cursor: pointer"
+                class="fas fa-eye text-secondary"
+              ></i>
+            </td>
+            <td>
+              <i
+                (click)="OnDelete(dataList.id)"
+                style="cursor: pointer"
+                class="fas fa-trash-alt text-danger"
+              ></i>
+            </td>
+          </tr>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">Aucune commande trouvé.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
 
-  <!-- Modal creation -->
-  <!-- Modal -->
-  <div *ngIf="isModalOpen" class="custom-modal">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header d-flex align-items-center">
-          <div
-            class="d-flex justify-content-center align-items-center"
-            style="
-              background-color: rgb(219, 255, 232);
-              border-radius: 3rem;
-              width: 3rem;
-              height: 3rem;
-            "
-          >
-            <i class="fas fa-box-check text-primary fs-3"></i>
-          </div>
-          <h1
-            *ngIf="operation == 'create'"
-            class="modal-title fs-5 ms-3"
-            id="staticBackdropLabel"
-          >
-            Création de la commande
-          </h1>
-          <h1
-            *ngIf="operation == 'edit'"
-            class="modal-title fs-5 ms-3"
-            id="staticBackdropLabel"
-          >
-            Détails de la commande
-          </h1>
+<!-- Modal creation -->
+<!-- Modal -->
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex align-items-center">
+        <div
+          class="d-flex justify-content-center align-items-center"
+          style="
+            background-color: rgb(219, 255, 232);
+            border-radius: 3rem;
+            width: 3rem;
+            height: 3rem;
+          "
+        >
+          <i class="fas fa-box-check text-primary fs-3"></i>
         </div>
-        <div class="modal-body">
-          <div class="row">
+        <h1
+          *ngIf="operation == 'create'"
+          class="modal-title fs-5 ms-3"
+          id="staticBackdropLabel"
+        >
+          Création de la commande
+        </h1>
+        <h1
+          *ngIf="operation == 'edit'"
+          class="modal-title fs-5 ms-3"
+          id="staticBackdropLabel"
+        >
+          Détails de la facturation
+        </h1>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="d-flex justify-content-end py-3">
+            <button
+              type="button"
+              class="btn btn-secondary px-4"
+              (click)="OnCreate()"
+            >
+              Génerer facture
+            </button>
+          </div>
+          <fieldset class="row border my-1" *ngIf="operation == 'edit'">
+            <legend style="font-size: 14px" class="text-secondary">
+              Information vente
+            </legend>
 
-            <fieldset class="row border my-1" *ngIf="operation == 'edit'">
-              <legend style="font-size: 14px" class="text-secondary">
-                Information Livraison
-              </legend>
-
-               <div class="row">
-                <div class="col-md-4">
-                  <strong>Commercial: </strong>
-                  <span>{{ updateData.commercial.nom }} {{ updateData.commercial.nom }}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Localité: </strong>
-                  <span>{{ updateData.localite.nomLocalite }}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Dépot: </strong>
-                  <span>{{ updateData.commercial.depot.nomDepot }}</span>
-                </div>
-               </div>
-            </fieldset>
-            <fieldset class="row border my-2" *ngIf="operation == 'edit'">
-              <legend style="font-size: 14px" class="text-secondary">
-                Informations du véhicule
-              </legend>
-              <div class="row">
-                <div class="col-md-4">
-                  <strong>Marque: </strong>
-                  <span>{{ updateData.vehicule.marque }}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Immatriculation : </strong>
-                  <span>{{ updateData.vehicule.immatriculation }}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Energie : </strong>
-                  <span>{{ updateData.vehicule.energie }}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Capacité : </strong>
-                  <span>{{ updateData.vehicule.capacite }}</span>
-                </div>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Commercial: </strong>
+                <span
+                  >{{ updateData.vente.commercial.nom }}
+                  {{ updateData.vente.commercial.prenom }}</span
+                >
               </div>
-            </fieldset>
-            <fieldset class="row border my-2">
-              <legend class="fs-6 text-primary">Cargaison</legend>
-              <div
-                *ngIf="operation == 'edit'"
-                class="table-responsive"
-                style="max-height: 300px; overflow-y: auto"
-              >
-                <table class="table">
-                  <thead>
-                    <tr style="font-size: small">
-                      <th scope="col">Produits</th>
-                      <th scope="col">Qte liquide</th>
-                      <th scope="col">Prix liquide</th>
-                      <th scope="col">Prix emballage</th>
-                      <th scope="col">Prix total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      style="font-size: small"
-                      *ngFor="let item of updateData.articles; let i = index"
-                    >
-                      <td>{{ item.liquide.libelle }}</td>
-                      <td>{{ item.quantite }}</td>
-
-                      <td>{{  item.prixUnitaireLiquide}}</td>
-                      <td>{{ item.prixUnitaireEmballage}}</td>
-                      <td>{{ item.prixTotal}}</td>
-
-                    </tr>
-                    <tr class="table-dark" *ngIf="updateData.articles.length > 0">
-                      <th scope="col" colspan="1">Total :</th>
-                      <td>{{ totalQte }}</td>
-                      <td>{{ totalLiquide }}</td>
-                      <td>{{ totalEmballage }}</td>
-                      <td>{{ totalGlobal }}</td>
-                    </tr>
-                    <!-- Ajoutez d'autres lignes si nécessaire -->
-                  </tbody>
-                </table>
+              <div class="col-md-4">
+                <strong>Téléphone: </strong>
+                <span>{{ updateData.vente.commercial.telephone }}</span>
               </div>
-              <div
-                *ngIf="operation == 'create'"
-                class="table-responsive"
-                style="max-height: 300px; overflow-y: auto"
-              >
-                <table  class="table table-bordered">
-                  <thead class="table-success">
+              <div class="col-md-4">
+                <strong>Montant: </strong>
+                <span>{{ updateData.vente.montantTotal }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Point de vente: </strong>
+                <span>{{
+                  updateData.vente.pointdevente.nomEtablissement
+                }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Date facture: </strong>
+                <span>{{ updateData.dateFacture | date }}</span>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="row border my-2">
+            <legend class="fs-6 text-primary">Articles</legend>
+            <div
+              *ngIf="operation == 'edit'"
+              class="table-responsive"
+              style="max-height: 300px; overflow-y: auto"
+            >
+              <table class="table">
+                <thead>
+                  <tr style="font-size: small">
+                    <th scope="col">Produits</th>
+                    <th scope="col">Qte liquide</th>
+                    <th scope="col">Prix liquide</th>
+                    <th scope="col">Prix emballage</th>
+                    <th scope="col">Prix total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    style="font-size: small"
+                    *ngFor="let item of updateData.articles; let i = index"
+                  >
+                    <td>{{ item.liquide.libelle }}</td>
+                    <td>{{ item.quantite }}</td>
+
+                    <td>{{ item.prixUnitaireLiquide }}</td>
+                    <td>{{ item.prixUnitaireEmballage }}</td>
+                    <td>{{ item.prixTotal }}</td>
+                  </tr>
+                  <tr class="table-dark" *ngIf="updateData.articles.length > 0">
+                    <th scope="col" colspan="1">Total :</th>
+                    <td>{{ totalQte }}</td>
+                    <td>{{ totalLiquide }}</td>
+                    <td>{{ totalEmballage }}</td>
+                    <td>{{ totalGlobal }}</td>
+                  </tr>
+                  <!-- Ajoutez d'autres lignes si nécessaire -->
+                </tbody>
+              </table>
+            </div>
+            <div
+              *ngIf="operation == 'create'"
+              class="table-responsive"
+              style="max-height: 300px; overflow-y: auto"
+            >
+              <table class="table table-bordered">
+                <thead class="table-success">
                   <tr>
                     <th scope="col">Produits</th>
                     <th scope="col">Qte liquide</th>
@@ -209,9 +214,9 @@
                     <th scope="col">Prix total</th>
                     <th scope="col">Action</th>
                   </tr>
-                  </thead>
+                </thead>
 
-                  <tbody>
+                <tbody>
                   <tr *ngFor="let item of selectedArticles">
                     <td>{{ item.liquide.libelle }}</td>
                     <td>
@@ -223,11 +228,12 @@
                         [max]="stocksDisponibles[item.liquide.id]"
                         [disabled]="stocksDisponibles[item.liquide.id] === 0"
                         [ngClass]="{
-                          invalid: item.quantite > stocksDisponibles[item.liquide.id]
+                          invalid:
+                            item.quantite > stocksDisponibles[item.liquide.id]
                         }"
                         (blur)="validateQuantite(item)"
                       />
-                      / {{stocksDisponibles[item.liquide.id]}}
+                      / {{ stocksDisponibles[item.liquide.id] }}
                     </td>
                     <td>{{ prixLiquideTotal[item.id] }}</td>
                     <td>{{ prixEmballageTotal[item.id] }}</td>
@@ -249,131 +255,132 @@
                     <td>{{ totalEmballage }}</td>
                     <td>{{ totalGlobal }}</td>
                   </tr>
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+
+      <div class="modal-footer gap-3 px-4">
+        <button
+          (click)="OnCloseModal()"
+          type="button"
+          class="btn btn-secondary px-2"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          *ngIf="operation == 'create'"
+          [disabled]="totalQte === 0"
+          (click)="onSubmit()"
+          class="btn btn-primary px-2"
+        >
+          Valider
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--CHOIX ARTICLE-->
+<div *ngIf="isChoiceModalOpen" class="custom-modal">
+  <div class="modal-dialog2 modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex align-items-center">
+        <div
+          class="d-flex justify-content-center align-items-center"
+          style="
+            background-color: rgb(219, 255, 232);
+            border-radius: 3rem;
+            width: 3rem;
+            height: 3rem;
+          "
+        >
+          <i class="fas fa-box-check text-primary fs-3"></i>
+        </div>
+        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
+          Selection des articles
+        </h1>
+      </div>
+
+      <div class="modal-body">
+        <form>
+          <div class="row">
+            <fieldset class="row border my-2">
+              <div class="p-3">
+                <!-- Champ de recherche -->
+                <input
+                  type="text"
+                  name="search"
+                  (input)="filterArticles()"
+                  [(ngModel)]="searchTerm"
+                  placeholder="Rechercher un produit"
+                  class="form-control mb-3"
+                />
+              </div>
+              <div
+                class="table-responsive"
+                style="max-height: 200px; overflow-y: auto"
+              >
+                <table class="table">
+                  <thead>
+                    <tr style="font-size: small">
+                      <th scope="col" class="text-secondary">Code</th>
+                      <th scope="col" class="text-secondary">Produits</th>
+                      <th scope="col" class="text-secondary">Disponibilité</th>
+                      <th scope="col" class="text-secondary text-center">
+                        Choix
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="let article of filteredArticleList; let i = index"
+                      style="font-size: small"
+                    >
+                      <th scope="row">{{ article.code }}</th>
+                      <th scope="row">{{ article.libelle }}</th>
+                      <th scope="row">
+                        {{ stocksDisponibles[article.liquide.id] }}
+                      </th>
+                      <td class="">
+                        <input
+                          type="checkbox"
+                          class="form-control-custom"
+                          [name]="'checkbox_' + i"
+                          [(ngModel)]="article.isChecked"
+                          (change)="onCheckboxChange(article)"
+                          [disabled]="
+                            stocksDisponibles[article.liquide.id] <= 0
+                          "
+                        />
+                      </td>
+                    </tr>
                   </tbody>
                 </table>
-
               </div>
             </fieldset>
           </div>
-        </div>
-
-        <div class="modal-footer gap-3 px-4">
-          <button
-            (click)="OnCloseModal()"
-            type="button"
-            class="btn btn-secondary px-2"
-          >
-            Annuler
-          </button>
-          <button
-            type="submit"
-            *ngIf="operation == 'create'"
-            [disabled]="totalQte === 0"
-            (click)="onSubmit()"
-            class="btn btn-primary px-2"
-          >
-            Valider
-          </button>
-        </div>
+        </form>
+      </div>
+      <div class="modal-footer gap-3 px-4y">
+        <button
+          (click)="OnCloseChoiceModal()"
+          type="button"
+          class="btn btn-secondary px-2"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          (click)="onSubmitSelection()"
+          class="btn btn-primary px-2"
+        >
+          Valider
+        </button>
       </div>
     </div>
   </div>
-
-  <!--CHOIX ARTICLE-->
-  <div *ngIf="isChoiceModalOpen" class="custom-modal">
-    <div class="modal-dialog2 modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header d-flex align-items-center">
-          <div
-            class="d-flex justify-content-center align-items-center"
-            style="
-              background-color: rgb(219, 255, 232);
-              border-radius: 3rem;
-              width: 3rem;
-              height: 3rem;
-            "
-          >
-            <i class="fas fa-box-check text-primary fs-3"></i>
-          </div>
-          <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
-            Selection des articles
-          </h1>
-        </div>
-
-        <div class="modal-body">
-          <form>
-            <div class="row">
-              <fieldset class="row border my-2">
-                <div class="p-3">
-                  <!-- Champ de recherche -->
-                  <input
-                    type="text"
-                    name="search"
-                    (input)="filterArticles()"
-                    [(ngModel)]="searchTerm"
-                    placeholder="Rechercher un produit"
-                    class="form-control mb-3"
-                  />
-                </div>
-                <div
-                  class="table-responsive"
-                  style="max-height: 200px; overflow-y: auto"
-                >
-                  <table class="table">
-                    <thead>
-                      <tr style="font-size: small">
-                        <th scope="col" class="text-secondary">Code</th>
-                        <th scope="col" class="text-secondary">Produits</th>
-                        <th scope="col" class="text-secondary">Disponibilité</th>
-                        <th scope="col" class="text-secondary text-center">
-                          Choix
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr
-                        *ngFor="let article of filteredArticleList ; let i = index"
-                        style="font-size: small"
-                      >
-                        <th scope="row">{{ article.code }}</th>
-                        <th scope="row">{{ article.libelle }}</th>
-                        <th scope="row">{{stocksDisponibles[article.liquide.id]}}</th>
-                        <td class="">
-                          <input
-                            type="checkbox"
-                            class="form-control-custom"
-                            [name]="'checkbox_' + i"
-                            [(ngModel)]="article.isChecked"
-                            (change)="onCheckboxChange(article)"
-                            [disabled]="stocksDisponibles[article.liquide.id] <=0"
-                          />
-
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </fieldset>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer gap-3 px-4y">
-          <button
-            (click)="OnCloseChoiceModal()"
-            type="button"
-            class="btn btn-secondary px-2"
-          >
-            Annuler
-          </button>
-          <button
-
-            type="submit"
-            (click)="onSubmitSelection()"
-            class="btn btn-primary px-2"
-          >
-            Valider
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+</div>
