@@ -115,131 +115,112 @@
           </h1>
         </div>
         <div class="modal-body">
-          <form [formGroup]="CommandeForm" *ngIf="operation == 'create'">
-            <div class="row">
-              <div
-                class="col-6 d-flex align-items-center justify-content-between"
-              >
-                <div class="">
-                  <label for="" class="form-label">Client</label>
-                  <span class="text-danger">*</span>
-                  <ng-select
-                    class="form-control"
-                    [items]="listRevendeurs"
-                    bindLabel="displayName"
-                    bindValue="id"
-                    formControlName="clientId"
-                    [searchable]="true"
-                    (change)="onRevendeurChange($event)"
-                  >
-                  </ng-select>
-                </div>
-              
-              </div>
-              <div
-                class="col-6 d-flex align-items-center justify-content-between"
-              >
-                <div class="">
-                  <label for="" class="form-label">Vente chine</label>
-                  <span class="text-danger">*</span>
-                  <ng-select
-                    class="form-control"
-                    [items]="ListVenteChine"
-                    bindLabel="statut"
-                    bindValue="id"
-                    formControlName="venteChineId"
-                    [searchable]="true"
-                  >
-                  </ng-select>
-                </div>
-                
-              </div>
-              <div class="mt-3">
-                <label for="" class="form-label"></label>
-                <button
-                  type="button"
-                  [disabled]="CommandeForm.controls['clientId'].invalid"
-                  class="btn btn-secondary"
-                  (click)="selectArticle()"
-                >
-                  Ajouter des articles
-                </button>
-              </div>
-            </div>
-          </form>
-          <fieldset class="row border my-1"  *ngIf="operation == 'edit'">
-            <legend style="font-size: 14px;" class="text-secondary">Numero Commande : {{updateData.NumCommande}} du {{updateData.createdAt | date}}</legend>
-          </fieldset>
-          <fieldset class="row border my-2"  *ngIf="operation == 'edit'">
-            <legend style="font-size: 14px;" class="text-secondary">Informations du client</legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Groupe de client :</strong>
-                <span>{{updateData.client.groupeClient.nomGroupe}}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Type de client :</strong>
-                <span>{{updateData.client.role}}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Propriétaire :</strong>
-                <span>{{ updateData.client.nomProprietaire }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Gérant :</strong>
-                <span>{{ updateData.client.nomGerant }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Établissement :</strong>
-                <span>{{ updateData.client.nomEtablissement ? updateData.client.nomEtablissement : updateData.client.raisonSocial }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Numero de registre :</strong>
-                <span>{{ updateData.client.numeroRegistre }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Numero contribuable :</strong>
-                <span>{{ updateData.client.numeroCompteContribuable }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Contact Gérant :</strong>
-                <span>{{ updateData.client.telephoneGerant }}</span>
-              </div>
-              <div class="col-md-4 mb-4">
-                <strong>Téléphone :</strong>
-                <span>{{ updateData.client.telephoneProprietaire }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <div class="p-2 mt-3">
-            <div style="max-height: 350px; overflow-y: auto">
-              <table  *ngIf="operation == 'create'" class="table table-bordered">
-                <thead class="table-success">
-                  <!-- Première ligne d'en-tête -->
-                  <tr>
-                    <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
-                    <th scope="col" colspan="4">MONTANT TTC(FCFA)</th>
-                  </tr>
-                  <!-- Deuxième ligne d'en-tête -->
-                  <tr>
-                    <th scope="col">Liquide</th>
-                    <th scope="col">Liquide (FCFA)</th>
-                    <th scope="col">Emballage (FCFA)</th>
-                    <th scope="col">Total (FCFA)</th>
-                    <th scope="col">Qte</th>
-                    <th scope="col">Liquide (FCFA)</th>
-                    <th scope="col">Emballage (FCFA)</th>
-                    <th scope="col">Total (FCFA)</th>
-                    <th scope="col">Actions</th>
-                  </tr>
-                </thead>
+          <div class="row">
+        
+            <fieldset class="row border my-1" *ngIf="operation == 'edit'">
+              <legend style="font-size: 14px" class="text-secondary">
+                Information Livraison
+              </legend>
   
-                <tbody>
+               <div class="row">
+                <div class="col-md-4">
+                  <strong>Commercial: </strong>
+                  <span>{{ updateData.commercial.nom }} {{ updateData.commercial.nom }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Localité: </strong>
+                  <span>{{ updateData.localite.nomLocalite }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Dépot: </strong>
+                  <span>{{ updateData.commercial.depot.nomDepot }}</span>
+                </div>
+               </div>
+            </fieldset>
+            <fieldset class="row border my-2" *ngIf="operation == 'edit'">
+              <legend style="font-size: 14px" class="text-secondary">
+                Informations du véhicule
+              </legend>
+              <div class="row">
+                <div class="col-md-4">
+                  <strong>Marque: </strong>
+                  <span>{{ updateData.vehicule.marque }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Immatriculation : </strong>
+                  <span>{{ updateData.vehicule.immatriculation }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Energie : </strong>
+                  <span>{{ updateData.vehicule.energie }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Capacité : </strong>
+                  <span>{{ updateData.vehicule.capacite }}</span>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset class="row border my-2">
+              <legend class="fs-6 text-primary">Cargaison</legend>
+              <div
+                *ngIf="operation == 'edit'"
+                class="table-responsive"
+                style="max-height: 300px; overflow-y: auto"
+              >
+                <table class="table">
+                  <thead>
+                    <tr style="font-size: small">
+                      <th scope="col">Produits</th>
+                      <th scope="col">Qte liquide</th>
+                      <th scope="col">Prix liquide</th>
+                      <th scope="col">Prix emballage</th>
+                      <th scope="col">Prix total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      style="font-size: small"
+                      *ngFor="let item of updateData.articles; let i = index"
+                    >
+                      <td>{{ item.liquide.libelle }}</td>
+                      <td>{{ item.quantite }}</td>
+  
+                      <td>{{  item.prixUnitaireLiquide}}</td>
+                      <td>{{ item.prixUnitaireEmballage}}</td>
+                      <td>{{ item.prixTotal}}</td>
+  
+                    </tr>
+                    <tr class="table-dark" *ngIf="updateData.articles.length > 0">
+                      <th scope="col" colspan="1">Total :</th>
+                      <td>{{ totalQte }}</td>
+                      <td>{{ totalLiquide }}</td>
+                      <td>{{ totalEmballage }}</td>
+                      <td>{{ totalGlobal }}</td>
+                    </tr>
+                    <!-- Ajoutez d'autres lignes si nécessaire -->
+                  </tbody>
+                </table>
+              </div>
+              <div
+                *ngIf="operation == 'create'"
+                class="table-responsive"
+                style="max-height: 300px; overflow-y: auto"
+              >
+                <table  class="table table-bordered">
+                  <thead class="table-success">
+                  <tr>
+                    <th scope="col">Produits</th>
+                    <th scope="col">Qte liquide</th>
+                    <th scope="col">Prix liquide</th>
+                    <th scope="col">Prix emballage</th>
+                    <th scope="col">Prix total</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                  </thead>
+  
+                  <tbody>
                   <tr *ngFor="let item of selectedArticles">
                     <td>{{ item.liquide.libelle }}</td>
-                    <td>{{ prixLiquide[item.id] }}</td>
-                    <td>{{ prixEmballage[item.id] }}</td>
-                    <td>{{ prixEmballage[item.id] + prixLiquide[item.id] }}</td>
                     <td>
                       <input
                         type="number"
@@ -269,57 +250,17 @@
                     </td>
                   </tr>
                   <tr class="table-dark">
-                    <th scope="col" colspan="4">Total :</th>
+                    <th scope="col" colspan="1">Total :</th>
                     <td>{{ totalQte }}</td>
                     <td>{{ totalLiquide }}</td>
                     <td>{{ totalEmballage }}</td>
                     <td>{{ totalGlobal }}</td>
-                    <td></td>
                   </tr>
-                </tbody>
-              </table>
-              <table  *ngIf="operation == 'edit'" class="table table-bordered">
-                <thead class="table-success">
-                <!-- Première ligne d'en-tête -->
-                <tr>
-                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
-                  <th scope="col" colspan="3">MONTANT TTC(FCFA)</th>
-                </tr>
-                <!-- Deuxième ligne d'en-tête -->
-                <tr>
-                  <th scope="col">Liquide</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Qte</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                </tr>
-                </thead>
+                  </tbody>
+                </table>
   
-                <tbody>
-                <tr *ngFor="let item of updateData.articles">
-                  <td>{{ item.liquide.libelle }}1</td>
-                  <td>{{ item.prixUnitaireLiquide }}</td>
-                  <td>{{ item.prixUnitaireEmballage}}</td>
-                  <td>{{  Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) }}</td>
-                  <td>{{ item.quantite }}</td>
-                  <td>{{ item.montantLiquide }}</td>
-                  <td>{{ item.montantEmballage }}</td>
-                  <td>{{Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) }}</td>
-  
-                </tr>
-                <tr class="table-dark">
-                  <th scope="col" colspan="4">Total :</th>
-                  <td>{{ totalQte }}</td>
-                  <td>{{ totalLiquide }}</td>
-                  <td>{{ totalEmballage }}</td>
-                  <td>{{ totalGlobal }}</td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
+              </div>
+            </fieldset>
           </div>
         </div>
   
