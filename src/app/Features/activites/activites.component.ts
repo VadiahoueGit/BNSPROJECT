@@ -15,6 +15,11 @@ export class ActivitesComponent implements OnInit{
       // url: 'feature/activites/articles',
     },
     {
+      image: 'assets/icon/facture.png',
+      title: 'Facturation',
+      url:'feature/activites/facturation',
+    },
+    {
       image: 'assets/icon/commande.png',
       title: 'Commandes clients',
        url:'feature/activites/commandes-clients',
@@ -34,11 +39,6 @@ export class ActivitesComponent implements OnInit{
       title: 'Gestion des retours',
       url:'feature/activites/gestion-retour',
     } ,
-    {
-      image: 'assets/icon/facture.png',
-      title: 'Facturation',
-      url:'feature/activites/facturation',
-    },
     {
       image: 'assets/icon/vente.png',
       title: 'Ventes chine',
