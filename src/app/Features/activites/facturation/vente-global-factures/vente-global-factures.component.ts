@@ -151,15 +151,24 @@ export class VenteGlobalFacturesComponent {
     this.operation = 'create';
     console.log(this.isModalOpen);
   }
-
+  GetDetailVenteGlobalFactures(id:number) {
+  
+    this._spinner.show();
+    this._activiteService.GetDetailGlobalFacturesById(id).then((res: any) => {
+      console.log('GetDetailGlobalFacturesById:::>', res);
+      this.updateData = res.data;
+      this._spinner.hide();
+    });
+  }
   OnEdit(data:any) {
+    this.GetDetailVenteGlobalFactures(data.id)
     this.totalEmballage = 0;
     this.totalLiquide  = 0;
     this.totalGlobal = 0;
     this.totalQte = 0;
     this.isEditMode = true;
-    console.log(data);
-    this.updateData = data;
+    // console.log(data);
+    // this.updateData = data;
     this.articleId = data.id;
     this.isModalOpen = true;
     this.operation = 'edit';
