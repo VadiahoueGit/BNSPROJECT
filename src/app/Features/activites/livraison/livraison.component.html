@@ -10,7 +10,7 @@
 <div class="card">
   <div class="d-flex justify-content-end py-3">
     <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
-      Saisir un regroupement
+      Faire un regroupement
     </button>
   </div>
   <p-table
@@ -66,13 +66,6 @@
                 class="fas fa-eye text-secondary"
               ></i>
             </td>
-<!--            <td>-->
-<!--              <i-->
-<!--                (click)="OnDelete(dataList.id)"-->
-<!--                style="cursor: pointer"-->
-<!--                class="fas fa-trash-alt text-danger"-->
-<!--              ></i>-->
-<!--            </td>-->
           </tr>
         </td>
       </tr>
@@ -267,150 +260,17 @@
                 type="text"
                 id="numRegroupement"
                 class="form-control"
-                value="cBL81380173349686311Z"
+                [value]=updateData.numRegroupement
                 readonly
               />
             </div>
-            <div>
-              <label for="zoneRegroupement" class="form-label">Zone</label>
-              <input
-                type="text"
-                id="zoneRegroupement"
-                class="form-control"
-                value="ZONE ANONO"
-                readonly
-              />
-            </div>
-          </div>
-
-          <!-- Palette et Casier -->
-          <div class="col-md-12 d-flex mb-3">
-            <div class="me-3">
-              <input type="number" class="form-control" value="1" readonly />
-              <small>Palette et 12</small>
-            </div>
-            <div class="me-3">
-              <input type="number" class="form-control" value="1" readonly />
-              <small>Palette et 53</small>
-            </div>
-            <div class="me-3">
-              <input type="number" class="form-control" value="0" readonly />
-              <small>Palette et 1</small>
-            </div>
-          </div>
-
-          <!-- Table des commandes -->
-          <div class="col-md-12">
-            <table class="table table-bordered">
-              <thead class="table-success">
-                <tr>
-                  <th style="font-size: 12px">Raison sociale</th>
-                  <th style="font-size: 11px">DESPERADOS 33 CL</th>
-                  <th style="font-size: 12px">COCA COLA RGB 60 CL</th>
-                  <th style="font-size: 12px">HEINEKEN 33 CL</th>
-                  <th style="font-size: 12px">IVOIRE 60 CL</th>
-                  <th style="font-size: 12px">RHINO ENERGY 33 CL</th>
-                  <th style="font-size: 12px">IVOIRE BLACK 60 CL</th>
-                  <th style="font-size: 12px">HEINEKEN 50 CL</th>
-                  <th style="font-size: 12px">FANTA RGB 60 CL</th>
-                  <th style="font-size: 12px">COCA COLA 30 CL</th>
-                  <th style="font-size: 12px">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>NDRI AUDREY</td>
-                  <td>5</td>
-                  <td>3</td>
-                  <td>8</td>
-                  <td>11</td>
-                  <td>7</td>
-                  <td>9</td>
-                  <td>1</td>
-                  <td>1</td>
-                  <td>0</td>
-                  <td>45</td>
-                </tr>
-                <tr>
-                  <td>ELOISE EASD</td>
-                  <td>0</td>
-                  <td>5</td>
-                  <td>7</td>
-                  <td>0</td>
-                  <td>5</td>
-                  <td>0</td>
-                  <td>0</td>
-                  <td>0</td>
-                  <td>2</td>
-                  <td>19</td>
-                </tr>
-                <tr>
-                  <td>S/D MARIE GRACE</td>
-                  <td>15</td>
-                  <td>0</td>
-                  <td>15</td>
-                  <td>15</td>
-                  <td>10</td>
-                  <td>10</td>
-                  <td>0</td>
-                  <td>0</td>
-                  <td>0</td>
-                  <td>65</td>
-                </tr>
-                <tr>
-                  <td>REHOBOTH ANONO</td>
-                  <td>7</td>
-                  <td>0</td>
-                  <td>7</td>
-                  <td>4</td>
-                  <td>3</td>
-                  <td>3</td>
-                  <td>0</td>
-                  <td>0</td>
-                  <td>0</td>
-                  <td>29</td>
-                </tr>
-                <tr>
-                  <td>LOUISE BAMBA</td>
-                  <td>5</td>
-                  <td>4</td>
-                  <td>8</td>
-                  <td>5</td>
-                  <td>7</td>
-                  <td>5</td>
-                  <td>0</td>
-                  <td>1</td>
-                  <td>0</td>
-                  <td>37</td>
-                </tr>
-              </tbody>
-              <tfoot class="table-success">
-                <tr>
-                  <td>Total</td>
-                  <td>32</td>
-                  <td>12</td>
-                  <td>45</td>
-                  <td>35</td>
-                  <td>32</td>
-                  <td>30</td>
-                  <td>1</td>
-                  <td>1</td>
-                  <td>7</td>
-                  <td>195</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-
-          <!-- Footer -->
-          <div class="col-md-12 d-flex mt-3">
             <div class="me-3">
               <label for="camion" class="form-label">Camion</label>
               <input
                 type="text"
                 id="camion"
                 class="form-control"
-                value="734LJO1"
+                [attr.value]="updateData?.vehicule?.marque"
                 readonly
               />
             </div>
@@ -420,24 +280,105 @@
                 type="text"
                 id="chauffeur"
                 class="form-control"
-                value="SEVERIN"
+                [attr.value]="updateData?.transporteur?.nom + ' ' + updateData?.transporteur?.prenoms"
                 readonly
               />
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Footer -->
+          <div class="col-md-12 d-flex">
+
+          </div>
+        </div>
+          <!-- Table des commandes -->
+          <div class="col-md-12">
+
+            <div class="row">
+              <div id="accordionExample" class="accordion col-12 fieldset1" style="overflow-y: auto; max-height: 400px;">
+                <div *ngFor="let item of updateData.commandes; let idx = index" class="accordion-item my-2">
+                  <h2 class="accordion-header" id="heading{{idx}}">
+                    <button
+                      class="accordion-button collapsed "
+                      type="button"
+                      data-bs-toggle="collapse"
+                      [attr.data-bs-target]="'#collapse' + idx"
+                      aria-expanded="false"
+                      [attr.aria-controls]="'collapse' + idx">
+                      <div class="w-100 d-flex justify-content-between" >
+                        <div class="d-flex flex-column">
+                          <label class="text-secondary fw-bold">
+                            {{ item.clientType }} - {{ item.clientInfo.nomEtablissement ? item.clientInfo.nomEtablissement : item.clientInfo.raisonSocial}}
+                          </label>
+                          <label class="ml-0">
+                            Montant : {{ item.montantTotal | currency :'XOF' }}
+                          </label>
+                        </div>
+                        <label class="fw-light ">
+                          {{item.type}} - {{item.numCommande}}
+                        </label>
+<!--                        <label-->
+<!--                          [ngStyle]="{-->
+<!--                                                color: item.status == 'TERMINÉ' ? 'green' :-->
+<!--                                                       item.status === 'EN COURS' ? 'orange' : 'red'-->
+<!--                                            }">-->
+<!--                          {{ item.status }}-->
+<!--                        </label>-->
+                      </div>
+                    </button>
+                  </h2>
+                  <div
+                    id="collapse{{idx}}"
+                    class="accordion-collapse collapse"
+                    [attr.aria-labelledby]="'heading' + idx"
+                    data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                      <!-- Nested Fieldset -->
+                      <fieldset class="row border my-2">
+                        <legend style="font-size: 14px;" class="text-secondary">Articles</legend>
+                        <table class="table">
+                          <thead>
+                          <tr>
+                            <th scope="col"><label>Codes</label></th>
+                            <th scope="col"><label>Désignations</label></th>
+                            <th scope="col"><label>formats</label></th>
+                            <th scope="col"><label>Quantité</label></th>
+                            <th scope="col"><label>Coûts</label></th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          <tr *ngFor="let article of item.articles; let i = index">
+                            <td><label>{{article.liquide.code}}</label></td>
+                            <td><label>{{ article.liquide.libelle }}</label></td>
+                            <td><label>{{ article.liquide.format }}</label></td>
+                            <td><label>{{ article.quantite }}</label></td>
+                            <td>
+                              <label>
+                                {{ (+article.montantLiquide || 0) + (+article.montantEmballage || 0) | currency:'XOF' }}
+                              </label>
+                            </td>
+
+                          </tr>
+                          <tr *ngIf="item.articles.length === 0">
+                            <td colspan="3" class="text-danger text-center">Pas d'article dans la commande</td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
       <div class="modal-footer gap-3 px-4">
         <button
           type="button"
           class="btn btn-secondary"
           (click)="closeDetailModal()"
         >
-          Annuler
+          Fermer
         </button>
-        <button type="button" class="btn btn-primary">Valider</button>
       </div>
     </div>
   </div>
