@@ -120,7 +120,7 @@
                 <thead class="table-success">
                 <tr>
                   <th>Commande</th>
-                  <th>Raison sociale</th>
+                  <th>Établissements</th>
                   <th>Casier</th>
                   <th>Zone livraison</th>
                   <th>Date</th>
@@ -130,7 +130,8 @@
                 <tbody>
                 <tr *ngFor="let item of filteredList; let i = index">
                   <td>{{ item.NumCommande }}</td>
-                  <td>{{ item.client.raisonSocial }}</td>
+                  <td> {{ item.client.nomEtablissement ? item.client.nomEtablissement : item.client.raisonSocial}}
+                  </td>
                   <td>{{ getTotalQuantite(item.articles) }}</td>
                   <td>{{ item.client.zoneDeLivraison.nomZone }}</td>
                   <td>{{ item.createdAt|date }}</td>
@@ -138,6 +139,7 @@
                     <input
                       type="checkbox"
                       class="form-control-custom"
+                      [disabled]="this.livraisonForm.controls['vehicule'].invalid"
                       [name]="'checkbox_' + i"
                       [(ngModel)]="item.isChecked"
                       (change)="onCheckboxChange(item)"
@@ -145,6 +147,7 @@
 
                   </td>
                 </tr>
+                <tr *ngIf="filteredList.length == 0" ><td colspan="6"><label class="text-center">Pas de commande en cours.</label></td></tr>
                 </tbody>
               </table>
             </div>
@@ -178,6 +181,7 @@
                           <ng-select
                             class="form-control"
                             [items]="listVehicule"
+                            (change)="onVehiculeChange($event)"
                             bindLabel="displayName"
                             formControlName="vehicule"
                             bindValue="id"
@@ -192,6 +196,7 @@
                   <div class="row">
                     <table class="table table-bordered table-hover">
                       <thead class="table-success">
+                      <tr><td colspan="1"><i class="fa-sharp fa-solid fa-truck-ramp-couch"></i></td><td colspan="2">{{cargaison}}/{{truckCapacity}}</td></tr>
                       <tr>
                         <th>Format</th>
                         <th>Palette</th>
@@ -222,7 +227,7 @@
         >
           Annuler
         </button>
-        <button type="submit" class="btn btn-primary" (click)="onSubmit()">
+        <button [disabled]="commandeList.length <=0 || cargaison >= truckCapacity || livraisonForm.invalid" type="submit" class="btn btn-primary" (click)="onSubmit()">
           Valider
         </button>
       </div>
@@ -316,13 +321,6 @@
                         <label class="fw-light ">
                           {{item.type}} - {{item.numCommande}}
                         </label>
-<!--                        <label-->
-<!--                          [ngStyle]="{-->
-<!--                                                color: item.status == 'TERMINÉ' ? 'green' :-->
-<!--                                                       item.status === 'EN COURS' ? 'orange' : 'red'-->
-<!--                                            }">-->
-<!--                          {{ item.status }}-->
-<!--                        </label>-->
                       </div>
                     </button>
                   </h2>

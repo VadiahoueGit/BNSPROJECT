@@ -7,6 +7,7 @@ import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { FinanceService } from 'src/app/core/finance.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
+import {StatutCommande} from "../../../../utils/utils";
 
 @Component({
   selector: 'app-validation-commande-client',
@@ -166,6 +167,10 @@ export class ValidationCommandeClientComponent {
     console.log(this.isModalOpen);
     this.filteredArticleList = [];
     this.selectedArticles = [];
+    this.totalQte=0
+    this.totalLiquide=0
+    this.totalEmballage = 0
+    this.totalGlobal =0
   }
   OnCreate() {
     this.isEditMode = false;
@@ -358,7 +363,7 @@ export class ValidationCommandeClientComponent {
     this.articleService.GetListCommandeClient(data).then((res: any) => {
       console.log('dataList:::>', res);
       this.dataList = res.data.filter(
-        (x: any) => x.statut === 'Attente de Validation'
+        (x: any) => x.statut === StatutCommande.ATTENTE_VALIDATION
       );
       this._spinner.hide();
     });
@@ -386,16 +391,22 @@ export class ValidationCommandeClientComponent {
     }
   }
   selectArticle() {
-    this.isEditMode = false;
-    this.isChoiceModalOpen = true;
-    this.operation = 'create';
-    if (!this.commandClientForm.controls['fraisTransport'].value) {
-      this.commandClientForm.patchValue({ fraisTransport: 0 });
+    if(this.commandClientForm.controls['clientId'].valid)
+    {
+      this.isEditMode = false;
+      this.isChoiceModalOpen = true;
+      this.operation = 'create';
+      if (!this.commandClientForm.controls['fraisTransport'].value) {
+        this.commandClientForm.patchValue({ fraisTransport: 0 });
+      }
+      if (!this.commandClientForm.controls['remise'].value) {
+        this.commandClientForm.patchValue({ remise: 0 });
+      }
+      this.cdr.detectChanges();
+    }else{
+      this.toastr.warning('Veuillez sélectionner le client.');
     }
-    if (!this.commandClientForm.controls['remise'].value) {
-      this.commandClientForm.patchValue({ remise: 0 });
-    }
-    this.cdr.detectChanges();
+
     console.log(this.isChoiceModalOpen);
   }
   validateQuantite(data: any): void {

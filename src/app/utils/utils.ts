@@ -4,5 +4,6 @@ export enum StatutCommande {
   ATTENTE_LIVRAISON = 'Attente Livraison',
   COMMANDE_LIVREE = 'Commande Livrée',
   APPROUVEE = 'Approuvée',
+  NON_APPROUVEE = 'Non approuvée'
 }
 

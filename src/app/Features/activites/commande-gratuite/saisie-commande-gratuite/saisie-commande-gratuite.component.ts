@@ -133,6 +133,7 @@ export class SaisieCommandeGratuiteComponent {
     this.totalQte = 0;
     this.filteredArticleList = [];
     this.isModalOpen = false;
+    this.selectedArticles = [];
     console.log(this.isModalOpen);
   }
   OnCreate() {

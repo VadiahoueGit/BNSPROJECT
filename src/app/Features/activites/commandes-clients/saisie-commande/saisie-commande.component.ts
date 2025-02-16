@@ -82,7 +82,8 @@ export class SaisieCommandeComponent {
       numeroCompte: [{ value: '', disabled: true }, ],
       raisonSociale: [{ value: '', disabled: true }, ],
       montantCredit: [{ value: '', disabled: true }, ],
-      enCours: ['', ],
+      statutCompte: [{ value: '', disabled: true } ],
+      enCours: [''],
       soldeEmballage: [{ value: '', disabled: true }, ],
       numeroSAP: [{ value: '', disabled: true }, ],
       remise: [
@@ -91,7 +92,6 @@ export class SaisieCommandeComponent {
       ],
       contact: [{ value: '', disabled: true }, ],
       soldeLiquide: [{ value: '', disabled: true }, ],
-      statutCompte: [{ value: '', disabled: true }, ],
       fraisTransport: [0,Validators.required ],
       articles: this.fb.array([]),
     });
@@ -136,7 +136,7 @@ export class SaisieCommandeComponent {
     this.commandClientForm.controls['numeroCompte'].setValue(
       this.detailPointDevente.numeroCompteContribuable
     );
-    this.commandClientForm.controls['statutCompte'].setValue( this.detailPointDevente.isValide ? 'ACTIF' : 'INACTIF')
+    this.commandClientForm.controls['statutCompte'].patchValue( this.detailPointDevente.isValide ? 'ACTIF' : 'INACTIF')
     this.commandClientForm.controls['raisonSociale'].setValue(
       this.detailPointDevente.raisonSocial
     );
@@ -166,7 +166,12 @@ export class SaisieCommandeComponent {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
     this.filteredArticleList = [];
+    // this.articles = []
     this.selectedArticles = [];
+    this.totalQte=0
+    this.totalLiquide=0
+    this.totalEmballage = 0
+    this.totalGlobal =0
   }
   OnCreate() {
     this.isEditMode = false;
@@ -320,7 +325,7 @@ export class SaisieCommandeComponent {
       montantCredit: parseInt(this.detailPointDevente.credits.totalCredit),
       soldeLiquide: parseInt(this.detailPointDevente.credits.creditLiquide),
       soldeEmballage: parseInt(this.detailPointDevente.credits.creditEmballage),
-      statutCompte: formData.statutCompte,
+      statutCompte: this.detailPointDevente.isValide ? 'ACTIF' : 'INACTIF',
       numeroSAP: this.detailPointDevente.numeroSAP,
       fraisTransport: formData.fraisTransport,
       enCours: parseInt(formData.enCours),

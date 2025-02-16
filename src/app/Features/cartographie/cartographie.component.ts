@@ -55,8 +55,8 @@ export class CartographieComponent {
   }
 
   ngOnInit() {
-    // this.websocketService.connect('ws://wsbnsapi.monassoci.com/');
-// Abonnez-vous pour recevoir les messages
+//     this.websocketService.connect('ws://wsbnsapi.localdev.business/');
+// // Abonnez-vous pour recevoir les messages
 //     this.messageSubscription = this.websocketService.getMessages().subscribe(
 //       (message) => {
 //         this.messages.push(message);
@@ -192,7 +192,7 @@ export class CartographieComponent {
     icon.style.width = '25px';
     icon.style.height = '25px';
     container.appendChild(icon);
-    console.log('container', container)
+    // console.log('container', container)
     return container;
   }
 

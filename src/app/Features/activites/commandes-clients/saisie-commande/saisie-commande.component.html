@@ -298,9 +298,7 @@
                   type="submit"
                   class="btn btn-primary"
                   [disabled]="
-                    commandClientForm.controls['clientId'].invalid ||
-                    commandClientForm.controls['remise'].invalid ||
-                    commandClientForm.controls['fraisTransport'].invalid
+                    commandClientForm.controls['clientId'].invalid
                   "
                   (click)="selectArticle()"
                 >

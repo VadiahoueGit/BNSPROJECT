@@ -7,6 +7,7 @@ import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { FinanceService } from 'src/app/core/finance.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
+import {StatutCommande} from "../../../../utils/utils";
 
 @Component({
   selector: 'app-validation-commande-gratuite',
@@ -115,7 +116,7 @@ export class ValidationCommandeGratuiteComponent {
     this.articleService.GetListCommandeGratuite(data).then((res: any) => {
       console.log('ListCommandeGratuites:::>', res);
         this.ListCommandeGratuites = res?.data.filter(
-          (x: any) => x.statut === 'Attente de Validation'
+          (x: any) => x.statut === StatutCommande.ATTENTE_VALIDATION
         );
       this._spinner.hide();
     });

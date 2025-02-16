@@ -18,6 +18,21 @@
         <th class="d-flex justify-content-center" style="color: var(--secondary-color);">Actions</th>
       </tr>
     </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="color: var(--secondary-color);">Etablissements</th>
+        <th style="color: var(--secondary-color);">Zone</th>
+        <th style="color: var(--secondary-color);">Statut</th>
+        <th style="color: var(--secondary-color);">Contact Gerant</th>
+        <th style="color: var(--secondary-color);">Action</th>
+      </tr>
+      <tr>
+        <th>
+          <p-columnFilter  type="text" field="nomEtablissement" placeholder="" />
+        </th>
+
+      </tr>
+    </ng-template>
     <ng-template pTemplate="body" let-dataList>
       <tr>
         <td>
@@ -216,7 +231,7 @@
               <li>
                 <strong>Téléphone :</strong> <span>{{ ClientOsrDetail.telephone }}</span>
               </li>
-         
+
             </ul>
           </div>
         </div>

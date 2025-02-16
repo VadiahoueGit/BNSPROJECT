@@ -8,6 +8,7 @@ import { FinanceService } from 'src/app/core/finance.service';
 import { LogistiqueService } from 'src/app/core/logistique.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
+import {StatutCommande} from "../../../../utils/utils";
 
 @Component({
   selector: 'app-validation-vente-chine',
@@ -337,7 +338,7 @@ export class ValidationVenteChineComponent {
       console.log('GetVenteChineList:::>', res.data);
 
       this.dataList = res.data.filter(
-        (x: any) => x.statut === 'Attente de Validation'
+        (x: any) => x.statut === StatutCommande.ATTENTE_VALIDATION
       );
       this._spinner.hide();
     });

@@ -18,7 +18,7 @@
       <ng-template pTemplate="header">
         <tr>
           <th style="color: var(--secondary-color)">N° commande</th>
-          <th style="color: var(--secondary-color)">Raison sociale</th>
+          <th style="color: var(--secondary-color)">Etablissement</th>
   <!--        <th style="color: var(&#45;&#45;secondary-color)">Depôt</th>-->
           <th style="color: var(--secondary-color)">Quantité</th>
           <th style="color: var(--secondary-color)">Montant</th>
@@ -32,7 +32,7 @@
           </td>
 
           <td>
-            {{ ListCommandeGratuites.client.raisonSocial }}
+            {{ ListCommandeGratuites.client.raisonSocial ? ListCommandeGratuites.client.raisonSocial : ListCommandeGratuites.client.nomEtablissement }}
           </td>
   <!--        <td>-->
   <!--          {{ ListCommandeGratuites.revendeur.depot.nomDepot }}-->
@@ -111,7 +111,8 @@
             <div class="row">
               <div class="col-md-4">
                 <strong>Groupe de client :</strong>
-                <span>{{updateData.client.groupeClient.nomGroupe}}</span>
+                <span>{{ updateData.client?.groupeClient?.nomGroupe || updateData.client?.GroupeClient?.nomGroupe }}</span>
+
               </div>
               <div class="col-md-4">
                 <strong>Type de client :</strong>

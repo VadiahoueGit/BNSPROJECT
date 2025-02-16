@@ -76,8 +76,11 @@ export class LivraisonComponent {
   rowsPerPage: any;
   listRevendeurs: any[] = [];
   listRegroupements: any[] = [];
+  truckCapacity: number = 0;
   isModalOpenDetail: boolean = false;
   totalCasiers: number = 0;
+  canContinue: boolean = false;
+  cargaison: number = 0;
   format: number = 33;
   result: { palettes: number; casier: number } | null = null;
   regroupementList: any[] = [];
@@ -109,6 +112,12 @@ export class LivraisonComponent {
       vehicule: [null, Validators.required],
     });
 
+    if (this.cargaison >= this.truckCapacity) {
+      this.canContinue = false;
+    } else {
+      this.canContinue = true;
+    }
+
     // this.selectedArticle = this.articles[0];
     this.GetListZone();
     this.GetRegroupementRules()
@@ -126,69 +135,68 @@ export class LivraisonComponent {
     // this.dataList
   }
 
-  getTotalGeneral(commandes:any): number {
-    return commandes.reduce((total:any, commande:any) => total + commande.montantTotal, 0);
+  getTotalGeneral(commandes: any): number {
+    return commandes.reduce((total: any, commande: any) => total + commande.montantTotal, 0);
   }
+
   removeCommande(commande: any): void {
     console.log('Retrait de la commande', commande);
 
-    // Vérification que `this.regroupementTable` n'est pas vide
     if (!this.regroupementTable || this.regroupementTable.length === 0) {
       console.warn("Aucune donnée dans regroupementTable.");
       return;
     }
 
-    // Regrouper les articles de la commande par format
+    // Regrouper les articles de la commande supprimée par format
     const articlesParFormat = commande.articles.reduce((acc: any, article: any) => {
       const format = Number(article?.liquide?.format);
       if (!format) return acc;
 
-      if (!acc[format]) {
-        acc[format] = [];
-      }
-
-      acc[format].push(article);
+      acc[format] = (acc[format] || 0) + Number(article.quantite || 0);
       return acc;
     }, {});
 
     console.log('Articles à retirer:', articlesParFormat);
 
-    // Mettre à jour regroupementTable en retirant les quantités de la commande décochée
-    this.regroupementTable = this.regroupementTable.map((regroupement) => {
-      let updatedRegroupement = {...regroupement}; // Copie pour éviter la mutation directe
-      let hasData = false; // Vérifier si ce regroupement contient encore des données après modification
+    // Mettre à jour `regroupementTable`
+    Object.keys(articlesParFormat).forEach((format) => {
+      let totalCasiersToRemove = articlesParFormat[format];
 
-      Object.keys(articlesParFormat).forEach((format) => {
-        if (updatedRegroupement[format]) {
-          const totalCasiersToRemove = articlesParFormat[format].reduce(
-            (total: number, article: any) => total + Number(article.quantite || 0),
-            0
-          );
-
-          updatedRegroupement[format] = {...updatedRegroupement[format]}; // Copie pour éviter la mutation directe
-          updatedRegroupement[format].casier -= totalCasiersToRemove;
-
-          // Vérifier si on doit aussi enlever une palette
+      // On va modifier **chaque entrée** où ce format est présent
+      this.regroupementTable = this.regroupementTable.map(regroupement => {
+        if (regroupement[format]) {
+          let casiersRestants = regroupement[format].casier;
+          let palettesRestantes = regroupement[format].palettes;
           const casiersParPalette = this.casiersPerPalette[Number(format)]?.casiers || 0;
-          while (updatedRegroupement[format].casier < 0 && updatedRegroupement[format].palettes > 0) {
-            updatedRegroupement[format].palettes -= 1;
-            updatedRegroupement[format].casier += casiersParPalette;
+
+          // **1️⃣ On retire d'abord des casiers**
+          let casiersÀRetirer = Math.min(totalCasiersToRemove, casiersRestants);
+          casiersRestants -= casiersÀRetirer;
+          totalCasiersToRemove -= casiersÀRetirer;
+          this.cargaison -= casiersÀRetirer;
+          // **2️⃣ Si on doit encore retirer, on enlève des palettes**
+          while (totalCasiersToRemove > 0 && palettesRestantes > 0) {
+            palettesRestantes -= 1;
+            casiersRestants += casiersParPalette;
+            let casiersÀRetirerSupplementaire = Math.min(totalCasiersToRemove, casiersRestants);
+            casiersRestants -= casiersÀRetirerSupplementaire;
+            totalCasiersToRemove -= casiersÀRetirerSupplementaire;
           }
 
-          // Vérifier si cet élément doit être supprimé
-          if (updatedRegroupement[format].palettes <= 0 && updatedRegroupement[format].casier <= 0) {
-            delete updatedRegroupement[format];
+          // **3️⃣ Mettre à jour l'entrée**
+          if (palettesRestantes <= 0 && casiersRestants <= 0) {
+            delete regroupement[format];
           } else {
-            hasData = true; // Il reste des données
+            regroupement[format].casier = casiersRestants;
+            regroupement[format].palettes = palettesRestantes;
           }
         }
-      });
-
-      return hasData ? updatedRegroupement : null; // Si l'objet est vide après suppression, retourner null
-    }).filter(regroupement => regroupement !== null); // Nettoyer les objets complètement vides
+        return regroupement;
+      }).filter(regroupement => Object.keys(regroupement).length > 0); // Supprimer les objets vides
+    });
 
     console.log('regroupementTable après suppression:', this.regroupementTable);
-    this.regrouperParFormat(); // Recalculer après suppression
+    this.regrouperParFormat();
   }
 
   calculate(commande: any): void {
@@ -231,7 +239,7 @@ export class LivraisonComponent {
 
       const palettes = Math.floor(totalCasiers / casiers);
       const casier = totalCasiers % casiers;
-
+      this.cargaison += casier;
       result[format] = {palettes, casier, type};
       return result;
     }, {});
@@ -308,7 +316,7 @@ export class LivraisonComponent {
     // Unifier les deux objets dans un seul tableau
     this.ListCommande = [...commandeClient.data, ...commandeGratuite.data];
     console.log('ListCommande', this.ListCommande);
-    this.filteredList = this.ListCommande.filter((commande:any) => commande.statut === StatutCommande.ATTENTE_VALIDATION);
+    this.filteredList = this.ListCommande.filter((commande: any) => commande.statut === StatutCommande.NON_APPROUVEE);
     console.log('filteredList', this.filteredList);
 
     this._spinner.hide();
@@ -407,9 +415,11 @@ export class LivraisonComponent {
       this._spinner.hide();
     });
   }
-  LoadForm(){
+
+  LoadForm() {
     // this.for
   }
+
   onSubmit(): void {
     this._spinner.show();
     let data = {
@@ -419,7 +429,13 @@ export class LivraisonComponent {
     }
     this.activiteService.CreationRegroupement(data).then((res: any) => {
       this._spinner.hide();
-      this.isModalOpen = false;
+      if (res.statusCode == 201) {
+        this.toastr.success(res.message);
+        this.isModalOpen = false;
+        this.GetRegroupementList()
+      } else {
+        this.toastr.error(res.message);
+      }
       console.log(res.data);
     })
   }
@@ -472,9 +488,13 @@ export class LivraisonComponent {
 
   onCheckboxChange(commande: any): void {
     if (commande.isChecked) {
-      this.commandeList.push(commande.NumCommande);
-      console.log('Ajout de la commande:', this.commandeList);
       this.calculate(commande);
+      if (this.cargaison < this.truckCapacity) {
+        this.commandeList.push(commande.NumCommande);
+        console.log('Ajout de la commande:', this.commandeList);
+      } else if (this.cargaison >= this.truckCapacity) {
+        this.toastr.warning('Le vehicule est plein !');
+      }
     } else {
       this.commandeList = this.commandeList.filter(num => num !== commande.NumCommande);
       console.log('Suppression de la commande:', this.commandeList);
@@ -594,6 +614,11 @@ export class LivraisonComponent {
         }));
       console.log(res.data);
     })
+  }
+
+  onVehiculeChange(event: any) {
+    this.truckCapacity = event.capacite;
+    console.log('truckCapacity', this.truckCapacity);
   }
 
   GetVehiculeList() {
