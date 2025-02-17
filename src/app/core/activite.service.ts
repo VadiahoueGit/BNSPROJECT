@@ -398,26 +398,41 @@ export class ActiviteService {
         );
     });
   }
-  DownloadGlobalFacturesById(id: any) {
-    return new Promise((resolve: any, reject: any) => {
+  DownloadGlobalFacturesById(id: any): Promise<void> {
+    return new Promise((resolve, reject) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
-      this._http
-        .get(
-          `${this.apiUrl}/v1/ventes_global/factures/${id}/telecharger`,{headers}
-        )
-        .subscribe(
-          (res: any) => {
-            console.log(res);
-            resolve(res);
-          },
-          (err) => {
-            console.log(err);
-            reject(err);
+  
+      this._http.get(`${this.apiUrl}/v1/ventes_global/factures/${id}/telecharger`, { 
+        headers,
+        responseType: 'blob' 
+      }).subscribe(response => {
+        try {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = window.URL.createObjectURL(blob);
+          
+          // Ouvrir le PDF dans une nouvelle fenêtre
+          const newTab = window.open(url);
+          if (!newTab) {
+            throw new Error('Le popup a été bloqué par le navigateur.');
           }
-        );
+  
+          // Nettoyer l’URL après un certain temps pour éviter les fuites mémoire
+          setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+  
+          resolve();
+        } catch (err) {
+          console.error('Erreur lors de l’ouverture du PDF :', err);
+          reject(err);
+        }
+      }, error => {
+        console.error('Erreur lors du téléchargement du PDF :', error);
+        reject(error);
+      });
     });
   }
+  
+
  
 }

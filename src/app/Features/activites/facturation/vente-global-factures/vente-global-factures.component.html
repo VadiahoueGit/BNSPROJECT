@@ -17,12 +17,12 @@
     <ng-template pTemplate="header">
       <tr>
         <th style="color: var(--secondary-color)">Référence</th>
-        <th style="color: var(--secondary-color)">Numéro livraison</th>
+        <!-- <th style="color: var(--secondary-color)">Numéro livraison</th> -->
         <th style="color: var(--secondary-color)">Date facture</th>
         <!-- <th style="color: var(--secondary-color)">Facture</th> -->
         <th style="color: var(--secondary-color)">Montant total</th>
-        <th style="color: var(--secondary-color)">statut</th>
-        <th style="color: var(--secondary-color)">Est payé?</th>
+        <!-- <th style="color: var(--secondary-color)">statut</th> -->
+        <th style="color: var(--secondary-color)">Est validé?</th>
         <th style="color: var(--secondary-color)">Actions</th>
       </tr>
     </ng-template>
@@ -31,9 +31,9 @@
         <td>
           {{ dataList.reference }}
         </td>
-        <td>
+        <!-- <td>
           {{ dataList.livraison.numeroLivraison }}
-        </td>
+        </td> -->
         <td>
           {{ dataList.dateFacture | date }}
         </td>
@@ -43,11 +43,11 @@
             {{ dataList.montantTotal }}
           </span>
         </td>
-        <td>
+        <!-- <td>
           <span class="ml-1 vertical-align-middle">
             {{ dataList.livraison.statut }}
           </span>
-        </td>
+        </td> -->
         <td>
           <span class="ml-1 vertical-align-middle">
             {{ dataList.estValidee ? "Oui" : "Non" }}
@@ -149,6 +149,49 @@
                 <span>{{ updateData.dateFacture | date }}</span>
               </div>
             </div>
+
+            <div *ngIf="updateData?.vente.articles.length>0">
+
+              <legend class="fs-6 text-primary mt-3">Articles</legend>
+              <div
+                class="table-responsive"
+                style="max-height: 300px; overflow-y: auto"
+              >
+                <table class="table">
+                  <thead>
+                    <tr style="font-size: small">
+                      <th scope="col">Produits</th>
+                      <th scope="col">Qte liquide</th>
+                      <th scope="col">Prix liquide</th>
+                      <th scope="col">Prix emballage</th>
+                      <th scope="col">Prix total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      style="font-size: small"
+                      *ngFor="let item of updateData?.vente.articles; let i = index"
+                    >
+                      <td>{{ item.liquide.libelle }}</td>
+                      <td>{{ item.quantite }}</td>
+  
+                      <td>{{  item.prixUnitaireLiquide}}</td>
+                      <td>{{ item.prixUnitaireEmballage}}</td>
+                      <td>{{ item.prixTotal}}</td>
+  
+                    </tr>
+                    <tr class="table-dark" *ngIf="updateData?.vente.articles.length > 0">
+                      <th scope="col" colspan="1">Total :</th>
+                      <td>{{ totalQte }}</td>
+                      <td>{{ totalLiquide }}</td>
+                      <td>{{ totalEmballage }}</td>
+                      <td>{{ totalGlobal }}</td>
+                    </tr>
+                    <!-- Ajoutez d'autres lignes si nécessaire -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </fieldset>
 
           <fieldset class="row border my-2" *ngIf="updateData?.livraison !== null">
@@ -193,6 +236,49 @@
                 >
               </div>
             </div>
+            <div *ngIf="updateData?.livraison.articles.length>0">
+
+              <legend class="fs-6 mt-3 text-primary">Articles</legend>
+              <div
+                class="table-responsive"
+                style="max-height: 300px; overflow-y: auto"
+              >
+                <table class="table">
+                  <thead>
+                    <tr style="font-size: small">
+                      <th scope="col">Produits</th>
+                      <th scope="col">Qte liquide</th>
+                      <th scope="col">Prix liquide</th>
+                      <th scope="col">Prix emballage</th>
+                      <th scope="col">Prix total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      style="font-size: small"
+                      *ngFor="let item of updateData?.livraison.articles; let i = index"
+                    >
+                      <td>{{ item.liquide.libelle }}</td>
+                      <td>{{ item.quantite }}</td>
+  
+                      <td>{{  item.prixUnitaireLiquide}}</td>
+                      <td>{{ item.prixUnitaireEmballage}}</td>
+                      <td>{{ item.prixTotal}}</td>
+  
+                    </tr>
+                    <tr class="table-dark" *ngIf="updateData?.livraison.articles.length > 0">
+                      <th scope="col" colspan="1">Total :</th>
+                      <td>{{ totalQte }}</td>
+                      <td>{{ totalLiquide }}</td>
+                      <td>{{ totalEmballage }}</td>
+                      <td>{{ totalGlobal }}</td>
+                    </tr>
+                    <!-- Ajoutez d'autres lignes si nécessaire -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+         
           </fieldset>
         </div>
       </div>
