@@ -134,6 +134,7 @@ export class SaisieCommandeGratuiteComponent {
     this.filteredArticleList = [];
     this.isModalOpen = false;
     this.selectedArticles = [];
+    (this.CommandeForm.get('articles') as FormArray).clear();
     console.log(this.isModalOpen);
   }
   OnCreate() {

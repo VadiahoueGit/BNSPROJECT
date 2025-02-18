@@ -317,10 +317,20 @@
                           <label class="ml-0">
                             Montant : {{ item.montantTotal | currency :'XOF' }}
                           </label>
+                          <label class="ml-0 text-success">
+                           {{ item.statutCommande }}
+                          </label>
                         </div>
-                        <label class="fw-light ">
-                          {{item.type}} - {{item.numCommande}}
-                        </label>
+
+                        <div class="d-flex flex-column">
+                          <label class="fw-light ">
+                            {{item.type}} - {{item.numCommande}}
+                          </label>
+                          <label class="ml-0">
+                            À livrer le :
+                          </label>
+                        </div>
+
                       </div>
                     </button>
                   </h2>

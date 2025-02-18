@@ -142,6 +142,9 @@
           <!-- REFERENCES -->
           <fieldset class="border p-3 mb-3">
             <legend class="float-none w-auto px-2">Références</legend>
+            <div class="row" *ngIf="isEditMode">
+              <label>Numero SAP : {{numeroSap}}</label>
+            </div>
             <div class="row">
               <div class="col-md-6 mt-3">
                 <label for="groupeClientId" class="form-label"
@@ -311,16 +314,16 @@
                   placeholder="Entrez le téléphone"
                 />
               </div>
-              <div class="col-md-6 mt-3">
-                <label for="contact" class="form-label">Tel du propriétaire</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="contact"
-                  formControlName="contact"
-                  placeholder="Entrez le contact"
-                />
-              </div>
+<!--              <div class="col-md-6 mt-3">-->
+<!--                <label for="contact" class="form-label">Tel du propriétaire</label>-->
+<!--                <input-->
+<!--                  type="text"-->
+<!--                  class="form-control"-->
+<!--                  id="contact"-->
+<!--                  formControlName="contact"-->
+<!--                  placeholder="Entrez le contact"-->
+<!--                />-->
+<!--              </div>-->
               <div class="col-md-6 mt-3">
                 <label for="nomGerant" class="form-label">Nom du gérant</label>
                 <input
@@ -361,18 +364,6 @@
                 />
               </div>
               <div class="col-md-6">
-                <label for="compteContribuable" class="form-label"
-                  >N° Compte contribuable</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="compteContribuable"
-                  formControlName="numeroCompteContribuable"
-                  placeholder="Entrez le numéro"
-                />
-              </div>
-              <div class="col-md-6 mt-3">
                 <label for="familleProduit" class="form-label"
                   >Famille de produit (Produit favoris)</label
                 >
