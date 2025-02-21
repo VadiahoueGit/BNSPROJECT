@@ -158,7 +158,6 @@ export class ClientosrComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
-    this.GetClientOSRList(this.currentPage);
   }
 
   onSubmit(): void {

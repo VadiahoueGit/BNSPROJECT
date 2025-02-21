@@ -77,6 +77,10 @@ export class VentechinepageComponent {
   }
 
   OnCloseModal() {
+    this.totalEmballage = 0;
+    this.totalLiquide  = 0;
+    this.totalGlobal = 0;
+    this.totalQte = 0;
     this.isModalOpen = false;
     this.selectedArticles = [];
     console.log(this.isModalOpen);
@@ -234,8 +238,8 @@ export class VentechinepageComponent {
     this.rowsPerPage = event.rows;
     // this.GetArticleList(this.currentPage);
   }
- 
- 
+
+
   GetArticleList(page: number) {
     let data = {
       paginate: false,
