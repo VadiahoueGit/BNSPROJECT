@@ -74,10 +74,8 @@
                   <input type="text" placeholder="Recherche" class="form-control w-70" formControlName="searchQuery"
                          (input)="filterData()"/>
                 </form>
-                <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
                   <table class="table">
-                    <thead>
-                    </thead>
                     <tbody>
                     <tr *ngFor="let item of filteredPointDeVente; let i = index" style="font-size: small;">
                       <td><input type="checkbox" [name]="'checkbox_' + i" [(ngModel)]="item.isChecked"
@@ -91,8 +89,7 @@
             </div>
           </div>
         </div>
-        <div class="row">
-          <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+          <div class="table-responsive" style="max-height: 220px; overflow-y: auto;">
             <table class="table">
               <thead>
               <tr style="font-size: small;">
@@ -116,7 +113,6 @@
               </tbody>
             </table>
           </div>
-        </div>
       </div>
 
 

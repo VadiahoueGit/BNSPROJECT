@@ -53,7 +53,7 @@ export class RevendeurComponent {
       groupeClientId: [null, Validators.required],
       numeroRegistre: [null, Validators.required],
       raisonSocial: [null, Validators.required],
-      contact: [null, Validators.required],
+      contact: [0, Validators.required],
       longitude: [null, Validators.required],
       latitude: [null, Validators.required],
       telephone: [null, [Validators.required]],
@@ -142,24 +142,34 @@ export class RevendeurComponent {
       numeroCompteContribuable: this.updateData.numeroCompteContribuable,
       familleProduitId: this.updateData.familleProduitId,
     });
+    if (this.updateData.numeroSAP != "")
+    {
+      this.numeroSap = this.updateData.numeroSAP;
+    }
   }
 
   OnValidate(data: any) {
-    console.log(data, 'client Osr details');
-    this.isModalDetail = true;
-    this.RevendeurDetail = data;
+    if(!data.isValide)
+    {
+      console.log(data, 'client Osr details');
+      this.isModalDetail = true;
+      this.RevendeurDetail = data;
 
-    if (this.docUrl && data?.photo) {
-      this.imageUrl = `${this.docUrl.replace(/\/$/, '')}/${data.photo.replace(
-        /^\//,
-        ''
-      )}`;
-    } else {
-      console.log('docUrl ou data.photo est null ou undefined.');
-      this.imageUrl = '';
+      if (this.docUrl && data?.photo) {
+        this.imageUrl = `${this.docUrl.replace(/\/$/, '')}/${data.photo.replace(
+          /^\//,
+          ''
+        )}`;
+      } else {
+        console.log('docUrl ou data.photo est null ou undefined.');
+        this.imageUrl = '';
+      }
+
+      console.log(this.imageUrl, 'imageUrl');
+    }else{
+      this.toastr.warning('Ce revendeur a déja été validé');
     }
 
-    console.log(this.imageUrl, 'imageUrl');
   }
 
   OnCloseDetailModal() {
@@ -248,6 +258,7 @@ export class RevendeurComponent {
   // }
   OnCloseModal() {
     this.isModalOpen = false;
+    this.revendeurForm.reset();
   }
   onDepotChange(event: any): void {
     const depotId = event?.id;

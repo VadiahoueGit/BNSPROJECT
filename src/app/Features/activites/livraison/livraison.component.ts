@@ -161,7 +161,7 @@ export class LivraisonComponent {
     // Mettre à jour `regroupementTable`
     Object.keys(articlesParFormat).forEach((format) => {
       let totalCasiersToRemove = articlesParFormat[format];
-
+      console.log('totalCasiersToRemove',totalCasiersToRemove)
       // On va modifier **chaque entrée** où ce format est présent
       this.regroupementTable = this.regroupementTable.map(regroupement => {
         if (regroupement[format]) {
@@ -174,6 +174,7 @@ export class LivraisonComponent {
           casiersRestants -= casiersÀRetirer;
           totalCasiersToRemove -= casiersÀRetirer;
           this.cargaison -= casiersÀRetirer;
+          console.log('cargaison',casiersÀRetirer)
           // **2️⃣ Si on doit encore retirer, on enlève des palettes**
           while (totalCasiersToRemove > 0 && palettesRestantes > 0) {
             palettesRestantes -= 1;
@@ -239,7 +240,7 @@ export class LivraisonComponent {
 
       const palettes = Math.floor(totalCasiers / casiers);
       const casier = totalCasiers % casiers;
-      this.cargaison += casier;
+      this.cargaison += totalCasiers;
       result[format] = {palettes, casier, type};
       return result;
     }, {});
@@ -338,9 +339,14 @@ export class LivraisonComponent {
   }
 
   OnCloseModal() {
+    this.cargaison = 0
+    this.truckCapacity = 0;
     this.isModalOpen = false;
     this.regroupementTable = [];
-    // this.deselectAllItems()
+    Object.keys(this.regroupementFinal).forEach(key => delete this.regroupementFinal[key]);
+
+    console.log('regroupementFinal', this.regroupementFinal);
+    this.onCheckboxClear()
     console.log(this.isModalOpen);
   }
 
@@ -486,6 +492,11 @@ export class LivraisonComponent {
     console.log(this.totalGlobal), "totalGlobal";
   }
 
+  onCheckboxClear(): void {
+    this.filteredList.forEach((item: any) => {
+      item.isChecked = false;
+    });
+  }
   onCheckboxChange(commande: any): void {
     if (commande.isChecked) {
       this.calculate(commande);
@@ -549,7 +560,7 @@ export class LivraisonComponent {
   }
 
   deselectAllItems(): void {
-    this.selectedArticles.forEach((item: any) => {
+    this.filteredList.forEach((item: any) => {
       this.onCheckboxChange(item);
       item.isChecked = false;
 

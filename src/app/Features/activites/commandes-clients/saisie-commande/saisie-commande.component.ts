@@ -166,6 +166,7 @@ export class SaisieCommandeComponent {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
     this.filteredArticleList = [];
+    (this.commandClientForm.get('articles') as FormArray).clear();
     // this.articles = []
     this.selectedArticles = [];
     this.totalQte=0
