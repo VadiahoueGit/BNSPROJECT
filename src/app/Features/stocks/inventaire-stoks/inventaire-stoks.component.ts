@@ -113,7 +113,7 @@ export class InventaireStoksComponent {
   toggleAllSelection(event: any): void {
     this.isAllSelected = event.target.checked; // Met à jour l'état global
     this.selectedArticles = []; // Réinitialise la liste des articles sélectionnés
-  
+
     this.filteredArticleList.forEach(article => {
       article.isChecked = this.isAllSelected; // Applique l'état à tous les articles
       if (this.isAllSelected) {
@@ -121,7 +121,7 @@ export class InventaireStoksComponent {
       }
       this.GetStockDisponibleByDepot(article)
     });
-  
+
     this.afficherArticlesSelectionnes();
   }
   OnEdit(data: any) {
@@ -272,8 +272,9 @@ export class InventaireStoksComponent {
         if (response.statusCode === 201) {
           this.InventaireForm.reset();
           this.deselectAllItems()
-          this.InventaireForm.controls['dateEnregistrement'].setValue(this.now)
+          // this.InventaireForm.controls['dateEnregistrement'].setValue(this.now)
           this.toastr.success(response.message);
+          this.GetInventaireList(1);
         } else {
           this.toastr.error(response.message);
         }
@@ -329,7 +330,7 @@ export class InventaireStoksComponent {
   }
 
   calculateData(stockTheorique: number, stockPhysique: number) {
-    const ecart = stockPhysique - stockTheorique ;
+    const ecart = stockPhysique - stockTheorique;
     console.log(ecart, stockTheorique)
     const ecartPercent = stockTheorique > 0 ? (ecart / stockTheorique) * 100 : 100;
     console.log(ecart, ecartPercent)
@@ -346,8 +347,8 @@ export class InventaireStoksComponent {
     articlesData.forEach((item: any) => {
       const articleGroup = this.fb.group({
         productCode: [item.code, Validators.required],
-        stockstheorique: [item.stockTheorique, Validators.required],
-        stockphysique: [item.quantite, [Validators.required, Validators.min(1)]],
+        stockTheorique: [item.stockTheorique, Validators.required],
+        stockPhysique: [item.quantite, [Validators.required, Validators.min(1)]],
         ecart: [item.ecart, Validators.required],
         pourcentageEcart: [item.ecartPercent, Validators.required],
         description: item.libelle
@@ -392,7 +393,7 @@ export class InventaireStoksComponent {
     };
     this._spinner.show();
     this._coreService.GetDepotList(data).then((res: any) => {
-      console.log('DATATYPEPRIX:::>', res);
+      console.log('GetDepotList:::>', res);
       this.depotList = res.data;
       this._spinner.hide();
     });
