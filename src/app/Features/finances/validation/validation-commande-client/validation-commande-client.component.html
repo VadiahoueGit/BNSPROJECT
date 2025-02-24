@@ -315,7 +315,7 @@
             <div class="row">
               <div class="col-md-4">
                 <strong>Groupe de client :</strong>
-                <span>{{ updateData.client.groupeClient.nomGroupe }}</span>
+                <span>{{ updateData.client?.groupeClient?.nomGroupe || updateData.client?.GroupeClient?.nomGroupe }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Type de client :</strong>

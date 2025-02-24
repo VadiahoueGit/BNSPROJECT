@@ -20,11 +20,19 @@
         <th style="color: var(--secondary-color)">Numéro de commande</th>
         <th style="color: var(--secondary-color)">Raison sociale</th>
         <th style="color: var(--secondary-color)">Remise</th>
-        <th style="color: var(--secondary-color)">Solde liquide</th>
-        <th style="color: var(--secondary-color)">Solde emballage</th>
+<!--        <th style="color: var(&#45;&#45;secondary-color)">Solde liquide</th>-->
+<!--        <th style="color: var(&#45;&#45;secondary-color)">Solde emballage</th>-->
         <th style="color: var(--secondary-color)">Entrepôt</th>
         <th style="color: var(--secondary-color)">Action(s)</th>
-
+      </tr>
+      <tr>
+        <th></th>
+        <th>
+          <p-columnFilter matchMode="contains"  type="text" field="NumCommande" placeholder="" />
+        </th>
+        <th>
+          <p-columnFilter matchMode="contains"  type="text" field="raisonSociale" placeholder="" />
+        </th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList>
@@ -47,16 +55,16 @@
             {{ dataList.remise }}
           </span>
         </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.soldeLiquide }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.soldeEmballage }}
-          </span>
-        </td>
+<!--        <td>-->
+<!--          <span class="ml-1 vertical-align-middle">-->
+<!--            {{ dataList.soldeLiquide }}-->
+<!--          </span>-->
+<!--        </td>-->
+<!--        <td>-->
+<!--          <span class="ml-1 vertical-align-middle">-->
+<!--            {{ dataList.soldeEmballage }}-->
+<!--          </span>-->
+<!--        </td>-->
         <td>
           <span class="ml-1 vertical-align-middle">
             {{ dataList.client.depot.nomDepot }}
@@ -321,7 +329,7 @@
           <div class="row">
             <div class="col-md-4">
               <strong>Groupe de client :</strong>
-              <span>{{ updateData.client.groupeClient.nomGroupe }}</span>
+              <span>{{ updateData.client?.groupeClient?.nomGroupe || updateData.client?.GroupeClient?.nomGroupe }}</span>
             </div>
             <div class="col-md-4">
               <strong>Type de client :</strong>
@@ -362,6 +370,14 @@
             <div class="col-md-4 mb-4">
               <strong>Numero SAP :</strong>
               <span>{{ updateData.client.numeroSAP }}</span>
+            </div>
+            <div class="col-md-4 mb-4">
+              <strong>Solde liquide :</strong>
+              <span>{{ updateData.soldeLiquide | currency:'XOF' }}</span>
+            </div>
+            <div class="col-md-4 mb-4">
+              <strong>Solde Emballage :</strong>
+              <span>{{ updateData.soldeEmballage | currency:'XOF' }}</span>
             </div>
           </div>
         </fieldset>

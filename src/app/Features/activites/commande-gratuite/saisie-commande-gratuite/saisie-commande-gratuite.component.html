@@ -19,10 +19,18 @@
       <tr>
         <th style="color: var(--secondary-color)">N° commande</th>
         <th style="color: var(--secondary-color)">Raison sociale</th>
-<!--        <th style="color: var(&#45;&#45;secondary-color)">Depôt</th>-->
+        <th style="color: var(--secondary-color)">Depôt</th>
         <th style="color: var(--secondary-color)">Quantité</th>
         <th style="color: var(--secondary-color)">Montant</th>
         <th style="color: var(--secondary-color)">Actions</th>
+      </tr>
+      <tr>
+        <th>
+          <p-columnFilter matchMode="contains"  type="text" field="NumCommande" placeholder="" />
+        </th>
+        <th>
+          <p-columnFilter matchMode="contains"  type="text" field="raisonSociale" placeholder="" />
+        </th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-ListCommandeGratuites let-i="index">
@@ -34,9 +42,9 @@
         <td>
           {{ ListCommandeGratuites.client.raisonSocial }}
         </td>
-<!--        <td>-->
-<!--          {{ ListCommandeGratuites.revendeur.depot.nomDepot }}-->
-<!--        </td>-->
+        <td>
+          {{ ListCommandeGratuites.client.depot.nomDepot }}
+        </td>
 
         <td>
           <span class="ml-1 vertical-align-middle">
@@ -150,7 +158,7 @@
           <div class="row">
             <div class="col-md-4">
               <strong>Groupe de client :</strong>
-              <span>{{updateData.client.groupeClient.nomGroupe}}</span>
+              <span>{{updateData.client?.groupeClient?.nomGroupe || updateData.client?.GroupeClient?.nomGroupe}}</span>
             </div>
             <div class="col-md-4">
               <strong>Type de client :</strong>
