@@ -3,10 +3,14 @@
   <h4 class="fw-bold mb-0">Clients OSR</h4>
 </div>
 <div class="card">
-  <div class=" d-flex justify-content-end py-3">
+  <div class=" d-flex justify-content-between py-3">
+    <div>
+      <span style="font-size:13px;">Nombre: </span>
+      <span style="font-size:13px;" class="fw-bold text-secondary">{{ filteredCount }}</span>
+    </div>
     <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer un client OSR</button>
   </div>
-  <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+  <p-table #dt [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8" (onFilter)="updateFilteredCount(dt)"
            [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
 
     <ng-template pTemplate="header">
@@ -21,16 +25,18 @@
     <ng-template pTemplate="header">
       <tr>
         <th style="color: var(--secondary-color);">Etablissements</th>
+        <th style="color: var(--secondary-color);">Dépots</th>
         <th style="color: var(--secondary-color);">Zone</th>
         <th style="color: var(--secondary-color);">Statut</th>
-        <th style="color: var(--secondary-color);">Contact Gerant</th>
         <th style="color: var(--secondary-color);">Action</th>
       </tr>
       <tr>
         <th>
           <p-columnFilter matchMode="contains"  type="text" field="nomEtablissement" placeholder="" />
         </th>
-
+        <th>
+          <p-columnFilter matchMode="contains"  type="text" field="depot.nomDepot" placeholder="" />
+        </th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList>
@@ -43,17 +49,17 @@
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
+            {{ dataList.depot.nomDepot }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
             {{ dataList.zoneDeLivraison.nomZone }}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
             {{ dataList.isValide ? 'Validé' : ' En attente' }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.contactGerant }}
           </span>
         </td>
         <td>

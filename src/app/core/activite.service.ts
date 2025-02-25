@@ -403,24 +403,24 @@ export class ActiviteService {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
-  
-      this._http.get(`${this.apiUrl}/v1/ventes_global/factures/${id}/telecharger`, { 
+
+      this._http.get(`${this.apiUrl}/v1/ventes_global/factures/${id}/telecharger`, {
         headers,
-        responseType: 'blob' 
+        responseType: 'blob'
       }).subscribe(response => {
         try {
           const blob = new Blob([response], { type: 'application/pdf' });
           const url = window.URL.createObjectURL(blob);
-          
+
           // Ouvrir le PDF dans une nouvelle fenêtre
           const newTab = window.open(url);
           if (!newTab) {
             throw new Error('Le popup a été bloqué par le navigateur.');
           }
-  
+
           // Nettoyer l’URL après un certain temps pour éviter les fuites mémoire
           setTimeout(() => window.URL.revokeObjectURL(url), 10000);
-  
+
           resolve();
         } catch (err) {
           console.error('Erreur lors de l’ouverture du PDF :', err);
@@ -432,7 +432,30 @@ export class ActiviteService {
       });
     });
   }
-  
 
- 
+  //GESTION DES RETOURS
+
+  GetRetourList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/retours?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+
 }

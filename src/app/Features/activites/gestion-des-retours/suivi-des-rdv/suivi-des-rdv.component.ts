@@ -4,6 +4,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
+import {ActiviteService} from "../../../../core/activite.service";
+import {MotifRetour} from "../../../../utils/utils";
 
 @Component({
   selector: 'app-suivi-des-rdv',
@@ -22,67 +24,20 @@ export class SuiviDesRDVComponent {
   updateData: any = {};
   articleId: any = 0;
   isEditMode: boolean = false;
-  dataListFormats: any = [];
-  dataListConditionnements: any = [];
-  dataListProduits: any= [];
-  dataListGroupeArticles: any =[];
-  dataListBouteilleVide: any=[];
-  dataListPlastiqueNu: any=[];
-  dataListLiquides: any=[];
-  dataListArticlesProduits: any=[];
   currentPage: number;
   rowsPerPage: any;
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
+    private activiteService:ActiviteService,
     private toastr: ToastrService
   ) {}
 
   ngOnInit() {
-    this.ArticleForm = this.fb.group({
-      photo: [null, Validators.required],
-      libelle: [null, Validators.required],
-      format: [null, Validators.required],
-      Conditionnement: [null, Validators.required],
-      categorieId: [0, Validators.required],
-      groupeId: [0, Validators.required],
-      plastiquenuId: [0, Validators.required],
-      bouteillevideId: [0, Validators.required],
-      liquideId: [0, Validators.required],
-    });
-    this.articleService.ListPlastiquesNu.subscribe((res: any) => {
-      this.dataListPlastiqueNu = res;
-    });
-    this.articleService.ListLiquides.subscribe((res: any) => {
-      this.dataListLiquides = res;
-    });
-    this.articleService.ListBouteilleVide.subscribe((res: any) => {
-      this.dataListBouteilleVide = res;
-    });
-    // this.articleService.ListArticles.subscribe((res: any) => {
-    //   this.dataList = res;
-    //   console.log('dataList:::>', this.dataList);
-    // });
-    this.articleService.GetFormatList().then((res: any) => {
-      this.dataListFormats = res;
-      console.log('dataListFormats:::>', this.dataListFormats);
-    });
-
-    this.articleService.GetConditionnementList().then((res: any) => {
-      this.dataListConditionnements = res;
-      console.log('dataListConditionnements:::>', this.dataListConditionnements);
-    });
-    this.articleService.ListTypeArticles.subscribe((res: any) => {
-      this.dataListProduits = res;
-      console.log(this.dataListProduits, 'this.dataListProduits ');
-    });
-    this.articleService.ListGroupesArticles.subscribe((res: any) => {
-      this.dataListGroupeArticles = res;
-    });
-    this.GetArticleList(1);
+    this.GetRetourList(1)
   }
-  
+
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -114,16 +69,16 @@ export class SuiviDesRDVComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetArticleList(page:number) {
+  GetRetourList(page:number) {
     let data = {
       paginate: false,
       page:page,
       limit: 8,
     };
     this._spinner.show();
-    this.articleService.GetArticleList(data).then((res: any) => {
-      console.log('DATATYPEPRIX:::>', res);
-      this.dataList = res.data;
+    this.activiteService.GetRetourList(data).then((res: any) => {
+      console.log('RDV:::>', res);
+      this.dataList = res.data.filter((item:any) => item.returnType === MotifRetour.APPOINTMENT);
       this._spinner.hide();
     });
   }
@@ -148,7 +103,6 @@ export class SuiviDesRDVComponent {
             this.toastr.success(response.message);
 
             this.OnCloseModal();
-            this.GetArticleList(1);
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -159,7 +113,6 @@ export class SuiviDesRDVComponent {
         this.articleService.CreateArticle(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetArticleList(1);
             this.ArticleForm.reset();
             this.toastr.success(response.message);
 
@@ -189,7 +142,7 @@ export class SuiviDesRDVComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
-    this.GetArticleList(this.currentPage);
+    // this.ger(this.currentPage);
   }
   OnAffect(data:any){
 

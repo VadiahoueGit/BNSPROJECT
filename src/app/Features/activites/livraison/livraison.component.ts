@@ -317,7 +317,7 @@ export class LivraisonComponent {
     // Unifier les deux objets dans un seul tableau
     this.ListCommande = [...commandeClient.data, ...commandeGratuite.data];
     console.log('ListCommande', this.ListCommande);
-    this.filteredList = this.ListCommande.filter((commande: any) => commande.statut === StatutCommande.NON_APPROUVEE);
+    this.filteredList = this.ListCommande.filter((commande: any) => commande.statut === StatutCommande.NON_REGROUPE);
     console.log('filteredList', this.filteredList);
 
     this._spinner.hide();

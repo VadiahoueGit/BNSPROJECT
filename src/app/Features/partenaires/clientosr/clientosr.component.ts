@@ -23,6 +23,7 @@ export class ClientosrComponent {
   operation: string = '';
   updateData: any = {};
   id: any = 0;
+  filteredCount: number = 0;
   isEditMode: boolean = false;
   zoneLivraison!: any[];
   grpClient!: any[];
@@ -153,6 +154,11 @@ export class ClientosrComponent {
     this.loadClientDetails();
     this.operation = 'edit';
     console.log(this.isModalOpen);
+  }
+
+
+  updateFilteredCount(table: any) {
+    this.filteredCount = table.filteredValue ? table.filteredValue.length : this.dataList.length;
   }
 
   onPage(event: any) {

@@ -18,7 +18,7 @@
     <ng-template pTemplate="header">
       <tr>
         <th style="color: var(--secondary-color)">N° commande</th>
-        <th style="color: var(--secondary-color)">Raison sociale</th>
+        <th style="color: var(--secondary-color)">Etablissement</th>
         <th style="color: var(--secondary-color)">Depôt</th>
         <th style="color: var(--secondary-color)">Quantité</th>
         <th style="color: var(--secondary-color)">Montant</th>
@@ -40,7 +40,7 @@
         </td>
 
         <td>
-          {{ ListCommandeGratuites.client.raisonSocial }}
+          {{ ListCommandeGratuites.client.nomEtablissement ? ListCommandeGratuites.client.nomEtablissement : ListCommandeGratuites.client.raisonSocial}}
         </td>
         <td>
           {{ ListCommandeGratuites.client.depot.nomDepot }}
