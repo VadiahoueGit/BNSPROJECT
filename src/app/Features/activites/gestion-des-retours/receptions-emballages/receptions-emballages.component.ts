@@ -4,6 +4,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
+import {MotifRetour} from "../../../../utils/utils";
+import {ActiviteService} from "../../../../core/activite.service";
 
 @Component({
   selector: 'app-receptions-emballages',
@@ -22,67 +24,21 @@ export class ReceptionsEmballagesComponent {
   updateData: any = {};
   articleId: any = 0;
   isEditMode: boolean = false;
-  dataListFormats: any = [];
-  dataListConditionnements: any = [];
-  dataListProduits: any= [];
-  dataListGroupeArticles: any =[];
-  dataListBouteilleVide: any=[];
-  dataListPlastiqueNu: any=[];
-  dataListLiquides: any=[];
-  dataListArticlesProduits: any=[];
   currentPage: number;
   rowsPerPage: any;
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
+    private activiteService:ActiviteService,
     private fb: FormBuilder,
     private toastr: ToastrService
   ) {}
 
   ngOnInit() {
-    this.ArticleForm = this.fb.group({
-      photo: [null, Validators.required],
-      libelle: [null, Validators.required],
-      format: [null, Validators.required],
-      Conditionnement: [null, Validators.required],
-      categorieId: [0, Validators.required],
-      groupeId: [0, Validators.required],
-      plastiquenuId: [0, Validators.required],
-      bouteillevideId: [0, Validators.required],
-      liquideId: [0, Validators.required],
-    });
-    this.articleService.ListPlastiquesNu.subscribe((res: any) => {
-      this.dataListPlastiqueNu = res;
-    });
-    this.articleService.ListLiquides.subscribe((res: any) => {
-      this.dataListLiquides = res;
-    });
-    this.articleService.ListBouteilleVide.subscribe((res: any) => {
-      this.dataListBouteilleVide = res;
-    });
-    // this.articleService.ListArticles.subscribe((res: any) => {
-    //   this.dataList = res;
-    //   console.log('dataList:::>', this.dataList);
-    // });
-    this.articleService.GetFormatList().then((res: any) => {
-      this.dataListFormats = res;
-      console.log('dataListFormats:::>', this.dataListFormats);
-    });
 
-    this.articleService.GetConditionnementList().then((res: any) => {
-      this.dataListConditionnements = res;
-      console.log('dataListConditionnements:::>', this.dataListConditionnements);
-    });
-    this.articleService.ListTypeArticles.subscribe((res: any) => {
-      this.dataListProduits = res;
-      console.log(this.dataListProduits, 'this.dataListProduits ');
-    });
-    this.articleService.ListGroupesArticles.subscribe((res: any) => {
-      this.dataListGroupeArticles = res;
-    });
-    this.GetArticleList(1);
+    this.GetRetourList(1);
   }
-  
+
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -110,19 +66,18 @@ export class ReceptionsEmballagesComponent {
     this.updateData = data;
     this.articleId = data.id;
     this.isModalOpen = true;
-    this.loadArticleDetails();
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetArticleList(page:number) {
+  GetRetourList(page:number) {
     let data = {
       paginate: false,
       page:page,
       limit: 8,
     };
     this._spinner.show();
-    this.articleService.GetArticleList(data).then((res: any) => {
-      console.log('DATATYPEPRIX:::>', res);
+    this.activiteService.GetRetourList(data).then((res: any) => {
+      console.log('ALL:::>', res);
       this.dataList = res.data;
       this._spinner.hide();
     });
@@ -148,7 +103,6 @@ export class ReceptionsEmballagesComponent {
             this.toastr.success(response.message);
 
             this.OnCloseModal();
-            this.GetArticleList(1);
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -159,7 +113,6 @@ export class ReceptionsEmballagesComponent {
         this.articleService.CreateArticle(formValues).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetArticleList(1);
             this.ArticleForm.reset();
             this.toastr.success(response.message);
 
@@ -173,23 +126,10 @@ export class ReceptionsEmballagesComponent {
       }
     }
   }
-  loadArticleDetails(): void {
-    this.ArticleForm.patchValue({
-      photo: this.updateData.photo??"",
-      libelle: this.updateData.libelle,
-      format: this.updateData.format,
-      Conditionnement: this.updateData.Conditionnement,
-      categorieId: this.updateData.categorieproduit.id,
-      groupeId: this.updateData.groupearticle.id,
-      plastiquenuId: this.updateData.plastiquenu.id,
-      bouteillevideId: this.updateData.bouteillevide.id,
-      liquideId: 1,
-    });
-  }
+
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
-    this.GetArticleList(this.currentPage);
   }
 
 }

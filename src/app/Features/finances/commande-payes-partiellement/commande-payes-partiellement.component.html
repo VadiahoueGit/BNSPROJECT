@@ -1,70 +1,72 @@
 <div class="card">
-    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
-        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
-
-        <ng-template pTemplate="header">
-            <tr>
-                <th style="color: var(--secondary-color);">Réf client</th>
-                <th style="color: var(--secondary-color);">Raison sociale</th>
-                <th style="color: var(--secondary-color);">Entrepôt</th>
-                <th style="color: var(--secondary-color);">N° Commande</th>
-                <th style="color: var(--secondary-color);">Montant(FCFA)</th>
-                <th style="color: var(--secondary-color);">Date</th>
-                <th style="color: var(--secondary-color);">Statut</th>
-                <th style="color: var(--secondary-color);">Localité à livrer</th>
-                <th style="color: var(--secondary-color);">Actions</th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-dataList>
-            <tr>
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.image }}
-                    </span>
-                </td>
-                <td>
-                    {{ dataList.libelle }}
-                </td>
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.format }}
-                    </span>
-                </td>
-                <td>
-                    {{ dataList.categorieproduit.libelle }}
-                </td>
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.groupearticle.libelle }}
-                    </span>
-                </td>
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.Conditionnement }}
-                    </span>
-                </td>
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.plastiquenu.libelle }}
-                    </span>
-                </td>
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.bouteillevide.libelle }}
-                    </span>
-                </td>
-                <td>
-            <tr class="d-flex justify-content-center gap-3">
-                <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>
-            </tr>
-
-            </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="5">Aucun élément trouvé.</td>
-            </tr>
-        </ng-template>
-    </p-table>
+  <p-table
+    [styleClass]="'p-datatable-sm'"
+    #dt2
+    [value]="dataList"
+    dataKey="id"
+    [rows]="8"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [paginator]="true"
+    (onPage)="onPage($event)"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="color: var(--secondary-color)">Commandes</th>
+        <th style="color: var(--secondary-color)">Client</th>
+        <th style="color: var(--secondary-color)">Montant à verser</th>
+        <th style="color: var(--secondary-color)">Montant versé</th>
+        <th style="color: var(--secondary-color)">Date</th>
+        <th style="color: var(--secondary-color)">Statut</th>
+        <th style="color: var(--secondary-color)">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-dataList>
+      <tr>
+        <td>
+          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
+            {{ dataList.returnStock.orderNum }}
+          </span>
+        </td>
+        <td>
+          <!--          {{ dataList.libelle }}-->
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.montantAPercevoir }}
+          </span>
+        </td>
+        <td>
+          {{ dataList.montantPercu}}
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.createdAt |date}}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.statut }}
+          </span>
+        </td>
+        <td>
+      <tr class="d-flex justify-content-center gap-3">
+        <td>
+          <i
+            (click)="OnEdit(dataList)"
+            style="cursor: pointer"
+            class="fas fa-eye text-secondary"
+          ></i>
+        </td>
+        <!-- <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
+                    class="fas fa-trash-alt text-danger"></i></td> -->
+      </tr>
+      </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">Aucun élément trouvé.</td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>

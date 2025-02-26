@@ -1,24 +1,27 @@
 <div class="card">
- 
+
     <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
         [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
 
         <ng-template pTemplate="header">
             <tr>
-                <th style="color: var(--secondary-color);">N° commandes</th>
-                <th style="color: var(--secondary-color);">Clients</th>
-                <th style="color: var(--secondary-color);">Chauffeurs</th>
+              <th style="color: var(--secondary-color);">Numero de commande</th>
                 <th style="color: var(--secondary-color);">Date Rdv</th>
-                <th style="color: var(--secondary-color);">Immatriculation camion</th>
+                <th style="color: var(--secondary-color);">Client</th>
                 <th style="color: var(--secondary-color);">Statut Rdv</th>
                 <th style="color: var(--secondary-color);">Actions</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-dataList>
             <tr>
+              <td>
+                    <span class="ml-1 vertical-align-middle">
+                         {{ dataList.orderNum | date }}
+                    </span>
+              </td>
                 <td>
                     <span class="ml-1 vertical-align-middle">
-                        <!-- {{ dataList.image }} -->
+                         {{ dataList.appointmentDate | date }}
                     </span>
                 </td>
                 <td>
@@ -31,21 +34,12 @@
                         <!-- {{ dataList.image }} -->
                     </span>
                 </td>
+
                 <td>
-                    <!-- {{ dataList.libelle }} -->
-                </td>
-                <td>
-                    <!-- {{ dataList.libelle }} -->
-                </td>
-                <td>
-                    <!-- {{ dataList.libelle }} -->
-                </td>
-                <td>
-                    <tr class="d-flex justify-content-center gap-3">
+                    <tr class="gap-3">
                         <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>
-                        <td><i (click)="OnAffect(dataList)" style="cursor: pointer;" class="fas fa-plus text-secondary"></i></td>
                     </tr>
-        
+
                     </td>
             </tr>
         </ng-template>

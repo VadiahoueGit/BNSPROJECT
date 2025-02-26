@@ -15,3 +15,10 @@ export enum MotifRetour {
   CONSIGNE = 'CONSIGNE'
 }
 
+export enum Status {
+  ATTENTE = 'En attente',
+  VALIDE = 'Validé',
+}
+
+
+

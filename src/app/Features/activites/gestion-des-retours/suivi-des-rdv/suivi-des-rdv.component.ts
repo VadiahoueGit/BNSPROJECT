@@ -65,7 +65,6 @@ export class SuiviDesRDVComponent {
     this.updateData = data;
     this.articleId = data.id;
     this.isModalOpen = true;
-    this.loadArticleDetails();
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
