@@ -24,28 +24,28 @@
       <tr>
         <td>
           <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-            {{ dataList.returnStock.orderNum }}
+            {{ dataList?.returnStock?.orderNum }}
           </span>
         </td>
         <td>
-          <!--          {{ dataList.libelle }}-->
+          {{ dataList?.client?.raisonSocial }}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.montantAPercevoir }}
+            {{ dataList?.montantAPercevoir }}
           </span>
         </td>
         <td>
-          {{ dataList.montantPercu}}
+          {{ dataList?.montantPercu}}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.createdAt |date}}
+            {{ dataList?.createdAt |date}}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.statut }}
+            {{ dataList?.statut }}
           </span>
         </td>
         <td>
