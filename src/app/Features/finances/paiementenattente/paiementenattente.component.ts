@@ -9,11 +9,11 @@ import { FinanceService } from '../../../core/finance.service';
 import {Status} from "../../../utils/utils";
 
 @Component({
-  selector: 'app-validation-paiements',
-  templateUrl: './validation-paiements.component.html',
-  styleUrls: ['./validation-paiements.component.scss'],
+  selector: 'app-paiementenattente',
+  templateUrl: './paiementenattente.component.html',
+  styleUrls: ['./paiementenattente.component.scss']
 })
-export class ValidationPaiementsComponent {
+export class PaiementenattenteComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
@@ -80,7 +80,8 @@ export class ValidationPaiementsComponent {
     this._spinner.show();
     this.financeService.GetPaiementList(data).then((res: any) => {
       console.log('ALL:::>', res);
-      this.dataList = res.data.filter((item: any) => Number(item.montantPercu) > 0
+      this.dataList = res.data.filter((item: any) =>
+        item.statut === Status.ATTENTE && Number(item.montantPercu) >= 0
       );
       this._spinner.hide();
     });

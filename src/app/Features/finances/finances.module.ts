@@ -111,6 +111,7 @@ import { ValidationVenteChineComponent } from './validation/validation-vente-chi
 import { ValidationCommandeClientComponent } from './validation/validation-commande-client/validation-commande-client.component';
 import { ValidationCommandeGratuiteComponent } from './validation/validation-commande-gratuite/validation-commande-gratuite.component';
 import { ValidationComponent } from './validation/validation/validation.component';
+import {PaiementenattenteComponent} from "./paiementenattente/paiementenattente.component";
 
 
 @NgModule({
@@ -124,7 +125,8 @@ import { ValidationComponent } from './validation/validation/validation.componen
     ValidationVenteChineComponent,
     ValidationCommandeClientComponent,
     ValidationCommandeGratuiteComponent,
-    ValidationComponent
+    ValidationComponent,
+    PaiementenattenteComponent
   ],
   imports: [
     CommonModule,

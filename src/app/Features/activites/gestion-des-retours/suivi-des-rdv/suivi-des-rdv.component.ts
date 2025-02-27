@@ -146,4 +146,6 @@ export class SuiviDesRDVComponent {
   OnAffect(data:any){
 
   }
+
+  protected readonly Number = Number;
 }

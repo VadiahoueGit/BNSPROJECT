@@ -1,0 +1,217 @@
+<div class="card">
+  <div class="d-flex justify-content-end py-3">
+  </div>
+  <p-table
+    [styleClass]="'p-datatable-sm'"
+    #dt2
+    [value]="dataList"
+    dataKey="id"
+    [rows]="8"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [paginator]="true"
+    (onPage)="onPage($event)"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="color: var(--secondary-color)">Commandes</th>
+        <th style="color: var(--secondary-color)">Client</th>
+        <th style="color: var(--secondary-color)">Montant à verser</th>
+        <th style="color: var(--secondary-color)">Montant versé</th>
+        <th style="color: var(--secondary-color)">Date</th>
+        <th style="color: var(--secondary-color)">Statut</th>
+        <th style="color: var(--secondary-color)">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-dataList>
+      <tr>
+        <td>
+          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
+            {{ dataList?.returnStock?.orderNum }}
+          </span>
+        </td>
+        <td>
+          {{ dataList?.client?.raisonSocial }}
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList?.montantAPercevoir }}
+          </span>
+        </td>
+        <td>
+          {{ dataList?.montantPercu}}
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList?.createdAt |date}}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList?.statut }}
+          </span>
+        </td>
+        <td>
+      <tr class="d-flex justify-content-center gap-3">
+        <td>
+          <i
+            (click)="OnEdit(dataList)"
+            style="cursor: pointer"
+            class="fas fa-eye text-secondary"
+          ></i>
+        </td>
+        <!-- <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
+                    class="fas fa-trash-alt text-danger"></i></td> -->
+      </tr>
+      </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">Aucun élément trouvé.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Modal creation -->
+<!-- Modal -->
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex align-items-center">
+        <div
+          class="d-flex justify-content-center align-items-center"
+          style="
+            background-color: rgb(219, 255, 232);
+            border-radius: 3rem;
+            width: 3rem;
+            height: 3rem;
+          "
+        >
+          <i class="fas fa-box-check text-primary fs-3"></i>
+        </div>
+
+        <h1
+          class="modal-title fs-5 ms-3"
+          id="staticBackdropLabel"
+        >
+          Paiement en attente
+        </h1>
+      </div>
+      <div class="modal-body">
+        <fieldset class="row border my-1" *ngIf="operation == 'edit'">
+          <legend style="font-size: 14px" class="text-secondary">
+            Information Client
+          </legend>
+
+          <div class="row">
+            <div class="col-md-4">
+              <strong>Client: </strong>
+              <span>{{ updateData?.client?.raisonSocial }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Localité: </strong>
+              <span>{{ updateData?.client?.localite.nomLocalite }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Dépot: </strong>
+              <span>{{ updateData?.client?.depot.nomDepot }}</span>
+            </div>
+          </div>
+
+
+          <legend style="font-size: 14px" class="text-secondary">
+            Informations commercial
+          </legend>
+          <div class="row">
+            <div class="col-md-4">
+              <strong>Commercial: </strong>
+              <span>{{ updateData?.livreurOuCommercial?.nom }} {{ updateData?.livreurOuCommercial?.prenoms }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Rôle : </strong>
+              <span>{{ updateData?.livreurOuCommercial?.role }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Téléphone : </strong>
+              <span>{{ updateData?.livreurOuCommercial?.telephone }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Capacité : </strong>
+              <span>{{ updateData?.livreurOuCommercial?.capacite }}</span>
+            </div>
+          </div>
+          <legend style="font-size: 14px" class="text-secondary">
+            Autres informations
+          </legend>
+          <div class="row">
+            <div class="col-md-4">
+              <strong>Statut: </strong>
+              <span>{{ updateData?.statut}}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Motif : </strong>
+              <span>{{ updateData?.motif }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Montant à percevoir : </strong>
+              <span>{{ updateData?.montantAPercevoir}}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Montant perçu : </strong>
+              <span>{{ updateData?.montantPercu }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Type retour : </strong>
+              <span>{{ updateData?.returnStock?.returnType }}</span>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset class="row border my-2">
+          <legend class="fs-6 text-primary">Articles</legend>
+          <div
+            class="table-responsive"
+            style="max-height: 300px; overflow-y: auto"
+          >
+            <table class="table">
+              <thead>
+              <tr style="font-size: small">
+                <th scope="col">Code</th>
+                <th scope="col">Type article</th>
+                <th scope="col">Quantité</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr
+                style="font-size: small"
+                *ngFor="let item of updateData.returnStock?.articles; let i = index"
+              >
+                <td>{{ item.productCode }}</td>
+                <td>{{ item.typeArticle }}</td>
+                <td>{{ item.quantity }}</td>
+
+
+              </tr>
+              <!-- Ajoutez d'autres lignes si nécessaire -->
+              </tbody>
+            </table>
+          </div>
+
+        </fieldset>
+      </div>
+
+      <div class="modal-footer gap-3 px-4">
+        <button
+          (click)="OnCloseModal()"
+          type="button"
+          class="btn btn-secondary px-2"
+        >
+          Annuler
+        </button>
+        <button *ngIf="updateData?.statut !== 'Validé'" type="submit"  class="btn btn-primary px-2" (click)="ValidatePaiement(updateData.id)">
+          Valider
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
