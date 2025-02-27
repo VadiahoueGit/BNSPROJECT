@@ -5,12 +5,12 @@ import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { ALERT_QUESTION } from '../../shared-component/utils';
-import {FinanceService} from "../../../core/finance.service";
+import { FinanceService } from '../../../core/finance.service';
 
 @Component({
   selector: 'app-validation-paiements',
   templateUrl: './validation-paiements.component.html',
-  styleUrls: ['./validation-paiements.component.scss']
+  styleUrls: ['./validation-paiements.component.scss'],
 })
 export class ValidationPaiementsComponent {
   @ViewChild('dt2') dt2!: Table;
@@ -28,6 +28,11 @@ export class ValidationPaiementsComponent {
 
   currentPage: number;
   rowsPerPage: any;
+  totalEmballage: number;
+  totalLiquide: number;
+  totalGlobal: number;
+  totalQte: number;
+  selectedArticles: never[];
   constructor(
     private articleService: ArticleServiceService,
     private financeService: FinanceService,
@@ -50,10 +55,6 @@ export class ValidationPaiementsComponent {
     table.clear();
   }
 
-  OnCloseModal() {
-    this.isModalOpen = false;
-    console.log(this.isModalOpen);
-  }
   OnCreate() {
     this.isEditMode = false;
     this.isModalOpen = true;
@@ -65,13 +66,11 @@ export class ValidationPaiementsComponent {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
-    this.articleId = data.id;
     this.isModalOpen = true;
-    this.loadArticleDetails();
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetPaiementList(page:number) {
+  GetPaiementList(page: number) {
     let data = {
       paginate: false,
       page: page,
@@ -117,5 +116,36 @@ export class ValidationPaiementsComponent {
         }
       }
     );
+  }
+  OnCloseModal() {
+    this.totalEmballage = 0;
+    this.totalLiquide = 0;
+    this.totalGlobal = 0;
+    this.totalQte = 0;
+    this.isModalOpen = false;
+    this.selectedArticles = [];
+    console.log(this.isModalOpen);
+  }
+  ValidatePaiement(id: number) {
+    ALERT_QUESTION(
+      'warning',
+      'Attention !',
+      'Voulez-vous valider ce paiement?'
+    ).then((res) => {
+      if (res.isConfirmed == true) {
+        this._spinner.show();
+        this.financeService.ValidatePaiement(id).then((res: any) => {
+          console.log('validation:::>', res);
+          this._spinner.hide();
+          this.GetPaiementList(1);
+
+          this.OnCloseModal();
+
+          this.toastr.success(res.message);
+        });
+      } else {
+        this.isModalOpen = false;
+      }
+    });
   }
 }
