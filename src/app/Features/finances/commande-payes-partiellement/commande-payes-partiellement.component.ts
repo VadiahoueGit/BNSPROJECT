@@ -80,8 +80,8 @@ export class CommandePayesPartiellementComponent {
     this.financeService.GetPaiementList(data).then((res: any) => {
       console.log('ALL:::>', res);
       this.dataList = res.data.filter((item: any) =>
-        item.statut === Status.VALIDE &&
-        Number(item.montantAPercevoir) > Number(item.montantPercu)
+        item.statut === Status.VALIDE && Number(item.montantPercu) > 0 && Number(item.montantPercu) < Number(item.montantAPercevoir)
+
       );
       this._spinner.hide();
     });
