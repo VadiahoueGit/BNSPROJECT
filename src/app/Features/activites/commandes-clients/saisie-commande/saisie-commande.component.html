@@ -19,10 +19,8 @@
         <th style="color: var(--secondary-color)">Date</th>
         <th style="color: var(--secondary-color)">Numéro de commande</th>
         <th style="color: var(--secondary-color)">Etablissements</th>
-        <th style="color: var(--secondary-color)">Remise</th>
-<!--        <th style="color: var(&#45;&#45;secondary-color)">Solde liquide</th>-->
-<!--        <th style="color: var(&#45;&#45;secondary-color)">Solde emballage</th>-->
         <th style="color: var(--secondary-color)">Entrepôt</th>
+        <th style="color: var(--secondary-color)">Statut</th>
         <th style="color: var(--secondary-color)">Action(s)</th>
       </tr>
       <tr>
@@ -52,29 +50,14 @@
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.remise }}
-          </span>
-        </td>
-<!--        <td>-->
-<!--          <span class="ml-1 vertical-align-middle">-->
-<!--            {{ dataList.soldeLiquide }}-->
-<!--          </span>-->
-<!--        </td>-->
-<!--        <td>-->
-<!--          <span class="ml-1 vertical-align-middle">-->
-<!--            {{ dataList.soldeEmballage }}-->
-<!--          </span>-->
-<!--        </td>-->
-        <td>
-          <span class="ml-1 vertical-align-middle">
             {{ dataList.client.depot.nomDepot }}
           </span>
         </td>
-        <!-- <td>
+        <td>
           <span class="ml-1 vertical-align-middle">
-                        {{ dataList.plastiquenu.libelle }}
-                    </span>
-        </td> -->
+            {{ dataList.statut }}
+          </span>
+        </td>
         <td>
       <tr class="d-flex justify-content-center gap-3">
         <td>

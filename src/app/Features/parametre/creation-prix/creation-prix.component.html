@@ -14,6 +14,7 @@
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
+              <th style="color: var(--secondary-color);">Produit</th>
                 <th style="color: var(--secondary-color);">Quantité</th>
                 <th style="color: var(--secondary-color);">Prix liquide</th>
                 <th style="color: var(--secondary-color);">Prix consigné</th>
@@ -23,6 +24,9 @@
         </ng-template>
         <ng-template pTemplate="body" let-dataList>
             <tr>
+              <td class="">
+                {{ dataList.produit.libelle }}
+              </td>
                 <td class="">
                     {{ dataList.Quantite }}
                 </td>

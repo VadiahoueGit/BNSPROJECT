@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
+import {FormGroup, FormBuilder, Validators, FormArray, FormControl} from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
@@ -163,16 +163,14 @@ export class SaisieCommandeComponent {
     this.GetArticleList(1);
   }
   OnCloseModal() {
-    this.isModalOpen = false;
-    console.log(this.isModalOpen);
+    this.totalEmballage = 0;
+    this.totalLiquide  = 0;
+    this.totalGlobal = 0;
+    this.totalQte = 0;
     this.filteredArticleList = [];
-    (this.commandClientForm.get('articles') as FormArray).clear();
-    // this.articles = []
+    this.isModalOpen = false;
     this.selectedArticles = [];
-    this.totalQte=0
-    this.totalLiquide=0
-    this.totalEmballage = 0
-    this.totalGlobal =0
+    (this.commandClientForm.get('articles') as FormArray).clear();
   }
   OnCreate() {
     this.isEditMode = false;
@@ -246,6 +244,53 @@ export class SaisieCommandeComponent {
 
     console.log('Montant final après frais de transport :', this.totalGlobal);
   }
+  removeArticle(item: any): void {
+    item.isChecked = false;
+    this.onCheckboxChange(item);
+
+    const articlesControl = this.commandClientForm.controls['articles'] as FormArray;
+    const articlesValue = articlesControl.value || [];
+
+    // Trouver l'article à retirer
+    const articleToRemove = articlesValue.find((i: any) => i.codeArticleLiquide === item.reference);
+
+    if (articleToRemove) {
+      // Calcul des totaux à retirer
+      const quantite = articleToRemove.quantite;
+      const prixLiquide = this.prixLiquide[articleToRemove.codeArticleLiquide];
+      const prixEmballage = this.prixEmballage[articleToRemove.codeArticleEmballage];
+      const montantTotal = (prixLiquide + prixEmballage) * quantite;
+
+      // Soustraire les valeurs des totaux
+      this.totalEmballage -= prixEmballage * quantite || 0;
+      this.totalLiquide -= prixLiquide * quantite || 0;
+      this.totalGlobalBeforeRemise -= montantTotal || 0;
+      this.totalQte -= quantite;
+
+      // Retirer l'article de la liste
+      const updatedArticles = articlesValue.filter(
+        (i: any) => i.codeArticleLiquide !== item.reference
+      );
+
+      // Vider le FormArray actuel
+      while (articlesControl.length !== 0) {
+        articlesControl.removeAt(0);
+      }
+
+      // Ajouter les éléments mis à jour dans le FormArray
+      updatedArticles.forEach((article: any) => {
+        articlesControl.push(this.fb.group(article)); // Assuming fb is FormBuilder
+      });
+
+      // Forcer la mise à jour de la validité
+      articlesControl.updateValueAndValidity();
+
+      console.log("Articles après suppression :", updatedArticles);
+
+      // Appliquer la remise sans recalculer les prix
+      this.applyRemise();
+    }
+  }
 
   calculatePrix(data: any) {
     if (this.prixLiquideTotal[data.id]) {
@@ -256,10 +301,8 @@ export class SaisieCommandeComponent {
     }
 
     this.prixLiquideTotal[data.id] = data.quantite * this.prixLiquide[data.id];
-    this.prixEmballageTotal[data.id] =
-      data.quantite * this.prixEmballage[data.id];
-    this.montantTotal[data.id] =
-      this.prixLiquideTotal[data.id] + this.prixEmballageTotal[data.id];
+    this.prixEmballageTotal[data.id] = data.quantite * this.prixEmballage[data.id];
+    this.montantTotal[data.id] = this.prixLiquideTotal[data.id] + this.prixEmballageTotal[data.id];
 
     this.totalEmballage += this.prixEmballageTotal[data.id];
     this.totalLiquide += this.prixLiquideTotal[data.id];
@@ -267,18 +310,39 @@ export class SaisieCommandeComponent {
     this.totalQte += data.quantite;
 
     this.applyRemise();
-    console.log(data,'data article');
+
+    console.log(data, 'data article');
     data.oldQuantite = data.quantite;
-    this.articles.push(
-      this.fb.group({
-        groupeArticleId: data.groupearticle.id,
-        codeArticleLiquide: data.liquide.code,
-        codeArticleEmballage: data.liquide.emballage.code,
+
+    // Accéder aux valeurs du FormArray
+    const articlesControl = this.commandClientForm.controls['articles'] as FormArray;
+    const articlesValue = articlesControl.value;
+
+    // Vérifier si l'article existe déjà dans 'this.articles' (articlesValue)
+    const existingArticleIndex = articlesValue.findIndex(
+      (item: any) => item.codeArticleLiquide === data.liquide.code
+    );
+
+    if (existingArticleIndex !== -1) {
+      // Si l'article existe, on met à jour sa quantité et son prix
+      articlesControl.at(existingArticleIndex).patchValue({
+        quantite: data.quantite,
         prixUnitaireLiquide: this.prixLiquide[data.id],
         prixUnitaireEmballage: this.prixEmballage[data.id],
-        quantite: data.quantite,
-      })
-    );
+      });
+    } else {
+      // Sinon, on ajoute un nouvel article
+      articlesControl.push(
+        this.fb.group({
+          groupeArticleId: data.groupearticle.id,
+          codeArticleLiquide: data.liquide.code,
+          codeArticleEmballage: data.liquide.emballage.code,
+          prixUnitaireLiquide: this.prixLiquide[data.id],
+          prixUnitaireEmballage: this.prixEmballage[data.id],
+          quantite: data.quantite,
+        })
+      );
+    }
   }
 
   async GetStockDisponibleByDepot(item: any): Promise<any> {
@@ -315,7 +379,6 @@ export class SaisieCommandeComponent {
   }
   onSubmit(): void {
     const formData = this.commandClientForm.value;
-
 
     const payload = {
       clientType: this.detailPointDevente.credits.clientType,
@@ -441,17 +504,7 @@ export class SaisieCommandeComponent {
   afficherArticlesSelectionnes() {
     console.log(this.selectedArticles);
   }
-  removeArticle(item: any): void {
-    item.isChecked = false;
-    this.onCheckboxChange(item);
-    const index = this.selectedArticles.findIndex((i: any) => i.id === item.id);
 
-    if (index !== -1) {
-      this.selectedArticles = this.selectedArticles
-        .slice(0, index)
-        .concat(this.selectedArticles.slice(index + 1));
-    }
-  }
   onSubmitSelection() {
     this.isChoiceModalOpen = false;
   }

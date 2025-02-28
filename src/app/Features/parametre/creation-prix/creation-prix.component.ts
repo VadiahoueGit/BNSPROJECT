@@ -84,9 +84,9 @@ export class CreationPrixComponent {
         ...this.prixForm.value,
         PrixId: +this.prixForm.value.PrixId,
         ProduitId: +this.prixForm.value.ProduitId,
-       
+
       };
-    
+
       if (this.isEditMode) {
         this.articleService.UpdatePrix(this.prixId, formValues).then(
           (response: any) => {
@@ -139,7 +139,7 @@ export class CreationPrixComponent {
       PrixLiquide: this.updateData.PrixLiquide,
       PrixConsigne: this.updateData.PrixConsigne,
       PrixId: this.updateData.typePrix.id,
-      // ProduitId: this.updateData.produit.id,
+      ProduitId: this.updateData.produit.id,
     }
     );
     this.isModalOpen = true;

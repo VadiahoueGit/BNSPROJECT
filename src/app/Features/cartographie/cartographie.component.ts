@@ -109,6 +109,7 @@ export class CartographieComponent {
 
     // console.log('data', data)
     if (type == 'osr') {
+      console.log(this.createCustomPinContent(type))
       this.markersClient = data.map((position: any, i: number) => {
         // console.log('position', position);
         const positions = {

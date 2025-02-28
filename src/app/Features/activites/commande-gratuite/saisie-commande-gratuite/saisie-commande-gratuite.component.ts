@@ -224,6 +224,7 @@ export class SaisieCommandeGratuiteComponent {
     }
   }
   removeArticle(item: any): void {
+    // Créer une copie de l'article avec la quantité définie à 0
     const data = {
       ...item,
       quantite: 0,
@@ -231,16 +232,26 @@ export class SaisieCommandeGratuiteComponent {
       id: item.groupearticle.id, // Assurez-vous que l'ID correspond
     };
 
+    // Mettre à jour l'état de l'article à 'non sélectionné'
     item.isChecked = false;
+
+    // Calculer les prix en passant l'article avec quantité 0 (pour gestion des totaux)
     this.calculatePrix(data);
+
+    // Gérer le changement de la case à cocher
     this.onCheckboxChange(item);
+
+    // Supprimer l'article de la liste `selectedArticles`
     const index = this.selectedArticles.findIndex((i: any) => i.id === item.id);
 
     if (index !== -1) {
+      // Suppression de l'article de la liste
       this.selectedArticles = this.selectedArticles.slice(0, index).concat(this.selectedArticles.slice(index + 1));
     }
 
+    // Optionnel : si tu as d'autres actions liées à la suppression, ajoute-les ici
   }
+
   onSubmitSelection() {
     this.isChoiceModalOpen = false;
   }
@@ -349,26 +360,30 @@ export class SaisieCommandeGratuiteComponent {
     const prixLiquide = this.prixLiquide[data.id] || 0;
     const prixEmballage = this.prixEmballage[data.id] || 0;
     const quantite = data.quantite || 0;
-    console.log('groupearticle:::>',  data.groupearticle.id);
+    console.log('groupearticle:::>', data.groupearticle.id);
+
     const existingArticleIndex = this.articles.controls.findIndex(
       (control: any) => control.value.codeArticleLiquide === data.liquide.code
     );
 
     if (existingArticleIndex !== -1) {
+      // Si l'article existe, on le modifie
       const existingArticle = this.articles.at(existingArticleIndex).value;
       const oldQuantite = existingArticle.quantite || 0;
       const differenceQuantite = quantite - oldQuantite;
 
       // ✅ Décrémentation des anciens totaux
       this.totalEmballage -= oldQuantite * prixEmballage;
-      console.log(this.totalEmballage, oldQuantite, '*', prixEmballage);
       this.totalLiquide -= oldQuantite * prixLiquide;
-      console.log(this.totalLiquide, oldQuantite, '*', prixLiquide);
       this.totalQte -= oldQuantite;
+
+      console.log(this.totalEmballage, oldQuantite, '*', prixEmballage);
+      console.log(this.totalLiquide, oldQuantite, '*', prixLiquide);
       console.log(this.totalQte);
 
       // ✅ Suppression si la quantité est 0
       if (quantite === 0) {
+        // Si la quantité est 0, on supprime l'article
         this.articles.removeAt(existingArticleIndex);
         delete this.prixEmballageTotal[data.id];
         delete this.prixLiquideTotal[data.id];
@@ -382,6 +397,7 @@ export class SaisieCommandeGratuiteComponent {
         this.totalLiquide += this.prixLiquideTotal[data.id];
         this.totalQte += quantite;
 
+        // Mise à jour de la quantité de l'article dans le formulaire
         this.articles.at(existingArticleIndex).patchValue({
           quantite: quantite,
         });
@@ -421,12 +437,13 @@ export class SaisieCommandeGratuiteComponent {
       totalEmballage: this.totalEmballage,
       montantTotal: this.montantTotal[data.id],
       totalGlobal: this.totalGlobal,
-      totalQte: this.totalQte
+      totalQte: this.totalQte,
     });
 
     // Forcer le rafraîchissement de l'interface
     this.cdr.detectChanges();
   }
+
   async fetchData() {
     let data = {
       paginate: false,

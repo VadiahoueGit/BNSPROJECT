@@ -19,7 +19,6 @@
         <th style="color: var(--secondary-color)">Montant versé</th>
         <th style="color: var(--secondary-color)">Date</th>
         <th style="color: var(--secondary-color)">Statut</th>
-        <th style="color: var(--secondary-color)">Actions</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList>
@@ -30,7 +29,7 @@
           </span>
         </td>
         <td>
-          {{ dataList?.client?.raisonSocial }}
+          {{ dataList?.client?.raisonSocial ? dataList?.client?.raisonSocial : dataList?.returnStock?.venteChineRetourStock?.pointdevente?.nomEtablissement  }}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
@@ -52,13 +51,7 @@
         </td>
         <td>
       <tr class="d-flex justify-content-center gap-3">
-        <td>
-          <i
-            (click)="OnEdit(dataList)"
-            style="cursor: pointer"
-            class="fas fa-eye text-secondary"
-          ></i>
-        </td>
+
         <!-- <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
                     class="fas fa-trash-alt text-danger"></i></td> -->
       </tr>
@@ -107,7 +100,7 @@
           <div class="row">
             <div class="col-md-4">
               <strong>Client: </strong>
-              <span>{{ updateData?.client?.raisonSocial }}</span>
+              <span>{{ updateData?.client?.raisonSocial ? updateData?.client?.raisonSocial : updateData?.returnStock?.venteChineRetourStock.pointdevente.nomEtablissement  }}</span>
             </div>
             <div class="col-md-4">
               <strong>Localité: </strong>
@@ -121,12 +114,12 @@
 
 
           <legend style="font-size: 14px" class="text-secondary">
-            Informations commercial
+            Informations agent
           </legend>
           <div class="row">
             <div class="col-md-4">
-              <strong>Commercial: </strong>
-              <span>{{ updateData?.livreurOuCommercial?.nom }} {{ updateData?.livreurOuCommercial?.prenoms }}</span>
+              <strong>Agent: </strong>
+              <span>{{ updateData?.returnStock?.venteChineRetourStock.commercial.nom +' '+ updateData?.returnStock?.venteChineRetourStock.commercial.prenoms}} </span>
             </div>
             <div class="col-md-4">
               <strong>Rôle : </strong>

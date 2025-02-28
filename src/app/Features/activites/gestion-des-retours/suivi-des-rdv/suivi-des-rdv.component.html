@@ -16,7 +16,8 @@
       <tr>
         <td>
                     <span class="ml-1 vertical-align-middle">
-                         {{ dataList.orderNum }}
+                         {{ dataList.commandeGratuiteRetourStock?.NumCommande ? dataList.commandeGratuiteRetourStock?.NumCommande
+                      : dataList.commandeClientRetourStock?.NumCommande  }}
                     </span>
         </td>
         <td>
@@ -26,7 +27,7 @@
         </td>
         <td>
                     <span class="ml-1 vertical-align-middle">
-                        <!-- {{ dataList.image }} -->
+                         {{ dataList.client ? dataList.client.raisonSocial : ''  }}
                     </span>
         </td>
         <td>
