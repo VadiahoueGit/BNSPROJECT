@@ -58,7 +58,7 @@
   >
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Détails RDV</h5>
+        <h5 class="modal-title">Détails récuperation</h5>
         <button type="button" class="btn-close" aria-label="Close"></button>
       </div>
 
@@ -68,22 +68,38 @@
       >
         <div class="row">
           <fieldset class="row border my-1" *ngIf="operation == 'edit'">
-            <legend style="font-size: 14px" class="text-secondary">
+            <legend style="font-size: 13px" class="text-secondary">
               Numero Commande : {{ updateData.orderNum }} du
               {{ updateData.createdAt | date }}
             </legend>
             <div class="row">
               <div class="col-md-4">
                 <strong>Dépot : </strong>
-                <span>{{ updateData.depot?.nomDepot }}</span>
+                <span>
+                  {{ updateData.depot?.nomDepot }}
+                </span>
               </div>
               <div class="col-md-4">
                 <strong>Motif : </strong>
-                <span>{{ updateData.transaction?.motif }}</span>
+                <span>
+                 {{
+                    updateData?.paiementsCommandeClient?.returnStock?.returnType ||
+                    updateData?.paiementsCommandeGratuit?.returnStock?.returnType ||
+                    updateData?.paiementsVente?.returnStock?.returnType ||
+                    ''
+                  }}
+                </span>
               </div>
               <div class="col-md-4">
                 <strong>Statut : </strong>
-                <span>{{ updateData.transaction?.statut}}</span>
+                <span>
+                  {{
+                    updateData?.paiementsCommandeClient?.statut ||
+                    updateData?.paiementsCommandeGratuit?.statut ||
+                    updateData?.paiementsVente?.statut ||
+                    ''
+                  }}
+                </span>
               </div>
               <div class="col-md-4 text-bg-primary">
                 <strong>Montant à perçevoir: </strong>
@@ -98,7 +114,7 @@
           </fieldset>
 
           <fieldset class="row border my-2" *ngIf="operation == 'edit'">
-            <legend style="font-size: 14px" class="text-secondary">
+            <legend style="font-size: 13px" class="text-secondary">
               Informations du client
             </legend>
             <div class="row">
@@ -120,26 +136,56 @@
               </div>
             </div>
           </fieldset>
-          <table class="table table-bordered">
-            <thead class="table-success">
-            <tr>
-              <th scope="col">Code</th>
-              <th scope="col">Type</th>
-              <th scope="col">Désignation</th>
-              <th scope="col">Conditionnement</th>
-              <th scope="col">Quantité</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let item of updateData.articles">
-              <td>{{ item.produit.code }}</td>
-              <td>{{ item.typeArticle }}</td>
-              <td>{{ item.produit.libelle }}</td>
-              <td>{{ item.produit.condition }}</td>
-              <td>{{ item.quantity }}</td>
-            </tr>
-            </tbody>
-          </table>
+          <fieldset class="row border my-2">
+            <legend style="font-size: 13px" class="text-secondary">
+              Emballages retournés
+            </legend>
+            <table class="table table-bordered">
+              <thead class="table-success">
+              <tr>
+                <th scope="col">Code</th>
+                <th scope="col">Type</th>
+                <th scope="col">Désignation</th>
+                <th scope="col">Conditionnement</th>
+                <th scope="col">Quantité</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let item of updateData.articles">
+                <td>{{ item.produit.code }}</td>
+                <td>{{ item.typeArticle }}</td>
+                <td>{{ item.produit.libelle }}</td>
+                <td>{{ item.produit.condition }}</td>
+                <td>{{ item.quantity }}</td>
+              </tr>
+              </tbody>
+            </table>
+          </fieldset>
+          <fieldset class="row border my-2">
+            <legend style="font-size: 13px" class="text-secondary">
+              Articles vendus
+            </legend>
+            <table class="table table-bordered">
+              <thead class="table-success">
+              <tr>
+                <th scope="col">Code</th>
+                <th scope="col">Type</th>
+                <th scope="col">Désignation</th>
+                <th scope="col">Conditionnement</th>
+                <th scope="col">Quantité</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let item of updateData.articles">
+                <td>{{ item.produit.code }}</td>
+                <td>{{ item.typeArticle }}</td>
+                <td>{{ item.produit.libelle }}</td>
+                <td>{{ item.produit.condition }}</td>
+                <td>{{ item.quantity }}</td>
+              </tr>
+              </tbody>
+            </table>
+          </fieldset>
         </div>
       </div>
 

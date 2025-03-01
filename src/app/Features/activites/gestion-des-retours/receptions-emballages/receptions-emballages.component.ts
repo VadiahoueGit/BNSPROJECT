@@ -78,7 +78,7 @@ export class ReceptionsEmballagesComponent {
     this._spinner.show();
     this.activiteService.GetRetourList(data).then((res: any) => {
       console.log('ALL:::>', res);
-      this.dataList = res.data;
+      this.dataList = res.data.filter((item:any) => item.stockUpdated );
       this._spinner.hide();
     });
   }

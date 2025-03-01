@@ -6,6 +6,7 @@
     <ng-template pTemplate="header">
       <tr>
         <th style="color: var(--secondary-color);">Numero de commande</th>
+        <th style="color: var(--secondary-color);">Agent</th>
         <th style="color: var(--secondary-color);">Date Rdv</th>
         <th style="color: var(--secondary-color);">Client</th>
         <!--                <th style="color: var(&#45;&#45;secondary-color);">Statut Rdv</th>-->
@@ -15,10 +16,23 @@
     <ng-template pTemplate="body" let-dataList>
       <tr>
         <td>
-                    <span class="ml-1 vertical-align-middle">
-                         {{ dataList.commandeGratuiteRetourStock?.NumCommande ? dataList.commandeGratuiteRetourStock?.NumCommande
-                      : dataList.commandeClientRetourStock?.NumCommande  }}
-                    </span>
+          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
+            {{
+              dataList?.paiementsCommandeClient?.length ? dataList?.paiementsCommandeClient[0]?.NumCommande
+                : dataList?.paiementsCommandeGratuit?.length ? dataList?.paiementsCommandeGratuit[0]?.NumCommande : ''
+            }}
+          </span>
+        </td>
+        <td>
+          {{
+            dataList?.paiementsCommandeClient?.length
+              ? (dataList?.transporteur?.nom || '') + ' ' + (dataList?.transporteur?.prenoms || '')
+              : dataList?.paiementsCommandeGratuit?.length
+                ? (dataList?.transporteur?.nom || '') + ' ' + (dataList?.transporteur?.prenoms || '')
+                : dataList?.paiementsVente?.length
+                  ? (dataList?.paiementsVente[0]?.commercial?.nom || '') + ' ' + (dataList?.paiementsVente[0]?.commercial?.prenoms || '')
+                  : ''
+          }}
         </td>
         <td>
                     <span class="ml-1 vertical-align-middle">
@@ -27,7 +41,7 @@
         </td>
         <td>
                     <span class="ml-1 vertical-align-middle">
-                         {{ dataList.client ? dataList.client.raisonSocial : ''  }}
+                         {{ dataList.client ? dataList.client.raisonSocial : '' }}
                     </span>
         </td>
         <td>
@@ -79,15 +93,15 @@
               </div>
               <div class="col-md-4">
                 <strong>Statut : </strong>
-                <span>{{ updateData.transaction?.statut}}</span>
+                <span>{{ updateData.transaction?.statut }}</span>
               </div>
               <div class="col-md-4 text-bg-primary">
                 <strong>Montant à perçevoir: </strong>
-                <span>{{ updateData.transaction?.montantAPercevoir |currency:'XOF'}}</span>
+                <span>{{ updateData.transaction?.montantAPercevoir |currency:'XOF' }}</span>
               </div>
               <div class="col-md-4 text-bg-primary">
                 <strong>Montant perçu : </strong>
-                <span>{{ updateData.transaction?.montantPercu |currency:'XOF'}}</span>
+                <span>{{ updateData.transaction?.montantPercu |currency:'XOF' }}</span>
               </div>
 
             </div>
@@ -104,31 +118,31 @@
               </div>
               <div class="col-md-4">
                 <strong>Type de client :</strong>
-                <span>{{ updateData.client.role }}</span>
+                <span>{{ updateData.client?.role }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Propriétaire :</strong>
-                <span>{{ updateData.client.nomProprietaire }}</span>
+                <span>{{ updateData.client?.nomProprietaire }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Gérant :</strong>
-                <span>{{ updateData.client.nomGerant }}</span>
+                <span>{{ updateData.client?.nomGerant }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Établissement :</strong>
                 <span>{{
-                    updateData.client.nomEtablissement
-                      ? updateData.client.nomEtablissement
-                      : updateData.client.raisonSocial
+                    updateData.client?.nomEtablissement
+                      ? updateData.client?.nomEtablissement
+                      : updateData.client?.raisonSocial
                   }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Contact Gérant :</strong>
-                <span>{{ updateData.client.telephoneGerant }}</span>
+                <span>{{ updateData.client?.telephoneGerant }}</span>
               </div>
               <div class="col-md-4 mb-4">
                 <strong>Téléphone proprietaire :</strong>
-                <span>{{ updateData.client.telephoneProprietaire }}</span>
+                <span>{{ updateData.client?.telephoneProprietaire }}</span>
               </div>
             </div>
           </fieldset>
