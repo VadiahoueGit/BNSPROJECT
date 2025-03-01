@@ -77,7 +77,7 @@ export class SuiviDesRDVComponent {
     this._spinner.show();
     this.activiteService.GetRetourList(data).then((res: any) => {
       console.log('RDV:::>', res);
-      this.dataList = res.data.filter((item:any) => item.returnType === MotifRetour.APPOINTMENT);
+      this.dataList = res.data.filter((item:any) => item.returnType === MotifRetour.APPOINTMENT && !item.stockUpdated );
       this._spinner.hide();
     });
   }

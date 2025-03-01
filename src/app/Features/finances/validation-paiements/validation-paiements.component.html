@@ -14,7 +14,7 @@
     <ng-template pTemplate="header">
       <tr>
         <th style="color: var(--secondary-color)">Commandes</th>
-        <th style="color: var(--secondary-color)">Client</th>
+        <th style="color: var(--secondary-color)">Agent</th>
         <th style="color: var(--secondary-color)">Montant à verser</th>
         <th style="color: var(--secondary-color)">Montant versé</th>
         <th style="color: var(--secondary-color)">Date</th>
@@ -26,11 +26,20 @@
       <tr>
         <td>
           <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-            {{ dataList?.returnStock?.orderNum }}
+            {{ dataList?.paiementsCommandeClient?.length ? dataList?.paiementsCommandeClient[0]?.NumCommande
+            : dataList?.paiementsCommandeGratuit?.length ? dataList?.paiementsCommandeGratuit[0]?.NumCommande : ''}}
           </span>
         </td>
         <td>
-         {{ dataList?.client?.raisonSocial }}
+          {{
+            dataList?.paiementsCommandeClient?.length
+              ? (dataList?.transporteur?.nom || '') + ' ' + (dataList?.transporteur?.prenoms || '')
+              : dataList?.paiementsCommandeGratuit?.length
+                ? (dataList?.transporteur?.nom || '') + ' ' + (dataList?.transporteur?.prenoms || '')
+                : dataList?.paiementsVente?.length
+                  ? (dataList?.paiementsVente[0]?.commercial?.nom || '') + ' ' + (dataList?.paiementsVente[0]?.commercial?.prenoms || '')
+                  : ''
+          }}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
@@ -90,7 +99,7 @@
         >
           <i class="fas fa-box-check text-primary fs-3"></i>
         </div>
-      
+
         <h1
           class="modal-title fs-5 ms-3"
           id="staticBackdropLabel"
@@ -118,8 +127,8 @@
               <span>{{ updateData?.client?.depot.nomDepot }}</span>
             </div>
            </div>
-       
-          
+
+
           <legend style="font-size: 14px" class="text-secondary">
             Informations commercial
           </legend>
@@ -196,7 +205,7 @@
               </tbody>
             </table>
           </div>
-     
+
         </fieldset>
       </div>
 

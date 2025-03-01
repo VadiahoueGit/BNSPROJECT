@@ -82,6 +82,7 @@ export class ValidationPaiementsComponent {
       console.log('ALL:::>', res);
       this.dataList = res.data.filter((item: any) => Number(item.montantPercu) > 0
       );
+      console.log('DATA:::>', this.dataList);
       this._spinner.hide();
     });
   }
