@@ -33,8 +33,8 @@
           </span>
         </td>
         <td>
-          {{ dataList.client?.GroupeClient?.nomGroupe ? dataList.client?.GroupeClient?.nomGroupe : dataList.client?.GroupeClient?.nomGroupe }}
-        </td>
+          <span>{{ dataList.client?.groupeClient?.nomGroupe || updateData.client?.GroupeClient?.nomGroupe }}</span>
+           </td>
         <td>
           <span class="ml-1 vertical-align-middle">
             {{ dataList.client?.raisonSocial ? dataList.client?.raisonSocial : dataList.client.nomEtablissement }}

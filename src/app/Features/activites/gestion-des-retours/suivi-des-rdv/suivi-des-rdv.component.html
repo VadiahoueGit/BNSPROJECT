@@ -41,7 +41,9 @@
         </td>
         <td>
                     <span class="ml-1 vertical-align-middle">
-                         {{ dataList.client ? dataList.client.raisonSocial : '' }}
+                         {{    dataList.clientALivrer?.nomEtablissement ||
+                    dataList.clientALivrer?.raisonSocial
+                      }}
                     </span>
         </td>
         <td>
@@ -114,35 +116,34 @@
             <div class="row">
               <div class="col-md-4">
                 <strong>Groupe de client :</strong>
-                <span>{{ updateData.client?.groupeClient?.nomGroupe || updateData.client?.GroupeClient?.nomGroupe }}</span>
+                <span>{{ updateData.clientALivrer?.groupeClient?.nomGroupe || updateData.clientALivrer?.GroupeClient?.nomGroupe }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Type de client :</strong>
-                <span>{{ updateData.client?.role }}</span>
+                <span>{{ updateData.clientALivrer?.role }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Propriétaire :</strong>
-                <span>{{ updateData.client?.nomProprietaire }}</span>
+                <span>{{ updateData.clientALivrer?.nomProprietaire }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Gérant :</strong>
-                <span>{{ updateData.client?.nomGerant }}</span>
+                <span>{{ updateData.clientALivrer?.nomGerant }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Établissement :</strong>
                 <span>{{
-                    updateData.client?.nomEtablissement
-                      ? updateData.client?.nomEtablissement
-                      : updateData.client?.raisonSocial
+                    updateData.clientALivrer?.nomEtablissement ||
+                      updateData.clientALivrer?.raisonSocial
                   }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Contact Gérant :</strong>
-                <span>{{ updateData.client?.telephoneGerant }}</span>
+                <span>{{ updateData.clientALivrer?.telephoneGerant }}</span>
               </div>
               <div class="col-md-4 mb-4">
                 <strong>Téléphone proprietaire :</strong>
-                <span>{{ updateData.client?.telephoneProprietaire }}</span>
+                <span>{{ updateData.clientALivrer?.telephoneProprietaire }}</span>
               </div>
             </div>
           </fieldset>
