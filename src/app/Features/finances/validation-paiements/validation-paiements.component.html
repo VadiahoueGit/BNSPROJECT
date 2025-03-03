@@ -118,7 +118,7 @@
         <ng-container *ngIf="updateData.motif == 'COMMANDE CLIENT'">
           <fieldset class="row border my-1">
             <legend style="font-size: 14px" class="text-secondary">
-              Information Client de la Commande :
+              Information de la Commande :
               {{ updateData.paiementsCommandeClient[0]?.NumCommande }} du
               {{ updateData.createdAt | date }}
             </legend>
@@ -252,7 +252,7 @@
         <ng-container *ngIf="updateData.motif == 'VENTE CHINE'">
           <fieldset class="row border my-1">
             <legend style="font-size: 14px" class="text-secondary">
-              Information vente du {{ updateData?.paiementsVente[0].dateVente }}
+              Information de la vente du {{ updateData?.paiementsVente[0].dateVente }}
             </legend>
 
             <div class="row">
@@ -364,11 +364,11 @@
             </div>
           </fieldset>
         </ng-container>
-        <ng-container *ngIf="updateData.motif == 'COMMANDE GRATUITE'">
+        <ng-container *ngIf="updateData.motif == 'CONSIGNE'">
           <fieldset class="row border my-1">
             <legend style="font-size: 14px" class="text-secondary">
-              Information Client de la Commande :
-              {{ updateData.paiementsCommandeClient[0]?.NumCommande }} du
+              Informationde la Commande :
+              {{ updateData.paiementsCommandeGratuit[0]?.NumCommande }} du
               {{ updateData.createdAt | date }}
             </legend>
             <div class="row">
@@ -480,7 +480,7 @@
                   <tr
                     style="font-size: small"
                     *ngFor="
-                      let item of updateData?.paiementsCommandeClient[0]
+                      let item of updateData?.paiementsCommandeGratuit[0]
                         ?.articles;
                       let i = index
                     "
