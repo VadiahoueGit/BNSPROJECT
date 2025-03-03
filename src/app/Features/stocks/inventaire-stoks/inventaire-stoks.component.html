@@ -180,6 +180,7 @@
                   [items]="depotList"
                   bindLabel="nomDepot"
                   bindValue="id"
+                  (change)="onDepotChange()"
                   formControlName="depotId"
                   [searchable]="true"
                 >
@@ -210,10 +211,10 @@
             <tbody>
               <tr *ngFor="let data of selectedArticles; let i = index">
                 <td>
-                  <p>{{ data.code }}</p>
+                  <p>{{ data.articleCode }}</p>
                 </td>
                 <td>
-                  <p>{{ data.libelle }}</p>
+                  <p>{{ data.articleName }}</p>
                 </td>
                 <td>
                   <input
@@ -332,8 +333,8 @@
                       *ngFor="let article of filteredArticleList; let i = index"
                       style="font-size: small"
                     >
-                      <th scope="row">{{ article.code }}</th>
-                      <th scope="row">{{ article.libelle }}</th>
+                      <th scope="row">{{ article.articleCode }}</th>
+                      <th scope="row">{{ article.articleName }}</th>
                       <td class="">
                         <input
                           type="checkbox"

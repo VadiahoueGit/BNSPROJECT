@@ -16,22 +16,13 @@
     <ng-template pTemplate="body" let-dataList>
       <tr>
         <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-            {{
-              dataList?.paiementsCommandeClient?.length ? dataList?.paiementsCommandeClient[0]?.NumCommande
-                : dataList?.paiementsCommandeGratuit?.length ? dataList?.paiementsCommandeGratuit[0]?.NumCommande : ''
-            }}
+           <span class="ml-1 vertical-align-middle">
+             {{ dataList.paiementsCommandeClient?.NumCommande || dataList.paiementsCommandeGratuit?.NumCommande || '' }}
           </span>
         </td>
         <td>
           {{
-            dataList?.paiementsCommandeClient?.length
-              ? (dataList?.transporteur?.nom || '') + ' ' + (dataList?.transporteur?.prenoms || '')
-              : dataList?.paiementsCommandeGratuit?.length
-                ? (dataList?.transporteur?.nom || '') + ' ' + (dataList?.transporteur?.prenoms || '')
-                : dataList?.paiementsVente?.length
-                  ? (dataList?.paiementsVente[0]?.commercial?.nom || '') + ' ' + (dataList?.paiementsVente[0]?.commercial?.prenoms || '')
-                  : ''
+            dataList?.transporteur?.nom || dataList?.paiementsVente?.commercial?.nom
           }}
         </td>
         <td>
@@ -41,8 +32,9 @@
         </td>
         <td>
                     <span class="ml-1 vertical-align-middle">
-                         {{    dataList.clientALivrer?.nomEtablissement ||
-                    dataList.clientALivrer?.raisonSocial
+                         {{
+                        dataList.clientALivrer?.nomEtablissement ||
+                        dataList.clientALivrer?.raisonSocial
                       }}
                     </span>
         </td>
@@ -134,7 +126,7 @@
                 <strong>Établissement :</strong>
                 <span>{{
                     updateData.clientALivrer?.nomEtablissement ||
-                      updateData.clientALivrer?.raisonSocial
+                    updateData.clientALivrer?.raisonSocial
                   }}</span>
               </div>
               <div class="col-md-4">

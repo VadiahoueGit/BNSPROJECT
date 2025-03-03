@@ -311,7 +311,7 @@ export class VentechinepageComponent {
       this.dataListCommercial = res.data;
       this.dataListCommercial = this.dataListCommercial.map((item: any) => ({
         ...item,
-        fullLabel: `${item.nom} ${item.prenom}`,
+        fullLabel: `${item.nom} ${item.prenoms}`,
       }));
       this._spinner.hide();
     });
