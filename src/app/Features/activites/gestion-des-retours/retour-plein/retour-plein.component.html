@@ -1,17 +1,14 @@
 <div class="card">
- 
+
     <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
         [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
 
         <ng-template pTemplate="header">
             <tr>
                 <th style="color: var(--secondary-color);">N° commandes</th>
-                <th style="color: var(--secondary-color);">Clients</th>
-                <th style="color: var(--secondary-color);">Chauffeurs</th>
-                <th style="color: var(--secondary-color);">Date RDV</th>
-                <th style="color: var(--secondary-color);">Immatriculation camion</th>
-                <th style="color: var(--secondary-color);">Nombre de casier</th>
-                <th style="color: var(--secondary-color);">Motif</th>
+                <th style="color: var(--secondary-color);">Agent</th>
+                <th style="color: var(--secondary-color);">Client</th>
+                <th style="color: var(--secondary-color);">Dépot</th>
                 <th style="color: var(--secondary-color);">Actions</th>
             </tr>
         </ng-template>
@@ -29,7 +26,7 @@
                 </td>
                 <td>
                     <span class="ml-1 vertical-align-middle">
-                        <!-- {{ dataList.image }} -->
+                         {{ dataList.depot?.nomDepot }}
                     </span>
                 </td>
                 <td>
@@ -48,7 +45,7 @@
                     <tr class="d-flex justify-content-center gap-3">
                         <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>
                     </tr>
-        
+
                     </td>
             </tr>
         </ng-template>

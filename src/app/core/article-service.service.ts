@@ -627,6 +627,30 @@ export class ArticleServiceService {
     });
   }
 
+  GetArticleListByDepot(depotId: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/movements/${depotId}/articles`,{headers}
+        )
+        .subscribe(
+          (res: any) => {
+            // if (res.statusCode == 200) {
+            //   this.ListArticles.next(res.data);
+            // }
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
   DeletedArticle(id: number) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({

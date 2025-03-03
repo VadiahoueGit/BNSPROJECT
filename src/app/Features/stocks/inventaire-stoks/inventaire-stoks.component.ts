@@ -74,9 +74,17 @@ export class InventaireStoksComponent {
       });
 
     this.GetInventaireList(1);
-    this.GetArticleList(1);
     this.GetDepotList(1);
-    this.fetchData();
+    // this.fetchData();
+  }
+
+  onDepotChange()
+  {
+    if(this.InventaireForm.controls['depotId'].valid)
+    {
+      this.GetArticleListByDepot();
+    }
+
   }
 
   onFilterGlobal(event: Event) {
@@ -135,14 +143,12 @@ export class InventaireStoksComponent {
     console.log(this.isModalOpen);
   }
 
-  GetArticleList(page: number) {
-    let data = {
-      paginate: false,
-      page: page,
-      limit: 8,
-    };
+  GetArticleListByDepot() {
     this._spinner.show();
-    this.articleService.GetArticleList(data).then((res: any) => {
+    let depotId = this.InventaireForm.controls['depotId'].value
+    this.articleService.GetArticleListByDepot(depotId).then((res: any) => {
+      this.articleList = res.articles
+      this.filteredArticleList = this.articleList;
       console.log('DATATYPEPRIX:::>', res);
       this._spinner.hide();
     });
@@ -164,7 +170,6 @@ export class InventaireStoksComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
-    this.GetArticleList(this.currentPage);
   }
 
   goBack() {
@@ -236,7 +241,7 @@ export class InventaireStoksComponent {
           this.articleService.DeletedArticle(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetArticleList(1);
+            // this.GetArticleList(1);
             this._spinner.hide();
           });
         } else {
@@ -346,7 +351,7 @@ export class InventaireStoksComponent {
     // Ajouter chaque article au FormArray
     articlesData.forEach((item: any) => {
       const articleGroup = this.fb.group({
-        productCode: [item.code, Validators.required],
+        productCode: [item.articleCode, Validators.required],
         stockTheorique: [item.stockTheorique, Validators.required],
         stockPhysique: [item.quantite, [Validators.required, Validators.min(1)]],
         ecart: [item.ecart, Validators.required],
