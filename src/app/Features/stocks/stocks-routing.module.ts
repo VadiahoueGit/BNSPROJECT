@@ -8,6 +8,7 @@ import { TransfertDeStockComponent } from './transfert-de-stock/transfert-de-sto
 import { VisualisationDeStockComponent } from './visualisation-de-stock/visualisation-de-stock.component';
 import { AnalyseDeStockComponent } from './analyse-de-stock/analyse-de-stock.component';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
+import {MouvementStockComponent} from "./mouvement-stock/mouvement-stock.component";
 
 const routes: Routes = [
   {path:'', component:StocksComponent},
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: 'inventaire', component: InventaireStoksComponent ,resolve:{ArticleServiceService}},
   { path: 'visualisation-stocks', component: VisualisationDeStockComponent },
   { path: 'analyse-stocks', component: AnalyseDeStockComponent },
+  { path: 'mouvement-stocks', component: MouvementStockComponent },
 ];
 
 @NgModule({

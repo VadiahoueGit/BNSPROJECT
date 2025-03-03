@@ -38,12 +38,17 @@ export class StocksComponent {
       title: 'Analyse de stock',
       url: 'feature/stocks/analyse-stocks',
     },
-  
-    
+    {
+      image: 'assets/icon/trade.png',
+      title: 'Mouvements de stock',
+      url: 'feature/stocks/mouvement-stocks',
+    },
+
+
   ]
   constructor(private _router: Router) { }
   ngOnInit(): void {
-    
+
   }
   displayItem(elt: any) {
     console.log(elt)

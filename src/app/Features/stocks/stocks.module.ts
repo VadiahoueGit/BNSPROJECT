@@ -108,6 +108,7 @@ import { TransfertDeStockComponent } from './transfert-de-stock/transfert-de-sto
 import { VisualisationDeStockComponent } from './visualisation-de-stock/visualisation-de-stock.component';
 import { AnalyseDeStockComponent } from './analyse-de-stock/analyse-de-stock.component';
 import { InventaireStoksComponent } from './inventaire-stoks/inventaire-stoks.component';
+import {MouvementStockComponent} from "./mouvement-stock/mouvement-stock.component";
 
 
 @NgModule({
@@ -118,7 +119,8 @@ import { InventaireStoksComponent } from './inventaire-stoks/inventaire-stoks.co
     TransfertDeStockComponent,
     VisualisationDeStockComponent,
     AnalyseDeStockComponent,
-    InventaireStoksComponent
+    InventaireStoksComponent,
+    MouvementStockComponent
   ],
   imports: [
     CommonModule,
@@ -222,7 +224,7 @@ import { InventaireStoksComponent } from './inventaire-stoks/inventaire-stoks.co
       RippleModule,
       StyleClassModule,
       AutoFocusModule,
-  
+
     ],
     exports: [
       AvatarModule,

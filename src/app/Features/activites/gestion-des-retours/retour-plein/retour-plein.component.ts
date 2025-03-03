@@ -35,7 +35,7 @@ export class RetourPleinComponent {
   ) {}
 
   ngOnInit() {
-    this.GetRetourPleinList(1);
+    this.GetRetourPleinList();
   }
 
   onFilterGlobal(event: Event) {
@@ -68,21 +68,39 @@ export class RetourPleinComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetRetourPleinList(page:number) {
-    let data = {
-      paginate: false,
-      page:page,
-      limit: 8,
-    };
+  GetRetourPleinList() {
 
     this._spinner.show();
-    this.activiteService.GetRetourPleinList(data).then((res: any) => {
+    this.activiteService.GetRetourPleinList().then((res: any) => {
       this.dataList = res.data;
       console.log('ALL:::>', this.dataList);
       this._spinner.hide();
     });
   }
 
+  ValidateReturn(id:any){
+    ALERT_QUESTION(
+      'warning',
+      'Attention !',
+      'Voulez-vous valider ce retour?'
+    ).then((res) => {
+      if (res.isConfirmed == true) {
+        this._spinner.show();
+        this.activiteService.ValidateRetourPlein(id).then((res: any) => {
+          this.dataList = res.data;
+          this.GetRetourPleinList()
+          this.OnCloseModal();
+          console.log('validation:::>', this.dataList);
+          this._spinner.hide();
+          this.toastr.success(res.message);
+        });
+
+      } else {
+        this.isModalOpen = false;
+      }
+    });
+
+  }
 
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
@@ -96,7 +114,7 @@ export class RetourPleinComponent {
           this.articleService.DeletedArticle(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetRetourPleinList(1);
+            this.GetRetourPleinList();
             this._spinner.hide();
           });
         } else {

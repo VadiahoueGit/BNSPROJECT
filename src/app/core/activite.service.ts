@@ -435,6 +435,23 @@ export class ActiviteService {
 
   //GESTION DES RETOURS
 
+  ValidateRetourPlein(id: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.patch(`${this.apiUrl}/v1/retours-pleins/${id}/valider`,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
   GetRetourList(data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -457,7 +474,7 @@ export class ActiviteService {
     });
   }
 
-  GetRetourPleinList(data: any) {
+  GetRetourPleinList() {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`

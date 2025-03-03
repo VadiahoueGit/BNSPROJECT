@@ -1084,6 +1084,24 @@ export class ArticleServiceService {
       );
     });
   }
+
+  GetMouvementStock(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.get(`${this.apiUrl}/v1/log-all/movements/log?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res.data);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
   // REVENDEUR
 
   GetListRevendeur(data: any) {

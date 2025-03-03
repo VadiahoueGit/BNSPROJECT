@@ -16,7 +16,7 @@
             <tr>
                 <td>
                       <span class="ml-1 vertical-align-middle">
-                         {{ dataList.paiementsCommandeClient?.NumCommande || dataList.paiementsCommandeGratuit?.NumCommande || ''}}
+                        {{ dataList.commandeClient?.NumCommande || dataList.commandeGratuite?.NumCommande || dataList.venteChine?.NumCommande}}
                     </span>
                 </td>
               <td>
@@ -26,7 +26,7 @@
               </td>
                 <td>
                      <span class="ml-1 vertical-align-middle">
-                         {{ dataList.transporteur ? dataList.transporteur?.nom +' '+ dataList.transporteur?.prenoms : dataList.paiementsVente.commercial?.nom +' '+dataList.paiementsVente.commercial?.prenoms}}
+                         {{ dataList.transporteur?.nom +' '+ dataList.transporteur?.prenoms || dataList.paiementsVente.commercial?.nom +' '+dataList.paiementsVente.commercial?.prenoms || '' }}
                     </span>
                 </td>
                 <td>
@@ -68,7 +68,7 @@
         <div class="row">
           <fieldset class="row border my-1" *ngIf="operation == 'edit'">
             <legend style="font-size: 13px" class="text-secondary">
-              Numero Commande :  {{ updateData.paiementsCommandeClient?.NumCommande || updateData.paiementsCommandeGratuit?.NumCommande || ''}} du
+              Numero Commande :  {{ updateData.commandeClient?.NumCommande || updateData.commandeGratuite?.NumCommande || updateData.venteChine?.NumCommande}} du
               {{ updateData.createdAt | date }}
             </legend>
             <div class="row">
@@ -82,10 +82,7 @@
                 <strong>Motif : </strong>
                 <span>
                  {{
-                    updateData?.paiementsCommandeClient?.returnStock?.returnType ||
-                    updateData?.paiementsCommandeGratuit?.returnStock?.returnType ||
-                    updateData?.paiementsVente?.returnStock?.returnType ||
-                    ''
+                    updateData?.returnType
                   }}
                 </span>
               </div>
@@ -93,21 +90,29 @@
                 <strong>Statut : </strong>
                 <span>
                   {{
-                    updateData?.paiementsCommandeClient?.statut ||
-                    updateData?.paiementsCommandeGratuit?.statut ||
-                    updateData?.paiementsVente?.statut ||
+                    updateData?.commandeClient?.statut ||
+                    updateData?.commandeGratuite?.statut ||
+                    updateData?.venteChine?.statut ||
                     ''
                   }}
                 </span>
               </div>
-              <div class="col-md-4 text-bg-primary">
-                <strong>Montant à perçevoir: </strong>
-                <span>{{ updateData.transaction?.montantAPercevoir |currency:'XOF'}}</span>
+              <div class="col-md-4">
+                <strong>Vente : </strong>
+                <span>
+                 {{
+                    updateData?.fromTo
+                  }}
+                </span>
               </div>
-              <div class="col-md-4 text-bg-primary">
-                <strong>Montant perçu : </strong>
-                <span>{{ updateData.transaction?.montantPercu |currency:'XOF'}}</span>
-              </div>
+<!--              <div class="col-md-4 text-bg-primary">-->
+<!--                <strong>Montant à perçevoir: </strong>-->
+<!--                <span>{{ updateData.transaction?.montantAPercevoir |currency:'XOF'}}</span>-->
+<!--              </div>-->
+<!--              <div class="col-md-4 text-bg-primary">-->
+<!--                <strong>Montant perçu : </strong>-->
+<!--                <span>{{ updateData.transaction?.montantPercu |currency:'XOF'}}</span>-->
+<!--              </div>-->
 
             </div>
           </fieldset>
@@ -160,29 +165,29 @@
               </tbody>
             </table>
           </fieldset>
-          <fieldset class="row border my-2">
-            <legend style="font-size: 13px" class="text-secondary">
-              Articles Chargés
-            </legend>
-            <table class="table table-bordered">
-              <thead class="table-success">
-              <tr>
-                <th scope="col">Code</th>
-                <th scope="col">Désignation</th>
-                <th scope="col">Conditionnement</th>
-                <th scope="col">Quantité</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr *ngFor="let item of (updateData?.paiementsCommandeClient?.articles || updateData?.paiementsCommandeGratuit?.articles ||  updateData?.paiementsVente?.articles) || []">
-                <td>{{ item.liquide.code }}</td>
-                <td>{{ item.liquide.libelle }}</td>
-                <td>{{ item.liquide.condition }}</td>
-                <td>{{ item.quantite }}</td>
-              </tr>
-              </tbody>
-            </table>
-          </fieldset>
+<!--          <fieldset class="row border my-2">-->
+<!--            <legend style="font-size: 13px" class="text-secondary">-->
+<!--              Articles Chargés-->
+<!--            </legend>-->
+<!--            <table class="table table-bordered">-->
+<!--              <thead class="table-success">-->
+<!--              <tr>-->
+<!--                <th scope="col">Code</th>-->
+<!--                <th scope="col">Désignation</th>-->
+<!--                <th scope="col">Conditionnement</th>-->
+<!--                <th scope="col">Quantité</th>-->
+<!--              </tr>-->
+<!--              </thead>-->
+<!--              <tbody>-->
+<!--              <tr *ngFor="let item of (updateData?.paiementsCommandeClient?.articles || updateData?.paiementsCommandeGratuit?.articles ||  updateData?.paiementsVente?.articles) || []">-->
+<!--                <td>{{ item.liquide.code }}</td>-->
+<!--                <td>{{ item.liquide.libelle }}</td>-->
+<!--                <td>{{ item.liquide.condition }}</td>-->
+<!--                <td>{{ item.quantite }}</td>-->
+<!--              </tr>-->
+<!--              </tbody>-->
+<!--            </table>-->
+<!--          </fieldset>-->
         </div>
       </div>
 

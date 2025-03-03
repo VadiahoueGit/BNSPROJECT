@@ -5,10 +5,12 @@
 
         <ng-template pTemplate="header">
             <tr>
-                <th style="color: var(--secondary-color);">N° commandes</th>
+                <th style="color: var(--secondary-color);">N° de retour</th>
                 <th style="color: var(--secondary-color);">Agent</th>
                 <th style="color: var(--secondary-color);">Client</th>
+              <th style="color: var(--secondary-color);">Opération</th>
                 <th style="color: var(--secondary-color);">Dépot</th>
+              <th style="color: var(--secondary-color);">Statut</th>
                 <th style="color: var(--secondary-color);">Actions</th>
             </tr>
         </ng-template>
@@ -16,31 +18,34 @@
             <tr>
                 <td>
                     <span class="ml-1 vertical-align-middle">
-                        <!-- {{ dataList.image }} -->
+                         {{ dataList.numRetour }}
                     </span>
                 </td>
                 <td>
                     <span class="ml-1 vertical-align-middle">
-                        <!-- {{ dataList.image }} -->
+                      {{ dataList.user?.nom +' '+dataList.user?.prenoms }}
+                    </span>
+                </td>
+              <td>
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.client?.raisonSocial || 'NEANT' }}
+                    </span>
+              </td>
+                <td>
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.typeRetour}}
                     </span>
                 </td>
                 <td>
-                    <span class="ml-1 vertical-align-middle">
+                  <span class="ml-1 vertical-align-middle">
                          {{ dataList.depot?.nomDepot }}
                     </span>
                 </td>
-                <td>
-                    <!-- {{ dataList.libelle }} -->
-                </td>
-                <td>
-                    <!-- {{ dataList.libelle }} -->
-                </td>
-                <td>
-                    <!-- {{ dataList.libelle }} -->
-                </td>
-                <td>
-                    <!-- {{ dataList.libelle }} -->
-                </td>
+              <td>
+                  <span class="ml-1 vertical-align-middle">
+                         {{ dataList.statut }}
+                    </span>
+              </td>
                 <td>
                     <tr class="d-flex justify-content-center gap-3">
                         <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>
@@ -57,4 +62,141 @@
     </p-table>
 </div>
 
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div
+    class="modal-dialog modal-dialog-centered"
 
+  >
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Détails récuperation</h5>
+        <button type="button" class="btn-close" aria-label="Close"></button>
+      </div>
+
+      <div
+        class="modal-body"
+        style="padding: 20px; max-height: 70vh; overflow-y: auto"
+      >
+        <div class="row">
+          <fieldset class="row border my-1" *ngIf="operation == 'edit'">
+            <legend style="font-size: 13px" class="text-secondary">
+              Numero Commande :  {{ updateData.commande.numVenteChine || updateData.commande.NumCommande || ''}} du
+              {{ updateData.createdAt | date }}
+            </legend>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Dépot : </strong>
+                <span>
+                  {{ updateData.depot?.nomDepot }}
+                </span>
+              </div>
+              <div class="col-md-4">
+                <strong>Agent {{updateData.typeUser}} : </strong>
+                <span>
+                  {{ updateData.user?.nom +' '+updateData.user?.prenoms }}
+                </span>
+              </div>
+              <div class="col-md-4">
+                <strong>Motif : </strong>
+                <span>
+                 {{ updateData?.typeRetour || '' }}
+                </span>
+              </div>
+              <div class="col-md-4">
+                <strong>Statut : </strong>
+                <span>
+                 {{ updateData?.statut || '' }}
+                </span>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="row border my-2" *ngIf="operation == 'edit'">
+            <legend style="font-size: 13px" class="text-secondary">
+              Informations du client
+            </legend>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Groupe de client : </strong>
+                <span>{{ updateData.client ? updateData.client?.groupeClient?.nomGroupe || updateData.client?.GroupeClient?.nomGroupe : 'NEANT'}}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Type de client : </strong>
+                <span>{{ updateData.client?.role || 'NEANT'}}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Établissement : </strong>
+                <span>{{updateData.client?.raisonSocial || 'NEANT'  }}</span>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset class="row border my-2">
+            <legend style="font-size: 13px" class="text-secondary">
+              Emballages retournés
+            </legend>
+            <table class="table table-bordered">
+              <thead class="table-success">
+              <tr>
+                <th scope="col">Code</th>
+                <th scope="col">Désignation</th>
+                <th scope="col">Conditionnement</th>
+                <th scope="col">Quantité</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let item of updateData.articles">
+                <td>{{ item.liquide.code }}</td>
+                <td>{{ item.liquide.libelle }}</td>
+                <td>{{ item.liquide.condition }}</td>
+                <td>{{ item.quantite }}</td>
+              </tr>
+              </tbody>
+            </table>
+          </fieldset>
+<!--          <fieldset class="row border my-2">-->
+<!--            <legend style="font-size: 13px" class="text-secondary">-->
+<!--              Articles Chargés-->
+<!--            </legend>-->
+<!--            <table class="table table-bordered">-->
+<!--              <thead class="table-success">-->
+<!--              <tr>-->
+<!--                <th scope="col">Code</th>-->
+<!--                <th scope="col">Désignation</th>-->
+<!--                <th scope="col">Conditionnement</th>-->
+<!--                <th scope="col">Quantité</th>-->
+<!--              </tr>-->
+<!--              </thead>-->
+<!--              <tbody>-->
+<!--              <tr *ngFor="let item of updateData.commande || []">-->
+<!--                <td>{{ item.liquide.code }}</td>-->
+<!--                <td>{{ item.liquide.libelle }}</td>-->
+<!--                <td>{{ item.liquide.condition }}</td>-->
+<!--                <td>{{ item.quantite }}</td>-->
+<!--              </tr>-->
+<!--              </tbody>-->
+<!--            </table>-->
+<!--          </fieldset>-->
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer gap-3 px-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="OnCloseModal()"
+        >
+          Fermer
+        </button>
+        <button
+          *ngIf="updateData?.statut !== 'Validé'"
+          type="submit"
+          class="btn btn-primary px-2"
+          (click)="ValidateReturn(updateData.id)"
+        >
+          Valider
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,117 @@
+<div
+  class="gap-2 d-flex align-items-center mb-3"
+  style="cursor: pointer"
+  (click)="goBack()"
+>
+  <i style="font-size: 18px" class="fas fw-bold fa-chevron-left me-2"></i>
+  <h4 class="fw-bold mb-0">Historiques mouvement de stock</h4>
+</div>
+<div class="card">
+
+  <p-table
+    [styleClass]="'p-datatable-sm'"
+    #dt2
+    [value]="dataList"
+    dataKey="id"
+    [rows]="8"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [paginator]="true"
+    (onPage)="onPage($event)"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="color: var(--secondary-color)">Dépot</th>
+        <th style="color: var(--secondary-color)">Mouvement</th>
+        <th style="color: var(--secondary-color)">Qte avant</th>
+        <th style="color: var(--secondary-color)">Qte après</th>
+        <th style="color: var(--secondary-color)">Quantité</th>
+        <th style="color: var(--secondary-color)">Temps</th>
+<!--        <th style="color: var(&#45;&#45;secondary-color);">Actions</th>-->
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-dataList>
+      <tr>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.depot.nomDepot }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.mouvement }}
+          </span>
+        </td>
+        <td>
+          {{ dataList.stockAvantMouvement }}
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.stockApresMouvement }}
+          </span>
+        </td>
+        <td>
+          {{ dataList.quantite }}
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+          {{ dataList.stock?.updatedAt | date:'dd/MM/yyyy HH:mm:ss' }}
+          </span>
+        </td>
+
+        <td>
+<!--        <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>-->
+      </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">Aucun élement trouvé.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Modal creation -->
+<!-- Modal -->
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex align-items-center">
+        <div
+          class="d-flex justify-content-center align-items-center"
+          style="
+            background-color: rgb(219, 255, 232);
+            border-radius: 3rem;
+            width: 3rem;
+            height: 3rem;
+          "
+        >
+          <i class="fas fa-box-check text-primary fs-3"></i>
+        </div>
+        <h1
+          *ngIf="operation == 'edit'"
+          class="modal-title fs-5 ms-3"
+          id="staticBackdropLabel"
+        >
+          Details du mouvement
+        </h1>
+      </div>
+      <div class="modal-body">
+
+      </div>
+
+      <div class="modal-footer gap-3 px-4">
+        <button
+          (click)="OnCloseModal()"
+          type="button"
+          class="btn btn-secondary px-2"
+        >
+          Annuler
+        </button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->

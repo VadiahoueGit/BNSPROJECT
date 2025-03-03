@@ -17,7 +17,9 @@
       <tr>
         <td>
            <span class="ml-1 vertical-align-middle">
-             {{ dataList.paiementsCommandeClient?.NumCommande || dataList.paiementsCommandeGratuit?.NumCommande || '' }}
+            {{ dataList?.commandeClient?.NumCommande ||
+           dataList?.commandeGratuite?.NumCommande ||
+           dataList?.venteChine?.NumCommande}}
           </span>
         </td>
         <td>
@@ -73,7 +75,9 @@
         <div class="row">
           <fieldset class="row border my-1" *ngIf="operation == 'edit'">
             <legend style="font-size: 14px" class="text-secondary">
-              Numero Commande : {{ updateData.orderNum }} du
+              Numero Commande : {{ updateData?.commandeClient?.NumCommande ||
+            updateData?.commandeGratuite?.NumCommande ||
+            updateData?.venteChine?.NumCommande}} du
               {{ updateData.createdAt | date }}
             </legend>
             <div class="row">
@@ -83,20 +87,38 @@
               </div>
               <div class="col-md-4">
                 <strong>Motif : </strong>
-                <span>{{ updateData.transaction?.motif }}</span>
+                <span>
+                 {{
+                    updateData?.returnType
+                  }}
+                </span>
               </div>
               <div class="col-md-4">
                 <strong>Statut : </strong>
-                <span>{{ updateData.transaction?.statut }}</span>
+                <span>
+                  {{
+                    updateData?.commandeClient?.statut ||
+                    updateData?.commandeGratuite?.statut ||
+                    updateData?.venteChine?.statut
+                  }}
+                </span>
               </div>
-              <div class="col-md-4 text-bg-primary">
-                <strong>Montant à perçevoir: </strong>
-                <span>{{ updateData.transaction?.montantAPercevoir |currency:'XOF' }}</span>
+              <div class="col-md-4">
+                <strong>Vente : </strong>
+                <span>
+                 {{
+                    updateData?.fromTo
+                  }}
+                </span>
               </div>
-              <div class="col-md-4 text-bg-primary">
-                <strong>Montant perçu : </strong>
-                <span>{{ updateData.transaction?.montantPercu |currency:'XOF' }}</span>
-              </div>
+<!--              <div class="col-md-4 text-bg-primary">-->
+<!--                <strong>Montant à perçevoir: </strong>-->
+<!--                <span>{{ updateData.transaction?.montantAPercevoir |currency:'XOF' }}</span>-->
+<!--              </div>-->
+<!--              <div class="col-md-4 text-bg-primary">-->
+<!--                <strong>Montant perçu : </strong>-->
+<!--                <span>{{ updateData.transaction?.montantPercu |currency:'XOF' }}</span>-->
+<!--              </div>-->
 
             </div>
           </fieldset>
@@ -150,11 +172,11 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let item of updateData.articles">
-              <td>{{ item.produit.code }}</td>
+            <tr *ngFor="let item of updateData.articleRdv">
+              <td>{{ item.productCode }}</td>
               <td>{{ item.typeArticle }}</td>
-              <td>{{ item.produit.libelle }}</td>
-              <td>{{ item.produit.condition }}</td>
+              <td>{{ item.libelle }}</td>
+              <td>{{ item.condition }}</td>
               <td>{{ item.quantity }}</td>
             </tr>
             </tbody>
