@@ -119,13 +119,13 @@
           <fieldset class="row border my-1">
             <legend style="font-size: 14px" class="text-secondary">
               Information Client de la Commande :
-              {{ updateData.paiementsCommandeClient[0].NumCommande }} du
+              {{ updateData.paiementsCommandeClient[0]?.NumCommande }} du
               {{ updateData.createdAt | date }}
             </legend>
             <div class="row">
               <div class="col-md-4">
                 <strong>Client: </strong>
-                <span>{{ updateData?.client.raisonSocial }}</span>
+                <span>{{ updateData?.client?.raisonSocial }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Localité: </strong>
@@ -368,13 +368,13 @@
           <fieldset class="row border my-1">
             <legend style="font-size: 14px" class="text-secondary">
               Information Client de la Commande :
-              {{ updateData.paiementsCommandeClient[0].NumCommande }} du
+              {{ updateData.paiementsCommandeClient[0]?.NumCommande }} du
               {{ updateData.createdAt | date }}
             </legend>
             <div class="row">
               <div class="col-md-4">
                 <strong>Client: </strong>
-                <span>{{ updateData?.client.raisonSocial }}</span>
+                <span>{{ updateData?.client?.raisonSocial }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Localité: </strong>
