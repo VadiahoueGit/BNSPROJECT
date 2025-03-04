@@ -51,22 +51,22 @@ export class RevendeurComponent {
   ngOnInit(): void {
     this.revendeurForm = this.fb.group({
       groupeClientId: [null, Validators.required],
-      numeroRegistre: [null, Validators.required],
+      numeroRegistre: [null],
       raisonSocial: [null, Validators.required],
-      contact: [0, Validators.required],
+      contact: [''],
       longitude: [null, Validators.required],
       latitude: [null, Validators.required],
-      telephone: [null, [Validators.required]],
-      localiteId: [null, Validators.required],
-      depotId: [null, Validators.required],
-      zoneDeLivraisonId: [null, Validators.required],
-      nomProprietaire: [null, Validators.required],
-      telephoneProprietaire: [null, Validators.required],
-      nomGerant: [null, Validators.required],
-      telephoneGerant: [null, Validators.required],
-      quantiteMinimumACommander: [null, Validators.min(0)],
-      numeroCompteContribuable: [null, Validators.required],
-      familleProduitId: [null, Validators.required],
+      telephone: [''],
+      localiteId: [0, Validators.required],
+      depotId: [0, Validators.required],
+      zoneDeLivraisonId: [0, Validators.required],
+      nomProprietaire: ['', Validators.required],
+      telephoneProprietaire: [''],
+      nomGerant: ['', Validators.required],
+      telephoneGerant: [''],
+      quantiteMinimumACommander: [0, Validators.min(0)],
+      numeroCompteContribuable: [''],
+      familleProduitId: [0, Validators.required],
     });
 
     this._articleService.ListGroupeRevendeurs.subscribe((res: any) => {
@@ -142,6 +142,7 @@ export class RevendeurComponent {
       numeroCompteContribuable: this.updateData.numeroCompteContribuable,
       familleProduitId: this.updateData.familleProduitId,
     });
+    console.log(this.revendeurForm);
     if (this.updateData.numeroSAP != "")
     {
       this.numeroSap = this.updateData.numeroSAP;
@@ -205,7 +206,7 @@ export class RevendeurComponent {
           formData.append('cni', this.selectedCniFile!);
           formData.append('registre', this.selectedRccmFile!);  // Ce champ n'est plus requis
           formData.append('dfe', this.selectedDfeFile!);  // Ce champ n'est plus requis
-          formData.append('cni', this.numeroSap);
+          formData.append('numeroSAP', this.numeroSap);
 
           this._articleService.ValidateRevendeur(revendeur.id, formData).then(
             (response: any) => {
@@ -326,7 +327,7 @@ export class RevendeurComponent {
   }
   onSubmit() {
     this._spinner.show();
-    console.log(this.revendeurForm.value, 'form value');
+    console.log(this.revendeurForm, 'form value');
     if (this.isEditMode) {
       this._articleService
         .UpdateRevendeur(this.id, this.revendeurForm.value)
