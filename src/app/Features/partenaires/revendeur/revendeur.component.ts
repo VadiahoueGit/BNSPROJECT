@@ -183,13 +183,13 @@ export class RevendeurComponent {
   }
   confirmValidateOperation(revendeur: any) {
     // Vérifier que la CNI et le numéro SAP sont sélectionnés
-    if (!this.selectedCniFile || !this.numeroSap) {
-      this.toastr.warning(
-        'Erreur!',
-        'Veuillez sélectionner la CNI et le numéro SAP.'
-      );
-      return;
-    }
+    // if (!this.selectedCniFile || !this.numeroSap) {
+    //   this.toastr.warning(
+    //     'Erreur!',
+    //     'Veuillez sélectionner la CNI et le numéro SAP.'
+    //   );
+    //   return;
+    // }
 
     if (!revendeur.isValide) {
       ALERT_QUESTION(
