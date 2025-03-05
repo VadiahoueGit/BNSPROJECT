@@ -197,4 +197,22 @@ export class FinanceService {
 
    // GESTION DES PAIEMENT
 
+  GetHistoriquePayment(id: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http
+        .get(
+          `${this.apiUrl}/v1/paiement/${id}/historique-paiements`
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
 }
