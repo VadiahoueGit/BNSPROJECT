@@ -180,7 +180,7 @@ export class RevendeurComponent {
   }
   selectedFile: File | null = null;
   onFileSelected(event: any) {
-    this.selectedFile = event.target.files[0]; // Récupérer le fichier sélectionné
+    this.selectedFile = event.target.files[0]; 
   }
   confirmValidateOperation(revendeur: any) {
     // Vérifier que la CNI et le numéro SAP sont sélectionnés
@@ -204,8 +204,8 @@ export class RevendeurComponent {
           const formData = new FormData();
 
           formData.append('cni', this.selectedCniFile!);
-          formData.append('registre', this.selectedRccmFile!);  // Ce champ n'est plus requis
-          formData.append('dfe', this.selectedDfeFile!);  // Ce champ n'est plus requis
+          formData.append('registre', this.selectedRccmFile!);  
+          formData.append('dfe', this.selectedDfeFile!);  
           formData.append('numeroSAP', this.numeroSap);
 
           this._articleService.ValidateRevendeur(revendeur.id, formData).then(
