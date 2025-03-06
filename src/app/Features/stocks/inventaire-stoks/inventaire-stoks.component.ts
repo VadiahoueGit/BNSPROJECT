@@ -1,18 +1,18 @@
-import {Component, ViewChild} from '@angular/core';
-import {FormGroup, FormBuilder, Validators, FormArray} from '@angular/forms';
-import {NgxSpinnerService} from 'ngx-spinner';
-import {ToastrService} from 'ngx-toastr';
-import {Table} from 'primeng/table';
-import {ArticleServiceService} from 'src/app/core/article-service.service';
-import {ALERT_QUESTION, storage_keys} from '../../shared-component/utils';
-import {Location} from '@angular/common';
-import {CoreServiceService} from "../../../core/core-service.service";
-import {LocalStorageService} from "../../../core/local-storage.service";
+import { Component, ViewChild } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { ToastrService } from 'ngx-toastr';
+import { Table } from 'primeng/table';
+import { ArticleServiceService } from 'src/app/core/article-service.service';
+import { ALERT_QUESTION, storage_keys } from '../../shared-component/utils';
+import { Location } from '@angular/common';
+import { CoreServiceService } from '../../../core/core-service.service';
+import { LocalStorageService } from '../../../core/local-storage.service';
 
 @Component({
   selector: 'app-inventaire-stoks',
   templateUrl: './inventaire-stoks.component.html',
-  styleUrls: ['./inventaire-stoks.component.scss']
+  styleUrls: ['./inventaire-stoks.component.scss'],
 })
 export class InventaireStoksComponent {
   @ViewChild('dt2') dt2!: Table;
@@ -48,43 +48,37 @@ export class InventaireStoksComponent {
   rowsPerPage: any;
   isAllSelected: boolean = false;
   now = new Date().toISOString().split('T')[0];
-  UserInfo:any
+  UserInfo: any;
   constructor(
-    private localstorage:LocalStorageService,
+    private localstorage: LocalStorageService,
     private articleService: ArticleServiceService,
     private _coreService: CoreServiceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService,
-    private location: Location,
-  ) {
-  }
+    private location: Location
+  ) {}
 
   ngOnInit() {
     this.UserInfo = this.localstorage.getItem(storage_keys.STOREUser);
-    this.InventaireForm = this.fb.group(
-      {
-        dateComptage: [null],
-        utilisateur: ['', Validators.required],
-        inventeur: ['', Validators.required],
-        // description: [''],
-        depotId: [null, Validators.required],
-        articles: this.fb.array([], this.articlesRequiredValidator)
-
-      });
+    this.InventaireForm = this.fb.group({
+      dateComptage: [null],
+      utilisateur: ['', Validators.required],
+      inventeur: ['', Validators.required],
+      // description: [''],
+      depotId: [null, Validators.required],
+      articles: this.fb.array([], this.articlesRequiredValidator),
+    });
 
     this.GetInventaireList(1);
     this.GetDepotList(1);
     // this.fetchData();
   }
 
-  onDepotChange()
-  {
-    if(this.InventaireForm.controls['depotId'].valid)
-    {
+  onDepotChange() {
+    if (this.InventaireForm.controls['depotId'].valid) {
       this.GetArticleListByDepot();
     }
-
   }
 
   onFilterGlobal(event: Event) {
@@ -110,7 +104,7 @@ export class InventaireStoksComponent {
   }
 
   CloseArticleModal() {
-    this.deselectAllItems()
+    this.deselectAllItems();
     this.isArticleModalOpen = false;
     console.log(this.isModalOpen);
   }
@@ -122,12 +116,12 @@ export class InventaireStoksComponent {
     this.isAllSelected = event.target.checked; // Met à jour l'état global
     this.selectedArticles = []; // Réinitialise la liste des articles sélectionnés
 
-    this.filteredArticleList.forEach(article => {
+    this.filteredArticleList.forEach((article) => {
       article.isChecked = this.isAllSelected; // Applique l'état à tous les articles
       if (this.isAllSelected) {
         this.selectedArticles.push(article);
       }
-      this.GetStockDisponibleByDepot(article)
+      this.GetStockDisponibleByDepot(article);
     });
 
     this.afficherArticlesSelectionnes();
@@ -145,9 +139,9 @@ export class InventaireStoksComponent {
 
   GetArticleListByDepot() {
     this._spinner.show();
-    let depotId = this.InventaireForm.controls['depotId'].value
+    let depotId = this.InventaireForm.controls['depotId'].value;
     this.articleService.GetArticleListByDepot(depotId).then((res: any) => {
-      this.articleList = res.articles
+      this.articleList = res.articles;
       this.filteredArticleList = this.articleList;
       console.log('DATATYPEPRIX:::>', res);
       this._spinner.hide();
@@ -173,16 +167,16 @@ export class InventaireStoksComponent {
   }
 
   goBack() {
-    this.location.back()
+    this.location.back();
   }
 
   // Méthode appelée lorsque l'état d'un checkbox change
   onCheckboxChange(article: any): void {
     console.log('onCheckboxChange', article);
-    this.GetStockDisponibleByDepot(article)
+    this.GetStockDisponibleByDepot(article);
     if (article.isChecked) {
       this.selectedArticles.push(article);
-      this.afficherArticlesSelectionnes()
+      this.afficherArticlesSelectionnes();
     } else {
       delete article.quantite;
       const indexToRemove = this.selectedArticles.findIndex(
@@ -192,9 +186,8 @@ export class InventaireStoksComponent {
         this.selectedArticles.splice(indexToRemove, 1);
       }
     }
-    this.isAllSelected = this.filteredArticleList.every(a => a.isChecked);
-    this.afficherArticlesSelectionnes()
-
+    this.isAllSelected = this.filteredArticleList.every((a) => a.isChecked);
+    this.afficherArticlesSelectionnes();
   }
 
   afficherArticlesSelectionnes() {
@@ -212,25 +205,27 @@ export class InventaireStoksComponent {
     this.afficherArticlesSelectionnes();
   }
 
-
   // Méthode pour filtrer les articles en fonction du terme de recherche
   filterArticles(): void {
-    console.log(this.searchTerm)
+    console.log(this.searchTerm);
     if (this.searchTerm) {
-      this.filteredArticleList = this.articleList.filter((article: any) =>
-        article.libelle.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        article.code.toLowerCase().includes(this.searchTerm.toLowerCase())
+      this.filteredArticleList = this.articleList.filter(
+        (article: any) =>
+          article.libelle
+            .toLowerCase()
+            .includes(this.searchTerm.toLowerCase()) ||
+          article.code.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
-      console.log(this.filteredArticleList)
+      console.log(this.filteredArticleList);
     } else {
       this.filteredArticleList = [...this.articleList];
     }
   }
 
   OnCloseModal() {
-    this.deselectAllItems()
+    this.deselectAllItems();
     this.isModalOpen = false;
-    console.log(this.isModalOpen)
+    console.log(this.isModalOpen);
   }
 
   OnDelete(Id: any) {
@@ -251,8 +246,10 @@ export class InventaireStoksComponent {
   }
 
   onSubmit(): void {
-    this.InventaireForm.controls['utilisateur'].setValue(this.UserInfo.nom+' '+this.UserInfo.prenom);
-    this.selectedArticles = this.selectedArticles.filter(article => {
+    this.InventaireForm.controls['utilisateur'].setValue(
+      this.UserInfo.nom + ' ' + this.UserInfo.prenom
+    );
+    this.selectedArticles = this.selectedArticles.filter((article) => {
       if (article.isChecked) {
         if (!article.quantite || article.quantite <= 0) {
           this.onCheckboxChange(article);
@@ -263,34 +260,35 @@ export class InventaireStoksComponent {
           return article.quantite && article.quantite > 0;
         }
       }
-
     });
-    console.log(this.selectedArticles)
-    this.setArticles(this.selectedArticles)
-    console.log("InventaireForm",this.InventaireForm)
+    console.log(this.selectedArticles);
+    this.setArticles(this.selectedArticles);
+    console.log('InventaireForm', this.InventaireForm);
     // this.stockForm.controls['depotId'].value
     if (this.InventaireForm.valid) {
-      this._spinner.show()
+      this._spinner.show();
 
-      console.log(this.InventaireForm)
-      this.articleService.SaveInventaire(this.InventaireForm.value).then((response: any) => {
-        if (response.statusCode === 201) {
-          this.InventaireForm.reset();
-          this.deselectAllItems()
-          // this.InventaireForm.controls['dateEnregistrement'].setValue(this.now)
-          this.toastr.success(response.message);
-          this.GetInventaireList(1);
-        } else {
-          this.toastr.error(response.message);
+      console.log(this.InventaireForm);
+      this.articleService.SaveInventaire(this.InventaireForm.value).then(
+        (response: any) => {
+          if (response.statusCode === 201) {
+            this.InventaireForm.reset();
+            this.deselectAllItems();
+            // this.InventaireForm.controls['dateEnregistrement'].setValue(this.now)
+            this.toastr.success(response.message);
+            this.GetInventaireList(1);
+          } else {
+            this.toastr.error(response.message);
+          }
+          this._spinner.hide();
+          this.OnCloseModal();
+        },
+        (error: any) => {
+          this._spinner.hide();
+          this.toastr.error('Erreur!', "Erreur lors de l'enregistrement.");
+          console.error('Erreur lors de la mise à jour', error);
         }
-        this._spinner.hide()
-        this.OnCloseModal();
-
-      }, (error: any) => {
-        this._spinner.hide()
-        this.toastr.error('Erreur!', "Erreur lors de l'enregistrement.");
-        console.error('Erreur lors de la mise à jour', error);
-      })
+      );
       console.log('Formulaire soumis :', this.InventaireForm.getRawValue());
     } else {
       this.toastr.error('Remplissez correctement!');
@@ -298,29 +296,30 @@ export class InventaireStoksComponent {
   }
 
   articlesRequiredValidator(control: any): { [key: string]: boolean } | null {
-
     if (control.length === 0) {
-      return {'articlesRequired': true};  // Le FormArray doit contenir au moins un article
+      return { articlesRequired: true }; // Le FormArray doit contenir au moins un article
     }
     // Vérifier la validité de chaque article (FormGroup)
     const allValid = control.controls.every((group: any) => group.valid);
-    return allValid ? null : {'articlesInvalid': true};
+    return allValid ? null : { articlesInvalid: true };
   }
 
   async GetStockDisponibleByDepot(item: any): Promise<any> {
     let data = {
-      productId: item.code,
+      productId: item.articleCode,
       depotId: this.InventaireForm.controls['depotId'].value,
     };
-
+    console.log(data, item, 'les donnees');
     try {
       // Attendre la réponse de la promesse
-      const response: any = await this.articleService.GetStockDisponibleByDepot(data);
-      console.log(response)
+      const response: any = await this.articleService.GetStockDisponibleByDepot(
+        data
+      );
+      console.log(response);
       // Vérifier si le statusCode est 200
       if (response) {
         this.stocksDisponibles[item.id] = response.quantiteDisponible;
-        console.log(this.stocksDisponibles)
+        console.log(this.stocksDisponibles);
       } else if (response.statusCode === 404) {
         this.stocksDisponibles[item.id] = 0; // Si le code est 404, retourner 0
       } else {
@@ -336,30 +335,33 @@ export class InventaireStoksComponent {
 
   calculateData(stockTheorique: number, stockPhysique: number) {
     const ecart = stockPhysique - stockTheorique;
-    console.log(ecart, stockTheorique)
-    const ecartPercent = stockTheorique > 0 ? (ecart / stockTheorique) * 100 : 100;
-    console.log(ecart, ecartPercent)
-    return {ecart, ecartPercent}; // Facultatif : retournez un objet si besoin
+    console.log(ecart, stockTheorique);
+    const ecartPercent =
+      stockTheorique > 0 ? (ecart / stockTheorique) * 100 : 100;
+    console.log(ecart, ecartPercent);
+    return { ecart, ecartPercent }; // Facultatif : retournez un objet si besoin
   }
-
 
   // Méthode pour ajouter un article au FormArray
   setArticles(articlesData: any) {
     // Vider d'abord le FormArray
     this.articles.clear();
-    console.log('articlesData:::>',articlesData);
+    console.log('articlesData:::>', articlesData);
     // Ajouter chaque article au FormArray
     articlesData.forEach((item: any) => {
       const articleGroup = this.fb.group({
         productCode: [item.articleCode, Validators.required],
         stockTheorique: [item.stockTheorique, Validators.required],
-        stockPhysique: [item.quantite, [Validators.required, Validators.min(1)]],
+        stockPhysique: [
+          item.quantite,
+          [Validators.required, Validators.min(1)],
+        ],
         ecart: [item.ecart, Validators.required],
         pourcentageEcart: [item.ecartPercent, Validators.required],
-        description: item.libelle
-      })
+        description: item.libelle,
+      });
       this.articles.push(articleGroup);
-    })
+    });
 
     console.log('form', this.InventaireForm.getRawValue());
   }
@@ -370,24 +372,27 @@ export class InventaireStoksComponent {
 
   validateQuantite(data: any, stockTheorique: number): void {
     data.stockTheorique = stockTheorique;
-    this.ecart[data.id] = this.calculateData(stockTheorique, data.quantite).ecart;
-    data.ecart = this.ecart[data.id]
-    this.ecartPercent[data.id] = this.calculateData(stockTheorique, data.quantite).ecartPercent;
-    data.ecartPercent = this.ecartPercent[data.id]
-    console.log('data',data)
+    this.ecart[data.id] = this.calculateData(
+      stockTheorique,
+      data.quantite
+    ).ecart;
+    data.ecart = this.ecart[data.id];
+    this.ecartPercent[data.id] = this.calculateData(
+      stockTheorique,
+      data.quantite
+    ).ecartPercent;
+    data.ecartPercent = this.ecartPercent[data.id];
+    console.log('data', data);
   }
-
 
   deselectAllItems(): void {
     this.selectedArticles.forEach((item: any) => {
       delete item.quantite;
       this.onCheckboxChange(item);
       item.isChecked = false;
-
     });
 
     this.selectedArticles = [];
-
   }
 
   GetDepotList(page: number) {
@@ -414,19 +419,19 @@ export class InventaireStoksComponent {
     try {
       // Effectuer les deux appels API en parallèle
       const [plastiques, liquides]: [any, any] = await Promise.all([
-        this.articleService.GetPlastiqueNuList(data),  // Remplacez par votre méthode API
-        this.articleService.GetLiquideList(data)      // Remplacez par votre méthode API
+        this.articleService.GetPlastiqueNuList(data), // Remplacez par votre méthode API
+        this.articleService.GetLiquideList(data), // Remplacez par votre méthode API
       ]);
 
-      console.log("Données plastiques:", plastiques);
-      console.log("Données liquides:", liquides);
+      console.log('Données plastiques:', plastiques);
+      console.log('Données liquides:', liquides);
       // Vérifier si plastiques et liquides sont bien des tableaux
       if (Array.isArray(plastiques.data)) {
         this.dataListPlastiqueNu = plastiques.data;
         // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
         this.articleList.push(...plastiques.data);
       } else {
-        console.error("Les données de plastiques ne sont pas un tableau");
+        console.error('Les données de plastiques ne sont pas un tableau');
       }
 
       if (Array.isArray(liquides.data)) {
@@ -434,7 +439,7 @@ export class InventaireStoksComponent {
         // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
         this.articleList.push(...liquides.data);
       } else {
-        console.error("Les données de liquides ne sont pas un tableau");
+        console.error('Les données de liquides ne sont pas un tableau');
       }
 
       this.filteredArticleList = this.articleList;
