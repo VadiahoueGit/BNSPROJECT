@@ -94,7 +94,7 @@
         </h1>
       </div>
 
-      <div class="modal-body">
+      <div class="modal-body" style="max-height: 70vh;overflow-y: auto;">
         <div class="row">
           <form [formGroup]="VenteForm" *ngIf="operation == 'create'">
             <fieldset class="row border my-2">
@@ -174,6 +174,10 @@
             </legend>
 
              <div class="row">
+               <div class="col-md-4">
+                 <strong>Numero vente: </strong>
+                 <span>{{ updateData.numVenteChine }}</span>
+               </div>
               <div class="col-md-4">
                 <strong>Commercial: </strong>
                 <span>{{ updateData.commercial.nom }} {{ updateData.commercial.nom }}</span>
@@ -186,6 +190,10 @@
                 <strong>Dépot: </strong>
                 <span>{{ updateData.commercial.depot.nomDepot }}</span>
               </div>
+               <div class="col-md-4">
+                 <strong>Montant liquide: </strong>
+                 <span>{{ totalLiquide | currency:'XOF'}}</span>
+               </div>
              </div>
           </fieldset>
           <fieldset class="row border my-2" *ngIf="operation == 'edit'">
@@ -212,7 +220,7 @@
             </div>
           </fieldset>
           <fieldset class="row border my-2">
-            <legend class="fs-6 text-primary">Cargaison</legend>
+            <legend class="fs-6 text-primary">Cargaison chargée</legend>
             <div
               *ngIf="operation == 'edit'"
               class="table-responsive"
@@ -234,11 +242,13 @@
                     *ngFor="let item of updateData.articles; let i = index"
                   >
                     <td>{{ item.liquide.libelle }}</td>
-                    <td>{{ item.quantite }}</td>
+                    <td>{{ item.quantiteAffectee }}</td>
 
-                    <td>{{  item.prixUnitaireLiquide}}</td>
-                    <td>{{ item.prixUnitaireEmballage}}</td>
-                    <td>{{ item.prixTotal}}</td>
+                    <td>{{ item.montantLiquide}}</td>
+                    <td>{{ item.montantEmballage}}</td>
+                    <td>{{ (+item.montantLiquide || 0) + (+item.montantEmballage || 0) }}</td>
+
+
 
                   </tr>
                   <tr class="table-dark" *ngIf="updateData.articles.length > 0">
@@ -312,7 +322,80 @@
 
             </div>
           </fieldset>
+          <fieldset class="row border my-2">
+            <legend class="fs-6 text-primary">Cargaison vendue</legend>
+            <div
+              *ngIf="operation == 'edit'"
+              class="table-responsive"
+              style="max-height: 300px; overflow-y: auto"
+            >
+              <table class="table">
+                <thead>
+                <tr style="font-size: small">
+                  <th scope="col">Produits</th>
+                  <th scope="col">Qte liquide</th>
+                  <th scope="col">Prix liquide</th>
+                  <th scope="col">Prix emballage</th>
+                  <th scope="col">Prix total</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr
+                  style="font-size: small"
+                  *ngFor="let item of updateData.articles; let i = index"
+                >
+                  <td>{{ item.liquide.libelle }}</td>
+                  <td>{{ (+item.quantiteAffectee || 0) - (+item.quantite || 0) }}</td>
+                  <td>{{ item.montantLiquide}}</td>
+                  <td>{{ item.montantEmballage}}</td>
+                  <td>{{ (+item.montantLiquide || 0) + (+item.montantEmballage || 0) }}</td>
+
+
+
+                </tr>
+
+                <!-- Ajoutez d'autres lignes si nécessaire -->
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
         </div>
+        <fieldset class="row border my-2">
+          <legend class="fs-6 text-primary">Cargaison restante</legend>
+          <div
+            *ngIf="operation == 'edit'"
+            class="table-responsive"
+            style="max-height: 300px; overflow-y: auto"
+          >
+            <table class="table">
+              <thead>
+              <tr style="font-size: small">
+                <th scope="col">Produits</th>
+                <th scope="col">Qte liquide</th>
+                <th scope="col">Prix liquide</th>
+                <th scope="col">Prix emballage</th>
+                <th scope="col">Prix total</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr
+                style="font-size: small"
+                *ngFor="let item of updateData.articles; let i = index"
+              >
+                <td>{{ item.liquide.libelle }}</td>
+                <td>{{ item.quantite }}</td>
+                <td>{{ item.montantLiquide}}</td>
+                <td>{{ item.montantEmballage}}</td>
+                <td>{{ (+item.montantLiquide || 0) + (+item.montantEmballage || 0) }}</td>
+
+
+
+              </tr>
+              <!-- Ajoutez d'autres lignes si nécessaire -->
+              </tbody>
+            </table>
+          </div>
+        </fieldset>
       </div>
       <div class="modal-footer gap-3 px-4y">
         <button
