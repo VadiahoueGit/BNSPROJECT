@@ -26,7 +26,7 @@ export class ValidationPaiementsComponent {
   articleId: any = 0;
   isEditMode: boolean = false;
   ListCLients: any = [];
-
+  hstoriquePayment: any = [];
   currentPage: number;
   rowsPerPage: any;
   totalEmballage: number;
@@ -64,6 +64,7 @@ export class ValidationPaiementsComponent {
   }
 
   OnEdit(data: any) {
+    this.GetHistoriquePayment(data.id)
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
@@ -151,4 +152,15 @@ export class ValidationPaiementsComponent {
       }
     });
   }
+
+  GetHistoriquePayment(id: number)
+    {
+      this._spinner.show();
+      this.financeService.GetHistoriquePayment(id).then((res: any) => {
+        this.hstoriquePayment = res.data
+        console.log('data:::>', res);
+        this._spinner.hide();
+      });
+    }
+
 }
