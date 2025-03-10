@@ -164,7 +164,6 @@ export class VenteGlobalFacturesComponent {
     this._activiteService.DownloadGlobalFacturesById(id).then(
       (res: any) => {
         console.log('DownloadGlobalFacturesById:::>', res);
-        // this.FactureDoc = res.data;
         this._spinner.hide();
       },
       (error: any) => {
