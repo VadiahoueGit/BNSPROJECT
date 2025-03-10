@@ -34,23 +34,23 @@
           {{ dataList.localite.nomLocalite }}
         </td>
         <td>
-          {{ dataList.dateVente |date}}
+          {{ dataList.dateVente |date }}
         </td>
         <td>
-          {{ dataList.statut}}
+          {{ dataList.statut }}
         </td>
         <td>
-          <tr class="d-flex justify-content-center gap-3">
-            <td>
-              <i
-                (click)="OnEdit(dataList)"
-                style="cursor: pointer"
-                class="fas fa-eye text-secondary"
-              ></i>
-            </td>
+      <tr class="d-flex justify-content-center gap-3">
+        <td>
+          <i
+            (click)="OnEdit(dataList)"
+            style="cursor: pointer"
+            class="fas fa-eye text-secondary"
+          ></i>
+        </td>
 
-          </tr>
-        </td>
+      </tr>
+      </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
@@ -93,16 +93,22 @@
           Détail vente chine
         </h1>
       </div>
-
+      <nav class="nav nav-pills flex-column flex-sm-row gap-1 border-bottom">
+        <a class="flex-sm text-sm-center nav-link" *ngIf="operation == 'edit'"[class.active]="activeTab === 'detail'"
+           (click)="activeElement('detail')">Détails</a>
+        <a class="flex-sm text-sm-center nav-link" *ngIf="operation == 'edit'" [class.active]="activeTab === 'suivivente'"
+           (click)="activeElement('suivivente')">Suivi des ventes</a>
+      </nav>
       <div class="modal-body" style="max-height: 70vh;overflow-y: auto;">
-        <div class="row">
+        <!-- DETAIL VENTE-->
+        <div class="row  tab-pane fade show active" *ngIf="activeTab === 'detail'">
           <form [formGroup]="VenteForm" *ngIf="operation == 'create'">
             <fieldset class="row border my-2">
               <legend class="fs-6 text-primary">Ressources & chargement</legend>
               <div class="col-md-4">
                 <div class="mb-3">
                   <label class="form-label"
-                    >Commercial <span class="text-danger">*</span></label
+                  >Commercial <span class="text-danger">*</span></label
                   >
                   <ng-select
                     class="form-control"
@@ -117,7 +123,7 @@
                 </div>
                 <div class="mb-3">
                   <label class="form-label"
-                    >Localité <span class="text-danger">*</span></label
+                  >Localité <span class="text-danger">*</span></label
                   >
                   <ng-select
                     class="form-control"
@@ -133,7 +139,7 @@
               <div class="col-md-4">
                 <div class="mb-3">
                   <label class="form-label"
-                    >Date <span class="text-danger">*</span></label
+                  >Date <span class="text-danger">*</span></label
                   >
                   <input
                     type="date"
@@ -143,7 +149,7 @@
                 </div>
                 <div class="mb-3">
                   <label class="form-label"
-                    >Camion <span class="text-danger">*</span></label
+                  >Camion <span class="text-danger">*</span></label
                   >
                   <ng-select
                     class="form-control"
@@ -173,11 +179,11 @@
               Information Livraison
             </legend>
 
-             <div class="row">
-               <div class="col-md-4">
-                 <strong>Numero vente: </strong>
-                 <span>{{ updateData.numVenteChine }}</span>
-               </div>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Numero vente: </strong>
+                <span>{{ updateData.numVenteChine }}</span>
+              </div>
               <div class="col-md-4">
                 <strong>Commercial: </strong>
                 <span>{{ updateData.commercial.nom }} {{ updateData.commercial.nom }}</span>
@@ -190,11 +196,11 @@
                 <strong>Dépot: </strong>
                 <span>{{ updateData.commercial.depot.nomDepot }}</span>
               </div>
-               <div class="col-md-4">
-                 <strong>Montant liquide: </strong>
-                 <span>{{ totalLiquide | currency:'XOF'}}</span>
-               </div>
-             </div>
+              <div class="col-md-4">
+                <strong>Montant liquide: </strong>
+                <span>{{ totalLiquide | currency:'XOF' }}</span>
+              </div>
+            </div>
           </fieldset>
           <fieldset class="row border my-2" *ngIf="operation == 'edit'">
             <legend style="font-size: 14px" class="text-secondary">
@@ -228,37 +234,36 @@
             >
               <table class="table">
                 <thead>
-                  <tr style="font-size: small">
-                    <th scope="col">Produits</th>
-                    <th scope="col">Qte liquide</th>
-                    <th scope="col">Prix liquide</th>
-                    <th scope="col">Prix emballage</th>
-                    <th scope="col">Prix total</th>
-                  </tr>
+                <tr style="font-size: small">
+                  <th scope="col">Produits</th>
+                  <th scope="col">Qte liquide</th>
+                  <th scope="col">Prix liquide</th>
+                  <th scope="col">Prix emballage</th>
+                  <th scope="col">Prix total</th>
+                </tr>
                 </thead>
                 <tbody>
-                  <tr
-                    style="font-size: small"
-                    *ngFor="let item of updateData.articles; let i = index"
-                  >
-                    <td>{{ item.liquide.libelle }}</td>
-                    <td>{{ item.quantiteAffectee }}</td>
+                <tr
+                  style="font-size: small"
+                  *ngFor="let item of updateData.articles; let i = index"
+                >
+                  <td>{{ item.liquide.libelle }}</td>
+                  <td>{{ item.quantiteAffectee }}</td>
 
-                    <td>{{ item.montantLiquide}}</td>
-                    <td>{{ item.montantEmballage}}</td>
-                    <td>{{ (+item.montantLiquide || 0) + (+item.montantEmballage || 0) }}</td>
+                  <td>{{ item.montantLiquide }}</td>
+                  <td>{{ item.montantEmballage }}</td>
+                  <td>{{ (+item.montantLiquide || 0) + (+item.montantEmballage || 0) }}</td>
 
 
-
-                  </tr>
-                  <tr class="table-dark" *ngIf="updateData.articles.length > 0">
-                    <th scope="col" colspan="1">Total :</th>
-                    <td>{{ totalQte }}</td>
-                    <td>{{ totalLiquide }}</td>
-                    <td>{{ totalEmballage }}</td>
-                    <td>{{ totalGlobal }}</td>
-                  </tr>
-                  <!-- Ajoutez d'autres lignes si nécessaire -->
+                </tr>
+                <tr class="table-dark" *ngIf="updateData.articles.length > 0">
+                  <th scope="col" colspan="1">Total :</th>
+                  <td>{{ totalQte }}</td>
+                  <td>{{ totalLiquide }}</td>
+                  <td>{{ totalEmballage }}</td>
+                  <td>{{ totalGlobal }}</td>
+                </tr>
+                <!-- Ajoutez d'autres lignes si nécessaire -->
                 </tbody>
               </table>
             </div>
@@ -267,7 +272,7 @@
               class="table-responsive"
               style="max-height: 300px; overflow-y: auto"
             >
-              <table  class="table table-bordered">
+              <table class="table table-bordered">
                 <thead class="table-success">
                 <tr>
                   <th scope="col">Produits</th>
@@ -295,7 +300,7 @@
                       }"
                       (blur)="validateQuantite(item)"
                     />
-                    / {{stocksDisponibles[item.liquide.id]}}
+                    / {{ stocksDisponibles[item.liquide.id] }}
                   </td>
                   <td>{{ prixLiquideTotal[item.id] }}</td>
                   <td>{{ prixEmballageTotal[item.id] }}</td>
@@ -322,10 +327,18 @@
 
             </div>
           </fieldset>
-          <fieldset class="row border my-2">
-            <legend class="fs-6 text-primary">Cargaison vendue</legend>
+        </div>
+        <!--  SUIVI VENTE-->
+        <div class="row tab-pane fade show active" *ngIf="activeTab === 'suivivente'">
+          <fieldset class="row border my-2" *ngFor="let data of updateData.ventes">
+            <legend class="fs-6 text-primary">Client - </legend>
+            <div class="d-flex flex-row justify-content-between align-items-center flex-wrap my-2" >
+              <div><span>Date - {{data.dateVente | date:'dd/MM/yyyy HH:mm:ss'}}</span></div>
+             <div><span>Montant à perçevoir : </span><span>{{data.transaction.montantAPercevoir | currency :'XOF'}}</span></div>
+              <div><span>Montant perçu : </span><span>{{data.transaction.montantPercu | currency :'XOF'}}</span></div>
+              <div><span>Montant restant : </span><span>{{data.transaction.montantRestant | currency :'XOF'}}</span></div>
+            </div>
             <div
-              *ngIf="operation == 'edit'"
               class="table-responsive"
               style="max-height: 300px; overflow-y: auto"
             >
@@ -333,24 +346,20 @@
                 <thead>
                 <tr style="font-size: small">
                   <th scope="col">Produits</th>
-                  <th scope="col">Qte liquide</th>
+                  <th scope="col">Qte liquide vendu</th>
                   <th scope="col">Prix liquide</th>
-                  <th scope="col">Prix emballage</th>
                   <th scope="col">Prix total</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr
                   style="font-size: small"
-                  *ngFor="let item of updateData.articles; let i = index"
+                  *ngFor="let item of data.articles; let i = index"
                 >
                   <td>{{ item.liquide.libelle }}</td>
-                  <td>{{ (+item.quantiteAffectee || 0) - (+item.quantite || 0) }}</td>
-                  <td>{{ item.montantLiquide}}</td>
-                  <td>{{ item.montantEmballage}}</td>
-                  <td>{{ (+item.montantLiquide || 0) + (+item.montantEmballage || 0) }}</td>
-
-
+                  <td>{{ item.quantite }}</td>
+                  <td>{{ item.prixUnitaire }}</td>
+                  <td>{{ item.montantTotal }}</td>
 
                 </tr>
 
@@ -360,159 +369,124 @@
             </div>
           </fieldset>
         </div>
-        <fieldset class="row border my-2">
-          <legend class="fs-6 text-primary">Cargaison restante</legend>
-          <div
-            *ngIf="operation == 'edit'"
-            class="table-responsive"
-            style="max-height: 300px; overflow-y: auto"
+        <div class="modal-footer gap-3 px-4y">
+          <button
+            (click)="OnCloseModal()"
+            type="button"
+            class="btn btn-secondary px-2"
           >
-            <table class="table">
-              <thead>
-              <tr style="font-size: small">
-                <th scope="col">Produits</th>
-                <th scope="col">Qte liquide</th>
-                <th scope="col">Prix liquide</th>
-                <th scope="col">Prix emballage</th>
-                <th scope="col">Prix total</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr
-                style="font-size: small"
-                *ngFor="let item of updateData.articles; let i = index"
-              >
-                <td>{{ item.liquide.libelle }}</td>
-                <td>{{ item.quantite }}</td>
-                <td>{{ item.montantLiquide}}</td>
-                <td>{{ item.montantEmballage}}</td>
-                <td>{{ (+item.montantLiquide || 0) + (+item.montantEmballage || 0) }}</td>
-
-
-
-              </tr>
-              <!-- Ajoutez d'autres lignes si nécessaire -->
-              </tbody>
-            </table>
-          </div>
-        </fieldset>
+            Annuler
+          </button>
+          <button
+            type="submit"
+            *ngIf="operation == 'create'"
+            [disabled]="totalQte === 0"
+            (click)="onSubmit()"
+            class="btn btn-primary px-2"
+          >
+            Valider
+          </button>
+        </div>
       </div>
-      <div class="modal-footer gap-3 px-4y">
-        <button
-          (click)="OnCloseModal()"
-          type="button"
-          class="btn btn-secondary px-2"
-        >
-          Annuler
-        </button>
-        <button
-          type="submit"
-          *ngIf="operation == 'create'"
-          [disabled]="totalQte === 0"
-          (click)="onSubmit()"
-          class="btn btn-primary px-2"
-        >
-          Valider
-        </button>
-      </div>
+
+
     </div>
   </div>
-</div>
 
-<!--CHOIX ARTICLE-->
-<div *ngIf="isChoiceModalOpen" class="custom-modal">
-  <div class="modal-dialog2 modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div
-          class="d-flex justify-content-center align-items-center"
-          style="
+  <!--CHOIX ARTICLE-->
+  <div *ngIf="isChoiceModalOpen" class="custom-modal">
+    <div class="modal-dialog2 modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header d-flex align-items-center">
+          <div
+            class="d-flex justify-content-center align-items-center"
+            style="
             background-color: rgb(219, 255, 232);
             border-radius: 3rem;
             width: 3rem;
             height: 3rem;
           "
-        >
-          <i class="fas fa-box-check text-primary fs-3"></i>
-        </div>
-        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
-          Selection des articles
-        </h1>
-      </div>
-
-      <div class="modal-body">
-        <form>
-          <div class="row">
-            <fieldset class="row border my-2">
-              <div class="p-3">
-                <!-- Champ de recherche -->
-                <input
-                  type="text"
-                  name="search"
-                  (input)="filterArticles()"
-                  [(ngModel)]="searchTerm"
-                  placeholder="Rechercher un produit"
-                  class="form-control mb-3"
-                />
-              </div>
-              <div
-                class="table-responsive"
-                style="max-height: 200px; overflow-y: auto"
-              >
-                <table class="table">
-                  <thead>
-                  <tr style="font-size: small">
-                    <th scope="col" class="text-secondary">Code</th>
-                    <th scope="col" class="text-secondary">Produits</th>
-                    <th scope="col" class="text-secondary">Disponibilité</th>
-                    <th scope="col" class="text-secondary text-center">
-                      Choix
-                    </th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr
-                    *ngFor="let article of filteredArticleList ; let i = index"
-                    style="font-size: small"
-                  >
-                    <th scope="row">{{ article.code }}</th>
-                    <th scope="row">{{ article.libelle }}</th>
-                    <th scope="row">{{stocksDisponibles[article.liquide.id]}}</th>
-                    <td class="">
-                      <input
-                        type="checkbox"
-                        class="form-control-custom"
-                        [name]="'checkbox_' + i"
-                        [(ngModel)]="article.isChecked"
-                        (change)="onCheckboxChange(article)"
-                        [disabled]="stocksDisponibles[article.liquide.id] <=0"
-                      />
-
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
-            </fieldset>
+          >
+            <i class="fas fa-box-check text-primary fs-3"></i>
           </div>
-        </form>
-      </div>
-      <div class="modal-footer gap-3 px-4y">
-        <button
-          (click)="OnCloseChoiceModal()"
-          type="button"
-          class="btn btn-secondary px-2"
-        >
-          Annuler
-        </button>
-        <button
-          type="submit"
-          (click)="onSubmitSelection()"
-          class="btn btn-primary px-2"
-        >
-          Valider
-        </button>
+          <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
+            Selection des articles
+          </h1>
+        </div>
+
+        <div class="modal-body">
+          <form>
+            <div class="row">
+              <fieldset class="row border my-2">
+                <div class="p-3">
+                  <!-- Champ de recherche -->
+                  <input
+                    type="text"
+                    name="search"
+                    (input)="filterArticles()"
+                    [(ngModel)]="searchTerm"
+                    placeholder="Rechercher un produit"
+                    class="form-control mb-3"
+                  />
+                </div>
+                <div
+                  class="table-responsive"
+                  style="max-height: 200px; overflow-y: auto"
+                >
+                  <table class="table">
+                    <thead>
+                    <tr style="font-size: small">
+                      <th scope="col" class="text-secondary">Code</th>
+                      <th scope="col" class="text-secondary">Produits</th>
+                      <th scope="col" class="text-secondary">Disponibilité</th>
+                      <th scope="col" class="text-secondary text-center">
+                        Choix
+                      </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr
+                      *ngFor="let article of filteredArticleList ; let i = index"
+                      style="font-size: small"
+                    >
+                      <th scope="row">{{ article.code }}</th>
+                      <th scope="row">{{ article.libelle }}</th>
+                      <th scope="row">{{ stocksDisponibles[article.liquide.id] }}</th>
+                      <td class="">
+                        <input
+                          type="checkbox"
+                          class="form-control-custom"
+                          [name]="'checkbox_' + i"
+                          [(ngModel)]="article.isChecked"
+                          (change)="onCheckboxChange(article)"
+                          [disabled]="stocksDisponibles[article.liquide.id] <=0"
+                        />
+
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </fieldset>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer gap-3 px-4y">
+          <button
+            (click)="OnCloseChoiceModal()"
+            type="button"
+            class="btn btn-secondary px-2"
+          >
+            Annuler
+          </button>
+          <button
+            type="submit"
+            (click)="onSubmitSelection()"
+            class="btn btn-primary px-2"
+          >
+            Valider
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>

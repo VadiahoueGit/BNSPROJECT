@@ -45,6 +45,7 @@ export class VentechinepageComponent {
   depotId: number = 0;
   updateData: any = {};
   venteId: any = 0;
+  public activeTab: string = 'detail';
   constructor(
     private cdr: ChangeDetectorRef,
     private _spinner: NgxSpinnerService,
@@ -76,6 +77,9 @@ export class VentechinepageComponent {
     this.GetVenteChineList(1);
   }
 
+  activeElement(elt: string) {
+    this.activeTab = elt;
+  }
   OnCloseModal() {
     this.totalEmballage = 0;
     this.totalLiquide  = 0;
@@ -276,7 +280,7 @@ export class VentechinepageComponent {
       this.totalEmballage += Number(article.montantEmballage);
       this.totalLiquide += Number(article.montantLiquide);
       this.totalGlobal = this.totalLiquide + this.totalEmballage;
-      this.totalQte += article.quantite;
+      this.totalQte += article.quantiteAffectee;
     });
 
     this.venteId = data.id;
