@@ -1,16 +1,16 @@
-import { Component, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
-import { Table } from 'primeng/table';
-import { ArticleServiceService } from 'src/app/core/article-service.service';
-import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
-import { ALERT_QUESTION } from '../../shared-component/utils';
-import { Location } from '@angular/common';
-import { CoreServiceService } from '../../../core/core-service.service';
-import { LogistiqueService } from '../../../core/logistique.service';
-import { ActiviteService } from '../../../core/activite.service';
-import { StatutCommande } from '../../../utils/utils';
+import {Component, ViewChild} from '@angular/core';
+import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {ToastrService} from 'ngx-toastr';
+import {Table} from 'primeng/table';
+import {ArticleServiceService} from 'src/app/core/article-service.service';
+import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
+import {ALERT_QUESTION} from '../../shared-component/utils';
+import {Location} from '@angular/common';
+import {CoreServiceService} from '../../../core/core-service.service';
+import {LogistiqueService} from '../../../core/logistique.service';
+import {ActiviteService} from '../../../core/activite.service';
+import {StatutCommande} from '../../../utils/utils';
 
 interface RegroupementItem {
   palettes: number;
@@ -86,10 +86,10 @@ export class LivraisonComponent {
   regroupementTable: any[] = [];
   regroupementFinal: Record<string, RegroupementItem>;
   casiersPerPalette: Record<number, { casiers: number; type: string }> = {
-    33: { casiers: 63, type: 'biere' },
-    25: { casiers: 63, type: 'biere' },
-    50: { casiers: 66, type: 'plastique' },
-    60: { casiers: 66, type: 'métal' },
+    33: {casiers: 63, type: 'biere'},
+    25: {casiers: 63, type: 'biere'},
+    50: {casiers: 66, type: 'plastique'},
+    60: {casiers: 66, type: 'métal'},
   };
 
   constructor(
@@ -102,7 +102,8 @@ export class LivraisonComponent {
     private fb: FormBuilder,
     private location: Location,
     private toastr: ToastrService
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.livraisonForm = this.fb.group({
@@ -214,6 +215,7 @@ export class LivraisonComponent {
   }
 
   calculate(commande: any): void {
+
     console.log('commande', commande);
     // Regrouper les articles par format
     const articlesParFormat = commande.articles.reduce(
@@ -257,12 +259,12 @@ export class LivraisonComponent {
           return result;
         }
 
-        const { casiers, type } = paletteInfo;
+        const {casiers, type} = paletteInfo;
 
         const palettes = Math.floor(totalCasiers / casiers);
         const casier = totalCasiers % casiers;
         this.cargaison += totalCasiers;
-        result[format] = { palettes, casier, type };
+        result[format] = {palettes, casier, type};
         return result;
       },
       {}
@@ -384,6 +386,8 @@ export class LivraisonComponent {
   }
 
   OnCreate() {
+    this.regroupementFinal = {};
+    this.regroupementTable = []
     this.isEditMode = false;
     this.isModalOpen = true;
     this.operation = 'create';
@@ -412,33 +416,54 @@ export class LivraisonComponent {
     console.log(this.isModalOpen);
   }
 
-  UploadDoc() {
-    const numRegroupement = 'NUMREG-20250308212748-NEA8';
-    const data = [
-      {
-        "format": 15,
-        "casier": 2,
-        "palette": 20
-      },
-      {
-        "format": 25,
-        "casier": 1,
-        "palette": 30
-      }
-    ];
-
+  UploadDoc(item: any) {
+    this.regroupementTable = []
+    const numRegroupement = item.numRegroupement;
+    let regroup = this.regrouperArticles(item.commandes)
+    this.calculate(regroup);
     this._spinner.show();
-    this.activiteService.GetRegroupementPdf(numRegroupement, data).then(
-      (res: any) => {
-        console.log('DownloadGlobalFacturesById:::>', res);
-        this._spinner.hide();
-      },
-      (error: any) => {
-        this._spinner.hide();
-        this.toastr.info(error.error.message);
-      }
-    );
+    if (this.regroupementFinal) {
+      const result = Object.entries(this.regroupementFinal).map(([key, value]) => ({
+        format: parseInt(key),
+        casier: value.casier,
+        palette: value.palettes
+      }));
+
+      this.activiteService.GetRegroupementPdf(numRegroupement, result).then(
+        (res: any) => {
+          console.log('DownloadGlobalFacturesById:::>', res);
+
+          this._spinner.hide();
+        },
+        (error: any) => {
+          this._spinner.hide();
+          this.toastr.info(error.error.message);
+        }
+      );
+    }
+
+
   }
+
+  regrouperArticles(commandes: any[]): any {
+    let articlesRegroupes: any = [];
+    let montantTotal = 0;
+
+    // Parcours de toutes les commandes
+    commandes.forEach(commande => {
+      // Ajouter les articles de chaque commande à la liste des articles regroupés
+      commande.articles.forEach((article: any) => {
+        articlesRegroupes.push(article);
+        montantTotal += parseFloat(article.montantEmballage);
+      })
+    });
+
+    return {
+      articles: articlesRegroupes,
+      montantTotal: montantTotal
+    };
+  }
+
   GetArticleList(page: number) {
     let data = {
       paginate: false,
@@ -556,6 +581,7 @@ export class LivraisonComponent {
       item.isChecked = false;
     });
   }
+
   onCheckboxChange(commande: any): void {
     if (commande.isChecked) {
       this.calculate(commande);

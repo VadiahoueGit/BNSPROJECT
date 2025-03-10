@@ -229,6 +229,7 @@
                 <thead>
                 <tr style="font-size: small">
                   <th scope="col">Opérations</th>
+                  <th scope="col">Mode de paiement</th>
                   <th scope="col">Montant versé</th>
                   <th scope="col">Date de paiement</th>
                 </tr>
@@ -239,8 +240,9 @@
                   *ngFor="let item of hstoriquePayment; let i = index "
                 >
                   <td>{{ item.transaction.motif }}</td>
+                  <td>{{ item.moyenPaiement }}</td>
                   <td>{{ item.montant }}</td>
-                  <td>{{ item.datePaiement | date }}</td>
+                  <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
                 </tr>
                 <!-- Ajoutez d'autres lignes si nécessaire -->
                 </tbody>
@@ -374,6 +376,7 @@
                 <thead>
                 <tr style="font-size: small">
                   <th scope="col">Opérations</th>
+                  <th scope="col">Mode de paiement</th>
                   <th scope="col">Montant versé</th>
                   <th scope="col">Date de paiement</th>
                 </tr>
@@ -384,8 +387,9 @@
                   *ngFor="let item of hstoriquePayment; let i = index "
                 >
                   <td>{{ item.transaction.motif }}</td>
+                  <td>{{ item.moyenPaiement }}</td>
                   <td>{{ item.montant }}</td>
-                  <td>{{ item.datePaiement | date }}</td>
+                  <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
                 </tr>
                 <!-- Ajoutez d'autres lignes si nécessaire -->
                 </tbody>
@@ -534,6 +538,7 @@
                 <thead>
                 <tr style="font-size: small">
                   <th scope="col">Opérations</th>
+                  <th scope="col">Mode de paiement</th>
                   <th scope="col">Montant versé</th>
                   <th scope="col">Date de paiement</th>
                 </tr>
@@ -544,8 +549,9 @@
                   *ngFor="let item of hstoriquePayment; let i = index "
                 >
                   <td>{{ item.transaction.motif }}</td>
+                  <td>{{ item.moyenPaiement }}</td>
                   <td>{{ item.montant }}</td>
-                  <td>{{ item.datePaiement | date }}</td>
+                  <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
                 </tr>
                 <!-- Ajoutez d'autres lignes si nécessaire -->
                 </tbody>
