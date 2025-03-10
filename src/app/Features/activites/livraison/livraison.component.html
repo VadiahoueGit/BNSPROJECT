@@ -256,7 +256,7 @@
       >
         <div class="row">
           <!-- Regroupement et Zone -->
-          <div class="col-md-12 d-flex mb-3">
+          <div class="col-md-12 d-flex mb-3 align-items-end">
             <div class="me-3">
               <label for="numRegroupement" class="form-label"
                 >N° Regroupement</label
@@ -279,7 +279,7 @@
                 readonly
               />
             </div>
-            <div>
+            <div class="me-3">
               <label for="chauffeur" class="form-label">Chauffeur</label>
               <input
                 type="text"
@@ -288,6 +288,15 @@
                 [attr.value]="updateData?.transporteur?.nom + ' ' + updateData?.transporteur?.prenoms"
                 readonly
               />
+            </div>
+            <div>
+              <button
+                type="button"
+                class="btn btn-secondary px-4"
+                (click)="UploadDoc()"
+              >
+                Imprimer
+              </button>
             </div>
           </div>
 

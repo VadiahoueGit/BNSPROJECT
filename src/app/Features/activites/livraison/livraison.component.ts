@@ -1,16 +1,16 @@
-import {Component, ViewChild} from '@angular/core';
-import {FormGroup, FormBuilder, Validators} from '@angular/forms';
-import {NgxSpinnerService} from 'ngx-spinner';
-import {ToastrService} from 'ngx-toastr';
-import {Table} from 'primeng/table';
-import {ArticleServiceService} from 'src/app/core/article-service.service';
-import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
-import {ALERT_QUESTION} from '../../shared-component/utils';
-import {Location} from '@angular/common';
-import {CoreServiceService} from "../../../core/core-service.service";
-import {LogistiqueService} from "../../../core/logistique.service";
-import {ActiviteService} from "../../../core/activite.service";
-import {StatutCommande} from "../../../utils/utils";
+import { Component, ViewChild } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { ToastrService } from 'ngx-toastr';
+import { Table } from 'primeng/table';
+import { ArticleServiceService } from 'src/app/core/article-service.service';
+import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
+import { ALERT_QUESTION } from '../../shared-component/utils';
+import { Location } from '@angular/common';
+import { CoreServiceService } from '../../../core/core-service.service';
+import { LogistiqueService } from '../../../core/logistique.service';
+import { ActiviteService } from '../../../core/activite.service';
+import { StatutCommande } from '../../../utils/utils';
 
 interface RegroupementItem {
   palettes: number;
@@ -21,9 +21,8 @@ interface RegroupementItem {
 @Component({
   selector: 'app-livraison',
   templateUrl: './livraison.component.html',
-  styleUrls: ['./livraison.component.scss']
+  styleUrls: ['./livraison.component.scss'],
 })
-
 export class LivraisonComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
@@ -34,8 +33,8 @@ export class LivraisonComponent {
       localite: 'test',
       statut: 'test',
       prenom: 'test',
-      nom: 'test'
-    }
+      nom: 'test',
+    },
   ];
 
   livraisonForm!: FormGroup;
@@ -87,10 +86,10 @@ export class LivraisonComponent {
   regroupementTable: any[] = [];
   regroupementFinal: Record<string, RegroupementItem>;
   casiersPerPalette: Record<number, { casiers: number; type: string }> = {
-    33: {casiers: 63, type: 'biere'},
-    25: {casiers: 63, type: 'biere'},
-    50: {casiers: 66, type: 'plastique'},
-    60: {casiers: 66, type: 'métal'},
+    33: { casiers: 63, type: 'biere' },
+    25: { casiers: 63, type: 'biere' },
+    50: { casiers: 66, type: 'plastique' },
+    60: { casiers: 66, type: 'métal' },
   };
 
   constructor(
@@ -103,8 +102,7 @@ export class LivraisonComponent {
     private fb: FormBuilder,
     private location: Location,
     private toastr: ToastrService
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.livraisonForm = this.fb.group({
@@ -120,11 +118,11 @@ export class LivraisonComponent {
 
     // this.selectedArticle = this.articles[0];
     this.GetListZone();
-    this.GetRegroupementRules()
+    this.GetRegroupementRules();
     this.GetTransporteurList();
     this.GetVehiculeList();
-    this.GetListCommande(1)
-    this.GetRegroupementList()
+    this.GetListCommande(1);
+    this.GetRegroupementList();
     this.articleService.ListTypeArticles.subscribe((res: any) => {
       this.dataListProduits = res;
       console.log(this.dataListProduits, 'this.dataListProduits ');
@@ -136,64 +134,79 @@ export class LivraisonComponent {
   }
 
   getTotalGeneral(commandes: any): number {
-    return commandes.reduce((total: any, commande: any) => total + commande.montantTotal, 0);
+    return commandes.reduce(
+      (total: any, commande: any) => total + commande.montantTotal,
+      0
+    );
   }
 
   removeCommande(commande: any): void {
     console.log('Retrait de la commande', commande);
 
     if (!this.regroupementTable || this.regroupementTable.length === 0) {
-      console.warn("Aucune donnée dans regroupementTable.");
+      console.warn('Aucune donnée dans regroupementTable.');
       return;
     }
 
     // Regrouper les articles de la commande supprimée par format
-    const articlesParFormat = commande.articles.reduce((acc: any, article: any) => {
-      const format = Number(article?.liquide?.format);
-      if (!format) return acc;
+    const articlesParFormat = commande.articles.reduce(
+      (acc: any, article: any) => {
+        const format = Number(article?.liquide?.format);
+        if (!format) return acc;
 
-      acc[format] = (acc[format] || 0) + Number(article.quantite || 0);
-      return acc;
-    }, {});
+        acc[format] = (acc[format] || 0) + Number(article.quantite || 0);
+        return acc;
+      },
+      {}
+    );
 
     console.log('Articles à retirer:', articlesParFormat);
 
     // Mettre à jour `regroupementTable`
     Object.keys(articlesParFormat).forEach((format) => {
       let totalCasiersToRemove = articlesParFormat[format];
-      console.log('totalCasiersToRemove',totalCasiersToRemove)
+      console.log('totalCasiersToRemove', totalCasiersToRemove);
       // On va modifier **chaque entrée** où ce format est présent
-      this.regroupementTable = this.regroupementTable.map(regroupement => {
-        if (regroupement[format]) {
-          let casiersRestants = regroupement[format].casier;
-          let palettesRestantes = regroupement[format].palettes;
-          const casiersParPalette = this.casiersPerPalette[Number(format)]?.casiers || 0;
+      this.regroupementTable = this.regroupementTable
+        .map((regroupement) => {
+          if (regroupement[format]) {
+            let casiersRestants = regroupement[format].casier;
+            let palettesRestantes = regroupement[format].palettes;
+            const casiersParPalette =
+              this.casiersPerPalette[Number(format)]?.casiers || 0;
 
-          // **1️⃣ On retire d'abord des casiers**
-          let casiersÀRetirer = Math.min(totalCasiersToRemove, casiersRestants);
-          casiersRestants -= casiersÀRetirer;
-          totalCasiersToRemove -= casiersÀRetirer;
-          this.cargaison -= casiersÀRetirer;
-          console.log('cargaison',casiersÀRetirer)
-          // **2️⃣ Si on doit encore retirer, on enlève des palettes**
-          while (totalCasiersToRemove > 0 && palettesRestantes > 0) {
-            palettesRestantes -= 1;
-            casiersRestants += casiersParPalette;
-            let casiersÀRetirerSupplementaire = Math.min(totalCasiersToRemove, casiersRestants);
-            casiersRestants -= casiersÀRetirerSupplementaire;
-            totalCasiersToRemove -= casiersÀRetirerSupplementaire;
-          }
+            // **1️⃣ On retire d'abord des casiers**
+            let casiersÀRetirer = Math.min(
+              totalCasiersToRemove,
+              casiersRestants
+            );
+            casiersRestants -= casiersÀRetirer;
+            totalCasiersToRemove -= casiersÀRetirer;
+            this.cargaison -= casiersÀRetirer;
+            console.log('cargaison', casiersÀRetirer);
+            // **2️⃣ Si on doit encore retirer, on enlève des palettes**
+            while (totalCasiersToRemove > 0 && palettesRestantes > 0) {
+              palettesRestantes -= 1;
+              casiersRestants += casiersParPalette;
+              let casiersÀRetirerSupplementaire = Math.min(
+                totalCasiersToRemove,
+                casiersRestants
+              );
+              casiersRestants -= casiersÀRetirerSupplementaire;
+              totalCasiersToRemove -= casiersÀRetirerSupplementaire;
+            }
 
-          // **3️⃣ Mettre à jour l'entrée**
-          if (palettesRestantes <= 0 && casiersRestants <= 0) {
-            delete regroupement[format];
-          } else {
-            regroupement[format].casier = casiersRestants;
-            regroupement[format].palettes = palettesRestantes;
+            // **3️⃣ Mettre à jour l'entrée**
+            if (palettesRestantes <= 0 && casiersRestants <= 0) {
+              delete regroupement[format];
+            } else {
+              regroupement[format].casier = casiersRestants;
+              regroupement[format].palettes = palettesRestantes;
+            }
           }
-        }
-        return regroupement;
-      }).filter(regroupement => Object.keys(regroupement).length > 0); // Supprimer les objets vides
+          return regroupement;
+        })
+        .filter((regroupement) => Object.keys(regroupement).length > 0); // Supprimer les objets vides
     });
 
     console.log('regroupementTable après suppression:', this.regroupementTable);
@@ -203,87 +216,102 @@ export class LivraisonComponent {
   calculate(commande: any): void {
     console.log('commande', commande);
     // Regrouper les articles par format
-    const articlesParFormat = commande.articles.reduce((acc: any, article: any) => {
-      const format = Number(article?.liquide?.format); // S'assurer que le format est un nombre
+    const articlesParFormat = commande.articles.reduce(
+      (acc: any, article: any) => {
+        const format = Number(article?.liquide?.format); // S'assurer que le format est un nombre
 
-      if (!format) {
-        console.warn('Article sans format ou format non numérique détecté, ignoré:', article);
+        if (!format) {
+          console.warn(
+            'Article sans format ou format non numérique détecté, ignoré:',
+            article
+          );
+          return acc;
+        }
+
+        if (!acc[format]) {
+          acc[format] = [];
+        }
+
+        acc[format].push(article);
         return acc;
-      }
-
-      if (!acc[format]) {
-        acc[format] = [];
-      }
-
-      acc[format].push(article);
-      return acc;
-    }, {});
+      },
+      {}
+    );
 
     console.log('Articles regroupés par format:', articlesParFormat);
 
     // Calcul des palettes et des casiers pour chaque format
-    this.result = Object.keys(articlesParFormat).reduce((result: any, formatStr: string) => {
-      const format = Number(formatStr); // Convertir la clé (string) en nombre
-      const totalCasiers = articlesParFormat[format].reduce(
-        (total: number, article: any) => total + Number(article.quantite || 0),
-        0
-      );
+    this.result = Object.keys(articlesParFormat).reduce(
+      (result: any, formatStr: string) => {
+        const format = Number(formatStr); // Convertir la clé (string) en nombre
+        const totalCasiers = articlesParFormat[format].reduce(
+          (total: number, article: any) =>
+            total + Number(article.quantite || 0),
+          0
+        );
 
-      const paletteInfo = this.casiersPerPalette[format];
-      if (!paletteInfo) {
-        console.warn(`Format invalide ou non trouvé : ${format}`);
-        result[format] = null;
+        const paletteInfo = this.casiersPerPalette[format];
+        if (!paletteInfo) {
+          console.warn(`Format invalide ou non trouvé : ${format}`);
+          result[format] = null;
+          return result;
+        }
+
+        const { casiers, type } = paletteInfo;
+
+        const palettes = Math.floor(totalCasiers / casiers);
+        const casier = totalCasiers % casiers;
+        this.cargaison += totalCasiers;
+        result[format] = { palettes, casier, type };
         return result;
-      }
-
-      const {casiers, type} = paletteInfo;
-
-      const palettes = Math.floor(totalCasiers / casiers);
-      const casier = totalCasiers % casiers;
-      this.cargaison += totalCasiers;
-      result[format] = {palettes, casier, type};
-      return result;
-    }, {});
+      },
+      {}
+    );
     this.regroupementTable.push(this.result);
     console.log('Résultat final', this.result);
     console.log('regroupementList', this.regroupementTable);
-    this.regrouperParFormat()
+    this.regrouperParFormat();
   }
 
   regrouperParFormat(): void {
-    const regroupement = this.regroupementTable.reduce((acc: any, item: any) => {
-      Object.entries(item).forEach(([format, details]: [string, any]) => {
-        if (!acc[format]) {
-          acc[format] = {
-            palettes: 0,
-            casier: 0,
-            type: details.type,
-          };
-        }
+    const regroupement = this.regroupementTable.reduce(
+      (acc: any, item: any) => {
+        Object.entries(item).forEach(([format, details]: [string, any]) => {
+          if (!acc[format]) {
+            acc[format] = {
+              palettes: 0,
+              casier: 0,
+              type: details.type,
+            };
+          }
 
-        // Ajouter les palettes et casiers au format correspondant
-        acc[format].palettes += details.palettes;
-        acc[format].casier += details.casier;
+          // Ajouter les palettes et casiers au format correspondant
+          acc[format].palettes += details.palettes;
+          acc[format].casier += details.casier;
 
-        // Gérer les casiers excédentaires pour compléter une palette
-        const casiersParPalette = this.casiersPerPalette[Number(format)]?.casiers || 0;
-        if (casiersParPalette && acc[format].casier >= casiersParPalette) {
-          const palettesSupplementaires = Math.floor(acc[format].casier / casiersParPalette);
-          acc[format].palettes += palettesSupplementaires;
-          acc[format].casier %= casiersParPalette;
-        }
-      });
+          // Gérer les casiers excédentaires pour compléter une palette
+          const casiersParPalette =
+            this.casiersPerPalette[Number(format)]?.casiers || 0;
+          if (casiersParPalette && acc[format].casier >= casiersParPalette) {
+            const palettesSupplementaires = Math.floor(
+              acc[format].casier / casiersParPalette
+            );
+            acc[format].palettes += palettesSupplementaires;
+            acc[format].casier %= casiersParPalette;
+          }
+        });
 
-      return acc;
-    }, {});
+        return acc;
+      },
+      {}
+    );
 
     console.log('Regroupement par format:', regroupement);
     this.regroupementFinal = regroupement;
 
-    console.log('test', this.regroupementTable)
+    console.log('test', this.regroupementTable);
     console.log('regroupementFinal:', this.regroupementFinal);
   }
-
 
   onZoneChange(zone: any | null): void {
     console.log('zoneId', zone.id);
@@ -299,9 +327,11 @@ export class LivraisonComponent {
   }
 
   getTotalQuantite(articles: any[]): number {
-    return articles.reduce((total, article) => total + Number(article.quantite || 0), 0);
+    return articles.reduce(
+      (total, article) => total + Number(article.quantite || 0),
+      0
+    );
   }
-
 
   async GetListCommande(page: number) {
     let data = {
@@ -317,11 +347,12 @@ export class LivraisonComponent {
     // Unifier les deux objets dans un seul tableau
     this.ListCommande = [...commandeClient.data, ...commandeGratuite.data];
     console.log('ListCommande', this.ListCommande);
-    this.filteredList = this.ListCommande.filter((commande: any) => commande.statut === StatutCommande.NON_REGROUPE);
+    this.filteredList = this.ListCommande.filter(
+      (commande: any) => commande.statut === StatutCommande.NON_REGROUPE
+    );
     console.log('filteredList', this.filteredList);
 
     this._spinner.hide();
-
   }
 
   onFilterGlobal(event: Event) {
@@ -331,7 +362,7 @@ export class LivraisonComponent {
   }
 
   goBack() {
-    this.location.back()
+    this.location.back();
   }
 
   clear(table: Table) {
@@ -339,14 +370,16 @@ export class LivraisonComponent {
   }
 
   OnCloseModal() {
-    this.cargaison = 0
+    this.cargaison = 0;
     this.truckCapacity = 0;
     this.isModalOpen = false;
     this.regroupementTable = [];
-    Object.keys(this.regroupementFinal).forEach(key => delete this.regroupementFinal[key]);
+    Object.keys(this.regroupementFinal).forEach(
+      (key) => delete this.regroupementFinal[key]
+    );
 
     console.log('regroupementFinal', this.regroupementFinal);
-    this.onCheckboxClear()
+    this.onCheckboxClear();
     console.log(this.isModalOpen);
   }
 
@@ -359,13 +392,13 @@ export class LivraisonComponent {
   }
 
   OnView(data: any) {
+    console.log(data, 'regroupement');
     this.updateData = data;
     this.isModalOpenDetail = true;
   }
 
   closeDetailModal() {
     this.isModalOpenDetail = false;
-
   }
 
   OnEdit(data: any) {
@@ -379,6 +412,33 @@ export class LivraisonComponent {
     console.log(this.isModalOpen);
   }
 
+  UploadDoc() {
+    const numRegroupement = 'NUMREG-20250308212748-NEA8';
+    const data = [
+      {
+        "format": 15,
+        "casier": 2,
+        "palette": 20
+      },
+      {
+        "format": 25,
+        "casier": 1,
+        "palette": 30
+      }
+    ];
+
+    this._spinner.show();
+    this.activiteService.GetRegroupementPdf(numRegroupement, data).then(
+      (res: any) => {
+        console.log('DownloadGlobalFacturesById:::>', res);
+        this._spinner.hide();
+      },
+      (error: any) => {
+        this._spinner.hide();
+        this.toastr.info(error.error.message);
+      }
+    );
+  }
   GetArticleList(page: number) {
     let data = {
       paginate: false,
@@ -429,21 +489,21 @@ export class LivraisonComponent {
   onSubmit(): void {
     this._spinner.show();
     let data = {
-      "vehiculeId": this.livraisonForm.controls['vehicule'].value,
-      "transporteurId": this.livraisonForm.controls['transporteur'].value,
-      "commandes": this.commandeList
-    }
+      vehiculeId: this.livraisonForm.controls['vehicule'].value,
+      transporteurId: this.livraisonForm.controls['transporteur'].value,
+      commandes: this.commandeList,
+    };
     this.activiteService.CreationRegroupement(data).then((res: any) => {
       this._spinner.hide();
       if (res.statusCode == 201) {
         this.toastr.success(res.message);
         this.isModalOpen = false;
-        this.GetRegroupementList()
+        this.GetRegroupementList();
       } else {
         this.toastr.error(res.message);
       }
       console.log(res.data);
-    })
+    });
   }
 
   selectArticle() {
@@ -454,7 +514,6 @@ export class LivraisonComponent {
   }
 
   validateQuantite(data: any): void {
-
     // Vérifier si la quantité saisie dépasse la quantité disponible
     if (data.quantite > this.stocksDisponibles[data.id]) {
       // Réinitialiser la quantité à la quantité disponible
@@ -462,34 +521,34 @@ export class LivraisonComponent {
       // Afficher un message de warning
       this.toastr.warning('La quantité saisie dépasse la quantité disponible.');
     } else {
-      this.calculatePrix(data)
+      this.calculatePrix(data);
     }
   }
 
   calculatePrix(data: any) {
-
-
     if (this.prixLiquideTotal[data.id]) {
       this.totalEmballage -= this.prixEmballageTotal[data.id] || 0;
       this.totalLiquide -= this.prixLiquideTotal[data.id] || 0;
       this.totalGlobal -= this.montantTotal[data.id] || 0;
-      this.totalQte -= data.oldQuantite || 0
+      this.totalQte -= data.oldQuantite || 0;
     }
     this.prixLiquideTotal[data.id] = data.quantite * this.prixLiquide[data.id];
-    this.prixEmballageTotal[data.id] = data.quantite * this.prixEmballage[data.id];
-    this.montantTotal[data.id] = this.prixLiquideTotal[data.id] + this.prixEmballageTotal[data.id];
+    this.prixEmballageTotal[data.id] =
+      data.quantite * this.prixEmballage[data.id];
+    this.montantTotal[data.id] =
+      this.prixLiquideTotal[data.id] + this.prixEmballageTotal[data.id];
 
     this.totalEmballage += this.prixEmballageTotal[data.id];
     this.totalLiquide += this.prixLiquideTotal[data.id];
     this.totalGlobal += this.montantTotal[data.id];
-    this.totalQte += data.quantite
+    this.totalQte += data.quantite;
 
     data.oldQuantite = data.quantite;
     console.log(data);
     console.log(this.totalQte, 'totalQte');
-    console.log(this.totalLiquide, "totalLiquide");
-    console.log(this.totalEmballage, "totalEmballage");
-    console.log(this.totalGlobal), "totalGlobal";
+    console.log(this.totalLiquide, 'totalLiquide');
+    console.log(this.totalEmballage, 'totalEmballage');
+    console.log(this.totalGlobal), 'totalGlobal';
   }
 
   onCheckboxClear(): void {
@@ -507,12 +566,13 @@ export class LivraisonComponent {
         this.toastr.warning('Le vehicule est plein !');
       }
     } else {
-      this.commandeList = this.commandeList.filter(num => num !== commande.NumCommande);
+      this.commandeList = this.commandeList.filter(
+        (num) => num !== commande.NumCommande
+      );
       console.log('Suppression de la commande:', this.commandeList);
       this.removeCommande(commande);
     }
   }
-
 
   async GetPrixByArticle(item: any): Promise<any> {
     let data = {
@@ -522,12 +582,12 @@ export class LivraisonComponent {
     try {
       // Attendre la réponse de la promesse
       const response: any = await this.articleService.GetPrixByProduit(data);
-      console.log(response)
+      console.log(response);
       // Vérifier si le statusCode est 200
       if (response.data) {
         this.prixLiquide[item.id] = response.data.PrixLiquide;
         this.prixEmballage[item.id] = response.data.PrixConsigne;
-        console.log('prixByArticle', this.prixLiquide[item.id])
+        console.log('prixByArticle', this.prixLiquide[item.id]);
       }
     } catch (error: any) {
       console.log(error);
@@ -544,9 +604,10 @@ export class LivraisonComponent {
     const index = this.selectedArticles.findIndex((i: any) => i.id === item.id);
 
     if (index !== -1) {
-      this.selectedArticles = this.selectedArticles.slice(0, index).concat(this.selectedArticles.slice(index + 1));
+      this.selectedArticles = this.selectedArticles
+        .slice(0, index)
+        .concat(this.selectedArticles.slice(index + 1));
     }
-
   }
 
   onSubmitSelection() {
@@ -554,20 +615,18 @@ export class LivraisonComponent {
   }
 
   OnCloseChoiceModal() {
-    this.deselectAllItems()
+    this.deselectAllItems();
     this.isChoiceModalOpen = false;
-    console.log(this.isModalOpen)
+    console.log(this.isModalOpen);
   }
 
   deselectAllItems(): void {
     this.filteredList.forEach((item: any) => {
       this.onCheckboxChange(item);
       item.isChecked = false;
-
     });
 
     this.selectedArticles = [];
-
   }
 
   // onSearchClient(): void {}
@@ -593,9 +652,8 @@ export class LivraisonComponent {
 
   onChange(event: any): void {
     this.detailPointDevente = event;
-    console.log(this.detailPointDevente, 'detailPointDevente')
+    console.log(this.detailPointDevente, 'detailPointDevente');
   }
-
 
   GetListZone() {
     let data = {
@@ -606,7 +664,7 @@ export class LivraisonComponent {
     this.coreService.GetZoneList(data).then((res: any) => {
       this.listZone = res.data;
       console.log(res.data);
-    })
+    });
   }
 
   GetTransporteurList() {
@@ -617,14 +675,12 @@ export class LivraisonComponent {
     };
     this.logistiqueService.GetTransporteurList(data).then((res: any) => {
       this.listTransporteur = res.data;
-      this.listTransporteur = this.listTransporteur
-        .map((item: any) => ({
-          ...item,
-          displayName:
-            item.nom + ' ' + item.prenoms
-        }));
+      this.listTransporteur = this.listTransporteur.map((item: any) => ({
+        ...item,
+        displayName: item.nom + ' ' + item.prenoms,
+      }));
       console.log(res.data);
-    })
+    });
   }
 
   onVehiculeChange(event: any) {
@@ -640,14 +696,12 @@ export class LivraisonComponent {
     };
     this.logistiqueService.GetVehiculeList(data).then((res: any) => {
       this.listVehicule = res.data;
-      this.listVehicule = this.listVehicule
-        .map((item: any) => ({
-          ...item,
-          displayName:
-            item.marque + ' - ' + item.immatriculation
-        }));
+      this.listVehicule = this.listVehicule.map((item: any) => ({
+        ...item,
+        displayName: item.marque + ' - ' + item.immatriculation,
+      }));
       console.log(res.data);
-    })
+    });
   }
 
   OnDelete(Id: any) {
@@ -668,19 +722,21 @@ export class LivraisonComponent {
   }
 
   GetRegroupementRules() {
-    let data = [{
-      "33": {
-        unit: 60,
-        type: 'biere',
+    let data = [
+      {
+        '33': {
+          unit: 60,
+          type: 'biere',
+        },
+        '60': {
+          unit: 66,
+          type: 'biere',
+        },
+        '25': {
+          unit: 60,
+          type: 'sucrerie',
+        },
       },
-      "60": {
-        unit: 66,
-        type: 'biere',
-      },
-      "25": {
-        unit: 60,
-        type: 'sucrerie',
-      }
-    }]
+    ];
   }
 }
