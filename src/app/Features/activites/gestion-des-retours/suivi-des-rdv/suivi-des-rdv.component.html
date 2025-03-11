@@ -19,12 +19,12 @@
            <span class="ml-1 vertical-align-middle">
             {{ dataList?.commandeClient?.NumCommande ||
            dataList?.commandeGratuite?.NumCommande ||
-           dataList?.venteChine?.NumCommande}}
+           dataList?.venteChine?.numVenteChine}}
           </span>
         </td>
         <td>
           {{
-            dataList?.transporteur?.nom || dataList?.paiementsVente?.commercial?.nom
+            dataList?.transporteur?.nom+' '+dataList?.transporteur?.prenoms || dataList?.venteChine?.commercial?.nom+' '+dataList?.venteChine?.commercial?.prenoms
           }}
         </td>
         <td>

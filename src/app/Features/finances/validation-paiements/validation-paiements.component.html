@@ -240,7 +240,7 @@
                   *ngFor="let item of hstoriquePayment; let i = index "
                 >
                   <td>{{ item.transaction.motif }}</td>
-                  <td>{{ item.moyenPaiement }}</td>
+                  <td>{{ item.moyenPaiement.libelle ? item.moyenPaiement.libelle : 'N/A' }}</td>
                   <td>{{ item.montant }}</td>
                   <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
                 </tr>
@@ -387,7 +387,7 @@
                   *ngFor="let item of hstoriquePayment; let i = index "
                 >
                   <td>{{ item.transaction.motif }}</td>
-                  <td>{{ item.moyenPaiement }}</td>
+                  <td>{{ item.moyenPaiement.libelle ? item.moyenPaiement.libelle : 'N/A' }}</td>
                   <td>{{ item.montant }}</td>
                   <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
                 </tr>
@@ -549,7 +549,7 @@
                   *ngFor="let item of hstoriquePayment; let i = index "
                 >
                   <td>{{ item.transaction.motif }}</td>
-                  <td>{{ item.moyenPaiement }}</td>
+                  <td>{{ item.moyenPaiement.libelle ? item.moyenPaiement.libelle : 'N/A' }}</td>
                   <td>{{ item.montant }}</td>
                   <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
                 </tr>
