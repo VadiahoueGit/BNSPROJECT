@@ -1,0 +1,93 @@
+
+<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
+    <i style="font-size: 18px; " class="fas fw-bold fa-chevron-left me-2 "></i>
+    <h4 class="fw-bold mb-0">Moyen de paiement</h4>
+  </div>
+<div class="card">
+
+    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" [globalFilterFields]="['code', 'libelle']"
+        [globalFilterFields]="['code', 'libelle']" (onPage)="onPage($event)">
+        <ng-template pTemplate="caption">
+            <div class=" d-flex justify-content-between py-3">
+                <span class="p-input-icon-left ml-auto d-flex align-items-center">
+                    <i class="fas fa-search"></i>
+                    <input pInputText type="text" (input)="filterGlobal($event)" placeholder="Recherche" />
+                </span>
+                <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer un moyen de paiement</button>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width:30%;color: var(--secondary-color);">Libelle</th>
+                <th style="width:20%;color: var(--secondary-color);">Date création</th>
+                <th style="width:10%;color: var(--secondary-color);">Actions</th>
+            </tr>
+
+        </ng-template>
+        <ng-template pTemplate="body" let-dataList>
+            <tr>
+
+                <td class="">
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.libelle }}
+                    </span>
+                </td>
+
+                <td class="">
+                    <span class="ml-1 vertical-align-middle">
+                        {{ dataList.createdAt | date }}
+                    </span>
+                </td>
+                <td>
+            <tr class="d-flex justify-content-center gap-3">
+                <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
+                <!-- <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
+                        class="fas fa-trash-alt text-danger"></i>
+                </td> -->
+            </tr>
+
+            </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="5">Aucun element trouvé!</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<div *ngIf="isModalOpen" class="custom-modal">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center">
+                <div class="d-flex justify-content-center align-items-center"
+                    style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
+                    <i class="fas fa-box-check text-primary fs-3"></i>
+                </div>
+                <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création d'un
+                    moyen de paiement</h1>
+                <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification du
+                    moyen de paiement</h1>
+            </div>
+
+            <div class="modal-body">
+                <form [formGroup]="moyenPaiementForm">
+                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
+                        <div class="d-flex align-items-center">
+                            <label for="libelle" class="form-label me-1 label-fixed-width">Moyen de paiement</label>
+                            <p class="text-danger mb-0">*</p>
+                        </div>
+                        <input type="text" class="form-control" formControlName="libelle" id="libelle"
+                            placeholder="Entrez type moyen de paiement ">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer gap-3 px-4">
+                <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
+                <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
+            </div>
+        </div>
+    </div>
+</div>

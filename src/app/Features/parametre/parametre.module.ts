@@ -120,10 +120,11 @@ import { TruncatePipe } from '../shared-component/Pipe/truncate.pipe';
 import { SharedComponentModule } from '../shared-component/shared-component.module';
 import { QuestionnaireVisiteComponent } from './questionnaire-visite/questionnaire-visite.component';
 import { CommercialComponent } from './commercial/commercial.component';
+import { MoyenDePaiementComponent } from './moyen-de-paiement/moyen-de-paiement.component';
 
 
 @NgModule({
-    declarations: [CommercialComponent,QuestionnaireVisiteComponent,TransporteurComponent,LogistiqueComponent,ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent, ListPrixComponent, CreationPrixComponent, EmballageComponent, LiquideComponent, VehiculesComponent, UtilisateursComponent, UtilisateurComponent, ProfilUtilisateurComponent],
+    declarations: [CommercialComponent,QuestionnaireVisiteComponent,TransporteurComponent,LogistiqueComponent,ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent, ListPrixComponent, CreationPrixComponent, EmballageComponent, LiquideComponent, VehiculesComponent, UtilisateursComponent, UtilisateurComponent, ProfilUtilisateurComponent, MoyenDePaiementComponent],
     imports: [
       NgSelectModule,
       SharedComponentModule,

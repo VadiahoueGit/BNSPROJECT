@@ -223,17 +223,17 @@
                     [(ngModel)]="data.quantite"
                     [min]="0"
                     value="0"
-                    (input)="validateQuantite(data, stocksDisponibles[data.id])"
+                    (input)="validateQuantite(data, data.quantiteDisponible,i)"
                   />
                 </td>
-                <td>{{ stocksDisponibles[data.id] }}</td>
+                <td>{{ data.quantiteDisponible }}</td>
                 <td>
-                  {{ ecart[data.id] }}
+                  {{ ecart[i] }}
                   <input
                     hidden="true"
                     type="text"
                     class="form-control-custom"
-                    [(ngModel)]="ecartPercent[data.id]"
+                    [(ngModel)]="ecartPercent[i]"
                     [min]="0"
                     value="0"
                   />
