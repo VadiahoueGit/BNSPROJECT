@@ -57,7 +57,7 @@
     >
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Détails regroupement</h5>
+          <h5 class="modal-title">Détails regroupement emballage</h5>
           <button type="button" class="btn-close" aria-label="Close"></button>
         </div>
   
@@ -143,6 +143,7 @@
                   <th scope="col">Code</th>
                   <th scope="col">Désignation</th>
                   <th scope="col">Conditionnement</th>
+                  <th scope="col">Format</th>
                   <th scope="col">Prix unitaire</th>
                   <th scope="col">Quantité</th>
                 </tr>
@@ -152,7 +153,8 @@
                   <td>{{ item.produit.code }}</td>
                   <td>{{ item.produit.libelle }}</td>
                   <td>{{ item.produit.condition }}</td>
-                  <td>{{ item.produit.prixUnitaire }}</td>
+                  <td>{{ item.produit.format }}</td>
+                  <td>{{ item.prixUnitaire }}</td>
                   <td>{{ item.quantity }}</td>
                 </tr>
                 </tbody>

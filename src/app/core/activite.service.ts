@@ -459,7 +459,7 @@ export class ActiviteService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/retours?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+          `${this.apiUrl}/v1/retours/with-articles?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
