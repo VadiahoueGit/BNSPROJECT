@@ -224,6 +224,7 @@ export class InventaireStoksComponent {
 
   OnCloseModal() {
     this.deselectAllItems();
+    this.selectedArticles =[]
     this.isModalOpen = false;
     console.log(this.isModalOpen);
   }
@@ -316,6 +317,7 @@ export class InventaireStoksComponent {
         data
       );
       console.log(response);
+      console.log(response.quantiteDisponible,'response.quantiteDisponible;');
       // Vérifier si le statusCode est 200
       if (response) {
         this.stocksDisponibles[item.id] = response.quantiteDisponible;
@@ -369,19 +371,12 @@ export class InventaireStoksComponent {
   get articles(): FormArray {
     return this.InventaireForm.get('articles') as FormArray;
   }
-
-  validateQuantite(data: any, stockTheorique: number): void {
+  validateQuantite(data: any, stockTheorique: number, index: number): void {
     data.stockTheorique = stockTheorique;
-    this.ecart[data.id] = this.calculateData(
-      stockTheorique,
-      data.quantite
-    ).ecart;
-    data.ecart = this.ecart[data.id];
-    this.ecartPercent[data.id] = this.calculateData(
-      stockTheorique,
-      data.quantite
-    ).ecartPercent;
-    data.ecartPercent = this.ecartPercent[data.id];
+    this.ecart[index] = this.calculateData(stockTheorique, data.quantite).ecart;
+    data.ecart = this.ecart[index];
+    this.ecartPercent[index] = this.calculateData(stockTheorique, data.quantite).ecartPercent;
+    data.ecartPercent = this.ecartPercent[index];
     console.log('data', data);
   }
 
