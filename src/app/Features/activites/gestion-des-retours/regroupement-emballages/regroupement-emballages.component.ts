@@ -234,7 +234,7 @@ export class RegroupementEmballagesComponent {
       limit: 8,
     };
     this._spinner.show();
-    this._activite.GetRetourList(data).then((res: any) => {
+    this._activite.GetRetourWithArtilesList(data).then((res: any) => {
       console.log('retour list:::>', res);
       this.dataList = res.data;
       this._spinner.hide();

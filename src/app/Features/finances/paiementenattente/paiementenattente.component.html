@@ -15,6 +15,9 @@
       <tr>
         <th style="color: var(--secondary-color)">Commandes</th>
         <th style="color: var(--secondary-color)">Agent</th>
+        <th style="color: var(--secondary-color)">Motif</th>
+        <th style="color: var(--secondary-color)">Numéro SAP</th>
+        <th style="color: var(--secondary-color)">Client</th>
         <th style="color: var(--secondary-color)">Montant à verser</th>
         <th style="color: var(--secondary-color)">Montant versé</th>
         <th style="color: var(--secondary-color)">Date</th>
@@ -42,6 +45,24 @@
                 : dataList?.paiementsVente?.length
                   ? (dataList?.paiementsVente[0]?.commercial?.nom || '') + ' ' + (dataList?.paiementsVente[0]?.commercial?.prenoms || '')
                   : ''
+          }}
+        </td>
+        <td>
+          {{
+            dataList?.motif
+              
+          }}
+        </td>
+        <td>
+          {{
+            dataList?.client?.numeroSAP
+              
+          }}
+        </td>
+        <td>
+          {{
+            dataList?.client?.raisonSocial
+              
           }}
         </td>
         <td>

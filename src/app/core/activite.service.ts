@@ -459,6 +459,27 @@ export class ActiviteService {
       });
       this._http
         .get(
+          `${this.apiUrl}/v1/retours?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+  GetRetourWithArtilesList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
           `${this.apiUrl}/v1/retours/with-articles?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
