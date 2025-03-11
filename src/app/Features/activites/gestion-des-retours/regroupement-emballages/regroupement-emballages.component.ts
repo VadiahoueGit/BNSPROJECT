@@ -3,85 +3,55 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
+import { ActiviteService } from 'src/app/core/activite.service';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
-
+interface RegroupementItem {
+  palettes: number;
+  casier: number;
+  type: string;
+}
 @Component({
   selector: 'app-regroupement-emballages',
   templateUrl: './regroupement-emballages.component.html',
   styleUrls: ['./regroupement-emballages.component.scss']
 })
+
 export class RegroupementEmballagesComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
-  ArticleForm!:FormGroup
+
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
   operation: string = '';
   updateData: any = {};
-  articleId: any = 0;
+  cargaison: number = 0;
   isEditMode: boolean = false;
-  dataListFormats: any = [];
-  dataListConditionnements: any = [];
-  dataListProduits: any= [];
-  dataListGroupeArticles: any =[];
-  dataListBouteilleVide: any=[];
-  dataListPlastiqueNu: any=[];
-  dataListLiquides: any=[];
-  dataListArticlesProduits: any=[];
+  result: { palettes: number; casier: number } | null = null;
+  regroupementList: any[] = [];
+  regroupementTable: any[] = [];
+  regroupementFinal: Record<string, RegroupementItem>;
+  casiersPerPalette: Record<number, { casiers: number; type: string }> = {
+    33: {casiers: 63, type: 'biere'},
+    25: {casiers: 63, type: 'biere'},
+    50: {casiers: 66, type: 'plastique'},
+    60: {casiers: 66, type: 'métal'},
+  };
   currentPage: number;
   rowsPerPage: any;
+  
   constructor(
-    private articleService: ArticleServiceService,
+    private _activite: ActiviteService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
   ) {}
 
   ngOnInit() {
-    this.ArticleForm = this.fb.group({
-      photo: [null, Validators.required],
-      libelle: [null, Validators.required],
-      format: [null, Validators.required],
-      Conditionnement: [null, Validators.required],
-      categorieId: [0, Validators.required],
-      groupeId: [0, Validators.required],
-      plastiquenuId: [0, Validators.required],
-      bouteillevideId: [0, Validators.required],
-      liquideId: [0, Validators.required],
-    });
-    this.articleService.ListPlastiquesNu.subscribe((res: any) => {
-      this.dataListPlastiqueNu = res;
-    });
-    this.articleService.ListLiquides.subscribe((res: any) => {
-      this.dataListLiquides = res;
-    });
-    this.articleService.ListBouteilleVide.subscribe((res: any) => {
-      this.dataListBouteilleVide = res;
-    });
-    // this.articleService.ListArticles.subscribe((res: any) => {
-    //   this.dataList = res;
-    //   console.log('dataList:::>', this.dataList);
-    // });
-    this.articleService.GetFormatList().then((res: any) => {
-      this.dataListFormats = res;
-      console.log('dataListFormats:::>', this.dataListFormats);
-    });
 
-    this.articleService.GetConditionnementList().then((res: any) => {
-      this.dataListConditionnements = res;
-      console.log('dataListConditionnements:::>', this.dataListConditionnements);
-    });
-    this.articleService.ListTypeArticles.subscribe((res: any) => {
-      this.dataListProduits = res;
-      console.log(this.dataListProduits, 'this.dataListProduits ');
-    });
-    this.articleService.ListGroupesArticles.subscribe((res: any) => {
-      this.dataListGroupeArticles = res;
-    });
-    this.GetArticleList(1);
+    this.GetRetourList(1);
   }
   
   onFilterGlobal(event: Event) {
@@ -98,114 +68,178 @@ export class RegroupementEmballagesComponent {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
   }
-  OnCreate() {
-    this.isEditMode = false;
-    this.isModalOpen = true;
-    this.operation = 'create';
-    console.log(this.isModalOpen);
-  }
 
   OnEdit(data:any) {
-    this.isEditMode = true;
     console.log(data);
     this.updateData = data;
-    this.articleId = data.id;
     this.isModalOpen = true;
-    this.loadArticleDetails();
-    this.operation = 'edit';
-    console.log(this.isModalOpen);
   }
-  GetArticleList(page:number) {
+  calculate(commande: any): void {
+
+    console.log('commande', commande);
+    // Regrouper les articles par format
+    const articlesParFormat = commande.articles.reduce(
+      (acc: any, article: any) => {
+        const format = Number(article?.liquide?.format); // S'assurer que le format est un nombre
+
+        if (!format) {
+          console.warn(
+            'Article sans format ou format non numérique détecté, ignoré:',
+            article
+          );
+          return acc;
+        }
+
+        if (!acc[format]) {
+          acc[format] = [];
+        }
+
+        acc[format].push(article);
+        return acc;
+      },
+      {}
+    );
+
+    console.log('Articles regroupés par format:', articlesParFormat);
+
+    // Calcul des palettes et des casiers pour chaque format
+    this.result = Object.keys(articlesParFormat).reduce(
+      (result: any, formatStr: string) => {
+        const format = Number(formatStr); // Convertir la clé (string) en nombre
+        const totalCasiers = articlesParFormat[format].reduce(
+          (total: number, article: any) =>
+            total + Number(article.quantite || 0),
+          0
+        );
+
+        const paletteInfo = this.casiersPerPalette[format];
+        if (!paletteInfo) {
+          console.warn(`Format invalide ou non trouvé : ${format}`);
+          result[format] = null;
+          return result;
+        }
+
+        const {casiers, type} = paletteInfo;
+
+        const palettes = Math.floor(totalCasiers / casiers);
+        const casier = totalCasiers % casiers;
+        this.cargaison += totalCasiers;
+        result[format] = {palettes, casier, type};
+        return result;
+      },
+      {}
+    );
+    this.regroupementTable.push(this.result);
+    console.log('Résultat final', this.result);
+    console.log('regroupementList', this.regroupementTable);
+    this.regrouperParFormat();
+  }
+
+  regrouperParFormat(): void {
+    const regroupement = this.regroupementTable.reduce(
+      (acc: any, item: any) => {
+        Object.entries(item).forEach(([format, details]: [string, any]) => {
+          if (!acc[format]) {
+            acc[format] = {
+              palettes: 0,
+              casier: 0,
+              type: details.type,
+            };
+          }
+
+          // Ajouter les palettes et casiers au format correspondant
+          acc[format].palettes += details.palettes;
+          acc[format].casier += details.casier;
+
+          // Gérer les casiers excédentaires pour compléter une palette
+          const casiersParPalette =
+            this.casiersPerPalette[Number(format)]?.casiers || 0;
+          if (casiersParPalette && acc[format].casier >= casiersParPalette) {
+            const palettesSupplementaires = Math.floor(
+              acc[format].casier / casiersParPalette
+            );
+            acc[format].palettes += palettesSupplementaires;
+            acc[format].casier %= casiersParPalette;
+          }
+        });
+
+        return acc;
+      },
+      {}
+    );
+
+    console.log('Regroupement par format:', regroupement);
+    this.regroupementFinal = regroupement;
+
+    console.log('test', this.regroupementTable);
+    console.log('regroupementFinal:', this.regroupementFinal);
+  }
+  regrouperArticles(commandes: any[]): any {
+    let articlesRegroupes: any = [];
+    let montantTotal = 0;
+
+    // Parcours de toutes les commandes
+    commandes.forEach(commande => {
+      // Ajouter les articles de chaque commande à la liste des articles regroupés
+      commande.articles.forEach((article: any) => {
+        articlesRegroupes.push(article);
+        montantTotal += parseFloat(article.montantEmballage);
+      })
+    });
+
+    return {
+      articles: articlesRegroupes,
+      montantTotal: montantTotal
+    };
+  }
+  PrintDoc(item: any) {
+    console.log(item)
+    this.regroupementTable = []
+    const idretour = item.id;
+    let regroup = this.regrouperArticles(item.commandes)
+    this.calculate(regroup);
+    this._spinner.show();
+    if (this.regroupementFinal) {
+      const result = Object.entries(this.regroupementFinal).map(([key, value]) => ({
+        format: parseInt(key),
+        casier: value.casier,
+        palette: value.palettes
+      }));
+
+      this._activite.GetRegroupementEmballagePdf(idretour, result).then(
+        (res: any) => {
+          console.log('DownloadGlobalFacturesById:::>', res);
+
+          this._spinner.hide();
+        },
+        (error: any) => {
+          this._spinner.hide();
+          this.toastr.info(error.error.message);
+        }
+      );
+    }
+
+
+  }
+  GetRetourList(page:number) {
     let data = {
       paginate: false,
       page:page,
       limit: 8,
     };
     this._spinner.show();
-    this.articleService.GetArticleList(data).then((res: any) => {
-      console.log('DATATYPEPRIX:::>', res);
+    this._activite.GetRetourList(data).then((res: any) => {
+      console.log('retour list:::>', res);
       this.dataList = res.data;
       this._spinner.hide();
     });
   }
-  onSubmit(): void {
-    console.log(this.ArticleForm.value);
-    if (this.ArticleForm.valid) {
-      // const formValues = this.ArticleForm.value;
-      const formValues = {
-        ...this.ArticleForm.value,
-        categorieId: +this.ArticleForm.value.categorieId,
-        groupeId: +this.ArticleForm.value.groupeId,
-        plastiquenuId: +this.ArticleForm.value.plastiquenuId,
-        bouteillevideId: +this.ArticleForm.value.bouteillevideId,
-        liquideId: +this.ArticleForm.value.liquideId,
-      };
-      console.log('formValues', formValues);
+  ValidateEmballage(id:number){}
 
-      if (this.isEditMode) {
-        this.articleService.UpdateArticle(this.articleId, formValues).then(
-          (response: any) => {
-            console.log('article mis à jour avec succès', response);
-            this.toastr.success(response.message);
-
-            this.OnCloseModal();
-            this.GetArticleList(1);
-          },
-          (error: any) => {
-            this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
-            console.error('Erreur lors de la mise à jour', error);
-          }
-        );
-      } else {
-        this.articleService.CreateArticle(formValues).then(
-          (response: any) => {
-            this.OnCloseModal();
-            this.GetArticleList(1);
-            this.ArticleForm.reset();
-            this.toastr.success(response.message);
-
-            console.log('Nouvel article créé avec succès', response);
-          },
-          (error: any) => {
-            this.toastr.error('Erreur!', 'Erreur lors de la création.');
-            console.error('Erreur lors de la création', error);
-          }
-        );
-      }
-    }
-  }
-  loadArticleDetails(): void {
-    this.ArticleForm.patchValue({
-      photo: this.updateData.photo??"",
-      libelle: this.updateData.libelle,
-      format: this.updateData.format,
-      Conditionnement: this.updateData.Conditionnement,
-      categorieId: this.updateData.categorieproduit.id,
-      groupeId: this.updateData.groupearticle.id,
-      plastiquenuId: this.updateData.plastiquenu.id,
-      bouteillevideId: this.updateData.bouteillevide.id,
-      liquideId: 1,
-    });
-  }
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
-    this.GetArticleList(this.currentPage);
+    this.GetRetourList(this.currentPage);
   }
-  OnDelete(Id: any) {
-    ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
-      (res:any) => {
-        if (res.isConfirmed == true) {
-          this._spinner.show();
-          this.articleService.DeletedArticle(Id).then((res: any) => {
-            console.log('DATA:::>', res);
-            this.toastr.success(res.message);
-            this.GetArticleList(1);
-            this._spinner.hide();
-          });
-        } else {
-        }
-      }
-    );
-  }
+
 }
