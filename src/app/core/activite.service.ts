@@ -544,7 +544,7 @@ export class ActiviteService {
   
       this._http
         .post(
-          `${this.apiUrl}/v1/regroupements/${idretour}/pdf`, 
+          `${this.apiUrl}/v1/regroupements/retour/${idretour}/pdf`, 
           data,
           { headers ,responseType: 'blob' }
         )

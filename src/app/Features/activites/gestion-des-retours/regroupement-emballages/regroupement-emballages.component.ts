@@ -14,9 +14,8 @@ interface RegroupementItem {
 @Component({
   selector: 'app-regroupement-emballages',
   templateUrl: './regroupement-emballages.component.html',
-  styleUrls: ['./regroupement-emballages.component.scss']
+  styleUrls: ['./regroupement-emballages.component.scss'],
 })
-
 export class RegroupementEmballagesComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
@@ -34,14 +33,14 @@ export class RegroupementEmballagesComponent {
   regroupementTable: any[] = [];
   regroupementFinal: Record<string, RegroupementItem>;
   casiersPerPalette: Record<number, { casiers: number; type: string }> = {
-    33: {casiers: 63, type: 'biere'},
-    25: {casiers: 63, type: 'biere'},
-    50: {casiers: 66, type: 'plastique'},
-    60: {casiers: 66, type: 'métal'},
+    33: { casiers: 63, type: 'biere' },
+    25: { casiers: 63, type: 'biere' },
+    50: { casiers: 66, type: 'plastique' },
+    60: { casiers: 66, type: 'métal' },
   };
   currentPage: number;
   rowsPerPage: any;
-  
+
   constructor(
     private _activite: ActiviteService,
     private _spinner: NgxSpinnerService,
@@ -50,10 +49,9 @@ export class RegroupementEmballagesComponent {
   ) {}
 
   ngOnInit() {
-
     this.GetRetourList(1);
   }
-  
+
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -69,13 +67,12 @@ export class RegroupementEmballagesComponent {
     console.log(this.isModalOpen);
   }
 
-  OnEdit(data:any) {
+  OnEdit(data: any) {
     console.log(data);
     this.updateData = data;
     this.isModalOpen = true;
   }
   calculate(commande: any): void {
-
     console.log('commande', commande);
     // Regrouper les articles par format
     const articlesParFormat = commande.articles.reduce(
@@ -119,12 +116,12 @@ export class RegroupementEmballagesComponent {
           return result;
         }
 
-        const {casiers, type} = paletteInfo;
+        const { casiers, type } = paletteInfo;
 
         const palettes = Math.floor(totalCasiers / casiers);
         const casier = totalCasiers % casiers;
         this.cargaison += totalCasiers;
-        result[format] = {palettes, casier, type};
+        result[format] = { palettes, casier, type };
         return result;
       },
       {}
@@ -179,52 +176,61 @@ export class RegroupementEmballagesComponent {
     let montantTotal = 0;
 
     // Parcours de toutes les commandes
-    commandes.forEach(commande => {
+    commandes.forEach((commande) => {
       // Ajouter les articles de chaque commande à la liste des articles regroupés
       commande.articles.forEach((article: any) => {
         articlesRegroupes.push(article);
         montantTotal += parseFloat(article.montantEmballage);
-      })
+      });
     });
 
     return {
       articles: articlesRegroupes,
-      montantTotal: montantTotal
+      montantTotal: montantTotal,
     };
   }
   PrintDoc(item: any) {
-    console.log(item)
-    this.regroupementTable = []
+    console.log(item);
+    this.regroupementTable = [];
     const idretour = item.id;
-    let regroup = this.regrouperArticles(item.commandes)
-    this.calculate(regroup);
+    // let regroup = this.regrouperArticles(item.commandes)
+    // this.calculate(regroup);
     this._spinner.show();
-    if (this.regroupementFinal) {
-      const result = Object.entries(this.regroupementFinal).map(([key, value]) => ({
-        format: parseInt(key),
-        casier: value.casier,
-        palette: value.palettes
-      }));
+    // if (this.regroupementFinal) {
+    //   const result = Object.entries(this.regroupementFinal).map(([key, value]) => ({
+    //     format: parseInt(key),
+    //     casier: value.casier,
+    //     palette: value.palettes
+    //   }));
+    const results = [
+      {
+        format: 15,
+        casier: 2,
+        palette: 20,
+      },
+      {
+        format: 25,
+        casier: 1,
+        palette: 30,
+      },
+    ];
+    this._activite.GetRegroupementEmballagePdf(idretour, results).then(
+      (res: any) => {
+        console.log('DownloadGlobalFacturesById:::>', res);
 
-      this._activite.GetRegroupementEmballagePdf(idretour, result).then(
-        (res: any) => {
-          console.log('DownloadGlobalFacturesById:::>', res);
-
-          this._spinner.hide();
-        },
-        (error: any) => {
-          this._spinner.hide();
-          this.toastr.info(error.error.message);
-        }
-      );
-    }
-
-
+        this._spinner.hide();
+      },
+      (error: any) => {
+        this._spinner.hide();
+        this.toastr.info(error.error.message);
+      }
+    );
+    // }
   }
-  GetRetourList(page:number) {
+  GetRetourList(page: number) {
     let data = {
       paginate: false,
-      page:page,
+      page: page,
       limit: 8,
     };
     this._spinner.show();
@@ -234,12 +240,11 @@ export class RegroupementEmballagesComponent {
       this._spinner.hide();
     });
   }
-  ValidateEmballage(id:number){}
+  ValidateEmballage(id: number) {}
 
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
     this.GetRetourList(this.currentPage);
   }
-
 }
