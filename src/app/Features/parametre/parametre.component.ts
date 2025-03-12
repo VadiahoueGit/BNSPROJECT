@@ -59,7 +59,7 @@ export class ParametreComponent implements OnInit {
       url:'feature/parametre/typeprix',
     },
     {
-      image: 'assets/icon/article.png',
+      image: 'assets/icon/wallet.png',
       title: 'Moyen de paiement',
       url:'feature/parametre/moyen-paiement',
     },
