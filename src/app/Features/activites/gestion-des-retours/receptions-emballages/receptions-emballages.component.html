@@ -16,7 +16,7 @@
             <tr>
                 <td>
                       <span class="ml-1 vertical-align-middle">
-                        {{ dataList.commandeClient?.NumCommande || dataList.commandeGratuite?.NumCommande || dataList.venteChine?.NumCommande}}
+                        {{ dataList.commandeClient?.NumCommande || dataList.commandeGratuite?.NumCommande || dataList.venteChine?.numVenteChine}}
                     </span>
                 </td>
               <td>
@@ -26,8 +26,15 @@
               </td>
                 <td>
                      <span class="ml-1 vertical-align-middle">
-                         {{ dataList.transporteur?.nom +' '+ dataList.transporteur?.prenoms || dataList.paiementsVente.commercial?.nom +' '+dataList.paiementsVente.commercial?.prenoms || '' }}
-                    </span>
+                         {{
+                         (dataList.venteChine)
+                           ? dataList.venteChine.commercial?.nom + ' ' + dataList.venteChine.commercial?.prenoms
+                           : (dataList.transporteur?.nom && dataList.transporteur?.prenoms)
+                             ? dataList.transporteur.nom + ' ' + dataList.transporteur.prenoms
+                             : 'N/A'
+                       }}
+
+                       </span>
                 </td>
                 <td>
                       <span class="ml-1 vertical-align-middle">

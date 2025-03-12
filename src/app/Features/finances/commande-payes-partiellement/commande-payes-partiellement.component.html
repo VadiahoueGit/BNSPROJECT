@@ -27,8 +27,7 @@
       <tr>
         <td>
           <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-            {{ dataList?.paiementsCommandeClient?.length ? dataList?.paiementsCommandeClient[0]?.NumCommande
-            : dataList?.paiementsCommandeGratuit?.length ? dataList?.paiementsCommandeGratuit[0]?.NumCommande : ''}}
+            {{ dataList?.paiementsCommandeClient[0]?.NumCommande || dataList?.paiementsCommandeGratuit[0]?.NumCommande || dataList?.paiementsVente[0]?.venteChine.numVenteChine || 'N/A'}}
           </span>
         </td>
         <td>
@@ -45,19 +44,18 @@
         <td>
           {{
             dataList?.motif
-              
+
           }}
         </td>
         <td>
           {{
             dataList?.client?.numeroSAP
-              
+
           }}
         </td>
         <td>
           {{
-            dataList?.client?.raisonSocial
-              
+            dataList?.client?.raisonSocial || dataList?.paiementsVente[0]?.pointdevente.nomEtablissement
           }}
         </td>
         <td>

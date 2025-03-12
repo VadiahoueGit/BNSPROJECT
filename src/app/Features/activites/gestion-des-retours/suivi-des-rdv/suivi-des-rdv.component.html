@@ -24,7 +24,11 @@
         </td>
         <td>
           {{
-            dataList?.transporteur?.nom+' '+dataList?.transporteur?.prenoms || dataList?.venteChine?.commercial?.nom+' '+dataList?.venteChine?.commercial?.prenoms
+            (dataList.venteChine)
+              ? dataList.venteChine.commercial.nom + ' ' + dataList.venteChine.commercial.prenoms
+              : (dataList.transporteur?.nom && dataList.transporteur?.prenoms)
+                ? dataList.transporteur.nom + ' ' + dataList.transporteur.prenoms
+                : 'N/A'
           }}
         </td>
         <td>
