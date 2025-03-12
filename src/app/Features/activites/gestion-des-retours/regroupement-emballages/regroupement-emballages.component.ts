@@ -193,28 +193,17 @@ export class RegroupementEmballagesComponent {
     console.log(item);
     this.regroupementTable = [];
     const idretour = item.id;
-    // let regroup = this.regrouperArticles(item.commandes)
-    // this.calculate(regroup);
+    let regroup = this.regrouperArticles(item.commandes)
+    this.calculate(regroup);
     this._spinner.show();
-    // if (this.regroupementFinal) {
-    //   const result = Object.entries(this.regroupementFinal).map(([key, value]) => ({
-    //     format: parseInt(key),
-    //     casier: value.casier,
-    //     palette: value.palettes
-    //   }));
-    const results = [
-      {
-        format: 15,
-        casier: 2,
-        palette: 20,
-      },
-      {
-        format: 25,
-        casier: 1,
-        palette: 30,
-      },
-    ];
-    this._activite.GetRegroupementEmballagePdf(idretour, results).then(
+    if (this.regroupementFinal) {
+      const result = Object.entries(this.regroupementFinal).map(([key, value]) => ({
+        format: parseInt(key),
+        casier: value.casier,
+        palette: value.palettes
+      }));
+
+    this._activite.GetRegroupementEmballagePdf(idretour, result).then(
       (res: any) => {
         console.log('DownloadGlobalFacturesById:::>', res);
 
@@ -225,7 +214,7 @@ export class RegroupementEmballagesComponent {
         this.toastr.info(error.error.message);
       }
     );
-    // }
+    }
   }
   GetRetourList(page: number) {
     let data = {
@@ -241,7 +230,7 @@ export class RegroupementEmballagesComponent {
     });
   }
   ValidateEmballage(id: any) {
-    
+
     ALERT_QUESTION(
       'warning',
       'Attention !',
