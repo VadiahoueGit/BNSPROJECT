@@ -240,7 +240,29 @@ export class RegroupementEmballagesComponent {
       this._spinner.hide();
     });
   }
-  ValidateEmballage(id: number) {}
+  ValidateEmballage(id: any) {
+    
+    ALERT_QUESTION(
+      'warning',
+      'Attention !',
+      'Voulez-vous valider ce retour?'
+    ).then((res) => {
+      if (res.isConfirmed == true) {
+        this._spinner.show();
+        this._activite.ValidateRetourById(id).then((res: any) => {
+          console.log('validation retour:::>', res);
+          this._spinner.hide();
+          this.GetRetourList(1);
+
+          this.OnCloseModal();
+
+          this.toastr.success(res.message);
+        });
+      } else {
+        this.isModalOpen = false;
+      }
+    });
+  }
 
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
