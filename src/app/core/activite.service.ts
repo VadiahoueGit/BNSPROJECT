@@ -473,6 +473,27 @@ export class ActiviteService {
         );
     });
   }
+  GetRetourWithArtilesList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/retours/with-articles?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
 
   GetRetourPleinList() {
     return new Promise((resolve: any, reject: any) => {
@@ -506,6 +527,45 @@ export class ActiviteService {
       this._http
         .post(
           `${this.apiUrl}/v1/regroupements/${numRegroupement}/pdf`, 
+          data,
+          { headers ,responseType: 'blob' }
+        )
+        .subscribe(response => {
+          try {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+  
+            // Ouvrir le PDF dans une nouvelle fenêtre
+            const newTab = window.open(url);
+            if (!newTab) {
+              throw new Error('Le popup a été bloqué par le navigateur.');
+            }
+  
+            // Nettoyer l’URL après un certain temps pour éviter les fuites mémoire
+            setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+  
+            resolve();
+          } catch (err) {
+            console.error('Erreur lors de l’ouverture du PDF :', err);
+            reject(err);
+          }
+        }, error => {
+          console.error('Erreur lors du téléchargement du PDF :', error);
+          reject(error);
+        });
+    });
+  }
+  
+  GetRegroupementEmballagePdf(idretour: string, data: any[]) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+        'Content-Type': 'application/json'
+      });
+  
+      this._http
+        .post(
+          `${this.apiUrl}/v1/regroupements/retour/${idretour}/pdf`, 
           data,
           { headers ,responseType: 'blob' }
         )

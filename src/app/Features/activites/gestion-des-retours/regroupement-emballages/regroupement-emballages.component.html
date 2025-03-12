@@ -5,10 +5,10 @@
 
         <ng-template pTemplate="header">
             <tr>
-                <th style="color: var(--secondary-color);">Immatriculation</th>
-                <th style="color: var(--secondary-color);">Nom transporteur</th>
-                <th style="color: var(--secondary-color);">Prénom transporteur</th>
-                <th style="color: var(--secondary-color);">Date récuperation</th>
+                <th style="color: var(--secondary-color);">Client à livrer</th>
+                <th style="color: var(--secondary-color);">Dépot</th>
+                <th style="color: var(--secondary-color);">Type retour</th>
+                <th style="color: var(--secondary-color);">Véhicule</th>
                 <th style="color: var(--secondary-color);">Actions</th>
             </tr>
         </ng-template>
@@ -16,21 +16,22 @@
             <tr>
                 <td>
                     <span class="ml-1 vertical-align-middle">
-                        <!-- {{ dataList.image }} -->
+                        {{ dataList.clientALivrer?.nomEtablissement }}
                     </span>
                 </td>
                 <td>
                     <span class="ml-1 vertical-align-middle">
-                        <!-- {{ dataList.image }} -->
+                        {{ dataList.depot?.nomDepot }}
+
                     </span>
                 </td>
                 <td>
                     <span class="ml-1 vertical-align-middle">
-                        <!-- {{ dataList.image }} -->
+                        {{ dataList?.returnType }}
                     </span>
                 </td>
                 <td>
-                    <!-- {{ dataList.libelle }} -->
+                    {{ dataList?.vehicule?.marque }}
                 </td>
                 <td>
                     <tr class="d-flex justify-content-center gap-3">
@@ -49,3 +50,137 @@
 </div>
 
 
+<div *ngIf="isModalOpen" class="custom-modal">
+    <div
+      class="modal-dialog modal-dialog-centered"
+  
+    >
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Détails regroupement emballage</h5>
+          <button type="button" class="btn-close" aria-label="Close"></button>
+        </div>
+  
+        <div
+          class="modal-body"
+          style="padding: 20px; max-height: 70vh; overflow-y: auto"
+        >
+          <div class="row">
+            <div class="d-flex justify-content-end py-3">
+                <button
+                  type="button"
+                  class="btn btn-secondary px-4"
+                  (click)="PrintDoc(updateData)"
+                >
+                  Imprimer
+                </button>
+              </div>
+            <fieldset class="row border my-1">
+              <legend style="font-size: 13px" class="text-secondary">
+                Numero Commande :  {{ updateData?.commande?.numVenteChine || updateData?.commande?.NumCommande || updateData?.commandeClient?.NumCommande || ''}} du
+                {{ updateData.createdAt | date }}
+              </legend>
+              <div class="row">
+                <div class="col-md-4">
+                  <strong>Dépot : </strong>
+                  <span>
+                    {{ updateData.depot?.nomDepot|| 'NEANT' }}
+                  </span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Gérant: </strong>
+                  <span>
+                    {{ updateData.depot?.gerant || 'NEANT'}}
+                  </span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Client à livrer : </strong>
+                  <span>
+                   {{ updateData?.clientALivrer?.nomEtablissement || 'NEANT' }}
+                  </span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Type retour : </strong>
+                  <span>
+                   {{ updateData?.returnType || 'NEANT'}}
+                  </span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Transporteur : </strong>
+                  <span>
+                   {{ updateData?.transporteur?.nom  }} {{ updateData?.transporteur?.prenoms  }}
+                  </span>
+                </div>
+              </div>
+            </fieldset>
+  
+            <fieldset class="row border my-2" >
+              <legend style="font-size: 13px" class="text-secondary">
+                Informations du commande client
+              </legend>
+              <div class="row">
+                <div class="col-md-4">
+                  <strong>Type client : </strong>
+                  <span>{{ updateData?.commandeClient?.clientType || 'NEANT'}}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Raison sociale : </strong>
+                  <span>{{updateData.commandeClient?.raisonSociale || 'NEANT'  }}</span>
+                </div>
+                <div class="col-md-4">
+                    <strong>Solde emballage : </strong>
+                    <span>{{ updateData.commandeClient?.soldeEmballage | currency :'XOF' }}</span>
+                  </div>
+              </div>
+            </fieldset>
+            <fieldset class="row border my-2">
+              <legend style="font-size: 13px" class="text-secondary">
+                Articles
+              </legend>
+              <table class="table table-bordered">
+                <thead class="table-success">
+                <tr>
+                  <th scope="col">Code</th>
+                  <th scope="col">Désignation</th>
+                  <th scope="col">Conditionnement</th>
+                  <th scope="col">Format</th>
+                  <th scope="col">Prix unitaire</th>
+                  <th scope="col">Quantité</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of updateData.articles">
+                  <td>{{ item.produit.code }}</td>
+                  <td>{{ item.produit.libelle }}</td>
+                  <td>{{ item.produit.condition }}</td>
+                  <td>{{ item.produit.format }}</td>
+                  <td>{{ item.prixUnitaire }}</td>
+                  <td>{{ item.quantity }}</td>
+                </tr>
+                </tbody>
+              </table>
+            </fieldset>
+          </div>
+        </div>
+  
+        <!-- Footer -->
+        <div class="modal-footer gap-3 px-4">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="OnCloseModal()"
+          >
+            Fermer
+          </button>
+          <!-- <button
+            *ngIf="updateData?.statut !== 'Validé'"
+            type="submit"
+            class="btn btn-primary px-2"
+            (click)="ValidateEmballage(updateData.id)"
+          >
+            Valider
+          </button> -->
+        </div>
+      </div>
+    </div>
+  </div>
