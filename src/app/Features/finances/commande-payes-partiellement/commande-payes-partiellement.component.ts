@@ -17,6 +17,7 @@ export class CommandePayesPartiellementComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
+  hstoriquePayment:any []
   ArticleForm!: FormGroup;
   loading: boolean = true;
   isModalOpen = false;
@@ -62,6 +63,7 @@ export class CommandePayesPartiellementComponent {
   }
 
   OnEdit(data: any) {
+    this.GetHistoriquePayment(data.id)
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
@@ -94,4 +96,13 @@ export class CommandePayesPartiellementComponent {
 
   }
 
+  GetHistoriquePayment(id: number)
+  {
+    this._spinner.show();
+    this.financeService.GetHistoriquePayment(id).then((res: any) => {
+      this.hstoriquePayment = res.data
+      console.log('data:::>', res);
+      this._spinner.hide();
+    });
+  }
 }

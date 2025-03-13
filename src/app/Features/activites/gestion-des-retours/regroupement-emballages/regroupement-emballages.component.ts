@@ -77,7 +77,7 @@ export class RegroupementEmballagesComponent {
     // Regrouper les articles par format
     const articlesParFormat = commande.articles.reduce(
       (acc: any, article: any) => {
-        const format = Number(article?.liquide?.format); // S'assurer que le format est un nombre
+        const format = Number(article?.format); // S'assurer que le format est un nombre
 
         if (!format) {
           console.warn(
@@ -172,17 +172,20 @@ export class RegroupementEmballagesComponent {
     console.log('regroupementFinal:', this.regroupementFinal);
   }
   regrouperArticles(commandes: any[]): any {
+    console.log('Regroupement par format:', commandes);
     let articlesRegroupes: any = [];
     let montantTotal = 0;
 
     // Parcours de toutes les commandes
-    commandes.forEach((commande) => {
-      // Ajouter les articles de chaque commande à la liste des articles regroupés
-      commande.articles.forEach((article: any) => {
-        articlesRegroupes.push(article);
-        montantTotal += parseFloat(article.montantEmballage);
-      });
+    commandes.forEach((commande: any) => {
+      // Ajouter l'article de chaque commande à la liste des articles regroupés
+      if (commande.produit) { // Vérifiez que produit existe
+        articlesRegroupes.push(commande.produit); // Poussez l'objet produit, pas un tableau
+        montantTotal += parseFloat(commande.produit.montantEmballage || '0'); // Ajouter le montant, si disponible
+      }
     });
+
+
 
     return {
       articles: articlesRegroupes,
@@ -193,7 +196,7 @@ export class RegroupementEmballagesComponent {
     console.log(item);
     this.regroupementTable = [];
     const idretour = item.id;
-    let regroup = this.regrouperArticles(item.commandes)
+    let regroup = this.regrouperArticles(item.articles)
     this.calculate(regroup);
     this._spinner.show();
     if (this.regroupementFinal) {
@@ -202,6 +205,7 @@ export class RegroupementEmballagesComponent {
         casier: value.casier,
         palette: value.palettes
       }));
+      console.log('result',result);
 
     this._activite.GetRegroupementEmballagePdf(idretour, result).then(
       (res: any) => {

@@ -64,13 +64,12 @@
         <td>
           {{
             dataList?.client?.numeroSAP
-              
+
           }}
         </td>
         <td>
           {{
-            dataList?.client?.raisonSocial
-              
+            dataList?.client?.raisonSocial || dataList?.paiementsVente[0]?.pointdevente.nomEtablissement
           }}
         </td>
         <td>

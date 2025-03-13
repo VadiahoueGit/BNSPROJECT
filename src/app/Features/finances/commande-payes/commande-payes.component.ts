@@ -16,6 +16,7 @@ import {FinanceService} from "../../../core/finance.service";
 export class CommandePayesComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
+  hstoriquePayment:any []
   dataList!: any[];
   ArticleForm!: FormGroup;
   loading: boolean = true;
@@ -62,6 +63,7 @@ export class CommandePayesComponent {
   }
 
   OnEdit(data: any) {
+    this.GetHistoriquePayment(data.id)
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
@@ -95,4 +97,13 @@ export class CommandePayesComponent {
 
   }
 
+  GetHistoriquePayment(id: number)
+  {
+    this._spinner.show();
+    this.financeService.GetHistoriquePayment(id).then((res: any) => {
+      this.hstoriquePayment = res.data
+      console.log('data:::>', res);
+      this._spinner.hide();
+    });
+  }
 }

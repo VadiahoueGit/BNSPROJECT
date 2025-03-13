@@ -98,3 +98,516 @@
     </ng-template>
   </p-table>
 </div>
+
+
+
+
+<!-- Modal creation -->
+<!-- Modal -->
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex align-items-center p-3">
+        <div
+          class="d-flex justify-content-center align-items-center"
+          style="
+            background-color: rgb(219, 255, 232);
+            border-radius: 3rem;
+            width: 3rem;
+            height: 3rem;
+          "
+        >
+          <i class="fas fa-box-check text-primary fs-3"></i>
+        </div>
+
+        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
+          Détails
+        </h1>
+      </div>
+      <div class="modal-body" *ngIf="operation == 'edit'"  style="max-height: 70vh;overflow-y: auto;">
+        <ng-container *ngIf="updateData.motif == 'COMMANDE CLIENT'"  >
+          <fieldset class="row border my-1">
+            <legend style="font-size: 14px" class="text-secondary">
+              Information de la Commande :
+              {{ updateData.paiementsCommandeClient[0]?.NumCommande }} du
+              {{ updateData.createdAt | date }}
+            </legend>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Client: </strong>
+                <span>{{ updateData?.client?.raisonSocial }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Localité: </strong>
+                <span>{{ updateData?.client?.localite.nomLocalite }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Dépot: </strong>
+                <span>{{ updateData?.client?.depot.nomDepot }}</span>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset class="row border my-1">
+            <legend style="font-size: 14px" class="text-secondary">
+              Informations regroupement
+            </legend>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Numéro : </strong>
+                <span>{{ updateData?.regroupement?.numRegroupement }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Transporteur : </strong>
+                <span
+                >{{ updateData?.transporteur?.nom }}
+                  {{ updateData?.transporteur?.prenoms }}</span
+                >
+              </div>
+              <div class="col-md-4">
+                <strong>Téléphone : </strong>
+                <span>{{ updateData?.regroupement?.telephone }}</span>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset class="row border my-1">
+            <legend style="font-size: 14px" class="text-secondary">
+              Informations véhicule
+            </legend>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Immatriculation: </strong>
+                <span>{{ updateData?.vehicule?.immatriculation }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Marque : </strong>
+                <span>{{ updateData?.vehicule?.marque }} </span>
+              </div>
+              <div class="col-md-4">
+                <strong>Capacité : </strong>
+                <span>{{ updateData?.vehicule?.capacite }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Disponible : </strong>
+                <span>{{
+                    updateData?.vehicule?.disponible == true ? "OUI" : "NON"
+                  }}</span>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset class="row border my-1">
+            <legend style="font-size: 14px" class="text-secondary">
+              Autres informations
+            </legend>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Statut: </strong>
+                <span>{{ updateData?.statut }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Motif : </strong>
+                <span>{{ updateData?.motif }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Montant à percevoir : </strong>
+                <span>{{ updateData?.montantAPercevoir }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Montant perçu : </strong>
+                <span>{{ updateData?.montantPercu }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Montant restant : </strong>
+                <span>{{ updateData?.montantRestant }}</span>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset class="row border my-2">
+            <legend class="fs-6 text-primary">Historique de paiement</legend>
+            <div
+              class="table-responsive"
+              style="max-height: 300px; overflow-y: auto"
+            >
+              <table class="table">
+                <thead>
+                <tr style="font-size: small">
+                  <th scope="col">Opérations</th>
+                  <th scope="col">Mode de paiement</th>
+                  <th scope="col">Montant versé</th>
+                  <th scope="col">Date de paiement</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr
+                  style="font-size: small"
+                  *ngFor="let item of hstoriquePayment; let i = index "
+                >
+                  <td>{{ item.transaction.motif }}</td>
+                  <td>{{ item.moyenPaiement.libelle ? item.moyenPaiement.libelle : 'N/A' }}</td>
+                  <td>{{ item.montant }}</td>
+                  <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
+                </tr>
+                <!-- Ajoutez d'autres lignes si nécessaire -->
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+          <fieldset class="row border my-2">
+            <legend class="fs-6 text-primary">Articles</legend>
+            <div
+              class="table-responsive"
+              style="max-height: 300px; overflow-y: auto"
+            >
+              <table class="table">
+                <thead>
+                <tr style="font-size: small">
+                  <th scope="col">Montant emballage</th>
+                  <th scope="col">Montant liquide</th>
+                  <th scope="col">Prix unitaire emballage</th>
+                  <th scope="col">Prix unitaire liquide</th>
+                  <th scope="col">Quantité</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr
+                  style="font-size: small"
+                  *ngFor="
+                      let item of updateData?.paiementsCommandeClient[0]
+                        ?.articles;
+                      let i = index
+                    "
+                >
+                  <td>{{ item.montantEmballage }}</td>
+                  <td>{{ item.montantLiquide }}</td>
+                  <td>{{ item.prixUnitaireEmballage }}</td>
+                  <td>{{ item.prixUnitaireLiquide }}</td>
+                  <td>{{ item.quantite }}</td>
+                </tr>
+                <!-- Ajoutez d'autres lignes si nécessaire -->
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+        </ng-container>
+
+        <ng-container *ngIf="updateData.motif == 'VENTE CHINE'">
+          <fieldset class="row border my-1">
+            <legend style="font-size: 14px" class="text-secondary">
+              Information de la vente du {{ updateData?.paiementsVente[0].dateVente }}
+            </legend>
+
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Client: </strong>
+                <span>{{
+                    updateData?.paiementsVente[0].pointdevente?.nomEtablissement
+                  }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Localité: </strong>
+                <span>{{
+                    updateData?.paiementsVente[0]?.venteChine?.localite
+                      ?.nomLocalite
+                  }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Dépot: </strong>
+                <span>{{ updateData?.client?.depot.nomDepot }}</span>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset class="row border my-1">
+            <legend style="font-size: 14px" class="text-secondary">
+              Informations commercial
+            </legend>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Commercial: </strong>
+                <span
+                >{{ updateData?.paiementsVente[0]?.commercial?.nom }}
+                  {{ updateData?.paiementsVente[0]?.commercial?.prenoms }}</span
+                >
+              </div>
+              <div class="col-md-4">
+                <strong>Rôle : </strong>
+                <span>{{
+                    updateData?.paiementsVente[0]?.commercial?.role
+                  }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Téléphone : </strong>
+                <span>{{
+                    updateData?.paiementsVente[0]?.commercial?.telephone
+                  }}</span>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset class="row border my-1">
+            <legend style="font-size: 14px" class="text-secondary">
+              Autres informations
+            </legend>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Statut: </strong>
+                <span>{{ updateData?.statut }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Motif : </strong>
+                <span>{{ updateData?.motif }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Montant à percevoir : </strong>
+                <span>{{ updateData?.montantAPercevoir }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Montant perçu : </strong>
+                <span>{{ updateData?.montantPercu }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Montant restant : </strong>
+                <span>{{ updateData?.montantRestant }}</span>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset class="row border my-2">
+            <legend class="fs-6 text-primary">Historique de paiement</legend>
+            <div
+              class="table-responsive"
+              style="max-height: 300px; overflow-y: auto"
+            >
+              <table class="table">
+                <thead>
+                <tr style="font-size: small">
+                  <th scope="col">Opérations</th>
+                  <th scope="col">Mode de paiement</th>
+                  <th scope="col">Montant versé</th>
+                  <th scope="col">Date de paiement</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr
+                  style="font-size: small"
+                  *ngFor="let item of hstoriquePayment; let i = index "
+                >
+                  <td>{{ item.transaction.motif }}</td>
+                  <td>{{ item.moyenPaiement.libelle ? item.moyenPaiement.libelle : 'N/A' }}</td>
+                  <td>{{ item.montant }}</td>
+                  <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
+                </tr>
+                <!-- Ajoutez d'autres lignes si nécessaire -->
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+          <fieldset class="row border my-2">
+            <legend class="fs-6 text-primary">Articles</legend>
+            <div
+              class="table-responsive"
+              style="max-height: 300px; overflow-y: auto"
+            >
+              <table class="table">
+                <thead>
+                <tr style="font-size: small">
+                  <th scope="col">Emballage</th>
+                  <th scope="col">Liquide</th>
+                  <th scope="col">Prix unitaire</th>
+                  <th scope="col">Quantité</th>
+                  <th scope="col">Montant total</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr
+                  style="font-size: small"
+                  *ngFor="
+                      let item of updateData?.paiementsVente[0]?.articles;
+                      let i = index
+                    "
+                >
+                  <td>{{ item.emballage.libelle }}</td>
+                  <td>{{ item.liquide.libelle }}</td>
+                  <td>{{ item.prixUnitaire }}</td>
+                  <td>{{ item.quantite }}</td>
+                  <td>{{ item.montantTotal }}</td>
+                </tr>
+                <!-- Ajoutez d'autres lignes si nécessaire -->
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+        </ng-container>
+        <ng-container *ngIf="updateData.motif == 'CONSIGNE'">
+          <fieldset class="row border my-1">
+            <legend style="font-size: 14px" class="text-secondary">
+              Informationde la Commande :
+              {{ updateData.paiementsCommandeGratuit[0]?.NumCommande }} du
+              {{ updateData.createdAt | date }}
+            </legend>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Client: </strong>
+                <span>{{ updateData?.client?.raisonSocial }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Localité: </strong>
+                <span>{{ updateData?.client?.localite.nomLocalite }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Dépot: </strong>
+                <span>{{ updateData?.client?.depot.nomDepot }}</span>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset class="row border my-1">
+            <legend style="font-size: 14px" class="text-secondary">
+              Informations regroupement
+            </legend>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Numéro : </strong>
+                <span>{{ updateData?.regroupement?.numRegroupement }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Transporteur : </strong>
+                <span
+                >{{ updateData?.transporteur?.nom }}
+                  {{ updateData?.transporteur?.prenoms }}</span
+                >
+              </div>
+              <div class="col-md-4">
+                <strong>Téléphone : </strong>
+                <span>{{ updateData?.regroupement?.telephone }}</span>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset class="row border my-1">
+            <legend style="font-size: 14px" class="text-secondary">
+              Informations véhicule
+            </legend>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Immatriculation: </strong>
+                <span>{{ updateData?.vehicule?.immatriculation }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Marque : </strong>
+                <span>{{ updateData?.vehicule?.marque }} </span>
+              </div>
+              <div class="col-md-4">
+                <strong>Capacité : </strong>
+                <span>{{ updateData?.vehicule?.capacite }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Disponible : </strong>
+                <span>{{
+                    updateData?.vehicule?.disponible == true ? "OUI" : "NON"
+                  }}</span>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset class="row border my-1">
+            <legend style="font-size: 14px" class="text-secondary">
+              Autres informations
+            </legend>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Statut: </strong>
+                <span>{{ updateData?.statut }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Motif : </strong>
+                <span>{{ updateData?.motif }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Montant à percevoir : </strong>
+                <span>{{ updateData?.montantAPercevoir }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Montant perçu : </strong>
+                <span>{{ updateData?.montantPercu }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Montant restant : </strong>
+                <span>{{ updateData?.montantRestant }}</span>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset class="row border my-2">
+            <legend class="fs-6 text-primary">Historique de paiement</legend>
+            <div
+              class="table-responsive"
+              style="max-height: 300px; overflow-y: auto"
+            >
+              <table class="table">
+                <thead>
+                <tr style="font-size: small">
+                  <th scope="col">Opérations</th>
+                  <th scope="col">Mode de paiement</th>
+                  <th scope="col">Montant versé</th>
+                  <th scope="col">Date de paiement</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr
+                  style="font-size: small"
+                  *ngFor="let item of hstoriquePayment; let i = index "
+                >
+                  <td>{{ item.transaction?.motif }}</td>
+                  <td>{{ item.moyenPaiement?.libelle ? item.moyenPaiement?.libelle : 'N/A' }}</td>
+                  <td>{{ item.montant }}</td>
+                  <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
+                </tr>
+                <!-- Ajoutez d'autres lignes si nécessaire -->
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+          <fieldset class="row border my-2">
+            <legend class="fs-6 text-primary">Articles</legend>
+            <div
+              class="table-responsive"
+              style="max-height: 300px; overflow-y: auto"
+            >
+              <table class="table">
+                <thead>
+                <tr style="font-size: small">
+                  <th scope="col">Montant emballage</th>
+                  <th scope="col">Montant liquide</th>
+                  <th scope="col">Prix unitaire emballage</th>
+                  <th scope="col">Prix unitaire liquide</th>
+                  <th scope="col">Quantité</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr
+                  style="font-size: small"
+                  *ngFor="
+                      let item of updateData?.paiementsCommandeGratuit[0]
+                        ?.articles;
+                      let i = index
+                    "
+                >
+                  <td>{{ item.montantEmballage }}</td>
+                  <td>{{ item.montantLiquide }}</td>
+                  <td>{{ item.prixUnitaireEmballage }}</td>
+                  <td>{{ item.prixUnitaireLiquide }}</td>
+                  <td>{{ item.quantite }}</td>
+                </tr>
+                <!-- Ajoutez d'autres lignes si nécessaire -->
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+        </ng-container>
+      </div>
+
+      <div class="modal-footer gap-3 px-4">
+        <button
+          (click)="OnCloseModal()"
+          type="button"
+          class="btn btn-secondary px-2"
+        >
+          Annuler
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
