@@ -7,7 +7,6 @@
   <h4 class="fw-bold mb-0">Historiques mouvement de stock</h4>
 </div>
 <div class="card">
-
   <p-table
     [styleClass]="'p-datatable-sm'"
     #dt2
@@ -26,7 +25,7 @@
         <th style="color: var(--secondary-color)">Qte après</th>
         <th style="color: var(--secondary-color)">Quantité</th>
         <th style="color: var(--secondary-color)">Temps</th>
-<!--        <th style="color: var(&#45;&#45;secondary-color);">Actions</th>-->
+        <th style="color: var(--secondary-color)">Actions</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList>
@@ -54,13 +53,17 @@
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-          {{ dataList.stock?.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}
+            {{ dataList.stock?.createdAt | date : "dd/MM/yyyy HH:mm:ss" }}
           </span>
         </td>
 
         <td>
-<!--        <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>-->
-      </td>
+          <i
+            (click)="OnEdit(dataList.mouvement)"
+            style="cursor: pointer"
+            class="fas fa-eye text-secondary"
+          ></i>
+        </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
@@ -97,7 +100,9 @@
         </h1>
       </div>
       <div class="modal-body">
-
+        <div class="d-flex justify-content-center mt-3">
+          <p style="font-size: larger; color: darkseagreen;">{{ updateData.commentaire }}</p>
+        </div>
       </div>
 
       <div class="modal-footer gap-3 px-4">
@@ -106,9 +111,8 @@
           type="button"
           class="btn btn-secondary px-2"
         >
-          Annuler
+          Fermer
         </button>
-
       </div>
     </div>
   </div>

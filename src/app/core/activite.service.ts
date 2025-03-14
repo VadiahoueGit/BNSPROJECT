@@ -591,13 +591,11 @@ export class ActiviteService {
             const blob = new Blob([response], { type: 'application/pdf' });
             const url = window.URL.createObjectURL(blob);
   
-            // Ouvrir le PDF dans une nouvelle fenêtre
             const newTab = window.open(url);
             if (!newTab) {
               throw new Error('Le popup a été bloqué par le navigateur.');
             }
   
-            // Nettoyer l’URL après un certain temps pour éviter les fuites mémoire
             setTimeout(() => window.URL.revokeObjectURL(url), 10000);
   
             resolve();

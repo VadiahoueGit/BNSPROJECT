@@ -143,14 +143,9 @@ export class MouvementStockComponent {
   }
 
   OnEdit(data: any) {
-    this.isEditMode = true;
-    console.log(data);
     this.updateData = data;
-    this.articleId = data.id;
     this.isModalOpen = true;
-    // this.loadArticleDetails();
     this.operation = 'edit';
-    console.log(this.isModalOpen);
   }
 
 

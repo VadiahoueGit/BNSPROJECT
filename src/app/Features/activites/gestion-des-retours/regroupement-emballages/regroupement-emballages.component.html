@@ -194,7 +194,7 @@
           Fermer
         </button>
         <button
-          *ngIf="updateData?.statut !== 'Validé'"
+          *ngIf="updateData?.status !== 'Validé'"
           type="submit"
           class="btn btn-primary px-2"
           (click)="ValidateEmballage(updateData.id)"
