@@ -1,16 +1,18 @@
-import { Component, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
-import { Table } from 'primeng/table';
-import { ActiviteService } from 'src/app/core/activite.service';
-import { ArticleServiceService } from 'src/app/core/article-service.service';
-import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
+import {Component, ViewChild} from '@angular/core';
+import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {ToastrService} from 'ngx-toastr';
+import {Table} from 'primeng/table';
+import {ActiviteService} from 'src/app/core/activite.service';
+import {ArticleServiceService} from 'src/app/core/article-service.service';
+import {ALERT_QUESTION} from 'src/app/Features/shared-component/utils';
+
 interface RegroupementItem {
   palettes: number;
   casier: number;
   type: string;
 }
+
 @Component({
   selector: 'app-regroupement-emballages',
   templateUrl: './regroupement-emballages.component.html',
@@ -33,10 +35,10 @@ export class RegroupementEmballagesComponent {
   regroupementTable: any[] = [];
   regroupementFinal: Record<string, RegroupementItem>;
   casiersPerPalette: Record<number, { casiers: number; type: string }> = {
-    33: { casiers: 63, type: 'biere' },
-    25: { casiers: 63, type: 'biere' },
-    50: { casiers: 66, type: 'plastique' },
-    60: { casiers: 66, type: 'métal' },
+    33: {casiers: 63, type: 'biere'},
+    25: {casiers: 63, type: 'biere'},
+    50: {casiers: 66, type: 'plastique'},
+    60: {casiers: 66, type: 'métal'},
   };
   currentPage: number;
   rowsPerPage: any;
@@ -46,7 +48,8 @@ export class RegroupementEmballagesComponent {
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.GetRetourList(1);
@@ -72,40 +75,83 @@ export class RegroupementEmballagesComponent {
     this.updateData = data;
     this.isModalOpen = true;
   }
+
   calculate(commande: any): void {
     console.log('commande', commande);
     // Regrouper les articles par format
-    const articlesParFormat = commande.articles.reduce(
-      (acc: any, article: any) => {
-        const format = Number(article?.format); // S'assurer que le format est un nombre
+    const articlesParFormat = commande.articles.reduce((acc: any, article: any) => {
+      console.log("article", article);
 
-        if (!format) {
-          console.warn(
-            'Article sans format ou format non numérique détecté, ignoré:',
-            article
-          );
-          return acc;
-        }
-
-        if (!acc[format]) {
-          acc[format] = [];
-        }
-
-        acc[format].push(article);
+      if (!article.produit) {
+        console.warn("Article sans produit détecté, ignoré:", article);
         return acc;
-      },
-      {}
-    );
+      }
+
+      const format = Number(article.produit.format); // Convertir en nombre
+
+      if (!format) {
+        console.warn("Format invalide détecté, ignoré:", article.produit);
+        return acc;
+      }
+
+      if (!acc[format]) {
+        // Si le format n'existe pas encore, on initialise
+        acc[format] = {
+          format: format,
+          totalQuantity: 0,
+          articles: []
+        };
+      }
+
+      // Ajouter la quantité et stocker l'article
+      acc[format].totalQuantity += article.quantity;
+      acc[format].articles.push(article);
+
+      return acc;
+    }, {});
+
 
     console.log('Articles regroupés par format:', articlesParFormat);
 
     // Calcul des palettes et des casiers pour chaque format
+    if (!commande || !Array.isArray(commande.articles)) {
+      console.error("commande.articles est invalide :", commande);
+    } else {
+      const articlesParFormat = commande.articles.reduce((acc: any, article: any) => {
+        console.log("article", article);
+
+        if (!article.produit) {
+          console.warn("Article sans produit détecté, ignoré:", article);
+          return acc;
+        }
+
+        const format = Number(article.produit.format);
+
+        if (!format) {
+          console.warn("Format invalide détecté, ignoré:", article.produit);
+          return acc;
+        }
+
+        if (!acc[format]) {
+          acc[format] = {format, totalQuantity: 0, articles: []};
+        }
+        console.log('test', article.quantity)
+        acc[format].totalQuantity += article.quantity;
+        acc[format].articles.push(article);
+
+        return acc;
+      }, {});
+
+      console.log("articlesParFormat", articlesParFormat);
+    }
+
     this.result = Object.keys(articlesParFormat).reduce(
       (result: any, formatStr: string) => {
-        const format = Number(formatStr); // Convertir la clé (string) en nombre
-        const totalCasiers = articlesParFormat[format].reduce(
-          (total: number, article: any) =>
-            total + Number(article.quantite || 0),
+        const format = Number(formatStr); // Convertir la clé en nombre
+        const articles = articlesParFormat[format].articles; // Accéder aux articles (tableau)
+
+        const totalCasiers = articles.reduce(
+          (total: number, article: any) => total + Number(article.quantity || 0),
           0
         );
 
@@ -126,6 +172,7 @@ export class RegroupementEmballagesComponent {
       },
       {}
     );
+
     this.regroupementTable.push(this.result);
     console.log('Résultat final', this.result);
     console.log('regroupementList', this.regroupementTable);
@@ -171,6 +218,7 @@ export class RegroupementEmballagesComponent {
     console.log('test', this.regroupementTable);
     console.log('regroupementFinal:', this.regroupementFinal);
   }
+
   regrouperArticles(commandes: any[]): any {
     console.log('Regroupement par format:', commandes);
     let articlesRegroupes: any = [];
@@ -179,12 +227,10 @@ export class RegroupementEmballagesComponent {
     // Parcours de toutes les commandes
     commandes.forEach((commande: any) => {
       // Ajouter l'article de chaque commande à la liste des articles regroupés
-      if (commande.produit) { // Vérifiez que produit existe
-        articlesRegroupes.push(commande.produit); // Poussez l'objet produit, pas un tableau
-        montantTotal += parseFloat(commande.produit.montantEmballage || '0'); // Ajouter le montant, si disponible
+      if (commande) { // Vérifiez que produit existe
+        articlesRegroupes.push(commande); // Poussez l'objet produit, pas un tableau
       }
     });
-
 
 
     return {
@@ -192,6 +238,7 @@ export class RegroupementEmballagesComponent {
       montantTotal: montantTotal,
     };
   }
+
   PrintDoc(item: any) {
     console.log(item);
     this.regroupementTable = [];
@@ -205,21 +252,22 @@ export class RegroupementEmballagesComponent {
         casier: value.casier,
         palette: value.palettes
       }));
-      console.log('result',result);
+      console.log('result', result);
 
-    this._activite.GetRegroupementEmballagePdf(idretour, result).then(
-      (res: any) => {
-        console.log('DownloadGlobalFacturesById:::>', res);
+      this._activite.GetRegroupementEmballagePdf(idretour, result).then(
+        (res: any) => {
+          console.log('DownloadGlobalFacturesById:::>', res);
 
-        this._spinner.hide();
-      },
-      (error: any) => {
-        this._spinner.hide();
-        this.toastr.info(error.error.message);
-      }
-    );
+          this._spinner.hide();
+        },
+        (error: any) => {
+          this._spinner.hide();
+          this.toastr.info(error.error.message);
+        }
+      );
     }
   }
+
   GetRetourList(page: number) {
     let data = {
       paginate: false,
@@ -233,6 +281,7 @@ export class RegroupementEmballagesComponent {
       this._spinner.hide();
     });
   }
+
   ValidateEmballage(id: any) {
 
     ALERT_QUESTION(
