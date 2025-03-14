@@ -20,6 +20,7 @@
     <ng-template pTemplate="header">
       <tr>
         <th style="color: var(--secondary-color)">Dépot</th>
+        <th style="color: var(--secondary-color)">Emballage</th>
         <th style="color: var(--secondary-color)">Mouvement</th>
         <th style="color: var(--secondary-color)">Qte avant</th>
         <th style="color: var(--secondary-color)">Qte après</th>
@@ -33,6 +34,11 @@
         <td>
           <span class="ml-1 vertical-align-middle">
             {{ dataList.depot.nomDepot }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.stock.emballage.libelle }}
           </span>
         </td>
         <td>
