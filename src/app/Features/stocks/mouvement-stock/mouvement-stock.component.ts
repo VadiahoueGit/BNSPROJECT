@@ -4,7 +4,7 @@ import {NgxSpinnerService} from 'ngx-spinner';
 import {ToastrService} from 'ngx-toastr';
 import {Table} from 'primeng/table';
 import {ArticleServiceService} from 'src/app/core/article-service.service';
-import {ALERT_QUESTION, storage_keys} from '../../shared-component/utils';
+import {ALERT, ALERT_INFO, ALERT_QUESTION, storage_keys} from '../../shared-component/utils';
 import {Location} from '@angular/common';
 import {CoreServiceService} from "../../../core/core-service.service";
 import {LocalStorageService} from "../../../core/local-storage.service";
@@ -143,14 +143,14 @@ export class MouvementStockComponent {
   }
 
   OnEdit(data: any) {
-    this.isEditMode = true;
-    console.log(data);
     this.updateData = data;
-    this.articleId = data.id;
-    this.isModalOpen = true;
-    // this.loadArticleDetails();
-    this.operation = 'edit';
-    console.log(this.isModalOpen);
+    ALERT_INFO(
+      'info',
+      'Information !',
+      this.updateData.commentaire ?? "Aucun commentaire renseigné"
+    ).then((res) => {
+      
+    });
   }
 
 

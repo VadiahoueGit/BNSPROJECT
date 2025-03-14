@@ -417,6 +417,7 @@ export class LivraisonComponent {
   }
 
   UploadDoc(item: any) {
+    console.log(item,'item')
     this.regroupementTable = []
     const numRegroupement = item.numRegroupement;
     let regroup = this.regrouperArticles(item.commandes)
