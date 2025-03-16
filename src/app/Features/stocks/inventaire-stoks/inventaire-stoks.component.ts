@@ -31,6 +31,7 @@ export class InventaireStoksComponent {
   loading: boolean = true;
   isModalOpen = false;
   isArticleModalOpen = false;
+  detailModalOpen = false;
   activityValues: number[] = [0, 100];
   operation: string = '';
   updateData: any = {};
@@ -102,6 +103,11 @@ export class InventaireStoksComponent {
     this.isArticleModalOpen = true;
     console.log(this.isModalOpen);
   }
+  OnViewInventaire(data:any) {
+    this.updateData = data
+    this.detailModalOpen = true;
+    console.log(this.isModalOpen);
+  }
 
   CloseArticleModal() {
     this.deselectAllItems();
@@ -126,16 +132,7 @@ export class InventaireStoksComponent {
 
     this.afficherArticlesSelectionnes();
   }
-  OnEdit(data: any) {
-    this.isEditMode = true;
-    console.log(data);
-    this.updateData = data;
-    this.articleId = data.id;
-    this.isModalOpen = true;
-    // this.loadArticleDetails();
-    this.operation = 'edit';
-    console.log(this.isModalOpen);
-  }
+ 
 
   GetArticleListByDepot() {
     this._spinner.show();
@@ -228,6 +225,10 @@ export class InventaireStoksComponent {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
   }
+  OnCloseDetailModal() {
+    this.detailModalOpen = false;
+    console.log(this.isModalOpen);
+  }
 
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
@@ -307,10 +308,11 @@ export class InventaireStoksComponent {
 
   async GetStockDisponibleByDepot(item: any): Promise<any> {
     let data = {
-      productId: item.articleCode,
+      productId: item.articleId,
       depotId: this.InventaireForm.controls['depotId'].value,
     };
-    console.log(data, item, 'les donnees');
+    console.log(data, 'les donnees');
+    console.log( item, 'les items');
     try {
       // Attendre la réponse de la promesse
       const response: any = await this.articleService.GetStockDisponibleByDepot(
@@ -352,7 +354,7 @@ export class InventaireStoksComponent {
     // Ajouter chaque article au FormArray
     articlesData.forEach((item: any) => {
       const articleGroup = this.fb.group({
-        productCode: [item.articleCode, Validators.required],
+        codeArticle: [item.articleCode, Validators.required],
         stockTheorique: [item.stockTheorique, Validators.required],
         stockPhysique: [
           item.quantite,
