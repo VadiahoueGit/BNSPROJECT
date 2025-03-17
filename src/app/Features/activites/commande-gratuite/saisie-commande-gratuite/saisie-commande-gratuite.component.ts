@@ -477,7 +477,7 @@ export class SaisieCommandeGratuiteComponent {
       }
 
       this.listRevendeurs = this.listRevendeurs
-        .filter((client:any) => client.credits != null)
+        .filter((client:any) => client.credit != null)
         .map((client:any) => ({
           ...client,
           displayName:

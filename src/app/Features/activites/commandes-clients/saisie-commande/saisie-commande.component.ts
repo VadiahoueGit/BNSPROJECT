@@ -80,10 +80,10 @@ export class SaisieCommandeComponent {
       clientId: [null, Validators.required],
       clientType: ['revendeur', ],
       numeroCompte: [{ value: '', disabled: true }, ],
-      raisonSociale: [{ value: '', disabled: true }, ],
-      montantCredit: [{ value: '', disabled: true }, ],
+      raisonSociale: [{ value: 0, disabled: true }, ],
+      montantCredit: [{ value: 0, disabled: true }, ],
       statutCompte: [{ value: '', disabled: true } ],
-      enCours: [''],
+      enCours: [{ value: 0, disabled: true } ],
       soldeEmballage: [{ value: '', disabled: true }, ],
       numeroSAP: [{ value: '', disabled: true }, ],
       remise: [
@@ -148,13 +148,16 @@ export class SaisieCommandeComponent {
     );
 
     this.commandClientForm.controls['montantCredit'].setValue(
-      this.detailPointDevente.credits.totalCredit
+      this.detailPointDevente.credit.totalCredit
     );
     this.commandClientForm.controls['soldeLiquide'].setValue(
-      this.detailPointDevente.credits.creditLiquide
+      this.detailPointDevente.credit.soldeLiquide
     );
     this.commandClientForm.controls['soldeEmballage'].setValue(
-      this.detailPointDevente.credits.creditEmballage
+      this.detailPointDevente.credit.soldeEmballage
+    );
+    this.commandClientForm.controls['enCours'].setValue(
+      this.detailPointDevente.encours
     );
     console.log(this.detailPointDevente, 'detailPointDevente');
     console.log('Élément sélectionné :', selectedItem);
@@ -378,26 +381,26 @@ export class SaisieCommandeComponent {
     return this.commandClientForm.get('articles') as FormArray;
   }
   onSubmit(): void {
-    const formData = this.commandClientForm.value;
+    const formData = this.commandClientForm.getRawValue();
+    console.log('Données à envoyer au service :', formData)
 
     const payload = {
-      clientType: this.detailPointDevente.credits.clientType,
+      clientType: this.detailPointDevente.credit.clientType,
       clientId: this.detailPointDevente.id,
       numeroCompte: this.detailPointDevente.numeroCompteContribuable,
       raisonSociale: this.detailPointDevente.raisonSocial,
       contact: this.detailPointDevente.telephoneGerant,
-      montantCredit: parseInt(this.detailPointDevente.credits.totalCredit),
-      soldeLiquide: parseInt(this.detailPointDevente.credits.creditLiquide),
-      soldeEmballage: parseInt(this.detailPointDevente.credits.creditEmballage),
+      montantCredit: parseInt(this.detailPointDevente.credit.totalCredit),
+      soldeLiquide: parseInt(this.detailPointDevente.credit.creditLiquide),
+      soldeEmballage: parseInt(this.detailPointDevente.credit.creditEmballage),
       statutCompte: this.detailPointDevente.isValide ? 'ACTIF' : 'INACTIF',
       numeroSAP: this.detailPointDevente.numeroSAP,
       fraisTransport: formData.fraisTransport,
-      enCours: parseInt(formData.enCours),
+      enCours: formData.enCours,
       remise: formData.remise,
       articles: formData.articles,
     };
 
-    console.log('Données à envoyer au service :', payload);
     if (this.commandClientForm.valid) {
       this._spinner.show();
       this.articleService.CreateCommandClient(payload).then(
@@ -595,22 +598,16 @@ export class SaisieCommandeComponent {
         this.dataRevendeur = revendeur.data;
         // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
         this.listRevendeurs.push(...revendeur.data);
+        console.log('Données listRevendeurs:', this.listRevendeurs);
       } else {
         console.error('Les données de plastiques ne sont pas un tableau');
       }
 
-      // if (Array.isArray(pointDeVente.data)) {
-      //   this.dataPointDeVente = pointDeVente.data;
-      //   // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
-      //   this.listRevendeurs.push(...pointDeVente.data);
-      // } else {
-      //   console.error('Les données de liquides ne sont pas un tableau');
-      // }
       this.listRevendeurs = this.listRevendeurs
-        .filter((client: any) => client.credits != null)
+        .filter((client: any) => client.credit != null)
         .map((client: any) => ({
           ...client,
-          displayName: client.raisonSocial || client.nomEtablissement || 'N/A',
+          displayName: client.raisonSocial || 'N/A',
         }));
       console.log('Données combinées dans dataList:', this.listRevendeurs);
     } catch (error) {

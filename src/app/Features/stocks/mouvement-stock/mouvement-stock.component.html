@@ -20,6 +20,7 @@
     <ng-template pTemplate="header">
       <tr>
         <th style="color: var(--secondary-color)">Dépot</th>
+        <th style="color: var(--secondary-color)">Liquide</th>
         <th style="color: var(--secondary-color)">Emballage</th>
         <th style="color: var(--secondary-color)">Mouvement</th>
         <th style="color: var(--secondary-color)">Qte avant</th>
@@ -38,7 +39,12 @@
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.stock.emballage.libelle }}
+            {{ dataList.stock.liquide ? dataList.stock.liquide.libelle : 'N/A' }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.stock.emballage ?  dataList.stock.emballage.libelle : 'N/A' }}
           </span>
         </td>
         <td>

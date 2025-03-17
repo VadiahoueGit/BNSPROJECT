@@ -98,6 +98,8 @@
            (click)="activeElement('detail')">Détails</a>
         <a class="flex-sm text-sm-center nav-link" *ngIf="operation == 'edit'" [class.active]="activeTab === 'suivivente'"
            (click)="activeElement('suivivente')">Suivi des ventes</a>
+        <a class="flex-sm text-sm-center nav-link" *ngIf="operation == 'edit'" [class.active]="activeTab === 'retour'"
+           (click)="activeElement('retour')">Retours d'emballage</a>
       </nav>
       <div class="modal-body" style="max-height: 70vh;overflow-y: auto;">
         <!-- DETAIL VENTE-->
@@ -237,6 +239,7 @@
                 <tr style="font-size: small">
                   <th scope="col">Produits</th>
                   <th scope="col">Qte liquide</th>
+                  <th scope="col">Qte restante</th>
                   <th scope="col">Prix liquide</th>
                   <th scope="col">Prix emballage</th>
                   <th scope="col">Prix total</th>
@@ -249,7 +252,7 @@
                 >
                   <td>{{ item.liquide.libelle }}</td>
                   <td>{{ item.quantiteAffectee }}</td>
-
+                  <td>{{ item.quantite}}</td>
                   <td>{{ item.montantLiquide }}</td>
                   <td>{{ item.montantEmballage }}</td>
                   <td>{{ (+item.montantLiquide || 0) + (+item.montantEmballage || 0) }}</td>
@@ -259,6 +262,7 @@
                 <tr class="table-dark" *ngIf="updateData.articles.length > 0">
                   <th scope="col" colspan="1">Total :</th>
                   <td>{{ totalQte }}</td>
+                  <td></td>
                   <td>{{ totalLiquide }}</td>
                   <td>{{ totalEmballage }}</td>
                   <td>{{ totalGlobal }}</td>
@@ -393,6 +397,74 @@
 <!--                </tbody>-->
 <!--              </table>-->
 <!--            </div>-->
+          </fieldset>
+        </div>
+        <!--  RETOUR EMBALLAGE-->
+        <div class="row tab-pane fade show active" *ngIf="activeTab === 'retour'">
+          <fieldset class="row border my-2" *ngFor="let data of updateData.retours">
+            <legend class="text-primary">Client - {{data.pointdevente?.nomEtablissement}} au {{data.pointdevente?.telephone}} </legend>
+            <div class="d-flex flex-row justify-content-between align-items-center flex-wrap my-2" >
+              <div><span>Date de retour- {{data.createdAt | date:'dd/MM/yyyy HH:mm:ss'}}</span></div>
+              <div><span>Type de retour- {{data.returnType}}</span></div>
+              <div><span>Statut : {{data.status}}</span></div>
+            </div>
+            <div
+              class="table-responsive"
+              style="max-height: 300px; overflow-y: auto"
+            >
+              <table class="table">
+                <thead>
+                <tr style="font-size: small">
+                  <th scope="col">Types</th>
+                  <th scope="col">Codes</th>
+                  <th scope="col">Produits</th>
+                  <th scope="col">Quantite</th>
+                  <th scope="col">Prix unitaire</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr
+                  style="font-size: small"
+                  *ngFor="let item of data.articles; let i = index"
+                >
+                  <td>{{ item.typeArticle }}</td>
+                  <td>{{ item.productCode }}</td>
+                  <td>{{ item.libelle }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>{{ item.prixUnitaire }}</td>
+
+                </tr>
+
+                <!-- Ajoutez d'autres lignes si nécessaire -->
+                </tbody>
+              </table>
+            </div>
+
+            <!--            <div-->
+            <!--              class="table-responsive"-->
+            <!--              style="max-height: 300px; overflow-y: auto"-->
+            <!--            >-->
+            <!--              <table class="table">-->
+            <!--                <thead>-->
+            <!--                <tr style="font-size: small">-->
+            <!--                  <th scope="col">Produits</th>-->
+            <!--                  <th scope="col" class="text-center">Qte Emballage retourné</th>-->
+            <!--                </tr>-->
+            <!--                </thead>-->
+            <!--                <tbody>-->
+            <!--                <tr-->
+            <!--                  style="font-size: small"-->
+            <!--                  *ngFor="let item of data.articles; let i = index"-->
+            <!--                >-->
+            <!--                  <td>{{ item.emballage.libelle }}</td>-->
+            <!--                  <td class="text-center">{{ item.quantite }}</td>-->
+
+            <!--                </tr>-->
+
+            <!--                &lt;!&ndash; Ajoutez d'autres lignes si nécessaire &ndash;&gt;-->
+            <!--                </tbody>-->
+            <!--              </table>-->
+            <!--            </div>-->
           </fieldset>
         </div>
         <div class="modal-footer gap-3 px-4y">
