@@ -26,14 +26,14 @@
       <tr>
         <th style="color: var(--secondary-color)">Dépot</th>
         <th style="color: var(--secondary-color)">Date de comptage</th>
-        <th style="color: var(--secondary-color)">Code article</th>
-        <th style="color: var(--secondary-color)">Article</th>
-        <th style="color: var(--secondary-color)">Qte théorique</th>
+        <th style="color: var(--secondary-color)">Code inventaire</th>
+        <th style="color: var(--secondary-color)">Inventeur</th>
+        <!-- <th style="color: var(--secondary-color)">Qte théorique</th>
         <th style="color: var(--secondary-color)">Qte physique</th>
         <th style="color: var(--secondary-color)">Ecart</th>
-        <th style="color: var(--secondary-color)">Ecart %</th>
-        <th style="color: var(--secondary-color)">Date d'enr...</th>
-        <!--                <th style="color: var(&#45;&#45;secondary-color);">Actions</th>-->
+        <th style="color: var(--secondary-color)">Ecart %</th> -->
+        <th style="color: var(--secondary-color)">Date d'enregistrement</th>
+                       <th style="color: var(--secondary-color);">Actions</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList>
@@ -49,29 +49,11 @@
           </span>
         </td>
         <td>
-          {{ dataList.codeArticle }}
+          {{ dataList.code }}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.description }}
-          </span>
-        </td>
-        <td>
-          {{ dataList.stockTheorique }}
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.stockPhysique }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.ecart }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.pourcentageEcart }}
+            {{ dataList.inventeur }}
           </span>
         </td>
         <td>
@@ -81,12 +63,12 @@
         </td>
 
         <td>
-          <!--            <tr class="d-flex justify-content-center gap-3">-->
-          <!--                <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>-->
+                    <tr class="d-flex justify-content-center gap-3">
+                         <td><i (click)="OnViewInventaire(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>
           <!--                <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>-->
           <!--                <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"-->
           <!--                        class="fas fa-trash-alt text-danger"></i></td>-->
-          <!--            </tr>-->
+                  </tr>
         </td>
       </tr>
     </ng-template>
@@ -367,6 +349,103 @@
         >
           Valider
         </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal detail -->
+<div  *ngIf="detailModalOpen"  class="custom-modal2">
+  <div
+    class="modal-dialog3 modal-dialog-centered"
+
+  >
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Détails inventaire</h5>
+      </div>
+
+      <div
+        class="modal-body"
+        style="padding: 20px; max-height: 70vh; overflow-y: auto"
+      >
+        <div class="row">
+          <fieldset class="row border my-1">
+            <legend style="font-size: 13px" class="text-secondary">
+              Numero inventaire
+              :  {{ updateData?.code || 'NA' }}
+              du
+              {{ updateData.createdAt | date }}
+            </legend>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Dépot : </strong>
+                <span>
+                    {{ updateData.depot?.nomDepot || 'NEANT' }}
+                  </span>
+              </div>
+              <div class="col-md-4">
+                <strong>Gérant: </strong>
+                <span>
+                    {{ updateData.depot?.gerant || 'NEANT' }}
+                  </span>
+              </div>
+              <div class="col-md-4">
+                <strong>Inventeur : </strong>
+                <span>
+                   {{ updateData?.inventeur || 'NEANT' }}
+                  </span>
+              </div>
+              <!-- <div class="col-md-4">
+                <strong>Utilisateur : </strong>
+                <span>
+                   {{ updateData?.utilisateur || 'NEANT' }}
+                  </span>
+              </div> -->
+       
+            </div>
+          </fieldset>
+
+          <fieldset class="row border my-2">
+            <legend style="font-size: 13px" class="text-secondary">
+              Articles
+            </legend>
+            <table class="table table-bordered">
+              <thead class="table-success">
+              <tr>
+                <th scope="col">Code</th>
+                <th scope="col">Description</th>
+                <th scope="col">Stock physique</th>
+                <th scope="col">Stock théorique</th>
+                <th scope="col">Ecart</th>
+                <th scope="col">Pourcentage écart</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let item of updateData.articles">
+                <td>{{ item.codeArticle }}</td>
+                <td>{{ item.description ?? 'NA' }}</td>
+                <td>{{ item.stockPhysique }}</td>
+                <td>{{ item.stockTheorique }}</td>
+                <td>{{ item.ecart }}</td>
+                <td>{{ item.pourcentageEcart }} %</td>
+              </tr>
+              </tbody>
+            </table>
+          </fieldset>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer gap-3 px-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="OnCloseDetailModal()"
+        >
+          Fermer
+        </button>
+     
       </div>
     </div>
   </div>
