@@ -201,6 +201,23 @@ export class InventaireStoksComponent {
     delete item.quantite;
     this.afficherArticlesSelectionnes();
   }
+  removeInventaireArticle(item: any): void {
+    ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer ce article?').then(
+      (res) => {
+        if (res.isConfirmed == true) {
+          this._spinner.show();
+          this.articleService.DeleteInventaireArticle(item.id).then((res: any) => {
+            console.log('DELETED REMOVEINVENTAIRE:::>', res);
+            this.toastr.success(res.message);
+            this.GetInventaireList(1);
+            this.OnCloseDetailModal()
+            this._spinner.hide();
+          });
+        } else {
+        }
+      }
+    );
+  }
 
   // Méthode pour filtrer les articles en fonction du terme de recherche
   filterArticles(): void {
@@ -235,10 +252,10 @@ export class InventaireStoksComponent {
       (res) => {
         if (res.isConfirmed == true) {
           this._spinner.show();
-          this.articleService.DeletedArticle(Id).then((res: any) => {
+          this.articleService.DeletedInventaire(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            // this.GetArticleList(1);
+            this.GetInventaireList(1);
             this._spinner.hide();
           });
         } else {

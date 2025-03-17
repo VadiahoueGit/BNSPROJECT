@@ -1084,6 +1084,23 @@ export class ArticleServiceService {
       );
     });
   }
+  DeletedInventaire(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/inventaire/${id}`,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
 
   GetMouvementStock(data: any) {
     return new Promise((resolve: any, reject: any) => {
@@ -1261,6 +1278,24 @@ export class ArticleServiceService {
           if (res.statusCode === 200) {
             this.ListRevendeurs.next(res.data)
           }
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  DeleteInventaireArticle(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/inventaire/articles/${id}`,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
           resolve(res);
         },
         (err) => {
