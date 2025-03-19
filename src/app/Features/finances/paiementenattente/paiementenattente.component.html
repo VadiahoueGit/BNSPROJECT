@@ -1,6 +1,5 @@
 <div class="card">
-  <div class="d-flex justify-content-end py-3">
-  </div>
+  <div class="d-flex justify-content-end py-3"></div>
   <p-table
     [styleClass]="'p-datatable-sm'"
     #dt2
@@ -28,40 +27,52 @@
       <tr>
         <td>
           <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-          {{ dataList?.paiementsCommandeClient?.length ?
-            dataList.paiementsCommandeClient[0]?.NumCommande :
-            dataList?.paiementsCommandeGratuit?.length ?
-              dataList.paiementsCommandeGratuit[0]?.NumCommande :
-              dataList?.paiementsVente?.length ?
-                dataList.paiementsVente[0]?.venteChine.numVenteChine : 'NA' }}
+            {{
+              dataList?.paiementsCommandeClient?.length
+                ? dataList.paiementsCommandeClient[0]?.NumCommande
+                : dataList?.paiementsCommandeGratuit?.length
+                ? dataList.paiementsCommandeGratuit[0]?.NumCommande
+                : dataList?.paiementsVente?.length
+                ? dataList.paiementsVente[0]?.venteChine.numVenteChine
+                : dataList?.returnStock?.venteChine
+                ? dataList?.returnStock?.venteChine?.numVenteChine
+                : dataList?.returnStock?.commandeClient
+                ? dataList?.returnStock?.commandeClient?.NumCommande
+                : dataList?.returnStock?.commandeGratuite
+                ? dataList?.returnStock?.commandeGratuite?.NumCommande
+                : "NA"
+            }}
           </span>
         </td>
         <td>
           {{
             dataList?.paiementsCommandeClient?.length
-              ? (dataList?.transporteur?.nom || 'NA') + ' ' + (dataList?.transporteur?.prenoms || 'NA')
+              ? (dataList?.transporteur?.nom || "NA") +
+                " " +
+                (dataList?.transporteur?.prenoms || "NA")
               : dataList?.paiementsCommandeGratuit?.length
-                ? (dataList?.transporteur?.nom || 'NA') + ' ' + (dataList?.transporteur?.prenoms || 'NA')
-                : dataList?.paiementsVente?.length
-                  ? (dataList?.paiementsVente[0]?.commercial?.nom || 'NA') + 'NA ' + (dataList?.paiementsVente[0]?.commercial?.prenoms || 'NA')
-                  : ''
+              ? (dataList?.transporteur?.nom || "NA") +
+                " " +
+                (dataList?.transporteur?.prenoms || "NA")
+              : dataList?.paiementsVente?.length
+              ? (dataList?.paiementsVente[0]?.commercial?.nom || "NA") +
+                "NA " +
+                (dataList?.paiementsVente[0]?.commercial?.prenoms || "NA")
+              : dataList?.returnStock?.venteChine
+              ? dataList?.returnStock?.venteChine?.commercial?.nom +
+              dataList?.returnStock?.venteChine?.commercial?.prenoms :"NA"
           }}
         </td>
         <td>
-          {{
-            dataList?.motif
-
-          }}
+          {{ dataList?.motif }}
+        </td>
+        <td>
+          {{ dataList?.client?.numeroSAP }}
         </td>
         <td>
           {{
-            dataList?.client?.numeroSAP
-
-          }}
-        </td>
-        <td>
-          {{
-            dataList?.client?.raisonSocial || dataList?.paiementsVente[0]?.pointdevente.nomEtablissement
+            dataList?.client?.raisonSocial || dataList?.client?.nomEtablissement||
+              dataList?.paiementsVente[0]?.pointdevente.nomEtablissement || "NA"
           }}
         </td>
         <td>
@@ -70,11 +81,11 @@
           </span>
         </td>
         <td>
-          {{ dataList?.montantPercu}}
+          {{ dataList?.montantPercu }}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList?.createdAt |date}}
+            {{ dataList?.createdAt | date }}
           </span>
         </td>
         <td>
@@ -83,12 +94,11 @@
           </span>
         </td>
         <td>
-      <tr class="d-flex justify-content-center gap-3">
-
-        <!-- <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
+          <tr class="d-flex justify-content-center gap-3">
+            <!-- <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
                     class="fas fa-trash-alt text-danger"></i></td> -->
-      </tr>
-      </td>
+          </tr>
+        </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
@@ -117,10 +127,7 @@
           <i class="fas fa-box-check text-primary fs-3"></i>
         </div>
 
-        <h1
-          class="modal-title fs-5 ms-3"
-          id="staticBackdropLabel"
-        >
+        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
           Paiement en attente
         </h1>
       </div>
@@ -133,7 +140,12 @@
           <div class="row">
             <div class="col-md-4">
               <strong>Client: </strong>
-              <span>{{ updateData?.client?.raisonSocial ? updateData?.client?.raisonSocial : updateData?.returnStock?.venteChineRetourStock.pointdevente.nomEtablissement  }}</span>
+              <span>{{
+                updateData?.client?.raisonSocial
+                  ? updateData?.client?.raisonSocial
+                  : updateData?.returnStock?.venteChineRetourStock.pointdevente
+                      .nomEtablissement
+              }}</span>
             </div>
             <div class="col-md-4">
               <strong>Localité: </strong>
@@ -145,14 +157,21 @@
             </div>
           </div>
 
-
           <legend style="font-size: 14px" class="text-secondary">
             Informations agent
           </legend>
           <div class="row">
             <div class="col-md-4">
               <strong>Agent: </strong>
-              <span>{{ updateData?.returnStock?.venteChineRetourStock.commercial.nom +' '+ updateData?.returnStock?.venteChineRetourStock.commercial.prenoms}} </span>
+              <span
+                >{{
+                  updateData?.returnStock?.venteChineRetourStock.commercial
+                    .nom +
+                    " " +
+                    updateData?.returnStock?.venteChineRetourStock.commercial
+                      .prenoms
+                }}
+              </span>
             </div>
             <div class="col-md-4">
               <strong>Rôle : </strong>
@@ -173,7 +192,7 @@
           <div class="row">
             <div class="col-md-4">
               <strong>Statut: </strong>
-              <span>{{ updateData?.statut}}</span>
+              <span>{{ updateData?.statut }}</span>
             </div>
             <div class="col-md-4">
               <strong>Motif : </strong>
@@ -181,7 +200,7 @@
             </div>
             <div class="col-md-4">
               <strong>Montant à percevoir : </strong>
-              <span>{{ updateData?.montantAPercevoir}}</span>
+              <span>{{ updateData?.montantAPercevoir }}</span>
             </div>
             <div class="col-md-4">
               <strong>Montant perçu : </strong>
@@ -201,28 +220,28 @@
           >
             <table class="table">
               <thead>
-              <tr style="font-size: small">
-                <th scope="col">Code</th>
-                <th scope="col">Type article</th>
-                <th scope="col">Quantité</th>
-              </tr>
+                <tr style="font-size: small">
+                  <th scope="col">Code</th>
+                  <th scope="col">Type article</th>
+                  <th scope="col">Quantité</th>
+                </tr>
               </thead>
               <tbody>
-              <tr
-                style="font-size: small"
-                *ngFor="let item of updateData.returnStock?.articles; let i = index"
-              >
-                <td>{{ item.productCode }}</td>
-                <td>{{ item.typeArticle }}</td>
-                <td>{{ item.quantity }}</td>
-
-
-              </tr>
-              <!-- Ajoutez d'autres lignes si nécessaire -->
+                <tr
+                  style="font-size: small"
+                  *ngFor="
+                    let item of updateData.returnStock?.articles;
+                    let i = index
+                  "
+                >
+                  <td>{{ item.productCode }}</td>
+                  <td>{{ item.typeArticle }}</td>
+                  <td>{{ item.quantity }}</td>
+                </tr>
+                <!-- Ajoutez d'autres lignes si nécessaire -->
               </tbody>
             </table>
           </div>
-
         </fieldset>
       </div>
 

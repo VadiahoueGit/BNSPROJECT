@@ -85,6 +85,7 @@ export class CommandePayesPartiellementComponent {
         item.statut === Status.VALIDE && Number(item.montantPercu) > 0 && Number(item.montantPercu) < Number(item.montantAPercevoir)
 
       );
+      console.log('Commande payees partiellement:::>', this.dataList );
       this._spinner.hide();
     });
   }

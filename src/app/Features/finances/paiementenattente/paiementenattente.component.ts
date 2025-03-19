@@ -79,10 +79,11 @@ export class PaiementenattenteComponent {
     };
     this._spinner.show();
     this.financeService.GetPaiementList(data).then((res: any) => {
-      console.log('ALL:::>', res);
       this.dataList = res.data.filter((item: any) =>
         item.statut === Status.ATTENTE && Number(item.montantPercu) >= 0
       );
+      console.log('ALL paiement en attente:::>',   this.dataList );
+
       this._spinner.hide();
     });
   }

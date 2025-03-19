@@ -86,6 +86,9 @@ export class CommandePayesComponent {
         item.statut === Status.VALIDE &&
         Number(item.montantAPercevoir) == Number(item.montantPercu)
       );
+      console.log('Commande payees :::>', this.dataList );
+
+
       this._spinner.hide();
     });
   }

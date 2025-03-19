@@ -30,12 +30,18 @@
           <span class="ml-1 vertical-align-middle" style="font-size: 11px">
             {{
               dataList?.paiementsCommandeClient?.length
-                ? dataList?.paiementsCommandeClient[0]?.NumCommande
+                ? dataList.paiementsCommandeClient[0]?.NumCommande
                 : dataList?.paiementsCommandeGratuit?.length
-                ? dataList?.paiementsCommandeGratuit[0]?.NumCommande
+                ? dataList.paiementsCommandeGratuit[0]?.NumCommande
                 : dataList?.paiementsVente?.length
-                ? dataList?.paiementsVente[0]?.venteChine?.numVenteChine
-                :""
+                ? dataList.paiementsVente[0]?.venteChine.numVenteChine
+                : dataList?.returnStock?.venteChine
+                ? dataList?.returnStock?.venteChine?.numVenteChine
+                : dataList?.returnStock?.commandeClient
+                ? dataList?.returnStock?.commandeClient?.NumCommande
+                : dataList?.returnStock?.commandeGratuite
+                ? dataList?.returnStock?.commandeGratuite?.NumCommande
+                : "NA"
             }}
           </span>
         </td>
@@ -47,18 +53,20 @@
         <td>
           {{
             dataList?.paiementsCommandeClient?.length
-              ? (dataList?.transporteur?.nom || "") +
+              ? (dataList?.transporteur?.nom || "NA") +
                 " " +
-                (dataList?.transporteur?.prenoms || "")
+                (dataList?.transporteur?.prenoms || "NA")
               : dataList?.paiementsCommandeGratuit?.length
-              ? (dataList?.transporteur?.nom || "") +
+              ? (dataList?.transporteur?.nom || "NA") +
                 " " +
-                (dataList?.transporteur?.prenoms || "")
+                (dataList?.transporteur?.prenoms || "NA")
               : dataList?.paiementsVente?.length
-              ? (dataList?.paiementsVente[0]?.commercial?.nom || "") +
-                " " +
-                (dataList?.paiementsVente[0]?.commercial?.prenoms || "")
-              : ""
+              ? (dataList?.paiementsVente[0]?.commercial?.nom || "NA") +
+                "NA " +
+                (dataList?.paiementsVente[0]?.commercial?.prenoms || "NA")
+              : dataList?.returnStock?.venteChine
+              ? dataList?.returnStock?.venteChine?.commercial?.nom +
+              dataList?.returnStock?.venteChine?.commercial?.prenoms :"NA"
           }}
         </td>
         <td>
@@ -69,7 +77,8 @@
         </td>
         <td>
           {{
-            dataList?.client?.raisonSocial || dataList?.paiementsVente[0]?.pointdevente.nomEtablissement
+            dataList?.client?.raisonSocial || dataList?.client?.nomEtablissement||
+              dataList?.paiementsVente[0]?.pointdevente.nomEtablissement || "NA"
           }}
         </td>
         <td>
