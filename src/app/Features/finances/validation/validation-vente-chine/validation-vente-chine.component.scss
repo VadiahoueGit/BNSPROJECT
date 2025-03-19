@@ -12,6 +12,9 @@
     align-items: center;
     z-index: 1050;
   }
+strong,span{
+  font-size: 13px;
+}
   .modal-dialog2 {
     background-color: white;
     border-radius: 0.3rem;
@@ -24,43 +27,43 @@
     width: 90%;
     padding: 1rem;
   }
-  
+
   .modal-header,
   .modal-body,
   .modal-footer {
     padding: 0.5rem;
   }
-  
+
   .btn-close {
     background: transparent;
     border: none;
     font-size: 1.5rem;
   }
-  
+
   .p-fluid .p-inputtext {
     width: 8em !important;
     height: 2.5rem;
   }
-  
+
   .p-column-filter-menu-button {
     display: none;
     /* Masquer l'icône de filtre */
   }
-  
+
   /* Ajuster l'espacement si nécessaire après suppression de l'icône */
   .p-column-filter {
     padding-right: 0;
     /* Supprime l'espace réservé à l'icône */
   }
-  
+
   .label-fixed-width {
     min-width: 10px;
   }
-  
+
   .table-responsive {
     position: relative;
   }
-  
+
   .table thead th {
     padding: 10px;
     position: sticky;
@@ -89,4 +92,3 @@
   td,th{
    //text-align: center;
   }
-  

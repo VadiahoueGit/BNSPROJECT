@@ -361,6 +361,14 @@
   dependencies:
     tslib "^2.3.0"
 
+"@angular/google-maps@16":
+  version "16.2.14"
+  resolved "https://registry.yarnpkg.com/@angular/google-maps/-/google-maps-16.2.14.tgz#f4af337110fd385f879f0f472385852000649dec"
+  integrity sha512-1M2ct906oLsXD4cjrhMANwf96n0v41qofzXsSIgKO8ziO8lQtYJatzI742ze2QwKkxsFgBDPDQDYo9T/wIEFew==
+  dependencies:
+    "@types/google.maps" "^3.52.4"
+    tslib "^2.3.0"
+
 "@angular/material-moment-adapter@^19.0.0":
   version "19.0.0"
   resolved "https://registry.yarnpkg.com/@angular/material-moment-adapter/-/material-moment-adapter-19.0.0.tgz#44abb329959d6e0d107b82a8f3d9b6aaca3630f6"
@@ -3471,7 +3479,7 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
-"@types/google.maps@^3.58.1":
+"@types/google.maps@^3.52.4", "@types/google.maps@^3.58.1":
   version "3.58.1"
   resolved "https://registry.yarnpkg.com/@types/google.maps/-/google.maps-3.58.1.tgz#71ce3dec44de1452f56641d2c87c7dd8ea964b4d"
   integrity sha512-X9QTSvGJ0nCfMzYOnaVs/k6/4L+7F5uCS+4iUmkLEls6J9S/Phv+m/i3mDeyc49ZBgwab3EFO1HEoBY7k98EGQ==

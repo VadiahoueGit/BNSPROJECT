@@ -14,26 +14,28 @@ import { AchatsComponent } from './achats/achats.component';
 import { PartenairesComponent } from './partenaires/partenaires.component';
 import { PartenairesModule } from './partenaires/partenaires.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {GoogleMapsModule} from "@angular/google-maps";
 
 @NgModule({
   declarations: [
-  
+
    CartographieComponent,
    RapportComponent,
    AchatsComponent,
    FeaturesComponent,
   ],
-  imports: [
-    FeaturesRoutingModule,
-    PartenairesModule,
-    // ParametreModule,
-    ReactiveFormsModule,
-    FormsModule,
-    DashboardModule,
-    CommonModule,
-    NgxDatatableModule
+    imports: [
+        FeaturesRoutingModule,
+        PartenairesModule,
+        // ParametreModule,
+        ReactiveFormsModule,
+        FormsModule,
+        DashboardModule,
+        CommonModule,
+        NgxDatatableModule,
+        GoogleMapsModule
 
-  ],
+    ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [CustomerService]
 })

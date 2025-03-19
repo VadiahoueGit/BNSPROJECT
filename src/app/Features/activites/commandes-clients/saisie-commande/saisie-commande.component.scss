@@ -6,7 +6,9 @@
   max-width: 90%; /* S'assurer qu'elle ne dépasse pas trop l'écran */
   padding: 1rem;
 }
-
+strong,span{
+  font-size: 13px;
+}
 .modal-content{
   background-color:white ;
 }

@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component} from '@angular/core';
+import {ChangeDetectorRef, Component,AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import {data} from 'jquery';
 import {NgxSpinnerService} from 'ngx-spinner';
 import {Subscription} from 'rxjs';
@@ -7,13 +7,15 @@ import {LogistiqueService} from 'src/app/core/logistique.service';
 import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
 import {WebsocketService} from 'src/app/core/webSocket.service';
 import {ArticleServiceService} from "../../core/article-service.service";
-
+declare var google: any;
 @Component({
   selector: 'app-cartographie',
   templateUrl: './cartographie.component.html',
   styleUrls: ['./cartographie.component.scss']
 })
-export class CartographieComponent {
+export class CartographieComponent implements AfterViewInit{
+  @ViewChild('mapContainer', { static: false }) mapElement!: ElementRef;
+  map!: google.maps.Map;
   panelOpenOsr: boolean = false;
   panelOpenDepot: boolean = false;
   panelOpenRevendeur: boolean = false;
@@ -66,13 +68,59 @@ export class CartographieComponent {
 //         console.error('Error receiving message:', error);
 //       }
 //     );
-    this.GetRevendeurList(1)
-    this.GetClientOSRList();
+
+//     this.GetClientOSRList();
     this.getPosition();
-    this.GetDepotList();
+    // this.GetDepotList();
     this.GetGoogleJWT();
   }
 
+  ngAfterViewInit(): void {
+
+    setTimeout(() => {
+      if (this.mapElement) {
+        this.loadGoogleMapsScript().then(() => {
+          this.initMap();
+          this.GetRevendeurList(1)
+        }).catch((error) => {
+          console.error("Erreur de chargement de Google Maps :", error);
+        });
+      } else {
+        console.error("L'élément #mapContainer n'a pas été trouvé !");
+      }
+    }, 1000);
+
+
+  }
+
+  // Charger le script de l'API Google Maps
+  loadGoogleMapsScript(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (typeof google !== 'undefined' && google.maps) {
+        resolve();
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDV1ke-HxBDmSPpqyfivksnjzeD29AC18k';
+      script.async = true;
+      script.defer = true;
+      script.onload = () => resolve();
+      script.onerror = (error) => reject(error);
+      document.head.appendChild(script);
+    });
+  }
+  initMap() {
+    if (!this.mapElement) {
+      console.error("L'élément #mapContainer n'a pas été trouvé !");
+      return;
+    }
+
+    this.map = new google.maps.Map(this.mapElement.nativeElement, {
+      center: { lat: this.currentPosition.lat, lng: this.currentPosition.lng }, // Paris
+      zoom: 12
+    });
+  }
 
   // ngOnDestroy(): void {
   //   // Se désabonner lorsque le composant est détruit
@@ -126,20 +174,32 @@ export class CartographieComponent {
       });
 
     } else if (type == 'revendeur') {
-      this.markersRevendeur = data.map((position: any, i: number) => {
-        // console.log(position);
-        const positions = {
-          lat: parseFloat(position.latitude),
-          lng: parseFloat(position.longitude),
-        };
-        const marker = new AdvancedMarkerElement({
-          position: positions, // Correction ici (le champ est "position", pas "positions")
-          content: this.createCustomPinContent(type), // Élément DOM du marqueur
-          title: (position.id).toString()
+      console.log(data)
+
+      data.forEach((location: any) => {
+        const marker = new google.maps.marker.AdvancedMarkerElement({
+          position: new google.maps.LatLng(Number(location.latitude), Number(location.longitude)),
+          title: location.title
         });
-        // console.log('container', marker)
-        return marker;
+
+        // Attacher chaque marqueur à la carte
+        marker.map = this.map;
       });
+
+      // this.markersRevendeur = data.map((position: any, i: number) => {
+      //   console.log(position);
+      //   const positions = {
+      //     lat: parseFloat(position.latitude),
+      //     lng: parseFloat(position.longitude),
+      //   };
+      //   const marker = new AdvancedMarkerElement({
+      //     position: positions, // Correction ici (le champ est "position", pas "positions")
+      //     content: this.createCustomPinContent(type), // Élément DOM du marqueur
+      //     title: (position.id).toString()
+      //   });
+      //   // console.log('container', marker)
+      //   return marker;
+      // });
     }else if (type == 'vehicule') {
       this.markersVehicule = data.map((position: any, i: number) => {
         // console.log(position);

@@ -27,21 +27,23 @@
         </div>
     </div>
     <div *ngIf="currentPosition">
-        <gmp-map [center]="currentPosition" zoom="12" map-id="df680b94cd051002">
-            <gmp-advanced-marker *ngFor="let marker of markersClient" [position]="marker.position"
-                [title]="marker.title" [content]="marker.content" title="My location"
-                (mouseover)="openInfoWindowOsr(marker)" (mouseout)="closeInfoWindowOsr()"></gmp-advanced-marker>
-            <gmp-advanced-marker *ngFor="let marker of markersDepot" [position]="marker.position" [title]="marker.title"
-                [content]="marker.content" title="My location" (mouseover)="openInfoWindowDepot(marker)"
-                (mouseout)="closeInfoWindowDepot()"></gmp-advanced-marker>
-            <gmp-advanced-marker *ngFor="let marker of markersVehicule" [position]="marker.position"
-                [title]="marker.title" [content]="marker.content" title="My location"></gmp-advanced-marker>
-          <gmp-advanced-marker  (mouseout)="closeInfoWindowRevendeur()" (mouseover)="openInfoWindowRevendeur(marker)"*ngFor="let marker of markersRevendeur" [position]="marker.position"
-                               [title]="marker.title" [content]="marker.content" title="My location"></gmp-advanced-marker>
-            <!-- Info Window -->
+      <div #mapContainer style="width: 100%; height: 600px;"></div>
+
+      <!--        <gmp-map [center]="currentPosition" zoom="12" map-id="df680b94cd051002">-->
+<!--            <gmp-advanced-marker *ngFor="let marker of markersClient" [position]="marker.position"-->
+<!--                [title]="marker.title" [content]="marker.content" title="My location"-->
+<!--                (mouseover)="openInfoWindowOsr(marker)" (mouseout)="closeInfoWindowOsr()"></gmp-advanced-marker>-->
+<!--            <gmp-advanced-marker *ngFor="let marker of markersDepot" [position]="marker.position" [title]="marker.title"-->
+<!--                [content]="marker.content" title="My location" (mouseover)="openInfoWindowDepot(marker)"-->
+<!--                (mouseout)="closeInfoWindowDepot()"></gmp-advanced-marker>-->
+<!--            <gmp-advanced-marker *ngFor="let marker of markersVehicule" [position]="marker.position"-->
+<!--                [title]="marker.title" [content]="marker.content" title="My location"></gmp-advanced-marker>-->
+<!--          <gmp-advanced-marker  (mouseout)="closeInfoWindowRevendeur()" (mouseover)="openInfoWindowRevendeur(marker)"*ngFor="let marker of markersRevendeur" [position]="marker.position"-->
+<!--                               [title]="marker.title" [content]="marker.content" title="My location"></gmp-advanced-marker>-->
+<!--            &lt;!&ndash; Info Window &ndash;&gt;-->
 
 
-        </gmp-map>
+<!--        </gmp-map>-->
     </div>
 
     <!-- SLIDE OSR -->
