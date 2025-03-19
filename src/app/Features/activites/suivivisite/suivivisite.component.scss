@@ -18,7 +18,9 @@ label{
   font-size: 14px;
 }
 
-
+strong,span{
+  font-size: 13px;
+}
 .custom-modal {
     position: fixed;
     top: 0;
@@ -40,11 +42,11 @@ label{
         width: 80%;
     padding: 1rem;
   }
-  
+
   .modal-header, .modal-body, .modal-footer {
     padding: 1rem;
   }
-  
+
   .btn-close {
     background: transparent;
     border: none;
@@ -58,11 +60,11 @@ label{
 .p-column-filter-menu-button {
     display: none; /* Masquer l'icône de filtre */
   }
-  
+
   /* Ajuster l'espacement si nécessaire après suppression de l'icône */
   .p-column-filter {
     padding-right: 0; /* Supprime l'espace réservé à l'icône */
   }
   .label-fixed-width {
-    min-width: 10px; 
+    min-width: 10px;
   }

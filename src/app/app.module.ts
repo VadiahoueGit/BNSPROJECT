@@ -22,6 +22,7 @@ import { MessageService } from 'primeng/api';
 import { AuthGuardService } from './core/auth-guard.service';
 import { LocalStorageService } from './core/local-storage.service';
 import { AuthInterceptor } from './core/auth.interceptor';
+import {GoogleMapsModule} from "@angular/google-maps";
 
 export function initConfig(configService: ConfigService) {
   return () => configService.loadConfig();
@@ -30,6 +31,7 @@ export function initConfig(configService: ConfigService) {
   declarations: [AppComponent],
   imports: [
     AuthModule,
+    GoogleMapsModule,
     FeaturesModule,
     SharedComponentModule,
     HttpClientModule,

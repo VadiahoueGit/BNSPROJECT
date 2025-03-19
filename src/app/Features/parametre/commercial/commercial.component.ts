@@ -150,7 +150,8 @@ export class CommercialComponent {
             console.log('Nouvel article créé avec succès', response);
           },
           (error: any) => {
-            this.toastr.error('Erreur!', 'Erreur lors de la création.');
+            this._spinner.hide();
+            this.toastr.error('Erreur!', error.error.message);
             console.error('Erreur lors de la création', error);
           }
         );
