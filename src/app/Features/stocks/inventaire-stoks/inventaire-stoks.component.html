@@ -66,8 +66,8 @@
                     <tr class="d-flex justify-content-center gap-3">
                          <td><i (click)="OnViewInventaire(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>
           <!--                <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>-->
-          <!--                <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"-->
-          <!--                        class="fas fa-trash-alt text-danger"></i></td>-->
+                         <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
+                                class="fas fa-trash-alt text-danger"></i></td>
                   </tr>
         </td>
       </tr>
@@ -396,13 +396,6 @@
                    {{ updateData?.inventeur || 'NEANT' }}
                   </span>
               </div>
-              <!-- <div class="col-md-4">
-                <strong>Utilisateur : </strong>
-                <span>
-                   {{ updateData?.utilisateur || 'NEANT' }}
-                  </span>
-              </div> -->
-       
             </div>
           </fieldset>
 
@@ -419,6 +412,7 @@
                 <th scope="col">Stock théorique</th>
                 <th scope="col">Ecart</th>
                 <th scope="col">Pourcentage écart</th>
+                <th scope="col">Actions</th>
               </tr>
               </thead>
               <tbody>
@@ -429,6 +423,15 @@
                 <td>{{ item.stockTheorique }}</td>
                 <td>{{ item.ecart }}</td>
                 <td>{{ item.pourcentageEcart }} %</td>
+                <td class="d-flex justify-content-center">
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm"
+                    (click)="removeInventaireArticle(item)"
+                  >
+                    <i class="fas fa-trash fs-6"></i>
+                  </button>
+                </td>
               </tr>
               </tbody>
             </table>
