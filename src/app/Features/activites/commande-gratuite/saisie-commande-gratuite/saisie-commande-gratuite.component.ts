@@ -264,7 +264,7 @@ export class SaisieCommandeGratuiteComponent {
     if (this.searchTerm) {
       this.filteredArticleList = this.dataListLiquides.filter((article: any) =>
         article.libelle.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        article.code.toLowerCase().includes(this.searchTerm.toLowerCase())
+        article.reference.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
       console.log(this.filteredArticleList)
     } else {

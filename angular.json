@@ -40,10 +40,8 @@
               "src/styles.scss",
               "src/assets/font-awesome-v6/css/all.css",
               "src/app/GlobalStyle.scss",
-              "node_modules/angular-calendar/css/angular-calendar.css",
-              "node_modules/primeng/resources/themes/saga-blue/theme.css",
-              "node_modules/primeng/resources/primeng.min.css",
-              "node_modules/primeicons/primeicons.css"
+              "node_modules/angular-calendar/css/angular-calendar.css"
+         
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
