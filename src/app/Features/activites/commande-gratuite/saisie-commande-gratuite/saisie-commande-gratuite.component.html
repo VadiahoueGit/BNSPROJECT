@@ -384,7 +384,7 @@
                       *ngFor="let article of filteredArticleList ; let i = index"
                       style="font-size: small"
                     >
-                      <th scope="row">{{ article.code }}</th>
+                      <th scope="row">{{ article.reference }}</th>
                       <th scope="row">{{ article.libelle }}</th>
                       <th scope="row">{{stocksDisponibles[article.liquide.id]}}</th>
                       <td class="">

@@ -79,7 +79,7 @@ export class SaisieCommandeComponent {
     this.commandClientForm = this.fb.group({
       clientId: [null, Validators.required],
       clientType: ['revendeur', ],
-      numeroCompte: [{ value: '', disabled: true }, ],
+      numeroCompte: [{ value: ''}, ],
       raisonSociale: [{ value: 0, disabled: true }, ],
       montantCredit: [{ value: 0, disabled: true }, ],
       statutCompte: [{ value: '', disabled: true } ],
@@ -548,13 +548,15 @@ export class SaisieCommandeComponent {
 
   filterArticles(): void {
     console.log(this.searchTerm);
+    console.log(this.dataListLiquides,'dataListLiquides');
+    console.log(this.filteredArticleList,'filteredArticleList');
     if (this.searchTerm) {
       this.filteredArticleList = this.dataListLiquides.filter(
         (article: any) =>
           article.libelle
             .toLowerCase()
             .includes(this.searchTerm.toLowerCase()) ||
-          article.code.toLowerCase().includes(this.searchTerm.toLowerCase())
+          article.reference.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
       console.log(this.filteredArticleList);
     } else {
