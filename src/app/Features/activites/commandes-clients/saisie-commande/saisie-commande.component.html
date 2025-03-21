@@ -226,6 +226,7 @@
                   id="enCours"
                   formControlName="enCours"
                 />
+                <p *ngIf="detailPointDevente.encours <= 0" class="text-danger my-2" style="font-size: 11px;">Credit insuffisant !</p>
               </div>
               <div class="col-md-4">
                 <label for="statutCompte" class="form-label"
@@ -500,7 +501,7 @@
           *ngIf="operation == 'create'"
           class="btn btn-primary"
           (click)="onSubmit()"
-          [disabled]="totalQte === 0"
+          [disabled]="totalQte === 0 || detailPointDevente.encours <= 0"
         >
           Valider
         </button>

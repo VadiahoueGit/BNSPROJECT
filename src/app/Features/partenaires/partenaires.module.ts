@@ -9,6 +9,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TableModule } from 'primeng/table';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedComponentModule } from "../shared-component/shared-component.module";
+import {InputTextModule} from "primeng/inputtext";
 
 
 
@@ -18,15 +19,16 @@ import { SharedComponentModule } from "../shared-component/shared-component.modu
     ClientosrComponent,
     RevendeurComponent
   ],
-  imports: [
-    NgSelectModule,
-    CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    TableModule,
-    PartenairesRoutingModule,
-    SharedComponentModule
-],
+    imports: [
+        NgSelectModule,
+        CommonModule,
+        ReactiveFormsModule,
+        FormsModule,
+        TableModule,
+        PartenairesRoutingModule,
+        SharedComponentModule,
+        InputTextModule
+    ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PartenairesModule { }

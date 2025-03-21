@@ -7,21 +7,34 @@
   <h4 class="fw-bold mb-0">Revendeurs</h4>
 </div>
 <div class="card">
-  <div class="d-flex justify-content-end py-3">
-    <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
-      Créer un revendeur
-    </button>
+  <div>
+    <span style="font-size:13px;">Nombre: </span>
+    <span style="font-size:13px;" class="fw-bold text-secondary">{{ filteredCount }}</span>
   </div>
   <p-table
+    #dt
     [styleClass]="'p-datatable-sm'"
     #dt2
     [value]="dataList"
     dataKey="id"
     [rows]="8"
     [rowsPerPageOptions]="[10, 25, 50]"
+    [globalFilterFields]="['raisonSocial', 'nomProprietaire', 'nomGerant']"
+    (onFilter)="updateFilteredCount(dt)"
     [paginator]="true"
     (onPage)="onPage($event)"
   >
+    <ng-template pTemplate="caption">
+      <div class=" d-flex justify-content-between py-3">
+                <span class="p-input-icon-left ml-auto d-flex align-items-center">
+                    <i class="fas fa-search"></i>
+                    <input style="width: 300px; border-radius: 7px;" pInputText type="text" (input)="filterGlobal($event)" placeholder="Recherche"/>
+                </span>
+        <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
+          Créer un revendeur
+        </button>
+      </div>
+    </ng-template>
     <ng-template pTemplate="header">
       <tr>
         <th style="color: var(--secondary-color)">Ref client</th>
@@ -29,7 +42,6 @@
         <th style="color: var(--secondary-color)">Raison sociale</th>
         <th style="color: var(--secondary-color)">Gérant</th>
         <th style="color: var(--secondary-color)">Propriétaire</th>
-        <th style="color: var(--secondary-color)">Role</th>
         <th style="color: var(--secondary-color)">Groupe client</th>
         <th
           class="d-flex justify-content-center"
@@ -68,43 +80,38 @@
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.role }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
             {{ dataList.groupeClient.nomGroupe }}
           </span>
         </td>
         <td>
-          <tr class="d-flex justify-content-center gap-3">
-            <td>
-              <i
-                [ngStyle]="{
+      <tr class="d-flex justify-content-center gap-3">
+        <td>
+          <i
+            [ngStyle]="{
                         'color': dataList.isValide ? 'gray' : '#08AD36',
                       }"
-                (click)="OnValidate(dataList)"
-                style="cursor: pointer"
-                class="fas fa-check fw-bold"
-              ></i>
-            </td>
-            <td>
-              <i
-                (click)="OnEdit(dataList)"
-                style="cursor: pointer"
-                class="fas fa-edit text-secondary fw-bold"
-              ></i>
-            </td>
-            <td>
-              <i
-                (click)="OnDelete(dataList.id)"
-                style="cursor: pointer"
-                class="fas fa-trash-alt text-danger fw-bold"
-              ></i>
-            </td>
-          </tr>
-        </td></tr
-    ></ng-template>
+            (click)="OnValidate(dataList)"
+            style="cursor: pointer"
+            class="fas fa-check fw-bold"
+          ></i>
+        </td>
+        <td>
+          <i
+            (click)="OnEdit(dataList)"
+            style="cursor: pointer"
+            class="fas fa-edit text-secondary fw-bold"
+          ></i>
+        </td>
+        <td>
+          <i
+            (click)="OnDelete(dataList.id)"
+            style="cursor: pointer"
+            class="fas fa-trash-alt text-danger fw-bold"
+          ></i>
+        </td>
+      </tr>
+      </td></tr
+      ></ng-template>
 
     <ng-template pTemplate="emptymessage">
       <tr>
@@ -146,13 +153,13 @@
           <fieldset class="border p-3 mb-3">
             <legend class="float-none w-auto px-2">Références</legend>
             <div class="row" *ngIf="isEditMode">
-              <label>Numero SAP : {{numeroSap}}</label>
+              <label>Numero SAP : {{ numeroSap }}</label>
             </div>
 
             <div class="row">
               <div class="col-md-6 mt-3">
                 <label for="groupeClientId" class="form-label"
-                  >Type de Client</label
+                >Type de Client</label
                 >
                 <ng-select
                   class="form-control"
@@ -166,7 +173,7 @@
               </div>
               <div class="col-md-6 mt-3">
                 <label for="numeroRegistre" class="form-label"
-                  >N° Registre de commerce</label
+                >N° Registre de commerce</label
                 >
                 <input
                   type="text"
@@ -178,7 +185,7 @@
               </div>
               <div class="col-md-6 mt-3">
                 <label for="raisonSociale" class="form-label"
-                  >Raison sociale</label
+                >Raison sociale</label
                 >
                 <input
                   type="text"
@@ -296,7 +303,7 @@
             <div class="row">
               <div class="col-md-6">
                 <label for="nomProprietaire" class="form-label"
-                  >Nom du propriétaire</label
+                >Nom du propriétaire</label
                 >
                 <input
                   type="text"
@@ -308,7 +315,7 @@
               </div>
               <div class="col-md-6">
                 <label for="telProprietaire" class="form-label"
-                  >Tel du propriétaire</label
+                >Tel du propriétaire</label
                 >
                 <input
                   type="text"
@@ -318,16 +325,16 @@
                   placeholder="Entrez le téléphone"
                 />
               </div>
-<!--              <div class="col-md-6 mt-3">-->
-<!--                <label for="contact" class="form-label">Tel du propriétaire</label>-->
-<!--                <input-->
-<!--                  type="text"-->
-<!--                  class="form-control"-->
-<!--                  id="contact"-->
-<!--                  formControlName="contact"-->
-<!--                  placeholder="Entrez le contact"-->
-<!--                />-->
-<!--              </div>-->
+              <!--              <div class="col-md-6 mt-3">-->
+              <!--                <label for="contact" class="form-label">Tel du propriétaire</label>-->
+              <!--                <input-->
+              <!--                  type="text"-->
+              <!--                  class="form-control"-->
+              <!--                  id="contact"-->
+              <!--                  formControlName="contact"-->
+              <!--                  placeholder="Entrez le contact"-->
+              <!--                />-->
+              <!--              </div>-->
               <div class="col-md-6 mt-3">
                 <label for="nomGerant" class="form-label">Nom du gérant</label>
                 <input
@@ -357,7 +364,7 @@
             <div class="row">
               <div class="col-md-6">
                 <label for="quantiteMinimum" class="form-label"
-                  >Quantité minimum à commander</label
+                >Quantité minimum à commander</label
                 >
                 <input
                   type="number"
@@ -369,7 +376,7 @@
               </div>
               <div class="col-md-6">
                 <label for="familleProduit" class="form-label"
-                  >Famille de produit (Produit favoris)</label
+                >Famille de produit (Produit favoris)</label
                 >
                 <!-- <select
                   class="form-select"
@@ -470,10 +477,10 @@
           <div class="col-md-6">
             <strong>Établissement :</strong>
             <span>{{
-              RevendeurDetail.nomEtablissement
-                ? RevendeurDetail.nomEtablissement
-                : RevendeurDetail.raisonSocial
-            }}</span>
+                RevendeurDetail.nomEtablissement
+                  ? RevendeurDetail.nomEtablissement
+                  : RevendeurDetail.raisonSocial
+              }}</span>
           </div>
           <div class="col-md-6">
             <strong>Contact Gérant :</strong>
@@ -485,7 +492,7 @@
           </div>
           <div class="col-md-6">
             <label for="rccm" class="form-label"
-              >Registre de commerce </label
+            >Registre de commerce </label
             >
             <input
               type="file"
@@ -498,7 +505,7 @@
           </div>
           <div class="col-md-6">
             <label for="cni" class="form-label"
-              >CNI <span class="text-danger">*</span></label
+            >CNI <span class="text-danger">*</span></label
             >
             <input
               type="file"
@@ -510,7 +517,7 @@
           </div>
           <div class="col-md-6">
             <label for="dfe" class="form-label"
-              >Déclaration fiscale (DFE)</label
+            >Déclaration fiscale (DFE)</label
             >
             <input
               type="file"
@@ -522,7 +529,7 @@
           </div>
           <div class="col-md-6">
             <label for="dfe" class="form-label"
-              >Numero SAP <span class="text-danger">*</span></label
+            >Numero SAP <span class="text-danger">*</span></label
             >
             <input
               type="text"

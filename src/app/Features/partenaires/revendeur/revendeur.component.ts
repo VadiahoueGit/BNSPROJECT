@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { ChangeDetectorRef, Component } from '@angular/core';
+import {ChangeDetectorRef, Component, ViewChild} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
@@ -7,6 +7,7 @@ import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { CoreServiceService } from 'src/app/core/core-service.service';
 import { ALERT_QUESTION } from '../../shared-component/utils';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
+import {Table} from "primeng/table";
 
 @Component({
   selector: 'app-revendeur',
@@ -38,6 +39,8 @@ export class RevendeurComponent {
   selectedCniFile: File | null = null;
   selectedDfeFile: File | null = null;
   numeroSap: string | Blob;
+  filteredCount: number = 0;
+  @ViewChild('dt2') dt2!: Table;
   constructor(
     private cd: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -101,6 +104,10 @@ export class RevendeurComponent {
   goBack() {
     this.location.back();
   }
+  updateFilteredCount(table: any) {
+    this.filteredCount = table.filteredValue ? table.filteredValue.length : this.dataList.length;
+  }
+
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
@@ -173,6 +180,11 @@ export class RevendeurComponent {
 
   }
 
+  filterGlobal(event:any) {
+    const inputElement = event.target as HTMLInputElement;
+    const value = inputElement?.value || ''; // Utilisez une valeur par défaut
+    this.dt2.filterGlobal(value, 'contains');
+  }
   OnCloseDetailModal() {
     this.isModalDetail = false;
     this.numeroSap = '';
@@ -180,7 +192,7 @@ export class RevendeurComponent {
   }
   selectedFile: File | null = null;
   onFileSelected(event: any) {
-    this.selectedFile = event.target.files[0]; 
+    this.selectedFile = event.target.files[0];
   }
   confirmValidateOperation(revendeur: any) {
     // Vérifier que la CNI et le numéro SAP sont sélectionnés
@@ -204,8 +216,8 @@ export class RevendeurComponent {
           const formData = new FormData();
 
           formData.append('cni', this.selectedCniFile!);
-          formData.append('registre', this.selectedRccmFile!);  
-          formData.append('dfe', this.selectedDfeFile!);  
+          formData.append('registre', this.selectedRccmFile!);
+          formData.append('dfe', this.selectedDfeFile!);
           formData.append('numeroSAP', this.numeroSap);
 
           this._articleService.ValidateRevendeur(revendeur.id, formData).then(
@@ -322,6 +334,7 @@ export class RevendeurComponent {
     this._articleService.GetListRevendeur(data).then((res: any) => {
       console.log('GetListRevendeur:::>', res);
       this.dataList = res.data;
+      this.filteredCount = this.dataList.length;
       this._spinner.hide();
     });
   }
