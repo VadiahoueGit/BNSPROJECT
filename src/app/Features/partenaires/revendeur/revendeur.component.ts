@@ -16,6 +16,9 @@ import {Table} from "primeng/table";
 })
 export class RevendeurComponent {
   dataList: any[] = [];
+  selectedRevendeur:any;
+  isActive: boolean = false;
+  revendeurConfirmed: any[] = [];
   produits: any[] = [];
   depots: any[] = [];
   zoneLivraison: any[] = [];
@@ -38,7 +41,7 @@ export class RevendeurComponent {
   selectedRccmFile: File | null = null;
   selectedCniFile: File | null = null;
   selectedDfeFile: File | null = null;
-  numeroSap: string | Blob;
+  numeroSap: any;
   filteredCount: number = 0;
   @ViewChild('dt2') dt2!: Table;
   constructor(
@@ -53,6 +56,8 @@ export class RevendeurComponent {
   ) {}
   ngOnInit(): void {
     this.revendeurForm = this.fb.group({
+      isAssocie: [null],
+      parentRevendeurId: [null],
       groupeClientId: [null, Validators.required],
       numeroRegistre: [null],
       raisonSocial: [null, Validators.required],
@@ -126,11 +131,45 @@ export class RevendeurComponent {
     this.id = data.id;
     this.isModalOpen = true;
     this.loadClientDetails();
+    if(this.updateData.isAssocie){
+      this.disableForm()
+    }
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
+
+  disableForm()
+  {
+    this.revendeurForm.controls['groupeClientId'].disable();
+    this.revendeurForm.controls['numeroRegistre'].disable();
+    this.revendeurForm.controls['contact'].disable();
+    this.revendeurForm.controls['telephone'].disable();
+    this.revendeurForm.controls['nomProprietaire'].disable();
+    this.revendeurForm.controls['telephoneProprietaire'].disable();
+    this.revendeurForm.controls['numeroCompteContribuable'].disable();
+    this.revendeurForm.controls['familleProduitId'].disable();
+  }
+
+  preloadData(event:any): void {
+    this.selectedRevendeur = event
+    this.revendeurForm.patchValue({
+      groupeClientId: event.groupeClient.id,
+      numeroRegistre: event.numeroRegistre,
+      contact: event.contact,
+      telephone: event.telephone,
+      nomProprietaire: event.nomProprietaire,
+      telephoneProprietaire: event.telephoneProprietaire,
+      quantiteMinimumACommander: event.quantiteMinimumACommander,
+      numeroCompteContribuable: event.numeroCompteContribuable,
+      familleProduitId: event.familleProduitId,
+    });
+    console.log(this.revendeurForm.value);
+
+  }
+
   loadClientDetails(): void {
     this.revendeurForm.patchValue({
+      isAssocie: this.updateData.isAssocie,
       groupeClientId: this.updateData.groupeClient.id,
       numeroRegistre: this.updateData.numeroRegistre,
       raisonSocial: this.updateData.raisonSocial,
@@ -324,6 +363,18 @@ export class RevendeurComponent {
         );
       });
   }
+  activateField(data:boolean)
+  {
+    this.isActive = data;
+    if (!this.isActive)
+    {
+      this.revendeurForm.reset();
+      this.selectedRevendeur = null;
+    }
+
+  }
+
+
   GetRevendeurList(page: number) {
     let data = {
       paginate: false,
@@ -334,6 +385,10 @@ export class RevendeurComponent {
     this._articleService.GetListRevendeur(data).then((res: any) => {
       console.log('GetListRevendeur:::>', res);
       this.dataList = res.data;
+      this.revendeurConfirmed = res.data.filter(
+        (i: any) => i.isAssocie === false && i.isValide === true
+      );
+
       this.filteredCount = this.dataList.length;
       this._spinner.hide();
     });
@@ -360,6 +415,12 @@ export class RevendeurComponent {
           }
         );
     } else {
+      this.revendeurForm.controls['isAssocie'].setValue(this.isActive)
+
+      if (this.isActive)
+      {
+        this.revendeurForm.controls['parentRevendeurId'].setValue(this.selectedRevendeur.id)
+      }
       this._articleService.CreateRevendeur(this.revendeurForm.value).then(
         (response: any) => {
           console.log('Nouveau revendeur créé avec succès', response);
@@ -402,4 +463,6 @@ export class RevendeurComponent {
       }
     );
   }
+
+  protected readonly event = event;
 }

@@ -28,7 +28,8 @@
       <div class=" d-flex justify-content-between py-3">
                 <span class="p-input-icon-left ml-auto d-flex align-items-center">
                     <i class="fas fa-search"></i>
-                    <input style="width: 300px; border-radius: 7px;" pInputText type="text" (input)="filterGlobal($event)" placeholder="Recherche"/>
+                    <input style="width: 300px; border-radius: 7px;" pInputText type="text"
+                           (input)="filterGlobal($event)" placeholder="Recherche"/>
                 </span>
         <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
           Créer un revendeur
@@ -60,7 +61,7 @@
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.agentCommercial.nom +' '+ dataList.agentCommercial.prenoms}}
+            {{ dataList.agentCommercial.nom + ' ' + dataList.agentCommercial.prenoms }}
           </span>
         </td>
         <td>
@@ -86,7 +87,10 @@
         <td>
       <tr class="d-flex justify-content-center gap-3">
         <td>
+          <i *ngIf="dataList.isValide && !dataList.isAssocie" class="fa-solid fa-crown" style="color:#ffc400"
+          ></i>
           <i
+            *ngIf="!dataList.isValide && !dataList.isAssocie"
             [ngStyle]="{
                         'color': dataList.isValide ? 'gray' : '#08AD36',
                       }"
@@ -149,11 +153,36 @@
       </div>
       <div class="modal-body" style="max-height: 70vh; overflow-y: auto">
         <form [formGroup]="revendeurForm" (ngSubmit)="onSubmit()">
+          <fieldset class="border px-3 pb-2" *ngIf="!isEditMode">
+            <legend class="float-none w-auto px-2">Voulez-vous l'associer ?</legend>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" formControlName="isAssocie" type="checkbox" id="associerCheckbox"
+                         (change)="activateField(!isActive)">
+                  <label class="form-check-label" for="associerCheckbox">
+                    Associer
+                  </label>
+                </div>
+                <ng-select
+                  formControlName="parentRevendeurId"
+                  (change)="preloadData($event)"
+                  [readonly]="!isActive"
+                  class="form-control"
+                  [items]="revendeurConfirmed"
+                  bindLabel="raisonSocial"
+                  bindValue="id"
+                  [searchable]="true"
+                >
+                </ng-select>
+              </div>
+            </div>
+          </fieldset>
           <!-- REFERENCES -->
           <fieldset class="border p-3 mb-3">
             <legend class="float-none w-auto px-2">Références</legend>
             <div class="row" *ngIf="isEditMode">
-              <label>Numero SAP : {{ numeroSap }}</label>
+              <label>Numero SAP : {{ numeroSap.numeroSAP }}</label>
             </div>
 
             <div class="row">

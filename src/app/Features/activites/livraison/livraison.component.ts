@@ -36,7 +36,7 @@ export class LivraisonComponent {
       nom: 'test',
     },
   ];
-
+  tableData: any[] = [];
   livraisonForm!: FormGroup;
   loading: boolean = true;
   isModalOpen = false;
@@ -81,16 +81,25 @@ export class LivraisonComponent {
   canContinue: boolean = false;
   cargaison: number = 0;
   format: number = 33;
-  result: { palettes: number; casier: number } | null = null;
+
   regroupementList: any[] = [];
   regroupementTable: any[] = [];
-  regroupementFinal: Record<string, RegroupementItem>;
-  casiersPerPalette: Record<number, { casiers: number; type: string }> = {
-    33: {casiers: 63, type: 'biere'},
-    25: {casiers: 63, type: 'biere'},
-    50: {casiers: 66, type: 'plastique'},
-    60: {casiers: 66, type: 'métal'},
+  regroupementFinal: { [key: string]: Array<{ type: string; palettes: number; casier: number; totalQuantite:number }> } = {};
+  result: { palettes: number; casier: number } | null = null;
+  casiersPerPalette: Record<number, { casiers: number; type: string }[]> = {
+    30: [{casiers: 60, type: 'SUCRERIE'}],
+    33: [
+      {casiers: 63, type: 'BIERE'},
+      {casiers: 126, type: 'EAU'}
+    ],
+    25: [{casiers: 63, type: 'BIERE'}],
+    50: [{casiers: 66, type: 'BIERE'}],
+    60: [
+      {casiers: 60, type: 'SUCRERIE'},
+      {casiers: 66, type: 'BIERE'}
+    ],
   };
+
 
   constructor(
     private articleService: ArticleServiceService,
@@ -142,178 +151,157 @@ export class LivraisonComponent {
   }
 
   removeCommande(commande: any): void {
-    console.log('Retrait de la commande', commande);
+    console.log('Retrait de la commande:', commande);
 
-    if (!this.regroupementTable || this.regroupementTable.length === 0) {
-      console.warn('Aucune donnée dans regroupementTable.');
-      return;
-    }
+    commande.articles.forEach((article: any) => {
+      const format = Number(article?.liquide?.format);
+      const type = article?.groupeArticle?.libelle;
 
-    // Regrouper les articles de la commande supprimée par format
-    const articlesParFormat = commande.articles.reduce(
-      (acc: any, article: any) => {
-        const format = Number(article?.liquide?.format);
-        if (!format) return acc;
+      // Vérifie si le format existe dans regroupementFinal
+      if (this.regroupementFinal[format]) {
+        console.log('AAA:',this.regroupementFinal)
+        // Recherche le type dans le format
+        const typeEntry = this.regroupementFinal[format].find((entry: any) => entry.type === type);
+        if (typeEntry) {
+          const casiersToRemove = article.quantite || 0;
 
-        acc[format] = (acc[format] || 0) + Number(article.quantite || 0);
-        return acc;
-      },
-      {}
-    );
+          // Retirer la quantité
+          typeEntry.casier -= casiersToRemove;  // Réduire la quantité des casiers
+          console.log('LISTEN:', typeEntry.casier, casiersToRemove);
 
-    console.log('Articles à retirer:', articlesParFormat);
-
-    // Mettre à jour `regroupementTable`
-    Object.keys(articlesParFormat).forEach((format) => {
-      let totalCasiersToRemove = articlesParFormat[format];
-      console.log('totalCasiersToRemove', totalCasiersToRemove);
-      // On va modifier **chaque entrée** où ce format est présent
-      this.regroupementTable = this.regroupementTable
-        .map((regroupement) => {
-          if (regroupement[format]) {
-            let casiersRestants = regroupement[format].casier;
-            let palettesRestantes = regroupement[format].palettes;
-            const casiersParPalette =
-              this.casiersPerPalette[Number(format)]?.casiers || 0;
-
-            // **1️⃣ On retire d'abord des casiers**
-            let casiersÀRetirer = Math.min(
-              totalCasiersToRemove,
-              casiersRestants
-            );
-            casiersRestants -= casiersÀRetirer;
-            totalCasiersToRemove -= casiersÀRetirer;
-            this.cargaison -= casiersÀRetirer;
-            console.log('cargaison', casiersÀRetirer);
-            // **2️⃣ Si on doit encore retirer, on enlève des palettes**
-            while (totalCasiersToRemove > 0 && palettesRestantes > 0) {
-              palettesRestantes -= 1;
-              casiersRestants += casiersParPalette;
-              let casiersÀRetirerSupplementaire = Math.min(
-                totalCasiersToRemove,
-                casiersRestants
-              );
-              casiersRestants -= casiersÀRetirerSupplementaire;
-              totalCasiersToRemove -= casiersÀRetirerSupplementaire;
+          // Si la quantité de casiers devient nulle ou inférieure à zéro, réinitialiser et supprimer l'entrée
+          if (typeEntry.casier <= 0) {
+            const index = this.regroupementFinal[format].indexOf(typeEntry);
+            if (index !== -1) {
+              // Réinitialiser le casier avant suppression pour éviter toute accumulation future
+              typeEntry.casier = 0;
+              typeEntry.palettes = 0;
+              this.regroupementFinal[format].splice(index, 1); // Retirer l'article
             }
+          } else {
+            // Si le casier reste positif, mettre à jour les palettes
+            const casiersParPalette = this.casiersPerPalette[format]?.find((el: any) => el.type === type)?.casiers || 0;
+            if (casiersParPalette) {
+              const palettes = Math.floor(typeEntry.casier / casiersParPalette);
+              const casiersRestants = typeEntry.casier % casiersParPalette;
 
-            // **3️⃣ Mettre à jour l'entrée**
-            if (palettesRestantes <= 0 && casiersRestants <= 0) {
-              delete regroupement[format];
-            } else {
-              regroupement[format].casier = casiersRestants;
-              regroupement[format].palettes = palettesRestantes;
+              // Réactualiser les palettes et casiers restants
+              typeEntry.palettes = palettes;
+              typeEntry.casier = casiersRestants;
             }
           }
-          return regroupement;
-        })
-        .filter((regroupement) => Object.keys(regroupement).length > 0); // Supprimer les objets vides
+        }
+      }
+      console.log('Après retrait, regroupementFinal:', this.regroupementFinal);
     });
-
-    console.log('regroupementTable après suppression:', this.regroupementTable);
-    this.regrouperParFormat();
+    // Recalcul de la cargaison après modification de regroupementFinal
+    this.updateCargaison();
   }
 
   calculate(commande: any): void {
+    console.log('Commande:', commande);
 
-    console.log('commande', commande);
-    // Regrouper les articles par format
-    const articlesParFormat = commande.articles.reduce(
-      (acc: any, article: any) => {
-        const format = Number(article?.liquide?.format); // S'assurer que le format est un nombre
+    // ✅ Ne réinitialise pas `regroupementFinal` complètement pour ne pas écraser les données existantes
+    if (!this.regroupementFinal) {
+      this.regroupementFinal = {};
+    }
+    console.log('fois:');
+    this.result = { palettes: 0, casier: 0 };
 
-        if (!format) {
-          console.warn(
-            'Article sans format ou format non numérique détecté, ignoré:',
-            article
-          );
-          return acc;
-        }
+    const articlesParFormatEtType = commande.articles.reduce((acc: any, article: any) => {
+      const format = Number(article?.liquide?.format);
+      const type = article?.groupeArticle?.libelle;
 
-        if (!acc[format]) {
-          acc[format] = [];
-        }
-
-        acc[format].push(article);
+      if (!format || !type) {
+        console.warn('Article sans format ou type non défini, ignoré:', article);
         return acc;
-      },
-      {}
-    );
+      }
 
-    console.log('Articles regroupés par format:', articlesParFormat);
+      if (!acc[format]) {
+        acc[format] = {};
+      }
 
-    // Calcul des palettes et des casiers pour chaque format
-    this.result = Object.keys(articlesParFormat).reduce(
-      (result: any, formatStr: string) => {
-        const format = Number(formatStr); // Convertir la clé (string) en nombre
-        const totalCasiers = articlesParFormat[format].reduce(
-          (total: number, article: any) =>
-            total + Number(article.quantite || 0),
+      if (!acc[format][type]) {
+        acc[format][type] = [];
+      }
+
+      acc[format][type].push(article);
+      return acc;
+    }, {});
+
+    console.log('Articles regroupés par format et type:', articlesParFormatEtType);
+
+    Object.keys(articlesParFormatEtType).forEach((formatStr: string) => {
+      const format = Number(formatStr);
+      const totalCasiersParFormat: any = {};
+
+      Object.entries(articlesParFormatEtType[format]).forEach(([type, articles]: [string, any]) => {
+        const totalCasiers = articles.reduce(
+          (total: number, article: any) => total + Number(article.quantite || 0),
           0
         );
 
-        const paletteInfo = this.casiersPerPalette[format];
-        if (!paletteInfo) {
+        const paletteInfos = this.casiersPerPalette[format];
+        if (!paletteInfos || paletteInfos.length === 0) {
           console.warn(`Format invalide ou non trouvé : ${format}`);
-          result[format] = null;
-          return result;
+          return;
         }
 
-        const {casiers, type} = paletteInfo;
+        paletteInfos.forEach(({casiers, type: paletteType}) => {
+          if (paletteType === type) {
+            const palettes = Math.floor(totalCasiers / casiers);
+            const casier = totalCasiers % casiers;
 
-        const palettes = Math.floor(totalCasiers / casiers);
-        const casier = totalCasiers % casiers;
-        this.cargaison += totalCasiers;
-        result[format] = {palettes, casier, type};
-        return result;
-      },
-      {}
-    );
-    this.regroupementTable.push(this.result);
-    console.log('Résultat final', this.result);
-    console.log('regroupementList', this.regroupementTable);
-    this.regrouperParFormat();
-  }
+            // ✅ Vérifie si ce format et type existent déjà dans regroupementFinal
+            if (!this.regroupementFinal[format]) {
+              this.regroupementFinal[format] = [];
+            }
 
-  regrouperParFormat(): void {
-    const regroupement = this.regroupementTable.reduce(
-      (acc: any, item: any) => {
-        Object.entries(item).forEach(([format, details]: [string, any]) => {
-          if (!acc[format]) {
-            acc[format] = {
-              palettes: 0,
-              casier: 0,
-              type: details.type,
-            };
-          }
-
-          // Ajouter les palettes et casiers au format correspondant
-          acc[format].palettes += details.palettes;
-          acc[format].casier += details.casier;
-
-          // Gérer les casiers excédentaires pour compléter une palette
-          const casiersParPalette =
-            this.casiersPerPalette[Number(format)]?.casiers || 0;
-          if (casiersParPalette && acc[format].casier >= casiersParPalette) {
-            const palettesSupplementaires = Math.floor(
-              acc[format].casier / casiersParPalette
-            );
-            acc[format].palettes += palettesSupplementaires;
-            acc[format].casier %= casiersParPalette;
+            const existingEntry = this.regroupementFinal[format].find((entry: any) => entry.type === type);
+            if (existingEntry) {
+              // 🔄 Additionne les nouvelles valeurs sans écraser l'existant
+              existingEntry.palettes += palettes;
+              existingEntry.casier += casier;
+            } else {
+              // ➕ Ajoute un nouvel article s'il n'existe pas encore
+              this.regroupementFinal[format].push({ type, palettes, casier, totalQuantite: 0 });
+            }
           }
         });
-
-        return acc;
-      },
-      {}
-    );
-
-    console.log('Regroupement par format:', regroupement);
-    this.regroupementFinal = regroupement;
-
-    console.log('test', this.regroupementTable);
-    console.log('regroupementFinal:', this.regroupementFinal);
+      });
+    });
+// Recalcul de la cargaison après modification de regroupementFinal
+    this.updateCargaison();
+    console.log('Résultat final:', this.regroupementFinal);
   }
+
+  updateCargaison(): void {
+    // Réinitialiser la cargaison à 0
+    this.cargaison = 0;
+
+    // Parcours de regroupementFinal pour recalculer la cargaison
+    Object.entries(this.regroupementFinal).forEach(([format, entries]: [string, any[]]) => {
+      entries.forEach((entry: any) => {
+        const casiersParPalette = this.casiersPerPalette[Number(format)]?.find(
+          (el: any) => el.type === entry.type
+        )?.casiers || 0;
+
+        console.log(`Format: ${format}, Type: ${entry.type}, Palettes: ${entry.palettes}, Casiers: ${entry.casier}`);
+
+        if (casiersParPalette) {
+          // Recalcul de la cargaison
+          this.cargaison += entry.palettes * casiersParPalette + entry.casier;
+        }
+      });
+    });
+
+    console.log('Cargaison après recalcul:', this.cargaison);
+  }
+
+  objectValues(obj: any): any[] {
+    return Object.values(obj);
+  }
+
 
   onZoneChange(zone: any | null): void {
     console.log('zoneId', zone.id);
@@ -376,7 +364,7 @@ export class LivraisonComponent {
     this.truckCapacity = 0;
     this.isModalOpen = false;
     this.regroupementTable = [];
-    Object.keys(this.regroupementFinal).forEach(
+    Object.keys(this.tableData).forEach(
       (key) => delete this.regroupementFinal[key]
     );
 
@@ -417,18 +405,41 @@ export class LivraisonComponent {
   }
 
   UploadDoc(item: any) {
-    console.log(item,'item')
+    console.log(item, 'item')
     this.regroupementTable = []
     const numRegroupement = item.numRegroupement;
     let regroup = this.regrouperArticles(item.commandes)
+    console.log(regroup, 'XXX')
     this.calculate(regroup);
+
     this._spinner.show();
     if (this.regroupementFinal) {
-      const result = Object.entries(this.regroupementFinal).map(([key, value]) => ({
-        format: parseInt(key),
-        casier: value.casier,
-        palette: value.palettes
-      }));
+      const result = Object.entries(this.regroupementFinal).flatMap(([key, value]) => {
+        // Vérifie que value est bien un tableau
+        if (!Array.isArray(value)) return [];
+
+        // Regroupement par type
+        const regroupementParType = value.reduce((acc, item) => {
+          const type = item.type ?? "Inconnu"; // Sécurité si le type est absent
+          if (!acc[type]) {
+            acc[type] = { casier: 0, palette: 0 };
+          }
+          acc[type].casier += item.casier ?? 0;
+          acc[type].palette += item.palettes ?? 0;
+          return acc;
+        }, {} as Record<string, { casier: number, palette: number }>);
+
+        // Convertir l'objet en tableau
+        return Object.entries(regroupementParType).map(([type, data]) => ({
+          format: Number(key),
+          type,
+          casier: data.casier,
+          palette: data.palette
+        }));
+      });
+
+      console.log(result);
+
 
       this.activiteService.GetRegroupementPdf(numRegroupement, result).then(
         (res: any) => {
@@ -590,7 +601,7 @@ export class LivraisonComponent {
         this.commandeList.push(commande.NumCommande);
         console.log('Ajout de la commande:', this.commandeList);
       } else if (this.cargaison >= this.truckCapacity) {
-        this.toastr.warning('Le vehicule est plein !');
+        this.toastr.warning('Le véhicule est plein !');
       }
     } else {
       this.commandeList = this.commandeList.filter(

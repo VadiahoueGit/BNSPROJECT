@@ -196,21 +196,33 @@
                   <div class="row">
                     <table class="table table-bordered table-hover">
                       <thead class="table-success">
-                      <tr><td colspan="1"><i class="fa-sharp fa-solid fa-truck-ramp-couch"></i></td><td colspan="2">{{cargaison}}/{{truckCapacity}}</td></tr>
+                      <tr>
+                        <td colspan="1">
+                          <i class="fa-sharp fa-solid fa-truck-ramp-couch"></i>
+                        </td>
+                        <td colspan="2">{{ cargaison }} / {{ truckCapacity }}</td>
+                      </tr>
                       <tr>
                         <th>Format</th>
+                        <th>Type</th>
                         <th>Palette</th>
                         <th>Casier</th>
                       </tr>
                       </thead>
                       <tbody>
-                      <tr *ngFor="let item of regroupementFinal | keyvalue">
-                        <td>{{ item.key }}</td>
-                        <td>{{item.value.palettes }}</td>
-                        <td>{{item.value.casier }}</td>
-                      </tr>
+                      <!-- Boucle sur chaque format -->
+                      <ng-container *ngFor="let item of regroupementFinal | keyvalue">
+                        <!-- Boucle sur chaque type d'article pour ce format -->
+                        <tr *ngFor="let subItem of item.value">
+                          <td>{{ item.key }}</td>
+                          <td>{{ subItem.type }}</td>
+                          <td>{{ subItem.palettes }}</td>
+                          <td>{{ subItem.casier }}</td>
+                        </tr>
+                      </ng-container>
                       </tbody>
                     </table>
+
                   </div>
                 </div>
               </div>
