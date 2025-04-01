@@ -10,7 +10,6 @@ import { CustomerService } from 'src/service/customerservice';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { CartographieComponent } from './cartographie/cartographie.component';
 import { RapportComponent } from './rapport/rapport.component';
-import { AchatsComponent } from './achats/achats.component';
 import { PartenairesComponent } from './partenaires/partenaires.component';
 import { PartenairesModule } from './partenaires/partenaires.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -21,7 +20,6 @@ import {GoogleMapsModule} from "@angular/google-maps";
 
    CartographieComponent,
    RapportComponent,
-   AchatsComponent,
    FeaturesComponent,
   ],
     imports: [

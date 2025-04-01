@@ -23,7 +23,7 @@ export class FeaturesComponent {
     {label: 'Cartographie', icon: 'fas fa-map', url: '/feature/cartographie'},
     {label: 'Rapports', icon: 'fas fa-file-chart-line', url: 'feature/rapport'},
     {label: 'Paramètres', icon: 'fas fa-cogs', url: 'feature/parametre'},
-    {label: 'Achats', icon: 'fas fa-sack-dollar', url: 'feature/achat'},
+    {label: 'Achats', icon: 'fas fa-sack-dollar', url: 'feature/achats'},
     {label: 'Partenaires', icon: 'fas fa-handshake', url: '/feature/partenaire'},
     {label: 'Finances', icon: 'fas fa-sack-dollar', url: 'feature/finances'},
     {label: 'Stocks', icon: 'fas fa-warehouse-alt', url: 'feature/stocks'},

@@ -194,3 +194,8 @@ i.active {
     padding-left: 100px; /* Réduit l'espace lorsque la sidebar est plus petite */
   }
 }
+.scrollable-menu {
+  max-height: 400px;
+  overflow-y: auto;
+  scrollbar-width: thin; /* Pour rendre la barre de défilement plus discrète */
+}

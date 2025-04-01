@@ -18,6 +18,7 @@ const routes: Routes = [
             { path: 'activites', loadChildren: () => import('./activites/activites.module').then(m => m.ActivitesModule) },
             { path: 'finances', loadChildren: () => import('./finances/finances.module').then(m => m.FinancesModule) },
             { path: 'stocks', loadChildren: () => import('./stocks/stocks.module').then(m => m.StocksModule) },
+            { path: 'achats', loadChildren: () => import('./achats/achats.module').then(m => m.AchatsModule) },
             { path: 'cartographie', component:CartographieComponent }
 
         ]
