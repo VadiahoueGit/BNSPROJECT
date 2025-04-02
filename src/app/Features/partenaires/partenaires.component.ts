@@ -17,11 +17,16 @@ export class PartenairesComponent {
       image: 'assets/icon/store.png',
       title: 'Revendeurs',
       url: 'feature/partenaire/revendeur',
+    },
+    {
+      image: 'assets/icon/supplier.png',
+      title: 'Fournisseurs',
+      url:'feature/partenaire/fournisseur',
     }
   ]
   constructor(private _router: Router) { }
   ngOnInit(): void {
-    
+
   }
   displayItem(elt: any) {
     console.log(elt)

@@ -42,7 +42,7 @@ export class SuiviComptesComponent {
   ngOnInit() {
     this.CreditForm = this.fb.group({
       clientType: [null],
-      clientId: [null, Validators.required],
+      codeClient: [null, Validators.required],
       creditLiquide: [null, Validators.required],
       creditEmballage: [null, Validators.required],
       totalCredit: [{ value: 0,  }],
@@ -86,7 +86,7 @@ export class SuiviComptesComponent {
   }
 
   OnCloseModal() {
-    this.CreditForm.controls['clientId'].enable();
+    this.CreditForm.controls['codeClient'].enable();
     this.isModalOpen = false;
     this.CreditForm.reset()
     console.log(this.isModalOpen);
@@ -105,7 +105,7 @@ export class SuiviComptesComponent {
     this.creditId = data.id;
     this.isModalOpen = true;
     this.loadUpdateData()
-    this.CreditForm.controls['clientId'].disable();
+    this.CreditForm.controls['codeClient'].disable();
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
@@ -174,7 +174,7 @@ export class SuiviComptesComponent {
   }
   loadUpdateData(): void {
     this.CreditForm.patchValue({
-      clientId: this.updateData.clientId ,
+      codeClient: this.updateData.codeClient ,
       clientType: this.updateData.clientType,
       creditEmballage: this.updateData.creditEmballage,
       creditLiquide: this.updateData.creditLiquide,

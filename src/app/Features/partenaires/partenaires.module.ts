@@ -10,6 +10,7 @@ import { TableModule } from 'primeng/table';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedComponentModule } from "../shared-component/shared-component.module";
 import {InputTextModule} from "primeng/inputtext";
+import { FournisseurComponent } from './fournisseur/fournisseur.component';
 
 
 
@@ -17,7 +18,8 @@ import {InputTextModule} from "primeng/inputtext";
   declarations: [
     PartenairesComponent,
     ClientosrComponent,
-    RevendeurComponent
+    RevendeurComponent,
+    FournisseurComponent
   ],
     imports: [
         NgSelectModule,

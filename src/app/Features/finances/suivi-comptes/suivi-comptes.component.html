@@ -111,7 +111,7 @@
           class="modal-title fs-5 ms-3"
           id="staticBackdropLabel"
         >
-          Modification de l'article
+          Modification de credit
         </h1>
       </div>
       <div class="modal-body">
@@ -126,9 +126,9 @@
                   class="form-control"
                   [items]="dataClient"
                   bindLabel="displayName"
-                  bindValue="id"
+                  bindValue="codeClient"
                   (change)="OnclientChange($event)"
-                  formControlName="clientId"
+                  formControlName="codeClient"
                   [searchable]="true"
                 >
                 </ng-select>
