@@ -110,6 +110,8 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { ActivitesRoutingModule } from '../activites/activites-routing.module';
 import { ParametreRoutingModule } from '../parametre/parametre-routing.module';
 import { SaisieEntreeGratuitesComponent } from './entree-gratuite/saisie-entree-gratuites/saisie-entree-gratuites.component';
+import { ListeCommandesMarchandisesComponent } from './reception-marchandise/liste-commandes-marchandises/liste-commandes-marchandises.component';
+import { ListEmballagesComponent } from './reception-marchandise/list-emballages/list-emballages.component';
 
 
 @NgModule({
@@ -121,7 +123,9 @@ import { SaisieEntreeGratuitesComponent } from './entree-gratuite/saisie-entree-
     EntreeGratuiteComponent,
     HistoiqueGestionRetoursComponent,
     CreateCommandeFournisseursComponent,
-    SaisieEntreeGratuitesComponent
+    SaisieEntreeGratuitesComponent,
+    ListeCommandesMarchandisesComponent,
+    ListEmballagesComponent
   ],
   imports: [
     CommonModule,
