@@ -11,6 +11,7 @@ import { QuestionnaireVisiteComponent } from './questionnaire-visite/questionnai
 import { CommercialComponent } from './commercial/commercial.component';
 import { ListPrixComponent } from './list-prix/list-prix.component';
 import { MoyenDePaiementComponent } from './moyen-de-paiement/moyen-de-paiement.component';
+import { DevisesComponent } from './devises/devises.component';
 const routes: Routes = [
   { path: '', component: ParametreComponent },
   {
@@ -21,6 +22,7 @@ const routes: Routes = [
     },
   },
   { path: 'logistique', component: LogistiqueComponent },
+  { path: 'devise', component: DevisesComponent },
   { path: 'commercial', component: CommercialComponent },
   { path: 'typeprix', component: ListPrixComponent, resolve:{ArticleServiceService} },
   { path: 'moyen-paiement', component: MoyenDePaiementComponent, resolve:{ArticleServiceService} },

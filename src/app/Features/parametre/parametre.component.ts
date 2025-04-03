@@ -76,7 +76,7 @@ export class ParametreComponent implements OnInit {
     {
       image: 'assets/icon/currency.png',
       title: 'Devises',
-      url:'feature/datareference/bouteille-vide',
+      url:'feature/parametre/devise',
     }
   ]
   constructor(private _router: Router) { }
