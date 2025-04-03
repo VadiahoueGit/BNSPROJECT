@@ -144,7 +144,7 @@ export class SaisieCommandeComponent {
       this.detailPointDevente.telephoneGerant
     );
     this.commandClientForm.controls['numeroSAP'].setValue(
-      this.detailPointDevente.numeroSAP
+      this.detailPointDevente.numeroSAP.numeroSAP
     );
 
     this.commandClientForm.controls['montantCredit'].setValue(
@@ -394,7 +394,7 @@ export class SaisieCommandeComponent {
       soldeLiquide: parseInt(this.detailPointDevente.credit.creditLiquide),
       soldeEmballage: parseInt(this.detailPointDevente.credit.creditEmballage),
       statutCompte: this.detailPointDevente.isValide ? 'ACTIF' : 'INACTIF',
-      numeroSAP: this.detailPointDevente.numeroSAP,
+      numeroSAP: this.detailPointDevente.numeroSAP.numeroSAP,
       fraisTransport: formData.fraisTransport,
       enCours: formData.enCours,
       remise: formData.remise,

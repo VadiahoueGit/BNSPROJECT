@@ -32,7 +32,7 @@ export class FournisseurComponent {
   updateData: any = {};
   rowsPerPage: any;
   id: any = 0;
-  revendeurForm!: FormGroup;
+  fournisseurForm!: FormGroup;
   operation: string = '';
   isModalOpen: boolean = false;
   isEditMode: boolean = false;
@@ -57,57 +57,20 @@ export class FournisseurComponent {
     private toastr: ToastrService
   ) {}
   ngOnInit(): void {
-    this.revendeurForm = this.fb.group({
-      isAssocie: [null],
-      parentRevendeurId: [null],
-      groupeClientId: [null, Validators.required],
-      numeroRegistre: [null],
-      raisonSocial: [null, Validators.required],
-      contact: [''],
-      longitude: [null, Validators.required],
-      latitude: [null, Validators.required],
-      telephone: [''],
-      localiteId: [0, Validators.required],
-      depotId: [0, Validators.required],
-      zoneDeLivraisonId: [0, Validators.required],
-      nomProprietaire: ['', Validators.required],
-      telephoneProprietaire: [''],
-      nomGerant: ['', Validators.required],
-      telephoneGerant: [''],
-      quantiteMinimumACommander: [0, Validators.min(0)],
-      numeroCompteContribuable: [''],
-      familleProduitId: [0, Validators.required],
+    this.fournisseurForm = this.fb.group({
+      codeFss: [''],
+      nomFournisseur: ['', Validators.required],
+      codeGroupe: ['', Validators.required],
+      adresse: ['', Validators.required],
+      pays: ['', Validators.required],
+      devise: ['', Validators.required],
+      telephone1: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+      telephone2: ['', Validators.pattern('^[0-9]+$')],
+      siteWeb: ['', Validators.pattern('https?://.+')]
     });
 
-    this._articleService.ListGroupeRevendeurs.subscribe((res: any) => {
-      console.log(res, 'res client groupe');
-      this.clientTypes = res;
-    });
-    this.coreService.listLocalite.subscribe((res: any) => {
-      console.log(res, 'res localites');
-      this.localites = res;
-    });
-    this._articleService.ListGroupesArticles.subscribe((res: any) => {
-      console.log(res, 'res ListGroupesArticles');
-      this.ListGroupesArticles = res;
-    });
-
-    // this.GetLocaliteList();
-    this.GetDepotList();
-    this.GetZoneList();
-    this.GetRevendeurList(1);
-  }
-  onRccmSelected(event: any) {
-    this.selectedRccmFile = event.target.files[0];
   }
 
-  onCniSelected(event: any) {
-    this.selectedCniFile = event.target.files[0];
-  }
-
-  onDfeSelected(event: any) {
-    this.selectedDfeFile = event.target.files[0];
-  }
   goBack() {
     this.location.back();
   }
@@ -121,7 +84,7 @@ export class FournisseurComponent {
     this.GetRevendeurList(this.currentPage);
   }
   OnCreate() {
-    this.revendeurForm.enable();
+    this.fournisseurForm.enable();
     this.isModalOpen = true;
     this.operation = 'create';
     this.isEditMode = false;
@@ -133,28 +96,14 @@ export class FournisseurComponent {
     this.id = data.id;
     this.isModalOpen = true;
     this.loadClientDetails();
-    if(this.updateData.isAssocie){
-      this.disableForm()
-    }
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
 
-  disableForm()
-  {
-    this.revendeurForm.controls['groupeClientId'].disable();
-    this.revendeurForm.controls['numeroRegistre'].disable();
-    this.revendeurForm.controls['contact'].disable();
-    this.revendeurForm.controls['telephone'].disable();
-    this.revendeurForm.controls['nomProprietaire'].disable();
-    this.revendeurForm.controls['telephoneProprietaire'].disable();
-    this.revendeurForm.controls['numeroCompteContribuable'].disable();
-    this.revendeurForm.controls['familleProduitId'].disable();
-  }
 
   preloadData(event:any): void {
     this.selectedRevendeur = event
-    this.revendeurForm.patchValue({
+    this.fournisseurForm.patchValue({
       groupeClientId: event.groupeClient.id,
       numeroRegistre: event.numeroRegistre,
       contact: event.contact,
@@ -165,12 +114,12 @@ export class FournisseurComponent {
       numeroCompteContribuable: event.numeroCompteContribuable,
       familleProduitId: event.familleProduitId,
     });
-    console.log(this.revendeurForm.value);
+    console.log(this.fournisseurForm.value);
 
   }
 
   loadClientDetails(): void {
-    this.revendeurForm.patchValue({
+    this.fournisseurForm.patchValue({
       isAssocie: this.updateData.isAssocie,
       groupeClientId: this.updateData.groupeClient.id,
       numeroRegistre: this.updateData.numeroRegistre,
@@ -190,7 +139,7 @@ export class FournisseurComponent {
       numeroCompteContribuable: this.updateData.numeroCompteContribuable,
       familleProduitId: this.updateData.familleProduitId,
     });
-    console.log(this.revendeurForm);
+    console.log(this.fournisseurForm);
     if (this.updateData.numeroSAP != "")
     {
       this.numeroSap = this.updateData.numeroSAP;
@@ -312,7 +261,7 @@ export class FournisseurComponent {
   // }
   OnCloseModal() {
     this.isModalOpen = false;
-    this.revendeurForm.reset();
+    this.fournisseurForm.reset();
   }
   onDepotChange(event: any): void {
     const depotId = event?.id;
@@ -353,7 +302,7 @@ export class FournisseurComponent {
       .then((response: any) => {
         if (response) {
           console.log(response, 'response');
-          this.revendeurForm.patchValue({
+          this.fournisseurForm.patchValue({
             localiteId: response.data.zone.localite?.id || null,
           });
         }
@@ -370,7 +319,7 @@ export class FournisseurComponent {
     this.isActive = data;
     if (!this.isActive)
     {
-      this.revendeurForm.reset();
+      this.fournisseurForm.reset();
       this.selectedRevendeur = null;
     }
 
@@ -397,15 +346,15 @@ export class FournisseurComponent {
   }
   onSubmit() {
     this._spinner.show();
-    console.log(this.revendeurForm, 'form value');
+    console.log(this.fournisseurForm, 'form value');
     if (this.isEditMode) {
       this._articleService
-        .UpdateRevendeur(this.id, this.revendeurForm.value)
+        .UpdateRevendeur(this.id, this.fournisseurForm.value)
         .then(
           (response: any) => {
             console.log(' mis à jour avec succès', response);
             this._spinner.hide();
-            this.revendeurForm.reset();
+            this.fournisseurForm.reset();
             this.OnCloseModal();
             this.GetRevendeurList(1);
             this.toastr.success(response.message);
@@ -417,17 +366,17 @@ export class FournisseurComponent {
           }
         );
     } else {
-      this.revendeurForm.controls['isAssocie'].setValue(this.isActive)
+      this.fournisseurForm.controls['isAssocie'].setValue(this.isActive)
 
       if (this.isActive)
       {
-        this.revendeurForm.controls['parentRevendeurId'].setValue(this.selectedRevendeur.id)
+        this.fournisseurForm.controls['parentRevendeurId'].setValue(this.selectedRevendeur.id)
       }
-      this._articleService.CreateRevendeur(this.revendeurForm.value).then(
+      this._articleService.CreateRevendeur(this.fournisseurForm.value).then(
         (response: any) => {
           console.log('Nouveau revendeur créé avec succès', response);
           this._spinner.hide();
-          this.revendeurForm.reset();
+          this.fournisseurForm.reset();
           this.OnCloseModal();
           this.GetRevendeurList(1);
           this.toastr.success(response.message);
