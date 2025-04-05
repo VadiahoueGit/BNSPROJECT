@@ -50,7 +50,7 @@ export class ListeCommandesMarchandisesComponent {
   listRevendeurs: any[] = [];
   dataRevendeur: any[] = [];
   dataPointDeVente: any[] = [];
-  ListCommandeGratuites: any[] = [];
+  ListCommandeMarchandises: any[] = [];
   depotId: any = 0;
   constructor(
     private cdr: ChangeDetectorRef,
@@ -112,8 +112,8 @@ export class ListeCommandesMarchandisesComponent {
     };
     this._spinner.show();
     this.articleService.GetListCommandeGratuite(data).then((res: any) => {
-      console.log('ListCommandeGratuites:::>', res);
-      this.ListCommandeGratuites = res.data;
+      console.log('ListCommandeMarchandises:::>', res);
+      this.ListCommandeMarchandises = res.data;
       this._spinner.hide();
     });
   }
@@ -289,7 +289,7 @@ export class ListeCommandesMarchandisesComponent {
 
   }
   onPage(event: any) {
-    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.currentPage = event.first / event.rows + 1;
     this.rowsPerPage = event.rows;
   }
   OnDelete(Id: any) {

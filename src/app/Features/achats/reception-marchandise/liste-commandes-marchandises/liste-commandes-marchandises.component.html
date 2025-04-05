@@ -8,7 +8,7 @@
     <p-table
       [styleClass]="'p-datatable-sm'"
       #dt2
-      [value]="ListCommandeGratuites"
+      [value]="ListCommandeMarchandises"
       dataKey="id"
       [rows]="8"
       [rowsPerPageOptions]="[10, 25, 50]"
@@ -33,41 +33,41 @@
           </th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-ListCommandeGratuites let-i="index">
+      <ng-template pTemplate="body" let-ListCommandeMarchandises let-i="index">
         <tr>
           <td>
-            {{ ListCommandeGratuites.NumCommande }}
+            {{ ListCommandeMarchandises.NumCommande }}
           </td>
   
           <td>
-            {{ ListCommandeGratuites.client.nomEtablissement ? ListCommandeGratuites.client.nomEtablissement : ListCommandeGratuites.client.raisonSocial}}
+            {{ ListCommandeMarchandises.client.nomEtablissement ? ListCommandeMarchandises.client.nomEtablissement : ListCommandeMarchandises.client.raisonSocial}}
           </td>
           <td>
-            {{ ListCommandeGratuites.client.depot.nomDepot }}
+            {{ ListCommandeMarchandises.client.depot.nomDepot }}
           </td>
   
           <td>
             <span class="ml-1 vertical-align-middle">
-  <!--            {{ ListCommandeGratuites.articles[i].quantite }}-->
+  <!--            {{ ListCommandeMarchandises.articles[i].quantite }}-->
             </span>
           </td>
           <td>
             <span class="ml-1 vertical-align-middle">
-  <!--            {{ ListCommandeGratuites.articles[i].quantite }}-->
+  <!--            {{ ListCommandeMarchandises.articles[i].quantite }}-->
             </span>
           </td>
           <td>
             <tr class="d-flex justify-content-center gap-3">
               <td>
                 <i
-                  (click)="OnEdit(ListCommandeGratuites)"
+                  (click)="OnEdit(ListCommandeMarchandises)"
                   style="cursor: pointer"
                   class="fas fa-eye text-secondary"
                 ></i>
               </td>
               <td>
                 <i
-                  (click)="OnDelete(ListCommandeGratuites.id)"
+                  (click)="OnDelete(ListCommandeMarchandises.id)"
                   style="cursor: pointer"
                   class="fas fa-trash-alt text-danger"
                 ></i>
