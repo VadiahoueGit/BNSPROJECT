@@ -1,5 +1,5 @@
 {
-    "apiUrlBns":"https://armonysapi.bnsgroupe.net/api",
+    "apiUrlBns":"https://bnsapi.localdev.business/api",
     "webSocketUrl":" http://wsbnsapi.monassoci.com/",
-    "docUrl":"https://armonysapi.bnsgroupe.net"
+    "docUrl":"https://bnsapi.localdev.business/api"
 }
