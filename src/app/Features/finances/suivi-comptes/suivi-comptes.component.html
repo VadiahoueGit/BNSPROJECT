@@ -18,7 +18,7 @@
       <tr>
         <th style="color: var(--secondary-color)">Type client</th>
         <th style="color: var(--secondary-color)">Groupe client</th>
-        <th style="color: var(--secondary-color)">Client</th>
+        <th style="color: var(--secondary-color)">Client ou commercial</th>
         <th style="color: var(--secondary-color)">Credit emballage</th>
         <th style="color: var(--secondary-color)">Crédit liquide</th>
         <th style="color: var(--secondary-color)">Total crédit</th>
@@ -37,7 +37,7 @@
            </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.client?.raisonSocial ? dataList.client?.raisonSocial : dataList?.client?.nomEtablissement }}
+            {{ dataList.client?.raisonSocial ? dataList.client?.raisonSocial : dataList?.client?.nom+' '+dataList?.client?.prenoms }}
           </span>
         </td>
         <td>
@@ -120,7 +120,7 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="photo" class="form-label"
-                  >Clients <span class="text-danger">*</span></label
+                  >Clients ou commercial<span class="text-danger">*</span></label
                 >
                 <ng-select
                   class="form-control"

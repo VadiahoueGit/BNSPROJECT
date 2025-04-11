@@ -307,9 +307,9 @@ export class LivraisonComponent {
     console.log('zoneId', zone.id);
     if (zone.id) {
       // Filtrer selon l'ID de la zone
-      this.filteredList = this.ListCommande.filter(
-        (item: any) => item.client.zoneDeLivraison.id === zone.id
-      );
+      this.filteredList = this.ListCommande
+        .filter((item: any) => item.client.zoneDeLivraison.id === zone.id)
+        .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     } else {
       // Si aucune zone n'est sélectionnée, afficher toute la liste
       this.filteredList = [...this.ListCommande];
@@ -337,9 +337,9 @@ export class LivraisonComponent {
     // Unifier les deux objets dans un seul tableau
     this.ListCommande = [...commandeClient.data, ...commandeGratuite.data];
     console.log('ListCommande', this.ListCommande);
-    this.filteredList = this.ListCommande.filter(
-      (commande: any) => commande.statut === StatutCommande.NON_REGROUPE
-    );
+    this.filteredList = this.ListCommande
+      .filter((commande: any) => commande.statut === StatutCommande.NON_REGROUPE)
+      .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     console.log('filteredList', this.filteredList);
 
     this._spinner.hide();
@@ -724,6 +724,13 @@ export class LivraisonComponent {
   onVehiculeChange(event: any) {
     this.truckCapacity = event.capacite;
     console.log('truckCapacity', this.truckCapacity);
+    if (event.disponible === false) {
+      this.toastr.warning("Le véhicule est n'est pas disponible !");
+    }
+    this.cargaison = 0;
+    this.regroupementTable = [];
+    this.regroupementFinal= {};
+    this.onCheckboxClear();
   }
 
   GetVehiculeList() {

@@ -174,7 +174,7 @@ export class SuiviComptesComponent {
   }
   loadUpdateData(): void {
     this.CreditForm.patchValue({
-      codeClient: this.updateData.codeClient ,
+      codeClient: this.updateData.codeClient || this.updateData.code ,
       clientType: this.updateData.clientType,
       creditEmballage: this.updateData.creditEmballage,
       creditLiquide: this.updateData.creditLiquide,
@@ -206,13 +206,13 @@ export class SuiviComptesComponent {
     };
     try {
       // Effectuer les deux appels API en parallèle
-      const [revendeur, pointDeVente]: [any, any] = await Promise.all([
+      const [revendeur, commercial]: [any, any] = await Promise.all([
         this._articleService.GetListRevendeur(data), // Remplacez par votre méthode API
-        this.utilisateurService.GetPointDeVenteList(data),
+        this.utilisateurService.GetCommercialList(data),
       ]);
 
       console.log('Données revendeur:', revendeur);
-      console.log('Données pointDeVente:', pointDeVente);
+      console.log('Données commercial:', commercial);
       // Vérifier si plastiques et liquides sont bien des tableaux
       if (Array.isArray(revendeur.data)) {
         this.dataRevendeur = revendeur.data;
@@ -222,10 +222,16 @@ export class SuiviComptesComponent {
         console.error('Les données de plastiques ne sont pas un tableau');
       }
 
-      if (Array.isArray(pointDeVente.data)) {
-        this.dataPointDeVente = pointDeVente.data;
+      if (Array.isArray(commercial.data)) {
+        this.dataPointDeVente = commercial.data;
         // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
-        this.dataClient.push(...pointDeVente.data);
+        const transformed = commercial.data.map((c:any) => ({
+          ...c,
+          codeClient: c.codeClient || c.code
+        }));
+
+        this.dataClient = [...this.dataClient, ...transformed];
+
       } else {
         console.error('Les données de liquides ne sont pas un tableau');
       }
@@ -234,7 +240,7 @@ export class SuiviComptesComponent {
         .map((client) => ({
         ...client,
         displayName:
-          client.raisonSocial || client.nomEtablissement || 'N/A',
+          client.raisonSocial || client.nom+' '+client.prenoms || 'N/A',
       }));
       console.log('Données combinées dans dataList:', this.dataClient);
     } catch (error) {
