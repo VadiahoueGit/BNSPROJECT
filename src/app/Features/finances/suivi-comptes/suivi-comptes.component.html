@@ -33,45 +33,52 @@
           </span>
         </td>
         <td>
-          <span>{{ dataList.client?.groupeClient?.nomGroupe || dataList.client?.GroupeClient?.nomGroupe }}</span>
-           </td>
+          <span>{{ dataList.client?.groupeClient?.nomGroupe || dataList.client?.GroupeClient?.nomGroupe || 'Commercial' }}</span>
+        </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.client?.raisonSocial ? dataList.client?.raisonSocial : dataList?.client?.nom+' '+dataList?.client?.prenoms }}
+            {{ dataList.client?.raisonSocial ? dataList.client?.raisonSocial : dataList?.client?.nom + ' ' + dataList?.client?.prenoms }}
           </span>
         </td>
         <td>
-          {{ dataList.creditEmballage }}
+          {{ dataList.creditEmballageDeduit }}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.creditLiquide }}
+            {{ dataList.creditLiquideDeduit }}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.totalCredit }}
+            {{ dataList.totalCreditDeduit }}
           </span>
         </td>
 
         <td>
-          <tr class="d-flex justify-content-center gap-3">
-            <td>
-              <i
-                (click)="OnEdit(dataList)"
-                style="cursor: pointer"
-                class="fas fa-edit text-secondary"
-              ></i>
-            </td>
-            <td>
-              <i
-                (click)="OnDelete(dataList.id)"
-                style="cursor: pointer"
-                class="fas fa-trash-alt text-danger"
-              ></i>
-            </td>
-          </tr>
+      <tr class="d-flex justify-content-center gap-3">
+        <td>
+          <i
+            (click)="OnDetails(dataList)"
+            style="cursor: pointer"
+            class="fas fa-eye text-secondary"
+          ></i>
         </td>
+        <td>
+          <i
+            (click)="OnEdit(dataList)"
+            style="cursor: pointer"
+            class="fas fa-edit text-secondary"
+          ></i>
+        </td>
+        <td>
+          <i
+            (click)="OnDelete(dataList.id)"
+            style="cursor: pointer"
+            class="fas fa-trash-alt text-danger"
+          ></i>
+        </td>
+      </tr>
+      </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
@@ -113,14 +120,21 @@
         >
           Modification de credit
         </h1>
+        <h1
+          *ngIf="operation == 'detail'"
+          class="modal-title fs-5 ms-3"
+          id="staticBackdropLabel"
+        >
+          Flux de credit
+        </h1>
       </div>
-      <div class="modal-body">
-        <form [formGroup]="CreditForm">
+      <div class="modal-body" style="max-height: 600px; overflow-y: auto">
+        <form *ngIf="operation != 'detail'" [formGroup]="CreditForm">
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="photo" class="form-label"
-                  >Clients ou commercial<span class="text-danger">*</span></label
+                >Clients ou commercial<span class="text-danger">*</span></label
                 >
                 <ng-select
                   class="form-control"
@@ -136,7 +150,7 @@
 
               <div class="mb-3">
                 <label for="libelle" class="form-label"
-                  >Crédit liquide <span class="text-danger">*</span></label
+                >Crédit liquide <span class="text-danger">*</span></label
                 >
                 <input
                   type="number"
@@ -151,7 +165,7 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="format" class="form-label"
-                  >Crédit emballage <span class="text-danger">*</span></label
+                >Crédit emballage <span class="text-danger">*</span></label
                 >
                 <input
                   type="number"
@@ -163,7 +177,7 @@
 
               <div class="mb-3">
                 <label for="categorieId" class="form-label"
-                  >Total crédit <span class="text-danger">*</span></label
+                >Total crédit <span class="text-danger">*</span></label
                 >
                 <input
                   type="number"
@@ -174,6 +188,48 @@
             </div>
           </div>
         </form>
+        <div class="row" *ngIf="operation == 'detail'" >
+          <div class="col-md-4">
+            <strong>Crée par : </strong>
+            <span>{{ detail.createdBy.nom +' '+ detail.createdBy.nom }}</span>
+          </div>
+          <div class="col-md-4">
+            <strong>Solde liquide : </strong>
+            <span>{{ detail.soldeLiquide }}</span>
+          </div>
+          <div class="col-md-4">
+            <strong>Solde emballage :</strong>
+            <span>{{ detail.soldeEmballage }}</span>
+          </div>
+          <div class="col-md-4">
+            <strong>Solde total : </strong>
+            <span>{{ detail.totalSolde }}</span>
+          </div>
+        </div>
+        <table *ngIf="operation == 'detail'" class="table table-bordered table-hover">
+          <thead class="table-success">
+          <tr>
+            <th>Mouvements</th>
+            <th>Descriptions</th>
+            <th>Montant liquide</th>
+            <th>Montant emballage</th>
+            <th>Solde</th>
+            <th>Date</th>
+          </tr>
+          </thead>
+          <tbody>
+          <!-- Boucle sur chaque format -->
+          <tr *ngFor="let item of historiqueMouvement">
+            <td>{{ item.typeMouvement }}</td>
+            <td>{{ item.description }}</td>
+            <td>{{ item.montantLiquide }}</td>
+            <td>{{ item.montantEmballage }}</td>
+            <td>{{ item.soldeApresMouvement }}</td>
+            <td>{{ item.createdAt | date:'dd/MM/yyyy' }}</td>
+          </tr>
+          </tbody>
+        </table>
+
       </div>
 
       <div class="modal-footer gap-3 px-4">
@@ -185,6 +241,7 @@
           Annuler
         </button>
         <button
+          *ngIf="operation != 'detail'"
           type="submit"
           (click)="onSubmit()"
           class="btn btn-primary px-2"

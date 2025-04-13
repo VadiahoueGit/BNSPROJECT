@@ -1,4 +1,84 @@
-<div class="container-fluid flex-column min-vh-100 d-flex justify-content-center align-items-center">
-  <img style="width: 500px;" src="assets/image/armonyssansfond.png" alt="">
-  <h1 class="fw-bold text-primary my-5">Bienvenue !</h1>
+<!--<div class="container-fluid flex-column min-vh-100 d-flex justify-content-center align-items-center">-->
+<!--  <img style="width: 500px;" src="assets/image/armonyssansfond.png" alt="">-->
+<!--  <h1 class="fw-bold text-primary my-5">Bienvenue !</h1>-->
+<!--</div>-->
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="card text-white bg-primary mb-3">
+        <div class="card-header">Clients - Revendeur</div>
+        <div class="card-body">
+          <h5 class="card-title">150</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-success mb-3">
+        <div class="card-header">Clients - Point de vente</div>
+        <div class="card-body">
+          <h5 class="card-title">$4,500</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-warning mb-3">
+        <div class="card-header">Commandes en attente</div>
+        <div class="card-body">
+          <h5 class="card-title">75</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-danger mb-3">
+        <div class="card-header">Ventes journalière</div>
+        <div class="card-body">
+          <h5 class="card-title">5</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row align-items-stretch">
+    <div class="col-md-6 d-flex">
+      <ngx-charts-pie-chart
+        class="w-100"
+        [view]="view"
+        [scheme]="colorScheme"
+        [results]="single"
+        [gradient]="gradient"
+        [legend]="showLegend"
+        [legendPosition]="legendPosition"
+        [legendTitle]="legendTitle"
+        [labels]="showLabels"
+        [doughnut]="isDoughnut"
+        (select)="onSelect($event)"
+        (activate)="onActivate($event)"
+        (deactivate)="onDeactivate($event)"
+      >
+      </ngx-charts-pie-chart>
+    </div>
+
+    <div class="col-md-6 d-flex">
+      <ngx-charts-bar-horizontal-2d
+        class="w-100"
+        [view]="view"
+        [scheme]="colorScheme"
+        [schemeType]="schemeType"
+        [results]="multi"
+        [gradient]="false"
+        [xAxis]="showXAxis"
+        [yAxis]="showYAxis"
+        [legend]="showLegend"
+        [legendPosition]="legendPosition"
+        [showXAxisLabel]="showXAxisLabel"
+        [showYAxisLabel]="showYAxisLabel"
+        [xAxisLabel]="xAxisLabel"
+        [yAxisLabel]="yAxisLabel"
+        (select)="onSelect($event)"
+        (activate)="onActivate($event)"
+        (deactivate)="onDeactivate($event)"
+      >
+      </ngx-charts-bar-horizontal-2d>
+    </div>
+  </div>
+
 </div>

@@ -25,7 +25,8 @@ export class SuiviComptesComponent {
   updateData: any = {};
   creditId: any = 0;
   isEditMode: boolean = false;
-
+  historiqueMouvement: any = [];
+  detail :any
   dataRevendeur: any[] = [];
   dataPointDeVente: any[] = [];
   currentPage: number;
@@ -172,6 +173,14 @@ export class SuiviComptesComponent {
       }
     }
   }
+  OnDetails(data:any)
+  {
+    this.detail = data
+    this.isModalOpen = true;
+    this.operation = 'detail';
+    this.historiqueMouvement = data.mouvements;
+  }
+
   loadUpdateData(): void {
     this.CreditForm.patchValue({
       codeClient: this.updateData.codeClient || this.updateData.code ,

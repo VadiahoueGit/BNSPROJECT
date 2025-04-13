@@ -15,6 +15,7 @@ import { Location } from '@angular/common';
 })
 export class CommercialComponent {
   @ViewChild('dt2') dt2!: Table;
+  totalPages: number = 0;
   dataList!: any[];
   commercialForm!: FormGroup;
   loading: boolean = true;
@@ -112,7 +113,7 @@ export class CommercialComponent {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
 
-    // this.GetCommercialList(this.currentPage);
+    this.GetCommercialList(this.currentPage);
   }
   onSubmit(): void {
     this._spinner.show();
@@ -188,14 +189,16 @@ export class CommercialComponent {
   GetCommercialList(page:number)
   {
     let data = {
-      paginate: false,
+      paginate: true,
       page: page,
       limit: 8,
     };
+    console.log('data', data);
     this._spinner.show()
     this.utilisateurService.GetCommercialList(data).then((res:any)=>{
-      this.dataList = res.data
-      console.log('currentPage',this.currentPage);
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+        this.dataList = res.data;
+      console.log('currentPage', this.totalPages);
       this._spinner.hide()
       console.log(this.dataList)
     })
