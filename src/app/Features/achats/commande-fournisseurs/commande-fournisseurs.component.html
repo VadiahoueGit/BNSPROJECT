@@ -9,8 +9,8 @@
         (click)="activeElement('saisiecommande')">Saisie commande</a>
 
 
-    <!-- <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'suivicommmande'"
-        (click)="activeElement('suivicommmande')">Suivi commande</a> -->
+    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'validationcommmande'"
+        (click)="activeElement('validationcommmande')">Validation commande</a>
 
 </nav>
 
@@ -19,8 +19,8 @@
         <app-create-commande-fournisseurs></app-create-commande-fournisseurs>
     </div>
 
-    <div *ngIf="activeTab === 'suivicommmande'" class="tab-pane fade show active">
-        <!-- <app-suivi-commande-gratuite></app-suivi-commande-gratuite> -->
+    <div *ngIf="activeTab === 'validationcommmande'" class="tab-pane fade show active">
+        <app-validation-commande></app-validation-commande>
     </div>
 
 </div>

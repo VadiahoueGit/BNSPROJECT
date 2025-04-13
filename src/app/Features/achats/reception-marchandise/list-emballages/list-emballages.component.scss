@@ -1,20 +1,25 @@
-input[type="radio"] {
-    accent-color: green; /* Sets the color of the selected radio button */
-  }
-  
-  /* Optional: Style the labels to add spacing and font customization */
-  label {
-    font-size: 1rem;
-    color: #333;
-    cursor: pointer;
-  }
-  
-  label + label {
-    margin-left: 15px; /* Adds space between the two labels */
-  }
-  
-  
-  .custom-modal {
+.modal-dialog {
+  background-color: white;
+  border-radius: 0.3rem;
+  width: auto;
+  min-width: 60em; /* Augmenter la largeur minimale */
+  max-width: 90%; /* S'assurer qu'elle ne dépasse pas trop l'écran */
+  padding: 1rem;
+}
+strong,span{
+  font-size: 13px;
+}
+.modal-content{
+  background-color:white ;
+}
+
+.form-control {
+  margin-bottom: -0.5rem; /* Espacer les champs */
+}
+.form-control-custom{
+  width: 50px;
+}
+.custom-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -26,59 +31,46 @@ input[type="radio"] {
     align-items: center;
     z-index: 1050;
   }
-  
-  .modal-dialog {
-    background-color: white;
-    border-radius: 0.3rem;
-    width: 90%;
-    min-width: 45em;
-    padding: 1rem;
-  }
-  
-  .modal-dialog2 {
-    background-color: white;
-    border-radius: 0.3rem;
-    width: 45em;
-    padding: 1rem;
-  }
-  
+
+
+
   .modal-header, .modal-body, .modal-footer {
     padding: 1rem;
   }
-  
+
   .btn-close {
     background: transparent;
     border: none;
     font-size: 1.5rem;
   }
-  strong{
-    font-size: 13px;
-  }
-  span{
-    font-size: 13px;
-  }
-  
   .p-fluid .p-inputtext {
     width: 8em !important;
     height: 2.5rem;
-  }
-  fieldset{
-    border:1px solid gray;
-    border-radius:10px !important;
-    padding: 1em;
-  }
-  .p-column-filter-menu-button {
+}
+
+.p-column-filter-menu-button {
     display: none; /* Masquer l'icône de filtre */
   }
-  
+
   /* Ajuster l'espacement si nécessaire après suppression de l'icône */
   .p-column-filter {
     padding-right: 0; /* Supprime l'espace réservé à l'icône */
   }
-  .form-control-custom{
-    width: 50px;
-  }
   .label-fixed-width {
     min-width: 10px;
   }
-  
+
+  input[type="radio"] {
+    accent-color: green; /* Sets the color of the selected radio button */
+  }
+
+  /* Optional: Style the labels to add spacing and font customization */
+  label {
+    font-size: 1rem;
+    color: #333;
+    cursor: pointer;
+  }
+
+  label + label {
+    margin-left: 15px; /* Adds space between the two labels */
+  }

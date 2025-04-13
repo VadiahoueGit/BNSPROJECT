@@ -14,11 +14,11 @@ export class AchatsComponent {
       title: 'Commande fournisseurs',
       url: 'feature/achats/commande-fournisseur',
     },
-    {
-      image: 'assets/icon/lading.png',
-      title: 'Validation commande',
-      url:'feature/achats/validation-commande',
-    },
+    // {
+    //   image: 'assets/icon/lading.png',
+    //   title: 'Validation commande',
+    //   url:'feature/achats/validation-commande',
+    // },
     {
       image: 'assets/icon/delivery-box.png',
       title: 'Réception marchandise',

@@ -13,105 +13,113 @@ import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
   styleUrls: ['./list-emballages.component.scss']
 })
 export class ListEmballagesComponent {
-   @ViewChild('dt2') dt2!: Table;
+  @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
-  selectedArticles: any[] = [];
-  pointDeVente!: any[];
-  CommandeForm!:FormGroup
-  isChoiceModalOpen: boolean
+  dataList!: any[];
+  emballageRenduForm!: FormGroup;
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
   operation: string = '';
+  searchTerm: string = '';
   updateData: any = {};
+  detailPointDevente: any = {};
   articleId: any = 0;
   isEditMode: boolean = false;
-  searchTerm: string = '';
+  isChoiceModalOpen: boolean = false;
+  dataListFormats: any = [];
+  dataListConditionnements: any = [];
+  dataListProduits: any = [];
+  dataListGroupeArticles: any = [];
+  dataListBouteilleVide: any = [];
+  dataListPlastiqueNu: any = [];
+  selectedArticles: any = [];
+  dataRevendeur: any = [];
+  dataClient: any = [];
+  dataPointDeVente: any = [];
+  items: any = [];
   filteredArticleList: any[] = [];
-  dataListLiquides: any=[];
-  dataListArticlesProduits: any=[];
-  currentPage: number;
-  rowsPerPage: any;
+  depotId: number = 0;
+  // articles = [
+  //   { id: 1, libelle: 'Article A', liquide: 500, emballage: 200, total: 700 },
+  //   { id: 2, libelle: 'Article B', liquide: 800, emballage: 300, total: 1100 },
+  //   { id: 3, libelle: 'Article C', liquide: 400, emballage: 100, total: 500 },
+  // ];
+  selectedArticle: any = [];
+  dataListLiquides: any = [];
   stocksDisponibles: any = {};
   prixLiquide: any = {};
   prixEmballage: any = {};
   prixLiquideTotal: any = {};
-  totalLiquide:number = 0;
-  totalEmballage:number = 0;
-  totalGlobal:number = 0;
-  totalQte:number = 0;
+  totalLiquide: number = 0;
+  totalEmballage: number = 0;
+  totalGlobal: number = 0;
+  totalGlobalBeforeRemise: number = 0;
+  totalQte: number = 0;
   prixEmballageTotal: any = {};
   montantTotal: any = {};
-  selectedOption: string = 'gratuitClient';
+  clients: any = [];
+  currentPage: number;
+  rowsPerPage: any;
   listRevendeurs: any[] = [];
-  dataRevendeur: any[] = [];
-  dataPointDeVente: any[] = [];
-  dataListEmballage: any[] = [];
-  depotId: any = 0;
+  totalGlobalAfterRemise: number = 0;
+  prixLiquideArticleSelected: any;
+  prixEmballageArticleSelected: any;
+  ListCommandeClient: any;
   constructor(
-    private cdr: ChangeDetectorRef,
     private articleService: ArticleServiceService,
+    private utilisateurService: UtilisateurResolveService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService,
-    private utilisateurService:UtilisateurResolveService
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.CommandeForm = this.fb.group({
+    this.emballageRenduForm = this.fb.group({
       clientId: [null, Validators.required],
-      clientType: [null, Validators.required],
-      depotId: [null, Validators.required],
+      clientType: ['revendeur', ],
+      numeroCompte: [{ value: ''}, ],
+      raisonSociale: [{ value: 0, disabled: true }, ],
+      montantCredit: [{ value: 0, disabled: true }, ],
+      statutCompte: [{ value: '', disabled: true } ],
+      enCours: [{ value: 0, disabled: true } ],
+      soldeEmballage: [{ value: '', disabled: true }, ],
+      numeroSAP: [{ value: '', disabled: true }, ],
+      remise: [
+        0,
+        [Validators.required, Validators.min(0), Validators.max(100)],
+      ],
+      contact: [{ value: '', disabled: true }, ],
+      soldeLiquide: [{ value: '', disabled: true }, ],
+      fraisTransport: [0,Validators.required ],
       articles: this.fb.array([]),
     });
-    this.GetArticleList(1)
-    this.LoadPdv()
-    this.GetRevendeurList(1)
-    this.GetListCommandeGratuite(1)
-    this.fetchData()
-  }
-  GetRevendeurList(page: number) {
-    let data = {
-      paginate: false,
-      page: page,
-      limit: 8,
-    };
-    this._spinner.show();
-    this.articleService.GetListRevendeur(data).then((res: any) => {
-      console.log('GetListRevendeur:::>', res);
-      this.listRevendeurs = res.data;
-      this._spinner.hide();
+
+    this.fetchData();
+
+    this.articleService.ListPlastiquesNu.subscribe((res: any) => {
+      this.dataListPlastiqueNu = res;
     });
-  }
-  GetArticleList(page:number) {
-    let data = {
-      paginate: false,
-      page:page,
-      limit: 8,
-    };
-    this._spinner.show();
-    this.articleService.GetArticleList(data).then((res: any) => {
-      console.log('DATATYPEPRIX:::>', res);
-      this.dataListLiquides = res.data;
-      this.dataListLiquides.forEach((item: any) => {
-        this.GetStockDisponibleByDepot(item)
-      })
-      this.filteredArticleList = this.dataListLiquides;
-      this._spinner.hide();
+
+    this.articleService.ListBouteilleVide.subscribe((res: any) => {
+      this.dataListBouteilleVide = res;
     });
-  }
-  GetListCommandeGratuite(page:number) {
-    let data = {
-      paginate: false,
-      page:page,
-      limit: 8,
-    };
-    this._spinner.show();
-    this.articleService.GetEmballageList(data).then((res: any) => {
-      console.log('dataListEmballage:::>', res);
-      this.dataListEmballage = res.data;
-      this._spinner.hide();
+
+    this.articleService.ListTypeArticles.subscribe((res: any) => {
+      this.dataListProduits = res;
+      console.log(this.dataListProduits, 'this.dataListProduits ');
     });
+    this.articleService.ListGroupesArticles.subscribe((res: any) => {
+      this.dataListGroupeArticles = res;
+    });
+    this.GetListCommandeClient(1);
+
+this.GetArticleList(1)
+  }
+
+  onDelete(item: any) {
+    console.log(item);
   }
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
@@ -122,6 +130,11 @@ export class ListEmballagesComponent {
   clear(table: Table) {
     table.clear();
   }
+  filterGlobal(event: any) {
+    const inputElement = event.target as HTMLInputElement;
+    const value = inputElement?.value || '';
+    this.dt2.filterGlobal(value, 'contains');
+  }
 
   OnCloseModal() {
     this.totalEmballage = 0;
@@ -131,20 +144,13 @@ export class ListEmballagesComponent {
     this.filteredArticleList = [];
     this.isModalOpen = false;
     this.selectedArticles = [];
-    (this.CommandeForm.get('articles') as FormArray).clear();
-    console.log(this.isModalOpen);
+    (this.emballageRenduForm.get('articles') as FormArray).clear();
   }
   OnCreate() {
     this.isEditMode = false;
     this.isModalOpen = true;
     this.operation = 'create';
-    console.log(this.isModalOpen);
-  }
-
-  selectArticle() {
-    this.isEditMode = false;
-    this.isChoiceModalOpen = true;
-    this.operation = 'create';
+    this.emballageRenduForm.reset();
     console.log(this.isModalOpen);
   }
 
@@ -168,277 +174,373 @@ export class ListEmballagesComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-
-  onSubmit(): void {
-    this.CommandeForm.controls['depotId'].setValue(this.depotId);
-    console.log(this.CommandeForm.value);
-    if (this.CommandeForm.valid) {
-      this._spinner.show()
-      this.articleService.CreateCommandGratuite(this.CommandeForm.value).then((res: any) => {
-        console.log(res,'enregistré avec succes')
-        this._spinner.hide();
-        this.CommandeForm.reset();
-        this.GetListCommandeGratuite(1)
-        this.OnCloseModal()
-        this.toastr.success(res.message);
-      }, (error: any) => {
-          this._spinner.hide();
-          this.toastr.info(error.error.message);
-          console.error('Erreur lors de la création', error);
-      })
-    }else{
-      this.toastr.warning('Formulaire invalide');
-    }
-
-  }
-  LoadPdv() {
+  GetArticleList(page: number) {
     let data = {
       paginate: false,
-      page: 1,
+      page: page,
       limit: 8,
     };
-    this.utilisateurService.GetPointDeVenteList(data).then((res: any) => {
-      this.pointDeVente = res.data
-      console.log('pointDeVente', res)
-    }, (error: any) => {
-      this._spinner.hide()
-    })
+    this._spinner.show();
+    this.articleService.GetArticleList(data).then((res: any) => {
+      console.log('filteredArticleList:::>', res);
+      this.dataListLiquides = res.data;
+      this.dataListLiquides.forEach((item: any) => {
+        this.GetStockDisponibleByDepot(item);
+      });
+      this.filteredArticleList = this.dataListLiquides;
+      this._spinner.hide();
+    });
   }
-  onCheckboxChange(article: any): void {
-    this.GetPrixByArticle(article)
-    if (article.isChecked) {
-      this.selectedArticles.push(article);
-      this.afficherArticlesSelectionnes()
-    } else {
-      delete article.quantite;
-      const indexToRemove = this.selectedArticles.findIndex(
-        (selectedArticle:any) => selectedArticle.libelle === article.libelle
+
+  applyRemise() {
+    const remise = this.emballageRenduForm.get('remise')?.value || 0;
+    const fraisTransport =
+      this.emballageRenduForm.get('fraisTransport')?.value || 0;
+
+    this.totalGlobalAfterRemise =
+      this.totalGlobalBeforeRemise * (1 - remise / 100);
+
+    this.totalGlobal = this.totalGlobalAfterRemise + fraisTransport;
+
+    console.log('Montant global après remise :', this.totalGlobalAfterRemise);
+    console.log('Montant final après frais de transport :', this.totalGlobal);
+  }
+
+  applyFraisTransport() {
+    const remise = this.emballageRenduForm.get('remise')?.value || 0;
+    const fraisTransport =
+      this.emballageRenduForm.get('fraisTransport')?.value || 0;
+
+    this.totalGlobalAfterRemise =
+      this.totalGlobalBeforeRemise * (1 - remise / 100);
+
+    this.totalGlobal = this.totalGlobalAfterRemise + fraisTransport;
+
+    console.log('Montant final après frais de transport :', this.totalGlobal);
+  }
+  removeArticle(item: any): void {
+    item.isChecked = false;
+    this.onCheckboxChange(item);
+
+    const articlesControl = this.emballageRenduForm.controls['articles'] as FormArray;
+    const articlesValue = articlesControl.value || [];
+
+    // Trouver l'article à retirer
+    const articleToRemove = articlesValue.find((i: any) => i.codeArticleLiquide === item.reference);
+
+    if (articleToRemove) {
+      // Calcul des totaux à retirer
+      const quantite = articleToRemove.quantite;
+      const prixLiquide = this.prixLiquide[articleToRemove.codeArticleLiquide];
+      const prixEmballage = this.prixEmballage[articleToRemove.codeArticleEmballage];
+      const montantTotal = (prixLiquide + prixEmballage) * quantite;
+
+      // Soustraire les valeurs des totaux
+      this.totalEmballage -= prixEmballage * quantite || 0;
+      this.totalLiquide -= prixLiquide * quantite || 0;
+      this.totalGlobalBeforeRemise -= montantTotal || 0;
+      this.totalQte -= quantite;
+
+      // Retirer l'article de la liste
+      const updatedArticles = articlesValue.filter(
+        (i: any) => i.codeArticleLiquide !== item.reference
       );
-      if (indexToRemove !== -1) {
-        this.selectedArticles.splice(indexToRemove, 1);
-        this.afficherArticlesSelectionnes()
+
+      // Vider le FormArray actuel
+      while (articlesControl.length !== 0) {
+        articlesControl.removeAt(0);
+      }
+
+      // Ajouter les éléments mis à jour dans le FormArray
+      updatedArticles.forEach((article: any) => {
+        articlesControl.push(this.fb.group(article)); // Assuming fb is FormBuilder
+      });
+
+      // Forcer la mise à jour de la validité
+      articlesControl.updateValueAndValidity();
+
+      console.log("Articles après suppression :", updatedArticles);
+
+      // Appliquer la remise sans recalculer les prix
+      this.applyRemise();
+    }
+  }
+
+  calculatePrix(data: any) {
+    if (this.prixLiquideTotal[data.id]) {
+      this.totalEmballage -= this.prixEmballageTotal[data.id] || 0;
+      this.totalLiquide -= this.prixLiquideTotal[data.id] || 0;
+      this.totalGlobalBeforeRemise -= this.montantTotal[data.id] || 0;
+      this.totalQte -= data.oldQuantite || 0;
+    }
+
+    this.prixLiquideTotal[data.id] = data.quantite * this.prixLiquide[data.id];
+    this.prixEmballageTotal[data.id] = data.quantite * this.prixEmballage[data.id];
+    this.montantTotal[data.id] = this.prixLiquideTotal[data.id] + this.prixEmballageTotal[data.id];
+
+    this.totalEmballage += this.prixEmballageTotal[data.id];
+    this.totalLiquide += this.prixLiquideTotal[data.id];
+    this.totalGlobalBeforeRemise += this.montantTotal[data.id];
+    this.totalQte += data.quantite;
+
+    this.applyRemise();
+
+    console.log(data, 'data article');
+    data.oldQuantite = data.quantite;
+
+    // Accéder aux valeurs du FormArray
+    const articlesControl = this.emballageRenduForm.controls['articles'] as FormArray;
+    const articlesValue = articlesControl.value;
+
+    // Vérifier si l'article existe déjà dans 'this.articles' (articlesValue)
+    const existingArticleIndex = articlesValue.findIndex(
+      (item: any) => item.codeArticleLiquide === data.liquide.code
+    );
+
+    if (existingArticleIndex !== -1) {
+      // Si l'article existe, on met à jour sa quantité et son prix
+      articlesControl.at(existingArticleIndex).patchValue({
+        quantite: data.quantite,
+        prixUnitaireLiquide: this.prixLiquide[data.id],
+        prixUnitaireEmballage: this.prixEmballage[data.id],
+      });
+    } else {
+      // Sinon, on ajoute un nouvel article
+      articlesControl.push(
+        this.fb.group({
+          groupeArticleId: data.groupearticle.id,
+          codeArticleLiquide: data.liquide.code,
+          codeArticleEmballage: data.liquide.emballage.code,
+          prixUnitaireLiquide: this.prixLiquide[data.id],
+          prixUnitaireEmballage: this.prixEmballage[data.id],
+          quantite: data.quantite,
+        })
+      );
+    }
+  }
+
+  async GetStockDisponibleByDepot(item: any): Promise<any> {
+    let data = {
+      productId: item.liquide.code,
+      depotId: this.depotId,
+    };
+
+    try {
+      // Attendre la réponse de la promesse
+      const response: any = await this.articleService.GetStockDisponibleByDepot(
+        data
+      );
+      console.log(response);
+      // Vérifier si le statusCode est 200
+      if (response) {
+        this.stocksDisponibles[item.liquide.id] = response.quantiteDisponible;
+        console.log(this.stocksDisponibles[item.liquide.id]);
+      } else if (response.statusCode === 404) {
+        this.stocksDisponibles[item.liquide.id] = 0; // Si le code est 404, retourner 0
+      } else {
+        return null; // Si un autre code, retourner null ou une valeur par défaut
+      }
+    } catch (error: any) {
+      console.log(error);
+      if (error.status === 404) {
+        this.stocksDisponibles[item.liquide.id] = 0; // Si le code est 404, retourner 0
       }
     }
   }
-  removeArticle(item: any): void {
-    // Créer une copie de l'article avec la quantité définie à 0
-    const data = {
-      ...item,
-      quantite: 0,
-      groupearticle: { id: item.groupearticle.id },
-      id: item.groupearticle.id, // Assurez-vous que l'ID correspond
+
+  get articles(): FormArray {
+    return this.emballageRenduForm.get('articles') as FormArray;
+  }
+  onSubmit(): void {
+    const formData = this.emballageRenduForm.getRawValue();
+    console.log('Données à envoyer au service :', formData)
+
+    const payload = {
+      clientType: this.detailPointDevente.credit.clientType,
+      clientId: this.detailPointDevente.id,
+      numeroCompte: this.detailPointDevente.numeroCompteContribuable,
+      raisonSociale: this.detailPointDevente.raisonSocial,
+      contact: this.detailPointDevente.telephoneGerant,
+      montantCredit: parseInt(this.detailPointDevente.credit.totalCredit),
+      soldeLiquide: parseInt(this.detailPointDevente.credit.creditLiquide),
+      soldeEmballage: parseInt(this.detailPointDevente.credit.creditEmballage),
+      statutCompte: this.detailPointDevente.isValide ? 'ACTIF' : 'INACTIF',
+      numeroSAP: this.detailPointDevente.numeroSAP.numeroSAP,
+      fraisTransport: formData.fraisTransport,
+      enCours: formData.enCours,
+      remise: formData.remise,
+      articles: formData.articles,
     };
 
-    // Mettre à jour l'état de l'article à 'non sélectionné'
-    item.isChecked = false;
-
-    // Calculer les prix en passant l'article avec quantité 0 (pour gestion des totaux)
-    this.calculatePrix(data);
-
-    // Gérer le changement de la case à cocher
-    this.onCheckboxChange(item);
-
-    // Supprimer l'article de la liste `selectedArticles`
-    const index = this.selectedArticles.findIndex((i: any) => i.id === item.id);
-
-    if (index !== -1) {
-      // Suppression de l'article de la liste
-      this.selectedArticles = this.selectedArticles.slice(0, index).concat(this.selectedArticles.slice(index + 1));
+    if (this.emballageRenduForm.valid) {
+      this._spinner.show();
+      this.articleService.CreateCommandClient(payload).then(
+        (res: any) => {
+          console.log(res, 'enregistré avec succes');
+          this._spinner.hide();
+          this.emballageRenduForm.reset();
+          this.GetListCommandeClient(1);
+          this.OnCloseModal();
+          this.toastr.success(res.message);
+        },
+        (error: any) => {
+          this._spinner.hide();
+          this.toastr.info(error.error.message);
+          console.error('Erreur lors de la création', error);
+        }
+      );
+    } else {
+      this.toastr.warning('Formulaire invalide');
     }
+  }
+  GetListCommandeClient(page: number) {
+    let data = {
+      paginate: false,
+      page: page,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.articleService.GetListCommandeClient(data).then((res: any) => {
+      console.log('dataList:::>', res);
+      this.dataList = res.data;
+      this._spinner.hide();
+    });
+  }
+  selectArticle() {
+    this.isEditMode = false;
+    this.isChoiceModalOpen = true;
+    this.operation = 'create';
+    this.cdr.detectChanges();
+    console.log(this.isChoiceModalOpen);
+  }
+  validateQuantite(data: any): void {
+    console.log(data, 'validateQuantiteData');
 
-    // Optionnel : si tu as d'autres actions liées à la suppression, ajoute-les ici
+    // Vérifier si la quantité saisie dépasse la quantité disponible
+    if (data.quantite > this.stocksDisponibles[data.liquide.id]) {
+      // Réinitialiser la quantité à la quantité disponible
+      data.quantite = '';
+
+      // Afficher un message de warning
+      this.toastr.warning('La quantité saisie dépasse la quantité disponible.');
+    } else {
+      this.calculatePrix(data);
+    }
+  }
+
+  onCheckboxChange(article: any): void {
+    this.GetPrixByArticle(article);
+    // this.GetStockDisponibleByDepot(article)
+    if (article.isChecked) {
+      this.selectedArticles.push(article);
+      this.afficherArticlesSelectionnes();
+    } else {
+      delete article.quantite;
+      const indexToRemove = this.selectedArticles.findIndex(
+        (selectedArticle: any) => selectedArticle.libelle === article.libelle
+      );
+      if (indexToRemove !== -1) {
+        this.selectedArticles.splice(indexToRemove, 1);
+        this.afficherArticlesSelectionnes();
+      }
+    }
+    console.log(this.selectedArticles, 'selectedArticles');
+  }
+  async GetPrixByArticle(item: any): Promise<any> {
+    let data = {
+      id: item.id,
+    };
+
+    try {
+      // Attendre la réponse de la promesse
+      const response: any = await this.articleService.GetPrixByProduit(data);
+      console.log(response);
+      // Vérifier si le statusCode est 200
+      if (response.data) {
+        this.prixLiquide[item.id] = response.data.PrixLiquide;
+        this.prixEmballage[item.id] = response.data.PrixConsigne;
+        // this.prixLiquideArticleSelected =  this.prixEmballage[item.id]
+        // this.prixEmballageArticleSelected =  this.prixLiquide[item.id]
+        console.log('prixByArticle', this.prixLiquide[item.id]);
+      }
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
+  afficherArticlesSelectionnes() {
+    console.log(this.selectedArticles);
   }
 
   onSubmitSelection() {
     this.isChoiceModalOpen = false;
   }
-
-  afficherArticlesSelectionnes() {
-    console.log(this.selectedArticles);
-  }
-  filterArticles(): void {
-    console.log(this.searchTerm)
-    if (this.searchTerm) {
-      this.filteredArticleList = this.dataListLiquides.filter((article: any) =>
-        article.libelle.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        article.reference.toLowerCase().includes(this.searchTerm.toLowerCase())
-      );
-      console.log(this.filteredArticleList)
-    } else {
-      this.filteredArticleList = [...this.dataListLiquides];
-    }
-  }
   OnCloseChoiceModal() {
-    this.deselectAllItems()
+    this.deselectAllItems();
     this.isChoiceModalOpen = false;
-    console.log(this.isModalOpen)
+    console.log(this.isModalOpen);
+    // this.filteredArticleList = []
   }
   deselectAllItems(): void {
     this.selectedArticles.forEach((item: any) => {
       delete item.quantite;
       this.onCheckboxChange(item);
       item.isChecked = false;
-
     });
 
     this.selectedArticles = [];
-
+  }
+  // onSearchClient(): void {}
+  loadArticleDetails(): void {
+    this.emballageRenduForm.patchValue({
+      photo: this.updateData.photo ?? '',
+      libelle: this.updateData.libelle,
+      format: this.updateData.format,
+      Conditionnement: this.updateData.Conditionnement,
+      categorieId: this.updateData.categorieproduit.id,
+      groupeId: this.updateData.groupearticle.id,
+      plastiquenuId: this.updateData.plastiquenu.id,
+      bouteillevideId: this.updateData.bouteillevide.id,
+      liquideId: 1,
+    });
   }
   onPage(event: any) {
-    this.currentPage = event.first / event.rows + 1;
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
+    this.GetArticleList(this.currentPage);
+  }
+
+  filterArticles(): void {
+    console.log(this.searchTerm);
+    console.log(this.dataListLiquides,'dataListLiquides');
+    console.log(this.filteredArticleList,'filteredArticleList');
+    if (this.searchTerm) {
+      this.filteredArticleList = this.dataListLiquides.filter(
+        (article: any) =>
+          article.libelle
+            .toLowerCase()
+            .includes(this.searchTerm.toLowerCase()) ||
+          article.reference.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+      console.log(this.filteredArticleList);
+    } else {
+      this.filteredArticleList = [...this.dataListLiquides];
+    }
   }
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
-      (res:any) => {
+      (res: any) => {
         if (res.isConfirmed == true) {
           this._spinner.show();
           this.articleService.DeletedArticle(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
+            this.GetArticleList(1);
             this._spinner.hide();
           });
         } else {
         }
       }
     );
-  }
-  onRevendeurChange(selectedItem: any): void {
-    console.log('Élément sélectionné :', selectedItem);
-    this.depotId = selectedItem.depot.id;
-    this.CommandeForm.controls["clientType"].setValue(selectedItem.role);
-    this.GetArticleList(1)
-  }
-  async GetStockDisponibleByDepot(item: any): Promise<any> {
-    let data = {
-      productId: item.liquide.code,
-      depotId:this.depotId
-    };
-
-    try {
-      // Attendre la réponse de la promesse
-      const response:any = await this.articleService.GetStockDisponibleByDepot(data);
-      console.log(response)
-      // Vérifier si le statusCode est 200
-      if (response) {
-        this.stocksDisponibles[item.liquide.id] = response.quantiteDisponible;
-      } else if (response.statusCode === 404) {
-        this.stocksDisponibles[item.liquide.id] =  0; // Si le code est 404, retourner 0
-      } else {
-        return null; // Si un autre code, retourner null ou une valeur par défaut
-      }
-    } catch (error:any) {
-      console.log(error);
-      if (error.status === 404) {
-        this.stocksDisponibles[item.liquide.id] = 0; // Si le code est 404, retourner 0
-      }
-    }
-
-    console.log('totalite',this.stocksDisponibles);
-  }
-  validateQuantite(data: any): void {
-    // Vérifier si la quantité saisie dépasse la quantité disponible
-    if (data.quantite > this.stocksDisponibles[data.liquide.id]) {
-      // Réinitialiser la quantité à la quantité disponible
-      data.quantite ='';
-      // Afficher un message de warning
-      this.toastr.warning('La quantité saisie dépasse la quantité disponible.');
-    }else{
-      this.calculatePrix(data)
-    }
-  }
-  get articles(): FormArray {
-    return this.CommandeForm.get('articles') as FormArray;
-  }
-
-  calculatePrix(data: any) {
-    console.log('DATA:::>', data);
-
-    const prixLiquide = this.prixLiquide[data.id] || 0;
-    const prixEmballage = this.prixEmballage[data.id] || 0;
-    const quantite = data.quantite || 0;
-    console.log('groupearticle:::>', data.groupearticle.id);
-
-    const existingArticleIndex = this.articles.controls.findIndex(
-      (control: any) => control.value.codeArticleLiquide === data.liquide.code
-    );
-
-    if (existingArticleIndex !== -1) {
-      // Si l'article existe, on le modifie
-      const existingArticle = this.articles.at(existingArticleIndex).value;
-      const oldQuantite = existingArticle.quantite || 0;
-      const differenceQuantite = quantite - oldQuantite;
-
-      // ✅ Décrémentation des anciens totaux
-      this.totalEmballage -= oldQuantite * prixEmballage;
-      this.totalLiquide -= oldQuantite * prixLiquide;
-      this.totalQte -= oldQuantite;
-
-      console.log(this.totalEmballage, oldQuantite, '*', prixEmballage);
-      console.log(this.totalLiquide, oldQuantite, '*', prixLiquide);
-      console.log(this.totalQte);
-
-      // ✅ Suppression si la quantité est 0
-      if (quantite === 0) {
-        // Si la quantité est 0, on supprime l'article
-        this.articles.removeAt(existingArticleIndex);
-        delete this.prixEmballageTotal[data.id];
-        delete this.prixLiquideTotal[data.id];
-        delete this.montantTotal[data.id];
-      } else {
-        // ✅ Mise à jour des totaux avec les nouvelles quantités
-        this.prixLiquideTotal[data.id] = quantite * prixLiquide;
-        this.prixEmballageTotal[data.id] = quantite * prixEmballage;
-
-        this.totalEmballage += this.prixEmballageTotal[data.id];
-        this.totalLiquide += this.prixLiquideTotal[data.id];
-        this.totalQte += quantite;
-
-        // Mise à jour de la quantité de l'article dans le formulaire
-        this.articles.at(existingArticleIndex).patchValue({
-          quantite: quantite,
-        });
-      }
-    } else {
-      // ✅ Ajout d'un nouvel article
-      this.prixLiquideTotal[data.id] = quantite * prixLiquide;
-      this.prixEmballageTotal[data.id] = quantite * prixEmballage;
-
-      this.totalEmballage += this.prixEmballageTotal[data.id];
-      this.totalLiquide += this.prixLiquideTotal[data.id];
-      this.totalQte += quantite;
-
-      this.articles.push(
-        this.fb.group({
-          groupeArticleId: data.groupearticle.id,
-          codeArticleLiquide: data.liquide.code,
-          codeArticleEmballage: data.liquide.emballage.code,
-          prixUnitaireLiquide: prixLiquide,
-          prixUnitaireEmballage: prixEmballage,
-          quantite: quantite,
-        })
-      );
-    }
-
-    // ✅ Recalcul des montants
-    this.montantTotal[data.id] = (this.prixLiquideTotal[data.id] || 0) + (this.prixEmballageTotal[data.id] || 0);
-
-    // ✅ Mise à jour des totaux globaux
-    this.totalEmballage = this.articles.controls.reduce((acc, control) => acc + (control.value.prixUnitaireEmballage * control.value.quantite), 0);
-    this.totalLiquide = this.articles.controls.reduce((acc, control) => acc + (control.value.prixUnitaireLiquide * control.value.quantite), 0);
-    this.totalQte = this.articles.controls.reduce((acc, control) => acc + control.value.quantite, 0);
-    this.totalGlobal = this.totalEmballage + this.totalLiquide;
-
-    console.log('Totaux:', {
-      totalLiquide: this.totalLiquide,
-      totalEmballage: this.totalEmballage,
-      montantTotal: this.montantTotal[data.id],
-      totalGlobal: this.totalGlobal,
-      totalQte: this.totalQte,
-    });
-
-    // Forcer le rafraîchissement de l'interface
-    this.cdr.detectChanges();
   }
 
   async fetchData() {
@@ -461,56 +563,22 @@ export class ListEmballagesComponent {
         this.dataRevendeur = revendeur.data;
         // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
         this.listRevendeurs.push(...revendeur.data);
+        console.log('Données listRevendeurs:', this.listRevendeurs);
       } else {
         console.error('Les données de plastiques ne sont pas un tableau');
       }
 
-      if (Array.isArray(pointDeVente.data)) {
-        this.dataPointDeVente = pointDeVente.data;
-        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
-        this.listRevendeurs.push(...pointDeVente.data);
-      } else {
-        console.error('Les données de liquides ne sont pas un tableau');
-      }
-
       this.listRevendeurs = this.listRevendeurs
-        .filter((client:any) => client.credit != null)
-        .map((client:any) => ({
+        .filter((client: any) => client.credit != null)
+        .map((client: any) => ({
           ...client,
-          displayName:
-            client.raisonSocial || client.nomEtablissement || 'N/A',
-        }))
-        .filter(
-          (client: any, index: number, self: any[]) =>
-            self.findIndex((c: any) => c.id === client.id) === index
-        );
+          displayName: client.raisonSocial || 'N/A',
+        }));
       console.log('Données combinées dans dataList:', this.listRevendeurs);
     } catch (error) {
       // Gestion des erreurs
       console.error('Erreur lors de la récupération des données:', error);
     }
   }
-  async GetPrixByArticle(item: any): Promise<any> {
-    let data = {
-      id: item.id,
-    };
-
-    try {
-      // Attendre la réponse de la promesse
-      const response:any = await this.articleService.GetPrixByProduit(data);
-      console.log(response)
-      // Vérifier si le statusCode est 200
-      if (response.data) {
-        this.prixLiquide[item.id] = 0;
-        this.prixEmballage[item.id] = response.data.PrixConsigne;
-        console.log('prixLiquide',this.prixLiquide[item.id])
-        console.log('prixEmballage',this.prixEmballage[item.id])
-      }
-    } catch (error:any) {
-      console.log(error);
-    }
-  }
-
-  protected readonly parseInt = parseInt;
   protected readonly Number = Number;
 }
