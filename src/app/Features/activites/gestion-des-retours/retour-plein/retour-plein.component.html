@@ -141,7 +141,8 @@
                 <th scope="col">Désignation</th>
                 <th scope="col">Conditionnement</th>
                 <th scope="col">Quantité</th>
-                <th scope="col">Prix unitaire</th>
+                <th scope="col">Prix unitaire liquide</th>
+                <th scope="col">Prix unitaire emballage</th>
               </tr>
               </thead>
               <tbody>
@@ -150,7 +151,8 @@
                 <td>{{ item.liquide.libelle }}</td>
                 <td>{{ item.liquide.condition }}</td>
                 <td>{{ item.quantite }}</td>
-                <td>{{ item.prixUnitaire }}</td>
+                <td>{{ item.prixUnitaireLiquide }}</td>
+                <td>{{ item.prixUnitaireEmballage }}</td>
               </tr>
               </tbody>
             </table>
