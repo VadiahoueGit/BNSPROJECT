@@ -315,7 +315,6 @@
                     <thead>
                     <tr style="font-size: small">
                       <th scope="col" class="text-secondary">Produits</th>
-                      <th scope="col" class="text-secondary">Disponibilité</th>
                       <th scope="col" class="text-secondary text-center">
                         Choix
                       </th>
@@ -327,9 +326,9 @@
                       style="font-size: small"
                     >
                       <th scope="row">{{ article.libelle }}</th>
-                      <th scope="row">
+                      <!-- <th scope="row">
                         {{ stocksDisponibles[article.liquide.id] }}
-                      </th>
+                      </th> -->
                       <td class="">
                         <input
                           type="checkbox"
@@ -337,9 +336,7 @@
                           [name]="'checkbox_' + i"
                           [(ngModel)]="article.isChecked"
                           (change)="onCheckboxChange(article)"
-                          [disabled]="
-                              stocksDisponibles[article.liquide.id] <= 0
-                            "
+                     
                         />
                       </td>
                     </tr>

@@ -51,6 +51,7 @@ export class CreateCommandeFournisseursComponent {
   dataPointDeVente: any[] = [];
   ListCommandeGratuites: any[] = [];
   depotId: any = 0;
+  now = new Date().toISOString().split('T')[0];
   constructor(
     private cdr: ChangeDetectorRef,
     private articleService: ArticleServiceService,
@@ -63,12 +64,15 @@ export class CreateCommandeFournisseursComponent {
   ngOnInit() {
     this.CommandeForm = this.fb.group({
       fournisseurId: [null, Validators.required],
-      datecommande: [null, Validators.required],
-      datelivraison: [null, Validators.required],
+      datecommande: ['', Validators.required],
+      datelivraison: ['', Validators.required],
       depotId: [null, Validators.required],
       clientId: [null, Validators.required],
       articles: this.fb.array([]),
     });
+    this.CommandeForm.controls['datecommande'].setValue(this.now)
+    // this.CommandeForm.controls['datelivraison'].setValue(this.now)
+  this.CommandeForm.get('datecommande')?.disable();
     this.GetArticleList(1)
     this.LoadPdv()
     this.GetRevendeurList(1)

@@ -2,7 +2,7 @@
     <div class=" d-flex justify-content-end py-3">
         <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Ajouter un article</button>
     </div>
-    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" [totalRecords]="totalPages" dataKey="id" [rows]="8"
         [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
 
         <ng-template pTemplate="header">
