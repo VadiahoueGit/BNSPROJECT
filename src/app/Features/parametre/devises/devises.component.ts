@@ -34,6 +34,7 @@ export class DevisesComponent {
   dataListPlastiqueNu: any = [];
   currentPage: number;
   rowsPerPage: any;
+  totalPages: number;
   constructor(
     private location: Location,
     private _articleService: ArticleServiceService,
@@ -107,6 +108,8 @@ export class DevisesComponent {
     this._spinner.show();
     this._articleService.GetPlastiqueNuList(data).then((res: any) => {
       console.log('DEVISE:::>', res);
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+
       this.dataList = [];
       this._spinner.hide();
     });

@@ -3,6 +3,8 @@
     [styleClass]="'p-datatable-sm'"
     #dt2
     [value]="dataList"
+    [totalRecords]="totalPages" [lazy]="true"
+    
     dataKey="id"
     [rows]="8"
     [rowsPerPageOptions]="[10, 25, 50]"

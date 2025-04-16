@@ -37,6 +37,7 @@ export class ClientosrComponent {
   apiUrl : any
   imageUrl : any
   docUrl : any
+  totalPages: number;
 
   constructor(
     private location: Location,
@@ -310,6 +311,8 @@ export class ClientosrComponent {
     this._spinner.show();
     this.utilisateurService.GetPointDeVenteList(data).then((res: any) => {
       console.log('GetClientOSRList:::>', res);
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+
       this.dataList = res.data;
       this._spinner.hide();
     });

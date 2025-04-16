@@ -25,6 +25,7 @@ export class TypeArticleComponent {
   updateData: any = {};
   currentPage: number;
   rowsPerPage: any;
+  totalPages: number;
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -139,6 +140,8 @@ export class TypeArticleComponent {
     this._spinner.show();
     this.articleService.GetTypesArticlesList(data).then((res: any) => {
       console.log('DATA:::>', res);
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+
       this.dataList = res.data;
       this._spinner.hide();
     });

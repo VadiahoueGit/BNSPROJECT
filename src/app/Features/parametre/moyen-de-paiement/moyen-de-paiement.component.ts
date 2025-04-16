@@ -27,6 +27,7 @@ export class MoyenDePaiementComponent {
   moyenPaiementForm: FormGroup;
   currentPage: number;
   rowsPerPage: any;
+  totalPages: number;
   constructor(
     private _financeService: FinanceService,
     private _spinner: NgxSpinnerService,
@@ -51,6 +52,8 @@ export class MoyenDePaiementComponent {
     this._spinner.show();
     this._financeService.GetMoyenPaiementList(data).then((res: any) => {
       console.log('MOYEN PAIEMENT LIST:::>', res);
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+
       this.dataList = res.data;
       this._spinner.hide();
     });

@@ -51,6 +51,8 @@ export class CreateCommandeFournisseursComponent {
   dataPointDeVente: any[] = [];
   ListCommandeGratuites: any[] = [];
   depotId: any = 0;
+  
+  minDate = new Date().toISOString().split('T')[0];
   now = new Date().toISOString().split('T')[0];
   constructor(
     private cdr: ChangeDetectorRef,
@@ -65,7 +67,7 @@ export class CreateCommandeFournisseursComponent {
     this.CommandeForm = this.fb.group({
       fournisseurId: [null, Validators.required],
       datecommande: ['', Validators.required],
-      datelivraison: ['', Validators.required],
+      datelivraison: [this.minDate, Validators.required],
       depotId: [null, Validators.required],
       clientId: [null, Validators.required],
       articles: this.fb.array([]),

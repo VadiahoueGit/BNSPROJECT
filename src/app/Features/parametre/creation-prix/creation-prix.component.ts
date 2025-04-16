@@ -24,6 +24,7 @@ export class CreationPrixComponent {
   prixForm!: FormGroup;
   currentPage: number;
   rowsPerPage: any;
+  totalPages: number;
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -58,6 +59,8 @@ export class CreationPrixComponent {
     this._spinner.show();
     this.articleService.GetListPrix(data).then((res: any) => {
       console.log('DATAPRIX:::>', res);
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+
       this.dataList = res.data;
       this._spinner.hide();
     });

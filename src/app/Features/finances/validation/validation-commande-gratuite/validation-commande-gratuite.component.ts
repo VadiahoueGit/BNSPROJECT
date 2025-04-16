@@ -53,6 +53,7 @@ export class ValidationCommandeGratuiteComponent {
   dataPointDeVente: any[] = [];
   ListCommandeGratuites: any[] = [];
   depotId: any = 0;
+  totalPages: number;
   constructor(
     private cdr: ChangeDetectorRef,
     private articleService: ArticleServiceService,
@@ -114,6 +115,8 @@ export class ValidationCommandeGratuiteComponent {
     };
     this._spinner.show();
     this.articleService.GetListCommandeGratuite(data).then((res: any) => {
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+
       console.log('ListCommandeGratuites:::>', res);
         this.ListCommandeGratuites = res?.data.filter(
           (x: any) => x.statut === StatutCommande.ATTENTE_VALIDATION

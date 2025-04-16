@@ -23,6 +23,7 @@ export class TransporteurComponent {
   transporteurForm!: FormGroup;
   currentPage: number;
   rowsPerPage: any;
+  totalPages: number;
   constructor(
     private toastr: ToastrService,
     private _spinner: NgxSpinnerService,
@@ -70,6 +71,8 @@ export class TransporteurComponent {
     };
     this._logistiqueService.GetTransporteurList(data).then((res: any) => {
       console.log('DATA:::>', res);
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+
       this.dataList = res.data;
       this._spinner.hide();
     });

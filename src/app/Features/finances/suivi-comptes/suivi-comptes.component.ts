@@ -31,6 +31,7 @@ export class SuiviComptesComponent {
   dataPointDeVente: any[] = [];
   currentPage: number;
   rowsPerPage: any;
+  totalPages: number;
   constructor(
     private _financeService: FinanceService,
     private _articleService: ArticleServiceService,
@@ -119,6 +120,8 @@ export class SuiviComptesComponent {
     this._spinner.show();
     this._financeService.GetCreditList(data).then((res: any) => {
       console.log('GetCreditList:::>', res);
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+
       this.dataList = res.data;
       this._spinner.hide();
     });

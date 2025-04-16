@@ -68,6 +68,7 @@ export class ValidationCommandeClientComponent {
   prixLiquideArticleSelected: any;
   prixEmballageArticleSelected: any;
   ListCommandeClient: any;
+  totalPages: number;
   constructor(
     private articleService: ArticleServiceService,
     private utilisateurService: UtilisateurResolveService,
@@ -362,6 +363,8 @@ export class ValidationCommandeClientComponent {
     this._spinner.show();
     this.articleService.GetListCommandeClient(data).then((res: any) => {
       console.log('dataList:::>', res);
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+
       this.dataList = res.data.filter(
         (x: any) => x.statut === StatutCommande.ATTENTE_VALIDATION
       );

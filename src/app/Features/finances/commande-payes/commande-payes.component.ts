@@ -28,6 +28,7 @@ export class CommandePayesComponent {
   isEditMode: boolean = false;
   currentPage: number;
   rowsPerPage: any;
+  totalPages: number;
   constructor(
     private articleService: ArticleServiceService,
     private financeService: FinanceService,
@@ -82,6 +83,8 @@ export class CommandePayesComponent {
     this._spinner.show();
     this.financeService.GetPaiementList(data).then((res: any) => {
       console.log('ALL:::>', res);
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+
       this.dataList = res.data.filter((item: any) =>
         item.statut === Status.VALIDE &&
         Number(item.montantAPercevoir) == Number(item.montantPercu)
