@@ -46,6 +46,7 @@ export class ValidationVenteChineComponent {
   depotId: number = 0;
   updateData: any = {};
   venteId: any = 0;
+  totalPages: number;
   constructor(
     private cdr: ChangeDetectorRef,
     private _spinner: NgxSpinnerService,
@@ -336,6 +337,7 @@ export class ValidationVenteChineComponent {
     this._spinner.show();
     this.utilisateurService.GetVenteChineList(data).then((res: any) => {
       console.log('GetVenteChineList:::>', res.data);
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
 
       this.dataList = res.data.filter(
         (x: any) => x.statut === StatutCommande.ATTENTE_VALIDATION

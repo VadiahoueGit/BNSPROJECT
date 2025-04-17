@@ -31,6 +31,7 @@ export class LiquideComponent {
   dataListConditionnements: any= [];
   currentPage: number;
   rowsPerPage: any;
+  totalPages: number;
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -111,6 +112,8 @@ export class LiquideComponent {
     this._spinner.show();
     this.articleService.GetLiquideList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+
       this.dataListLiquides = res.data ?? [];
       this._spinner.hide();
     });

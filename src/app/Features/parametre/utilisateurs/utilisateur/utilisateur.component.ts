@@ -36,6 +36,7 @@ export class UtilisateurComponent implements AfterViewInit {
   dataListUsers: any;
   currentPage: number;
   rowsPerPage: any;
+  totalPages: number;
   constructor(
     private _userService: UtilisateurResolveService,
     private _spinner: NgxSpinnerService,
@@ -107,6 +108,8 @@ export class UtilisateurComponent implements AfterViewInit {
     this._spinner.show();
     this._userService.GetUsersList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+
       this.dataList = res.data;
       this._spinner.hide();
     });

@@ -18,6 +18,7 @@
     [value]="dataList"
     dataKey="id"
     [rows]="8"
+    [totalRecords]="totalPages" [lazy]="true"
     [rowsPerPageOptions]="[10, 25, 50]"
     [globalFilterFields]="['raisonSocial', 'nomProprietaire', 'nomGerant']"
     (onFilter)="updateFilteredCount(dt)"

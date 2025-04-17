@@ -46,6 +46,7 @@ export class FournisseurComponent {
   numeroSap: any;
   filteredCount: number = 0;
   @ViewChild('dt2') dt2!: Table;
+  totalPages: number;
   constructor(
     private cd: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -335,6 +336,8 @@ export class FournisseurComponent {
     this._spinner.show();
     this._articleService.GetListRevendeur(data).then((res: any) => {
       console.log('GetListRevendeur:::>', res);
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+
       this.dataList = res.data;
       this.revendeurConfirmed = res.data.filter(
         (i: any) => i.isAssocie === false && i.isValide === true

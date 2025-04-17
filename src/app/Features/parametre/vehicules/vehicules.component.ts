@@ -25,6 +25,7 @@ export class VehiculesComponent implements AfterViewInit {
   vehicleForm!: FormGroup;
   currentPage: number;
   rowsPerPage: any;
+  totalPages: number;
   constructor(
     private coreService:CoreServiceService,
     private _logistiqueService: LogistiqueService,
@@ -113,6 +114,8 @@ export class VehiculesComponent implements AfterViewInit {
     this._spinner.show();
     this._logistiqueService.GetVehiculeList(data).then((res: any) => {
       this.dataList = res.data
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+
       this._spinner.hide();
       console.log(res)
     })

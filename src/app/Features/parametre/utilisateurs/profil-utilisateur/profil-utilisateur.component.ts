@@ -34,6 +34,7 @@ export class ProfilUtilisateurComponent {
   dataListArticlesProduits: any = [];
   currentPage: number;
   rowsPerPage: any;
+  totalPages: number;
   constructor(
     private _userService: UtilisateurResolveService,
     private _spinner: NgxSpinnerService,
@@ -95,6 +96,8 @@ export class ProfilUtilisateurComponent {
     this._userService.GetListProfil(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.dataList = res.data;
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+
       this._spinner.hide();
     });
   }

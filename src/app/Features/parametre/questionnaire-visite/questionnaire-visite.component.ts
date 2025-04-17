@@ -23,6 +23,7 @@ export class QuestionnaireVisiteComponent {
   questionForm:FormGroup
   currentPage: number;
   rowsPerPage: any;
+  totalPages: number;
   constructor(private activiteService:ActiviteService,private location: Location,private cd: ChangeDetectorRef,private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService) {
@@ -115,6 +116,8 @@ export class QuestionnaireVisiteComponent {
     };
     this.activiteService.GetQuestionList(data).then((res:any)=>{
       this.dataList = res.data
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+
       console.log('GetQuestionList:::>', res);
       this._spinner.hide();
     })

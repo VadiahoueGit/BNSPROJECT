@@ -33,6 +33,7 @@ export class ArticleComponent {
   dataListArticlesProduits: any = [];
   currentPage: number;
   rowsPerPage: any;
+  totalPages: number;
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -130,6 +131,7 @@ export class ArticleComponent {
     this._spinner.show();
     this.articleService.GetArticleList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
       this.dataList = res.data;
       this._spinner.hide();
     });

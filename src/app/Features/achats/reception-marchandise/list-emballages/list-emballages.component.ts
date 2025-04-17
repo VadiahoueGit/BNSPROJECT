@@ -181,43 +181,18 @@ this.GetArticleList(1)
       limit: 8,
     };
     this._spinner.show();
-    this.articleService.GetArticleList(data).then((res: any) => {
+    this.articleService.GetEmballageList(data).then((res: any) => {
       console.log('filteredArticleList:::>', res);
       this.dataListLiquides = res.data;
-      this.dataListLiquides.forEach((item: any) => {
-        this.GetStockDisponibleByDepot(item);
-      });
+      // this.dataListLiquides.forEach((item: any) => {
+      //   this.GetStockDisponibleByDepot(item);
+      // });
       this.filteredArticleList = this.dataListLiquides;
       this._spinner.hide();
     });
   }
 
-  applyRemise() {
-    const remise = this.emballageRenduForm.get('remise')?.value || 0;
-    const fraisTransport =
-      this.emballageRenduForm.get('fraisTransport')?.value || 0;
 
-    this.totalGlobalAfterRemise =
-      this.totalGlobalBeforeRemise * (1 - remise / 100);
-
-    this.totalGlobal = this.totalGlobalAfterRemise + fraisTransport;
-
-    console.log('Montant global après remise :', this.totalGlobalAfterRemise);
-    console.log('Montant final après frais de transport :', this.totalGlobal);
-  }
-
-  applyFraisTransport() {
-    const remise = this.emballageRenduForm.get('remise')?.value || 0;
-    const fraisTransport =
-      this.emballageRenduForm.get('fraisTransport')?.value || 0;
-
-    this.totalGlobalAfterRemise =
-      this.totalGlobalBeforeRemise * (1 - remise / 100);
-
-    this.totalGlobal = this.totalGlobalAfterRemise + fraisTransport;
-
-    console.log('Montant final après frais de transport :', this.totalGlobal);
-  }
   removeArticle(item: any): void {
     item.isChecked = false;
     this.onCheckboxChange(item);
@@ -262,7 +237,7 @@ this.GetArticleList(1)
       console.log("Articles après suppression :", updatedArticles);
 
       // Appliquer la remise sans recalculer les prix
-      this.applyRemise();
+     
     }
   }
 
@@ -283,7 +258,7 @@ this.GetArticleList(1)
     this.totalGlobalBeforeRemise += this.montantTotal[data.id];
     this.totalQte += data.quantite;
 
-    this.applyRemise();
+   
 
     console.log(data, 'data article');
     data.oldQuantite = data.quantite;

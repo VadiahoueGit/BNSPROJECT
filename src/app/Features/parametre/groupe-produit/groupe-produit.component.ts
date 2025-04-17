@@ -33,6 +33,7 @@ export class GroupeProduitComponent {
   isEditMode: boolean = false;
   currentPage: number;
   rowsPerPage: any;
+  totalPages: number;
   constructor(private articleService: ArticleServiceService, private _spinner:NgxSpinnerService,
     private toastr: ToastrService,
     private fb: FormBuilder,
@@ -145,7 +146,10 @@ export class GroupeProduitComponent {
     this._spinner.show()
     this.articleService.GetGroupeArticleList(data).then((res:any)=>{
       console.log('DATA:::>',res)
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+
       this.dataList = res.data
+
       this._spinner.hide()
     })
   }
