@@ -21,6 +21,7 @@ export class SuiviDesRDVComponent {
   isModalOpen = false;
   activityValues: number[] = [0, 100];
   operation: string = '';
+  totalPages: number = 0;
   updateData: any = {};
   articleId: any = 0;
   isEditMode: boolean = false;
@@ -70,14 +71,16 @@ export class SuiviDesRDVComponent {
   }
   GetRetourList(page:number) {
     let data = {
-      paginate: false,
+      paginate: true,
       page:page,
       limit: 8,
     };
     this._spinner.show();
     this.activiteService.GetRetourList(data).then((res: any) => {
-      console.log('RDV:::>', res);
+
       this.dataList = res.data.filter((item:any) => item.returnType === MotifRetour.APPOINTMENT && !item.stockUpdated );
+      this.totalPages =  this.dataList.length * data.limit; // nombre total d’enregistrements
+      console.log('RDV:::>',this.dataList.length * data.limit);
       this._spinner.hide();
     });
   }
@@ -141,7 +144,7 @@ export class SuiviDesRDVComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
-    // this.ger(this.currentPage);
+    this.GetRetourList(this.currentPage);
   }
   OnAffect(data:any){
 

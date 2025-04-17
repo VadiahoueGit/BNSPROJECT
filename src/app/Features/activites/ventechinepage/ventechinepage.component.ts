@@ -17,6 +17,7 @@ import { ALERT_QUESTION } from '../../shared-component/utils';
 export class VentechinepageComponent {
   groupeProduitForm!: FormGroup;
   dataList: [];
+  totalPages: number = 0;
   VenteForm: FormGroup;
   isModalOpen = false;
   isChoiceModalOpen: boolean;
@@ -240,9 +241,9 @@ export class VentechinepageComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
+
     this.GetVenteChineList(this.currentPage);
   }
-
 
   GetArticleList(page: number) {
     let data = {
@@ -299,6 +300,7 @@ export class VentechinepageComponent {
     this._spinner.show();
     this.utilisateurService.GetVenteChineList(data).then((res: any) => {
       console.log('GetVenteChineList:::>', res.data);
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
       this.dataList = res.data;
       this._spinner.hide();
     });

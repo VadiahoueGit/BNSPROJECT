@@ -1,6 +1,6 @@
 <div class="card">
 
-    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="10" [paginator]="true"
+    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="10" [paginator]="true" [totalRecords]="totalPages" [lazy]="true"
         (onPage)="onPage($event)">
 
         <ng-template pTemplate="header">

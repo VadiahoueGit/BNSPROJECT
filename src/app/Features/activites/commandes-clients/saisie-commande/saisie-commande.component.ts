@@ -16,6 +16,7 @@ export class SaisieCommandeComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
+  totalPages: number = 0;
   commandClientForm!: FormGroup;
   loading: boolean = true;
   isModalOpen = false;
@@ -424,13 +425,14 @@ export class SaisieCommandeComponent {
   }
   GetListCommandeClient(page: number) {
     let data = {
-      paginate: false,
+      paginate: true,
       page: page,
       limit: 8,
     };
     this._spinner.show();
     this.articleService.GetListCommandeClient(data).then((res: any) => {
       console.log('dataList:::>', res);
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
       this.dataList = res.data;
       this._spinner.hide();
     });
@@ -543,7 +545,8 @@ export class SaisieCommandeComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
-    this.GetArticleList(this.currentPage);
+
+    this.GetListCommandeClient(this.currentPage);
   }
 
   filterArticles(): void {

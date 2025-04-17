@@ -1,10 +1,6 @@
-<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
-    <i style="font-size: 18px;" class="fas fw-bold fa-chevron-left me-2"></i>
-    <h4 class="fw-bold mb-0">Validation commande</h4>
-</div>
 
 <div class="card">
-   
+
     <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
         [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
 

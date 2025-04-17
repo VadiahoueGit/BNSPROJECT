@@ -17,6 +17,7 @@ export class SaisieCommandeGratuiteComponent {
   statuses!: any[];
   dataList : any[] = [];
   selectedArticles: any[] = [];
+  totalPages: number = 0;
   pointDeVente!: any[];
   CommandeForm!:FormGroup
   isChoiceModalOpen: boolean
@@ -105,13 +106,14 @@ export class SaisieCommandeGratuiteComponent {
   }
   GetListCommandeGratuite(page:number) {
     let data = {
-      paginate: false,
+      paginate: true,
       page:page,
       limit: 8,
     };
     this._spinner.show();
     this.articleService.GetListCommandeGratuite(data).then((res: any) => {
       console.log('ListCommandeGratuites:::>', res);
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
       this.ListCommandeGratuites = res.data;
       this._spinner.hide();
     });
@@ -290,7 +292,10 @@ export class SaisieCommandeGratuiteComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
+
+    this.GetListCommandeGratuite(this.currentPage);
   }
+
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
       (res:any) => {

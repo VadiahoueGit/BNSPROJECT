@@ -13,6 +13,7 @@
     [rows]="8"
     [rowsPerPageOptions]="[10, 25, 50]"
     [paginator]="true"
+    [totalRecords]="totalPages" [lazy]="true"
     (onPage)="onPage($event)"
   >
     <ng-template pTemplate="header">

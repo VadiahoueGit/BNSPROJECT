@@ -23,6 +23,7 @@ export class RegroupementEmballagesComponent {
   statuses!: any[];
   dataList!: any[];
 
+  totalPages: number = 0;
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
@@ -227,13 +228,14 @@ export class RegroupementEmballagesComponent {
 
   GetRetourList(page: number) {
     let data = {
-      paginate: false,
+      paginate: true,
       page: page,
       limit: 8,
     };
     this._spinner.show();
     this._activite.GetRetourWithArtilesList(data).then((res: any) => {
       console.log('retour list:::>', res);
+      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
       this.dataList = res.data;
       this._spinner.hide();
     });

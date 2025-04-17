@@ -19,6 +19,7 @@ export class ReceptionsEmballagesComponent {
   ArticleForm!:FormGroup
   loading: boolean = true;
   isModalOpen = false;
+  totalPages: number = 0;
   activityValues: number[] = [0, 100];
   operation: string = '';
   updateData: any = {};
@@ -71,7 +72,7 @@ export class ReceptionsEmballagesComponent {
   }
   GetRetourList(page:number) {
     let data = {
-      paginate: false,
+      paginate: true,
       page:page,
       limit: 8,
     };
@@ -79,6 +80,7 @@ export class ReceptionsEmballagesComponent {
     this.activiteService.GetRetourList(data).then((res: any) => {
       console.log('ALL:::>', res);
       this.dataList = res.data.filter((item:any) => item.stockUpdated );
+      this.totalPages =  this.dataList.length * data.limit; // nombre total d’enregistrements
       this._spinner.hide();
     });
   }
@@ -130,6 +132,7 @@ export class ReceptionsEmballagesComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
-  }
 
+    this.GetRetourList(this.currentPage);
+  }
 }

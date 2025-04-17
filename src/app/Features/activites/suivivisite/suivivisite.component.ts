@@ -13,7 +13,7 @@ export class SuivivisiteComponent {
   dataList!: any[];
   visiteDetail: any
   isModalOpen: boolean = false;
-
+  totalPages: number = 0;
   currentPage:any
   rowsPerPage:any
   constructor(
@@ -27,7 +27,7 @@ export class SuivivisiteComponent {
   ViewDetails(data: any) {
     this.isModalOpen = true;
     console.log(this.isModalOpen);
-  
+
     this.visiteDetail = data
     this.getFormattedDuration()
     console.log(this.visiteDetail);
@@ -42,16 +42,17 @@ export class SuivivisiteComponent {
     const minutes = diffMins % 60;
     return `${hours}h ${minutes}m`;
   }
-  
+
   LoadVisite(page: number ) {
     let data = {
-      paginate: false,
+      paginate: true,
       page: page,
       limit: 8,
     };
     console.log(data)
     this._spinner.show()
     this.activiteService.GetVisiteList(data).then((res: any) => {
+      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
       this.dataList = res.data;
       this._spinner.hide()
       console.log('Visite', res)
@@ -68,10 +69,12 @@ export class SuivivisiteComponent {
 
 
   // Méthode pour gérer la pagination
-onPage(event: any) {
-  this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
-  this.rowsPerPage = event.rows;
-  this.LoadVisite(this.currentPage);
-}
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+
+    this.LoadVisite(this.currentPage);
+  }
+
 
 }
