@@ -71,7 +71,8 @@ export class TransporteurComponent {
     };
     this._logistiqueService.GetTransporteurList(data).then((res: any) => {
       console.log('DATA:::>', res);
-      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      console.log('totalPages:::>', this.totalPages);
 
       this.dataList = res.data;
       this._spinner.hide();

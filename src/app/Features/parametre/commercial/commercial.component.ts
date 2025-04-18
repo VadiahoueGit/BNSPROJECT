@@ -196,7 +196,8 @@ export class CommercialComponent {
     console.log('data', data);
     this._spinner.show()
     this.utilisateurService.GetCommercialList(data).then((res:any)=>{
-      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      console.log('totalPages:::>', this.totalPages);
         this.dataList = res.data;
       console.log('currentPage', this.totalPages);
       this._spinner.hide()

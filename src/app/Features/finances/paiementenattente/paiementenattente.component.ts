@@ -80,7 +80,8 @@ export class PaiementenattenteComponent {
     };
     this._spinner.show();
     this.financeService.GetPaiementList(data).then((res: any) => {
-      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      console.log('totalPages:::>', this.totalPages);
 
       this.dataList = res.data.filter((item: any) =>
         item.statut === Status.ATTENTE && Number(item.montantPercu) >= 0

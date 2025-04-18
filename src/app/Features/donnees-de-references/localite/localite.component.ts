@@ -37,6 +37,7 @@ export class LocaliteComponent {
   dataListUsers: any;
   currentPage: number;
   rowsPerPage: any;
+  totalPages: any;
   constructor(
     private _userService: UtilisateurResolveService,
     private location: Location,
@@ -102,6 +103,8 @@ export class LocaliteComponent {
     this._spinner.show();
     this._coreService.GetLocaliteList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
+      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      console.log('totalPages:::>', this.totalPages);
       this.dataList = res.data;
       this._spinner.hide();
     });

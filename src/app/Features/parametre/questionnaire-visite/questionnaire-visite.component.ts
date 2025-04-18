@@ -116,7 +116,8 @@ export class QuestionnaireVisiteComponent {
     };
     this.activiteService.GetQuestionList(data).then((res:any)=>{
       this.dataList = res.data
-      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      console.log('totalPages:::>', this.totalPages);
 
       console.log('GetQuestionList:::>', res);
       this._spinner.hide();

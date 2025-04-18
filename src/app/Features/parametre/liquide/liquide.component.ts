@@ -112,7 +112,8 @@ export class LiquideComponent {
     this._spinner.show();
     this.articleService.GetLiquideList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
-      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      console.log('totalPages:::>', this.totalPages);
 
       this.dataListLiquides = res.data ?? [];
       this._spinner.hide();

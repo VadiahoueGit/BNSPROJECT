@@ -108,7 +108,8 @@ export class DevisesComponent {
     this._spinner.show();
     this._articleService.GetPlastiqueNuList(data).then((res: any) => {
       console.log('DEVISE:::>', res);
-      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      console.log('totalPages:::>', this.totalPages);
 
       this.dataList = [];
       this._spinner.hide();
