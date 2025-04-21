@@ -37,7 +37,7 @@ export class ReceptionsEmballagesComponent {
 
   ngOnInit() {
 
-    this.GetRetourList(1);
+    this.GetRetourEmballageList(1);
   }
 
   onFilterGlobal(event: Event) {
@@ -70,17 +70,17 @@ export class ReceptionsEmballagesComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetRetourList(page:number) {
+  GetRetourEmballageList(page:number) {
     let data = {
       paginate: true,
       page:page,
       limit: 8,
     };
     this._spinner.show();
-    this.activiteService.GetRetourList(data).then((res: any) => {
+    this.activiteService.GetRetourEmballageList(data).then((res: any) => {
       console.log('ALL:::>', res);
-      this.dataList = res.data.filter((item:any) => item.stockUpdated );
-      this.totalPages =  this.dataList.length * data.limit; // nombre total d’enregistrements
+      this.dataList = res.data;
+      this.totalPages = res.total; // nombre total d’enregistrements
       this._spinner.hide();
     });
   }
@@ -133,6 +133,6 @@ export class ReceptionsEmballagesComponent {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
 
-    this.GetRetourList(this.currentPage);
+    this.GetRetourEmballageList(this.currentPage);
   }
 }

@@ -5,6 +5,9 @@ import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
+import {ActiviteService} from "../../../../core/activite.service";
+import {data} from "jquery";
+import {Status} from "../../../../utils/utils";
 
 @Component({
   selector: 'app-list-des-receptions-emballages',
@@ -15,75 +18,48 @@ export class ListDesReceptionsEmballagesComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
-  ArticleForm!:FormGroup
+
+  totalPages: number = 0;
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
   operation: string = '';
   updateData: any = {};
-  articleId: any = 0;
+  cargaison: number = 0;
   isEditMode: boolean = false;
-  dataListFormats: any = [];
-  dataListConditionnements: any = [];
-  dataListProduits: any= [];
-  dataListGroupeArticles: any =[];
-  dataListBouteilleVide: any=[];
-  dataListPlastiqueNu: any=[];
-  dataListLiquides: any=[];
-  dataListArticlesProduits: any=[];
+  regroupementList: any[] = [];
+  ramassageList: any[] = [];
+  regroupementTable: any[] = [];
+  regroupementFinal: { [key: string]: Array<{ type: string; palettes: number; casier: number; totalQuantite:number }> } = {};
+  result: { palettes: number; casier: number } | null = null;
+  casiersPerPalette: Record<number, { casiers: number; type: string }[]> = {
+    30: [{casiers: 60, type: 'SUCRERIE'}],
+    33: [
+      {casiers: 63, type: 'BIERE'},
+      {casiers: 126, type: 'EAU'}
+    ],
+    25: [{casiers: 63, type: 'BIERE'}],
+    50: [{casiers: 66, type: 'BIERE'}],
+    60: [
+      {casiers: 60, type: 'SUCRERIE'},
+      {casiers: 66, type: 'BIERE'}
+    ],
+  };
   currentPage: number;
   rowsPerPage: any;
+
   constructor(
-    private articleService: ArticleServiceService,
+    private _activite: ActiviteService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
-    this.ArticleForm = this.fb.group({
-      photo: [null, Validators.required],
-      libelle: [null, Validators.required],
-      format: [null, Validators.required],
-      Conditionnement: [null, Validators.required],
-      categorieId: [0, Validators.required],
-      groupeId: [0, Validators.required],
-      plastiquenuId: [0, Validators.required],
-      bouteillevideId: [0, Validators.required],
-      liquideId: [0, Validators.required],
-    });
-    this.articleService.ListPlastiquesNu.subscribe((res: any) => {
-      this.dataListPlastiqueNu = res;
-    });
-    this.articleService.ListLiquides.subscribe((res: any) => {
-      this.dataListLiquides = res;
-    });
-    this.articleService.ListBouteilleVide.subscribe((res: any) => {
-      this.dataListBouteilleVide = res;
-    });
-    // this.articleService.ListArticles.subscribe((res: any) => {
-    //   this.dataList = res;
-    //   console.log('dataList:::>', this.dataList);
-    // });
-    this.articleService.GetFormatList().then((res: any) => {
-      this.dataListFormats = res;
-      console.log('dataListFormats:::>', this.dataListFormats);
-    });
-
-    this.articleService.GetConditionnementList().then((res: any) => {
-      this.dataListConditionnements = res;
-      console.log('dataListConditionnements:::>', this.dataListConditionnements);
-    });
-    this.articleService.ListTypeArticles.subscribe((res: any) => {
-      this.dataListProduits = res;
-      console.log(this.dataListProduits, 'this.dataListProduits ');
-    });
-    this.articleService.ListGroupesArticles.subscribe((res: any) => {
-      this.dataListGroupeArticles = res;
-    });
-    this.GetArticleList(1);
+    this.GetRetourList(1);
   }
-  
+
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -98,114 +74,222 @@ export class ListDesReceptionsEmballagesComponent {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
   }
-  OnCreate() {
-    this.isEditMode = false;
-    this.isModalOpen = true;
-    this.operation = 'create';
-    console.log(this.isModalOpen);
-  }
 
-  OnEdit(data:any) {
-    this.isEditMode = true;
+  OnEdit(data: any) {
     console.log(data);
     this.updateData = data;
-    this.articleId = data.id;
     this.isModalOpen = true;
-    this.loadArticleDetails();
-    this.operation = 'edit';
-    console.log(this.isModalOpen);
   }
-  GetArticleList(page:number) {
+
+  calculate(commande: any): void {
+    console.log('Commande:', commande);
+
+    // ✅ Ne réinitialise pas `regroupementFinal` complètement pour ne pas écraser les données existantes
+    if (!this.regroupementFinal) {
+      this.regroupementFinal = {};
+    }
+    console.log('fois:');
+    this.result = { palettes: 0, casier: 0 };
+
+    const articlesParFormatEtType = commande.articles.reduce((acc: any, article: any) => {
+      const format = Number(article?.produit?.format);
+      const type:string = article?.produit.groupearticle?.libelle;
+      console.log('type:', article?.produit.groupearticle?.libelle);
+      if (!format || !type) {
+        console.log('format:', format);
+        console.log('type:', type);
+        console.warn('Article sans format ou type non défini, ignoré:', article);
+        return acc;
+      }
+
+      if (!acc[format]) {
+        acc[format] = {};
+      }
+
+      if (!acc[format][type]) {
+        acc[format][type] = [];
+      }
+
+      acc[format][type].push(article);
+      return acc;
+    }, {});
+
+    console.log('Articles regroupés par format et type:', articlesParFormatEtType);
+
+    Object.keys(articlesParFormatEtType).forEach((formatStr: string) => {
+      const format = Number(formatStr);
+      const totalCasiersParFormat: any = {};
+
+      Object.entries(articlesParFormatEtType[format]).forEach(([type, articles]: [string, any]) => {
+        const totalCasiers = articles.reduce(
+          (total: number, article: any) => total + Number(article.quantite || 0),
+          0
+        );
+
+        const paletteInfos = this.casiersPerPalette[format];
+        if (!paletteInfos || paletteInfos.length === 0) {
+          console.warn(`Format invalide ou non trouvé : ${format}`);
+          return;
+        }
+
+        paletteInfos.forEach(({casiers, type: paletteType}) => {
+          if (paletteType === type) {
+            const palettes = Math.floor(totalCasiers / casiers);
+            const casier = totalCasiers % casiers;
+
+            // ✅ Vérifie si ce format et type existent déjà dans regroupementFinal
+            if (!this.regroupementFinal[format]) {
+              this.regroupementFinal[format] = [];
+            }
+
+            const existingEntry = this.regroupementFinal[format].find((entry: any) => entry.type === type);
+            if (existingEntry) {
+              // 🔄 Additionne les nouvelles valeurs sans écraser l'existant
+              existingEntry.palettes += palettes;
+              existingEntry.casier += casier;
+            } else {
+              // ➕ Ajoute un nouvel article s'il n'existe pas encore
+              this.regroupementFinal[format].push({ type, palettes, casier, totalQuantite: 0 });
+            }
+          }
+        });
+      });
+    });
+// Recalcul de la cargaison après modification de regroupementFinal
+    console.log('Résultat final:', this.regroupementFinal);
+  }
+
+
+  regrouperArticles(articles: any[]): any {
+    let articlesRegroupes: any = [];
+    let montantTotal = 0;
+    console.log('Regroupement par format:', articles);
+    // Parcours de toutes les commandes
+    articles.forEach((article: any) => {
+      articlesRegroupes.push(article);
+      montantTotal += parseFloat(article.montantEmballage);
+    })
+
+    return {
+      articles: articlesRegroupes,
+      montantTotal: montantTotal
+    };
+  }
+
+  PrintDoc(item: any) {
+    console.log(item);
+    this.regroupementTable = [];
+    const idretour = item.id;
+    let regroup = this.regrouperArticles(item.articles)
+    this.calculate(regroup);
+    this._spinner.show();
+    if (this.regroupementFinal) {
+      const result = Object.entries(this.regroupementFinal).flatMap(([key, value]) => {
+        // Vérifie que value est bien un tableau
+        if (!Array.isArray(value)) return [];
+
+        // Regroupement par type
+        const regroupementParType = value.reduce((acc, item) => {
+          const type = item.type ?? "Inconnu"; // Sécurité si le type est absent
+          if (!acc[type]) {
+            acc[type] = { casier: 0, palette: 0 };
+          }
+          acc[type].casier += item.casier ?? 0;
+          acc[type].palette += item.palettes ?? 0;
+          return acc;
+        }, {} as Record<string, { casier: number, palette: number }>);
+
+        // Convertir l'objet en tableau
+        return Object.entries(regroupementParType).map(([type, data]) => ({
+          format: Number(key),
+          type,
+          casier: data.casier,
+          palette: data.palette
+        }));
+      });
+      console.log('result', result);
+
+      this._activite.GetRegroupementEmballagePdf(idretour, result).then(
+        (res: any) => {
+          console.log('DownloadGlobalFacturesById:::>', res);
+
+          this._spinner.hide();
+        },
+        (error: any) => {
+          this._spinner.hide();
+          this.toastr.info(error.error.message);
+        }
+      );
+    }
+  }
+
+  GetRetourList(page: number) {
     let data = {
-      paginate: false,
-      page:page,
+      paginate: true,
+      page: page,
       limit: 8,
     };
     this._spinner.show();
-    this.articleService.GetArticleList(data).then((res: any) => {
-      console.log('DATATYPEPRIX:::>', res);
+    this._activite.GetRetourWithArtilesListAgent(data).then((res: any) => {
+      console.log('retour list:::>', res);
       this.dataList = res.data;
+      this.totalPages =  this.dataList.length * data.limit;
       this._spinner.hide();
     });
   }
-  onSubmit(): void {
-    console.log(this.ArticleForm.value);
-    if (this.ArticleForm.valid) {
-      // const formValues = this.ArticleForm.value;
-      const formValues = {
-        ...this.ArticleForm.value,
-        categorieId: +this.ArticleForm.value.categorieId,
-        groupeId: +this.ArticleForm.value.groupeId,
-        plastiquenuId: +this.ArticleForm.value.plastiquenuId,
-        bouteillevideId: +this.ArticleForm.value.bouteillevideId,
-        liquideId: +this.ArticleForm.value.liquideId,
-      };
-      console.log('formValues', formValues);
 
-      if (this.isEditMode) {
-        this.articleService.UpdateArticle(this.articleId, formValues).then(
-          (response: any) => {
-            console.log('article mis à jour avec succès', response);
-            this.toastr.success(response.message);
+  TerminerRegroupement(id: any)
+  {
+    ALERT_QUESTION(
+      'warning',
+      'Attention !',
+      'Voulez-vous valider ce retour?'
+    ).then((res) => {
+      if (res.isConfirmed == true) {
+        this._spinner.show();
+        this._activite.TerminerRegroupement(id).then((res: any) => {
+          console.log('validation retour:::>', res);
+          this._spinner.hide();
+          this.GetRetourList(1);
+          this.OnCloseModal();
 
-            this.OnCloseModal();
-            this.GetArticleList(1);
-          },
-          (error: any) => {
-            this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
-            console.error('Erreur lors de la mise à jour', error);
-          }
-        );
+          this.toastr.success(res.message);
+        })
       } else {
-        this.articleService.CreateArticle(formValues).then(
-          (response: any) => {
-            this.OnCloseModal();
-            this.GetArticleList(1);
-            this.ArticleForm.reset();
-            this.toastr.success(response.message);
-
-            console.log('Nouvel article créé avec succès', response);
-          },
-          (error: any) => {
-            this.toastr.error('Erreur!', 'Erreur lors de la création.');
-            console.error('Erreur lors de la création', error);
-          }
-        );
+        this.isModalOpen = false;
       }
-    }
+    });
+
   }
-  loadArticleDetails(): void {
-    this.ArticleForm.patchValue({
-      photo: this.updateData.photo??"",
-      libelle: this.updateData.libelle,
-      format: this.updateData.format,
-      Conditionnement: this.updateData.Conditionnement,
-      categorieId: this.updateData.categorieproduit.id,
-      groupeId: this.updateData.groupearticle.id,
-      plastiquenuId: this.updateData.plastiquenu.id,
-      bouteillevideId: this.updateData.bouteillevide.id,
-      liquideId: 1,
+  ValidateEmballage(id: any) {
+
+    ALERT_QUESTION(
+      'warning',
+      'Attention !',
+      'Voulez-vous valider ce retour?'
+    ).then((res) => {
+      if (res.isConfirmed == true) {
+        this._spinner.show();
+        this._activite.ValidateRetourById(id).then((res: any) => {
+          console.log('validation retour:::>', res);
+          this._spinner.hide();
+          this.GetRetourList(1);
+
+          this.OnCloseModal();
+
+          this.toastr.success(res.message);
+        });
+      } else {
+        this.isModalOpen = false;
+      }
     });
   }
+
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
-    this.GetArticleList(this.currentPage);
+    this.GetRetourList(this.currentPage);
   }
-  OnDelete(Id: any) {
-    ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
-      (res:any) => {
-        if (res.isConfirmed == true) {
-          this._spinner.show();
-          this.articleService.DeletedArticle(Id).then((res: any) => {
-            console.log('DATA:::>', res);
-            this.toastr.success(res.message);
-            this.GetArticleList(1);
-            this._spinner.hide();
-          });
-        } else {
-        }
-      }
-    );
-  }
+
+  protected readonly Status = Status;
 }

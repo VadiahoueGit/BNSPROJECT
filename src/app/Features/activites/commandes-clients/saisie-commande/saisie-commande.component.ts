@@ -432,7 +432,7 @@ export class SaisieCommandeComponent {
     this._spinner.show();
     this.articleService.GetListCommandeClient(data).then((res: any) => {
       console.log('dataList:::>', res);
-      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total; // nombre total d’enregistrements
       this.dataList = res.data;
       this._spinner.hide();
     });

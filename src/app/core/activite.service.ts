@@ -469,6 +469,29 @@ export class ActiviteService {
       );
     });
   }
+
+  GetRetourEmballageList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/retours/emballages?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
   GetRetourList(data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -476,7 +499,47 @@ export class ActiviteService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/retours?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+          `${this.apiUrl}/v1/retours/rdv?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+  TerminerRegroupement(id: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/retours/terminer-regroupement-emballage/${id}`,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  GetRetourWithArtilesListAgent(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/retours/emballage/regroupement?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -540,10 +603,10 @@ export class ActiviteService {
         Authorization: `Bearer ${this.token}`,
         'Content-Type': 'application/json'
       });
-  
+
       this._http
         .post(
-          `${this.apiUrl}/v1/regroupements/${numRegroupement}/pdf`, 
+          `${this.apiUrl}/v1/regroupements/${numRegroupement}/pdf`,
           data,
           { headers ,responseType: 'blob' }
         )
@@ -551,16 +614,16 @@ export class ActiviteService {
           try {
             const blob = new Blob([response], { type: 'application/pdf' });
             const url = window.URL.createObjectURL(blob);
-  
+
             // Ouvrir le PDF dans une nouvelle fenêtre
             const newTab = window.open(url);
             if (!newTab) {
               throw new Error('Le popup a été bloqué par le navigateur.');
             }
-  
+
             // Nettoyer l’URL après un certain temps pour éviter les fuites mémoire
             setTimeout(() => window.URL.revokeObjectURL(url), 10000);
-  
+
             resolve();
           } catch (err) {
             console.error('Erreur lors de l’ouverture du PDF :', err);
@@ -572,17 +635,17 @@ export class ActiviteService {
         });
     });
   }
-  
+
   GetRegroupementEmballagePdf(idretour: string, data: any[]) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`,
         'Content-Type': 'application/json'
       });
-  
+
       this._http
         .post(
-          `${this.apiUrl}/v1/regroupements/retour/${idretour}/pdf`, 
+          `${this.apiUrl}/v1/regroupements/retour/${idretour}/pdf`,
           data,
           { headers ,responseType: 'blob' }
         )
@@ -590,14 +653,14 @@ export class ActiviteService {
           try {
             const blob = new Blob([response], { type: 'application/pdf' });
             const url = window.URL.createObjectURL(blob);
-  
+
             const newTab = window.open(url);
             if (!newTab) {
               throw new Error('Le popup a été bloqué par le navigateur.');
             }
-  
+
             setTimeout(() => window.URL.revokeObjectURL(url), 10000);
-  
+
             resolve();
           } catch (err) {
             console.error('Erreur lors de l’ouverture du PDF :', err);
@@ -609,5 +672,5 @@ export class ActiviteService {
         });
     });
   }
-  
+
 }

@@ -1,69 +1,214 @@
 <div class="card">
- 
-    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
-        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
 
-        <ng-template pTemplate="header">
-            <tr>
-                <th style="color: var(--secondary-color);">Date</th>
-                <th style="color: var(--secondary-color);">Montant (FCFA)</th>
-                <th style="color: var(--secondary-color);">Quantité</th>
-                <th style="color: var(--secondary-color);">Type récupération</th>
-                <th style="color: var(--secondary-color);">Personne en charge</th>
-                <th style="color: var(--secondary-color);">Profil</th>
-                <th style="color: var(--secondary-color);">N° commandes</th>
-                <th style="color: var(--secondary-color);">Clients</th>
-                <th style="color: var(--secondary-color);">Actions</th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-dataList>
-            <tr>
-                <td>
+  <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+           [totalRecords]="totalPages" [lazy]="true"
+           [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="color: var(--secondary-color);">Numero de regroupement</th>
+        <th style="color: var(--secondary-color);">Agent</th>
+        <th style="color: var(--secondary-color);">Contact</th>
+        <th style="color: var(--secondary-color);">Fonction</th>
+        <th style="color: var(--secondary-color);">Véhicule</th>
+        <th style="color: var(--secondary-color);">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-dataList>
+      <tr>
+        <td>
+          {{ dataList?.regroupementNumber }}
+        </td>
+        <td>
                     <span class="ml-1 vertical-align-middle">
-                        <!-- {{ dataList.image }} -->
+                    {{
+                        (dataList.commercial)
+                          ? dataList.commercial.nom + ' ' + dataList.commercial.prenoms
+                          : (dataList.transporteur?.nom && dataList.transporteur?.prenoms)
+                            ? dataList.transporteur.nom + ' ' + dataList.transporteur.prenoms
+                            : 'N/A'
+                      }}
+
                     </span>
-                </td>
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                        <!-- {{ dataList.image }} -->
-                    </span>
-                </td>
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                        <!-- {{ dataList.image }} -->
-                    </span>
-                </td>
-                <td>
-                    <!-- {{ dataList.libelle }} -->
-                </td>
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                        <!-- {{ dataList.format }} -->
-                    </span>
-                </td>
-                <td>
-                    <!-- {{ dataList.categorieproduit.libelle }} -->
-                </td>
-                <td>
-                    <!-- {{ dataList.categorieproduit.libelle }} -->
-                </td>
-                <td>
-                    <!-- {{ dataList.categorieproduit.libelle }} -->
-                </td>
-                <td>
-                    <tr class="d-flex justify-content-center gap-3">
-                        <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>
-                    </tr>
-        
-                    </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="5">Aucun élément trouvé.</td>
-            </tr>
-        </ng-template>
-    </p-table>
+        </td>
+        <td>
+          {{ dataList?.transporteur ? dataList?.transporteur.telephone : dataList?.transporteur }}
+        </td>
+        <td>
+          {{ dataList?.transporteur.role }}
+        </td>
+        <td>
+          <!--          {{ dataList?.vehicule?.marque || dataList.venteChine.vehicule.marque }}-->
+        </td>
+        <td>
+      <tr class="d-flex justify-content-center gap-3">
+        <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>
+      </tr>
+
+      </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">Aucun élément trouvé.</td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>
 
 
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div
+    class="modal-dialog modal-dialog-centered"
+
+  >
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Détails regroupement emballage</h5>
+        <button type="button" class="btn-close" aria-label="Close"></button>
+      </div>
+
+      <div
+        class="modal-body"
+        style="padding: 20px; max-height: 70vh; overflow-y: auto"
+      >
+        <div class="row">
+<!--          <div class="d-flex justify-content-end py-3">-->
+<!--            <button-->
+<!--              type="button"-->
+<!--              class="btn btn-secondary px-4"-->
+<!--              (click)="PrintDoc(updateData)"-->
+<!--            >-->
+<!--              Imprimer-->
+<!--            </button>-->
+<!--          </div>-->
+          <fieldset class="row border my-1">
+
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Transporteur : </strong>
+                <span>
+                   {{ updateData?.transporteur?.nom }} {{ updateData?.transporteur?.prenoms }}
+                  </span>
+              </div>
+              <div class="col-md-4">
+                <strong>Dépot : </strong>
+                <span>
+                    {{ updateData.depot?.nomDepot || 'NEANT' }}
+                  </span>
+              </div>
+              <div class="col-md-4">
+                <strong>Gérant: </strong>
+                <span>
+                    {{ updateData.depot?.gerant || 'NEANT' }}
+                  </span>
+              </div>
+
+            </div>
+          </fieldset>
+          <div class="col-md-12">
+
+            <div class="row">
+              <div id="accordionExample" class="accordion col-12 fieldset1" style="overflow-y: auto; max-height: 400px;">
+                <div *ngFor="let item of updateData.retours; let idx = index" class="accordion-item my-2">
+                  <h2 class="accordion-header" id="heading{{idx}}">
+                    <button
+                      class="accordion-button collapsed "
+                      type="button"
+                      data-bs-toggle="collapse"
+                      [attr.data-bs-target]="'#collapse' + idx"
+                      aria-expanded="false"
+                      [attr.aria-controls]="'collapse' + idx">
+                      <div class="w-100 d-flex justify-content-between" >
+                        <div class="d-flex flex-column">
+                          <label class="text-secondary fw-bold">
+                            {{ item.clientALivrer.role }} - {{ item.clientALivrer.nomEtablissement ? item.clientALivrer.nomEtablissement : item.clientALivrer.raisonSocial}}
+                          </label>
+                          <label class="ml-0">
+                            Type de retour  : {{ item.fromTo }}
+                          </label>
+                          <label class="ml-0 text-success">
+                            {{ item.statutCommande }}
+                          </label>
+                        </div>
+
+                        <div class="d-flex flex-column">
+                          <label class="fw-light ">
+                            {{item.commandeClient.NumCommande || item.commandeGratuite.NumCommande || item.venteChine.NumVenteChine }}
+                          </label>
+                          <label class="ml-0">
+                            Date récupération : {{ item.createdAt | date: 'dd/MM/yyyy HH:mm' }}
+
+                          </label>
+                        </div>
+
+                      </div>
+                    </button>
+                  </h2>
+                  <div
+                    id="collapse{{idx}}"
+                    class="accordion-collapse collapse"
+                    [attr.aria-labelledby]="'heading' + idx"
+                    data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                      <!-- Nested Fieldset -->
+                      <fieldset class="row border my-2">
+                        <legend style="font-size: 14px;" class="text-secondary">Emballages</legend>
+                        <table class="table">
+                          <thead>
+                          <tr>
+                            <th scope="col"><label>Codes</label></th>
+                            <th scope="col"><label>Désignations</label></th>
+                            <th scope="col"><label>formats</label></th>
+                            <th scope="col"><label>Quantité</label></th>
+                            <th scope="col"><label>Coûts</label></th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          <tr *ngFor="let article of item.articles; let i = index">
+                            <td><label>{{article.productCode}}</label></td>
+                            <td><label>{{ article.produit.libelle }}</label></td>
+                            <td><label>{{ article.produit.format }}</label></td>
+                            <td><label>{{ article.quantity }}</label></td>
+                            <td>
+                              <label>
+                                {{ article.prixUnitaire | currency:'XOF' }}
+                              </label>
+                            </td>
+                          </tr>
+                          <tr *ngIf="item.articles.length === 0">
+                            <td colspan="3" class="text-danger text-center">Pas d'article dans la commande</td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer gap-3 px-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="OnCloseModal()"
+        >
+          Fermer
+        </button>
+        <button
+          *ngIf="updateData?.regroupementStatut !==  Status.TERMINE"
+          type="submit"
+          class="btn btn-primary px-2"
+          (click)="TerminerRegroupement(updateData.regroupementId)"
+        >
+          Valider
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

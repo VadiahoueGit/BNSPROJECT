@@ -18,6 +18,7 @@ export enum MotifRetour {
 export enum Status {
   ATTENTE = 'En attente',
   VALIDE = 'Validé',
+  TERMINE ='TERMINE',
 }
 
 

@@ -78,9 +78,8 @@ export class SuiviDesRDVComponent {
     this._spinner.show();
     this.activiteService.GetRetourList(data).then((res: any) => {
 
-      this.dataList = res.data.filter((item:any) => item.returnType === MotifRetour.APPOINTMENT && !item.stockUpdated );
-      this.totalPages =  this.dataList.length * data.limit; // nombre total d’enregistrements
-      console.log('RDV:::>',this.dataList.length * data.limit);
+      this.dataList = res.data;
+      this.totalPages =  res.total; // nombre total d’enregistrements
       this._spinner.hide();
     });
   }
