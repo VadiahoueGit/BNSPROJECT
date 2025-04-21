@@ -26,6 +26,7 @@ interface RegroupementItem {
 export class LivraisonComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
+  results:any
   dataList: any[] = [
     {
       refclient: 'test',
@@ -414,7 +415,7 @@ export class LivraisonComponent {
 
     this._spinner.show();
     if (this.regroupementFinal) {
-      const result = Object.entries(this.regroupementFinal).flatMap(([key, value]) => {
+       this.results = Object.entries(this.regroupementFinal).flatMap(([key, value]) => {
         // Vérifie que value est bien un tableau
         if (!Array.isArray(value)) return [];
 
@@ -424,6 +425,7 @@ export class LivraisonComponent {
           if (!acc[type]) {
             acc[type] = { casier: 0, palette: 0 };
           }
+          console.log(item.casier )
           acc[type].casier += item.casier ?? 0;
           acc[type].palette += item.palettes ?? 0;
           return acc;
@@ -436,15 +438,16 @@ export class LivraisonComponent {
           casier: data.casier,
           palette: data.palette
         }));
+
       });
 
-      console.log(result);
+      console.log(this.result);
 
 
-      this.activiteService.GetRegroupementPdf(numRegroupement, result).then(
+      this.activiteService.GetRegroupementPdf(numRegroupement, this.results).then(
         (res: any) => {
           console.log('DownloadGlobalFacturesById:::>', res);
-
+          this.regroupementFinal = {}
           this._spinner.hide();
         },
         (error: any) => {

@@ -42,7 +42,7 @@ export class CommercialComponent {
   ngOnInit() {
     this.commercialForm = this.fb.group({
       nom: [null, Validators.required],
-      prenom: [null, Validators.required],
+      prenoms: [null, Validators.required],
       email: [null, [Validators.required, Validators.email]],
       telephone: [null, [Validators.required]], // Validation pour 10 chiffres
       idCommercialBNS: [null, Validators.required],
@@ -163,7 +163,7 @@ export class CommercialComponent {
     this.commercialForm.patchValue({
       idCommercialBNS: this.updateData.idCommercialBNS,
       nom: this.updateData.nom,
-      prenom: this.updateData.prenom,
+      prenoms: this.updateData.prenoms,
       email: this.updateData.email,
       telephone: this.updateData.telephone,
       depotId: this.updateData.depot.id,

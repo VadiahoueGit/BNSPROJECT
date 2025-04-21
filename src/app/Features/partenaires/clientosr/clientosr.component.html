@@ -10,8 +10,7 @@
     </div>
     <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer un client OSR</button>
   </div>
-    [totalRecords]="totalPages" [lazy]="true"
-  <p-table #dt [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8" 
+  <p-table #dt [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
   [totalRecords]="totalPages" [lazy]="true"
   (onFilter)="updateFilteredCount(dt)"
            [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">

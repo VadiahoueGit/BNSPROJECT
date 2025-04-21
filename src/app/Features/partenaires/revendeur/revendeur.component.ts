@@ -385,7 +385,7 @@ export class RevendeurComponent {
     this._spinner.show();
     this._articleService.GetListRevendeur(data).then((res: any) => {
       console.log('GetListRevendeur:::>', res);
-      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
 
       this.dataList = res.data;
       this.revendeurConfirmed = res.data.filter(

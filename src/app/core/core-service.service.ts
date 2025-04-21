@@ -27,7 +27,7 @@ export class CoreServiceService {
     return new Promise<void>((resolve, reject) => {
       this.listLocalite.next([]);
       this.ListZoneLivraison.next([]);
-     
+
 
       let data = {};
       Promise.all([
@@ -37,7 +37,7 @@ export class CoreServiceService {
         this.ListZoneLivraison.getValue().length === 0
           ? this.GetZoneList(data)
           : this.Nothing(),
-       
+
       ]).then(() => {
         resolve();
       }, () =>
@@ -68,7 +68,7 @@ export class CoreServiceService {
 
       this._http.post(`${this.apiUrl}/v1/auth/login`, data, { headers })
         .subscribe((res: any) => {
-          console.log(res)
+          console.log(this.apiUrl)
           resolve(res);
         }
           , err => {
