@@ -363,7 +363,8 @@ export class ValidationCommandeClientComponent {
     this._spinner.show();
     this.articleService.GetListCommandeClient(data).then((res: any) => {
       console.log('dataList:::>', res);
-      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      console.log('totalPages:::>', this.totalPages);
 
       this.dataList = res.data.filter(
         (x: any) => x.statut === StatutCommande.ATTENTE_VALIDATION

@@ -114,7 +114,8 @@ export class VehiculesComponent implements AfterViewInit {
     this._spinner.show();
     this._logistiqueService.GetVehiculeList(data).then((res: any) => {
       this.dataList = res.data
-      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      console.log('totalPages:::>', this.totalPages);
 
       this._spinner.hide();
       console.log(res)

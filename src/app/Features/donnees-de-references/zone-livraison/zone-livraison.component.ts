@@ -28,6 +28,7 @@ export class ZoneLivraisonComponent {
   dataListlocalite: any = [];
   currentPage: number;
   rowsPerPage: any;
+  totalPages: any;
 
   constructor(
     private _userService: UtilisateurResolveService,
@@ -101,6 +102,8 @@ export class ZoneLivraisonComponent {
     this._spinner.show();
     this._coreService.GetZoneList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
+      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      console.log('totalPages:::>', this.totalPages);
       this.dataList = res.data;
       this._spinner.hide();
     });

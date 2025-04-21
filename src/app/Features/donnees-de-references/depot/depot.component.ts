@@ -40,6 +40,7 @@ export class DepotComponent {
   dataListlocalite: any;
   currentPage: number;
   rowsPerPage: any;
+  totalPages: any;
   constructor(
     private coreService: CoreServiceService,
     private _userService: UtilisateurResolveService,
@@ -62,6 +63,8 @@ export class DepotComponent {
     this._spinner.show();
     this._coreService.GetLocaliteList(data).then((res: any) => {
       console.log('GetLocaliteList:::>', res);
+      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      console.log('totalPages:::>', this.totalPages);
       this.dataListlocalite = res.data;
       this._spinner.hide();
     });
