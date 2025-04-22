@@ -43,7 +43,7 @@ export class RevendeurComponent {
   selectedDfeFile: File | null = null;
   numeroSap: any;
   filteredCount: number = 0;
-  @ViewChild('dt2') dt2!: Table;
+  @ViewChild('dt') dt!: Table;
   totalPages: number;
   constructor(
     private cd: ChangeDetectorRef,
@@ -111,13 +111,14 @@ export class RevendeurComponent {
     this.location.back();
   }
   updateFilteredCount(table: any) {
+    console.log('Filtrage déclenché')
     this.filteredCount = table.filteredValue ? table.filteredValue.length : this.dataList.length;
   }
 
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
-    this.GetRevendeurList(this.currentPage);
+    // this.GetRevendeurList(this.currentPage);
   }
   OnCreate() {
     this.revendeurForm.enable();
@@ -223,7 +224,7 @@ export class RevendeurComponent {
   filterGlobal(event:any) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement?.value || ''; // Utilisez une valeur par défaut
-    this.dt2.filterGlobal(value, 'contains');
+    this.dt.filterGlobal(value, 'contains');
   }
   OnCloseDetailModal() {
     this.isModalDetail = false;
@@ -385,7 +386,7 @@ export class RevendeurComponent {
     this._spinner.show();
     this._articleService.GetListRevendeur(data).then((res: any) => {
       console.log('GetListRevendeur:::>', res);
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total; // nombre total d’enregistrements
 
       this.dataList = res.data;
       this.revendeurConfirmed = res.data.filter(

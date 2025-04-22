@@ -12,13 +12,11 @@
     <span style="font-size:13px;" class="fw-bold text-secondary">{{ filteredCount }}</span>
   </div>
   <p-table
-    #dt
     [styleClass]="'p-datatable-sm'"
-    #dt2
+    #dt
     [value]="dataList"
     dataKey="id"
     [rows]="8"
-    [totalRecords]="totalPages" [lazy]="true"
     [rowsPerPageOptions]="[10, 25, 50]"
     [globalFilterFields]="['raisonSocial', 'nomProprietaire', 'nomGerant']"
     (onFilter)="updateFilteredCount(dt)"

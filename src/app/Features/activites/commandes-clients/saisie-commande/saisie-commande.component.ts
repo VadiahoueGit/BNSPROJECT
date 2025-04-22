@@ -425,7 +425,7 @@ export class SaisieCommandeComponent {
   }
   GetListCommandeClient(page: number) {
     let data = {
-      paginate: true,
+      paginate: false,
       page: page,
       limit: 8,
     };

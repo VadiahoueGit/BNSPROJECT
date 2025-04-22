@@ -13,7 +13,6 @@
     [rows]="8"
     [rowsPerPageOptions]="[10, 25, 50]"
     [paginator]="true"
-    [totalRecords]="totalPages" [lazy]="true"
     (onPage)="onPage($event)"
   >
     <ng-template pTemplate="header">
@@ -30,7 +29,7 @@
           <p-columnFilter matchMode="contains"  type="text" field="NumCommande" placeholder="" />
         </th>
         <th>
-          <p-columnFilter matchMode="contains"  type="text" field="raisonSociale" placeholder="" />
+          <p-columnFilter matchMode="contains"  type="text" field="raisonSocial" placeholder="" />
         </th>
       </tr>
     </ng-template>

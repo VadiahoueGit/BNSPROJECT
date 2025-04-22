@@ -88,7 +88,6 @@ export class ListDesReceptionsEmballagesComponent {
     if (!this.regroupementFinal) {
       this.regroupementFinal = {};
     }
-    console.log('fois:');
     this.result = { palettes: 0, casier: 0 };
 
     const articlesParFormatEtType = commande.articles.reduce((acc: any, article: any) => {
@@ -180,7 +179,9 @@ export class ListDesReceptionsEmballagesComponent {
     console.log(item);
     this.regroupementTable = [];
     const idretour = item.id;
-    let regroup = this.regrouperArticles(item.articles)
+    let allArticles = item.retours.flatMap((retour:any) => retour.articles);
+console.log('allArticles',allArticles);
+    let regroup = this.regrouperArticles(allArticles)
     this.calculate(regroup);
     this._spinner.show();
     if (this.regroupementFinal) {
