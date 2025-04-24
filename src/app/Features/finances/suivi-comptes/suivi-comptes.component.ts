@@ -113,7 +113,7 @@ export class SuiviComptesComponent {
   }
   GetCreditList(page: number) {
     let data = {
-      paginate: false,
+      paginate: true,
       page: page,
       limit: 8,
     };

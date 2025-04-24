@@ -101,7 +101,7 @@ export class DevisesComponent {
   }
   GetPlastiqueNuList(page:number) {
     let data = {
-      paginate: false,
+      paginate: true,
       page: page,
       limit: 8,
     };

@@ -65,7 +65,7 @@ export class TransporteurComponent {
   GetTransporteurList(page: number) {
     this._spinner.show();
     let data = {
-      paginate: false,
+      paginate: true,
       page: page,
       limit: 8,
     };

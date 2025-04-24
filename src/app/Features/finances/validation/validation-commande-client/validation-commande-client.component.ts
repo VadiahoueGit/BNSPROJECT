@@ -356,7 +356,7 @@ export class ValidationCommandeClientComponent {
   }
   GetListCommandeClient(page: number) {
     let data = {
-      paginate: false,
+      paginate: true,
       page: page,
       limit: 8,
     };

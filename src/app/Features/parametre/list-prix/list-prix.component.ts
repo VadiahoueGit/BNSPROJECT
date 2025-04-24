@@ -43,7 +43,7 @@ export class ListPrixComponent implements OnInit {
   }
   GetListTypePrix(page:number) {
     let data = {
-      paginate: false,
+      paginate: true,
       page: page,
       limit: 8,
     };

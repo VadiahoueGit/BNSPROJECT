@@ -330,7 +330,7 @@ export class ValidationVenteChineComponent {
   OnDelete(id: number) {}
   GetVenteChineList(page: number) {
     let data = {
-      paginate: false,
+      paginate: true,
       page: page,
       limit: 8,
     };

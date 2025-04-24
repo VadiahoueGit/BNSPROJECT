@@ -56,7 +56,7 @@ export class DepotComponent {
   }
   ngOnInit() {
     let data = {
-      paginate: false,
+      paginate: true,
       page: 1,
       limit: 8,
     };
