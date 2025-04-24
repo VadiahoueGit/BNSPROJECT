@@ -168,4 +168,5 @@ export class ValidationPaiementsComponent {
       });
     }
 
+  protected readonly Status = Status;
 }
