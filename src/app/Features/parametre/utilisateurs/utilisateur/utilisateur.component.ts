@@ -51,7 +51,7 @@ export class UtilisateurComponent implements AfterViewInit {
     this.UserForm = this.fb.group({
       photo: [null],
       nom: [null, Validators.required],
-      prenom: [null, Validators.required],
+      prenoms: [null, Validators.required],
       email: [null, Validators.required],
       telephone_one: [null, Validators.required],
       telephone_two: [null, Validators.required],
