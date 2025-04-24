@@ -304,7 +304,7 @@ export class ClientosrComponent {
 
   GetClientOSRList(page: number) {
     let data = {
-      paginate: false,
+      paginate: true,
       page: page,
       limit: 8,
     };

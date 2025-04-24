@@ -112,7 +112,7 @@ export class GroupeClientComponent {
   }
   GetGroupeClientList(page:number) {
     let data = {
-      paginate: false,
+      paginate: true,
       page: page,
       limit: 8,
     };
