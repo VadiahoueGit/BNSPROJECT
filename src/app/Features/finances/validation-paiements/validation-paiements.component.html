@@ -266,9 +266,9 @@
                   <td>{{ item.montant }}</td>
                   <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
                   <td>
-                    <p class="text-success" *ngIf="item?.transaction.statut == Status.PAYE">Payé</p>
+                    <p class="text-success" *ngIf="item?.statut !== null">{{item?.statut}}</p>
                     <button
-                      *ngIf="item?.transaction.statut !== Status.PAYE"
+                      *ngIf="item?.statut !== Status.PAYE"
                       type="submit"
                       class="btn btn-primary px-2"
                       (click)="ValidatePaiement(item.transaction.id)"

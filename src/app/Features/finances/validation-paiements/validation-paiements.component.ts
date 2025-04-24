@@ -153,7 +153,7 @@ export class ValidationPaiementsComponent {
           this.toastr.success(res.message);
         });
       } else {
-        this.isModalOpen = false;
+        res.isConfirmed == false;
       }
     });
   }
