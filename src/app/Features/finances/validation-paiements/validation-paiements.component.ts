@@ -82,12 +82,12 @@ export class ValidationPaiementsComponent {
     this._spinner.show();
     this.financeService.GetPaiementList(data).then((res: any) => {
       console.log('ALL:::>', res);
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
-      console.log('totalPages:::>', this.totalPages);
+      this.totalPages = res.total// nombre total d’enregistrements
 
-      this.dataList = res.data.filter((item: any) => Number(item.montantPercu) > 0 && item.statut !== "Validé"
+      this.dataList = res.data
+        // .filter((item: any) => Number(item.montantPercu) > 0 && item.statut !== "Validé"
 
-      );
+      // );
       console.log('DATA:::>', this.dataList);
       this._spinner.hide();
     });
