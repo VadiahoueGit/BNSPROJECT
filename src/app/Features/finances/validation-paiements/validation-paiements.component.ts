@@ -145,12 +145,17 @@ export class ValidationPaiementsComponent {
         this._spinner.show();
         this.financeService.ValidatePaiement(id).then((res: any) => {
           console.log('validation:::>', res);
+          if(res.status == 200) {
+            this.GetPaiementList(1);
+            this.toastr.success(res.message);
+            this.OnCloseModal();
+          }else {
+            this.toastr.error(res.message);
+          }
           this._spinner.hide();
-          this.GetPaiementList(1);
 
-          this.OnCloseModal();
 
-          this.toastr.success(res.message);
+
         });
       } else {
         res.isConfirmed == false;

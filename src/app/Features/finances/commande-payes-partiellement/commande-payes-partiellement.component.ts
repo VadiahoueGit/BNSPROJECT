@@ -82,9 +82,7 @@ export class CommandePayesPartiellementComponent {
     this._spinner.show();
     this.financeService.GetPaiementList(data).then((res: any) => {
       console.log('ALL:::>', res);
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
-      console.log('totalPages:::>', this.totalPages); // nombre total d’enregistrements
-
+      this.totalPages = res.total; // nombre total d’enregistrements
       this.dataList = res.data.filter((item: any) =>
         item.statut === Status.VALIDE && Number(item.montantPercu) > 0 && Number(item.montantPercu) < Number(item.montantAPercevoir)
 
