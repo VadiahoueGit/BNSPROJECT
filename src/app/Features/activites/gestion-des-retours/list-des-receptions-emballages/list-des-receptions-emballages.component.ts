@@ -180,7 +180,7 @@ export class ListDesReceptionsEmballagesComponent {
     this.regroupementTable = [];
     const idretour = item.id;
     let allArticles = item.retours.flatMap((retour:any) => retour.articles);
-console.log('allArticles',allArticles);
+    console.log('allArticles',allArticles);
     let regroup = this.regrouperArticles(allArticles)
     this.calculate(regroup);
     this._spinner.show();
@@ -210,10 +210,14 @@ console.log('allArticles',allArticles);
       });
       console.log('result', result);
 
-      this._activite.GetRegroupementEmballagePdf(idretour, result).then(
+      const params = {
+        "regroupementId": item.regroupementId,
+        "transporteurId": item.transporteur ? item.transporteur.id : item.commercial.id,
+        "role": item.transporteur ? item.transporteur.role : item.commercial.role
+      }
+      this._activite.GetRetourWithArtilesListAgentPdf(params, result).then(
         (res: any) => {
           console.log('DownloadGlobalFacturesById:::>', res);
-
           this._spinner.hide();
         },
         (error: any) => {

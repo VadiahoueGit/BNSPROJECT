@@ -553,6 +553,46 @@ export class ActiviteService {
         );
     });
   }
+
+  GetRetourWithArtilesListAgentPdf(data: any,result:any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+        'Content-Type': 'application/json'
+      });
+
+      this._http
+        .post(
+          `${this.apiUrl}/v1/regroupements/regroupe/regroupement_emballage/pdf?regroupementId=${data.regroupementId}&transporteurId=${data.transporteurId}&role=${data.role}`,
+          result,
+          { headers ,responseType: 'blob' }
+        )
+        .subscribe(response => {
+          try {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+
+            // Ouvrir le PDF dans une nouvelle fenêtre
+            const newTab = window.open(url);
+            if (!newTab) {
+              throw new Error('Le popup a été bloqué par le navigateur.');
+            }
+
+            // Nettoyer l’URL après un certain temps pour éviter les fuites mémoire
+            setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+
+            resolve();
+          } catch (err) {
+            console.error('Erreur lors de l’ouverture du PDF :', err);
+            reject(err);
+          }
+        }, error => {
+          console.error('Erreur lors du téléchargement du PDF :', error);
+          reject(error);
+        });
+    });
+  }
+
   GetRetourWithArtilesList(data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({

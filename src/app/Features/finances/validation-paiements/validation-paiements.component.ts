@@ -81,7 +81,7 @@ export class ValidationPaiementsComponent {
     const value = inputElement?.value || ''; // Utilisez une valeur par défaut
     this.GetPaiementList(1,value);
   }
-  
+
   GetPaiementList(page: number,numeroCommande?: string) {
     let data = {
       paginate: true,
