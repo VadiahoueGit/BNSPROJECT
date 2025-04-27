@@ -46,9 +46,12 @@ export class LogistiqueService {
    // TRANSPORTEUR
    getCurrentPosition(): Promise<GeolocationPosition> {
     return new Promise((resolve, reject) => {
+
       if (navigator.geolocation) {
+
         navigator.geolocation.getCurrentPosition(resolve, reject);
       } else {
+        console.log('currentPosition');
         reject(new Error('Geolocation is not supported by this browser.'));
       }
     });

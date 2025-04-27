@@ -16,7 +16,11 @@ label {
   color: #333;
   cursor: pointer;
 }
-
+.form-control-custom{
+  border: 0.1px solid gray;
+  border-radius: 3px;
+  width: 100px;
+}
 .modal-dialog {
   background-color: white;
   border-radius: 0.3rem;

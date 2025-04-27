@@ -1,8 +1,13 @@
 <div class="card">
-  <div class="d-flex justify-content-end py-3"></div>
+   <span class="p-input-icon-left ml-auto d-flex align-items-center">
+                    <i class="fas fa-search"></i>
+                    <input style="width: 300px; border-radius: 7px;" pInputText type="text"
+                           (keydown.enter)="filterGlobal($event)" placeholder="Recherche"/>
+                </span>
   <p-table
     [styleClass]="'p-datatable-sm'"
     #dt2
+    [totalRecords]="totalPages" [lazy]="true"
     [value]="dataList"
     dataKey="id"
     [rows]="8"

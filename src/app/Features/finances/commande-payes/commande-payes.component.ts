@@ -74,22 +74,31 @@ export class CommandePayesComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetPaiementList(page:number) {
+
+  filterGlobal(event:any) {
+    const inputElement = event.target as HTMLInputElement;
+    const value = inputElement?.value || ''; // Utilisez une valeur par défaut
+    this.GetPaiementList(1,value);
+  }
+
+  GetPaiementList(page:number,numeroCommande?: string) {
     let data = {
       paginate: true,
       page: page,
       limit: 8,
+      numeroCommande: numeroCommande,
     };
     this._spinner.show();
-    this.financeService.GetPaiementList(data).then((res: any) => {
+    this.financeService.GetPaiementListPaye(data).then((res: any) => {
       console.log('ALL:::>', res);
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages);// nombre total d’enregistrements
 
-      this.dataList = res.data.filter((item: any) =>
-        item.statut === Status.VALIDE &&
-        Number(item.montantAPercevoir) == Number(item.montantPercu)
-      );
+      this.dataList = res.data
+      //   .filter((item: any) =>
+      //   item.statut === Status.VALIDE &&
+      //   Number(item.montantAPercevoir) == Number(item.montantPercu)
+      // );
       console.log('Commande payees :::>', this.dataList );
 
 

@@ -1,11 +1,11 @@
-import { Component, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
-import { Table } from 'primeng/table';
-import { ArticleServiceService } from 'src/app/core/article-service.service';
-import { ALERT_QUESTION } from '../../shared-component/utils';
-import { FinanceService } from '../../../core/finance.service';
+import {Component, ViewChild} from '@angular/core';
+import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {ToastrService} from 'ngx-toastr';
+import {Table} from 'primeng/table';
+import {ArticleServiceService} from 'src/app/core/article-service.service';
+import {ALERT_QUESTION} from '../../shared-component/utils';
+import {FinanceService} from '../../../core/finance.service';
 import {Status} from "../../../utils/utils";
 
 @Component({
@@ -35,13 +35,15 @@ export class ValidationPaiementsComponent {
   totalQte: number;
   selectedArticles: never[];
   totalPages: number;
+
   constructor(
     private articleService: ArticleServiceService,
     private financeService: FinanceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.GetPaiementList(1);
@@ -73,11 +75,19 @@ export class ValidationPaiementsComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetPaiementList(page: number) {
+
+  filterGlobal(event:any) {
+    const inputElement = event.target as HTMLInputElement;
+    const value = inputElement?.value || ''; // Utilisez une valeur par défaut
+    this.GetPaiementList(1,value);
+  }
+  
+  GetPaiementList(page: number,numeroCommande?: string) {
     let data = {
       paginate: true,
       page: page,
       limit: 8,
+      numeroCommande: numeroCommande,
     };
     this._spinner.show();
     this.financeService.GetPaiementList(data).then((res: any) => {
@@ -85,7 +95,7 @@ export class ValidationPaiementsComponent {
       this.totalPages = res.total// nombre total d’enregistrements
 
       this.dataList = res.data
-        // .filter((item: any) => Number(item.montantPercu) > 0 && item.statut !== "Validé"
+      // .filter((item: any) => Number(item.montantPercu) > 0 && item.statut !== "Validé"
 
       // );
       console.log('DATA:::>', this.dataList);
@@ -111,6 +121,7 @@ export class ValidationPaiementsComponent {
       liquideId: 1,
     });
   }
+
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
       (res) => {
@@ -126,6 +137,7 @@ export class ValidationPaiementsComponent {
       }
     );
   }
+
   OnCloseModal() {
     this.totalEmballage = 0;
     this.totalLiquide = 0;
@@ -135,6 +147,7 @@ export class ValidationPaiementsComponent {
     this.selectedArticles = [];
     console.log(this.isModalOpen);
   }
+
   ValidatePaiement(id: number) {
     ALERT_QUESTION(
       'warning',
@@ -145,15 +158,17 @@ export class ValidationPaiementsComponent {
         this._spinner.show();
         this.financeService.ValidatePaiement(id).then((res: any) => {
           console.log('validation:::>', res);
-          if(res.status == 200) {
+          if (res.statusCode == 200) {
             this.GetPaiementList(1);
+            const matchedItem = this.dataList.find(item => item.id === this.updateData.id);
+            this.OnEdit(matchedItem);
+
             this.toastr.success(res.message);
-            this.OnCloseModal();
-          }else {
+            // this.OnCloseModal();
+          } else {
             this.toastr.error(res.message);
           }
           this._spinner.hide();
-
 
 
         });
@@ -163,15 +178,14 @@ export class ValidationPaiementsComponent {
     });
   }
 
-  GetHistoriquePayment(id: number)
-    {
-      this._spinner.show();
-      this.financeService.GetHistoriquePayment(id).then((res: any) => {
-        this.hstoriquePayment = res.data
-        console.log('data:::>', res);
-        this._spinner.hide();
-      });
-    }
+  GetHistoriquePayment(id: number) {
+    this._spinner.show();
+    this.financeService.GetHistoriquePayment(id).then((res: any) => {
+      this.hstoriquePayment = res.data
+      console.log('data:::>', res);
+      this._spinner.hide();
+    });
+  }
 
   protected readonly Status = Status;
 }
