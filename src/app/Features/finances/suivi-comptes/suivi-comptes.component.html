@@ -218,6 +218,14 @@
             <strong>Solde total : </strong>
             <span>{{ detail.totalSolde }}</span>
           </div>
+          <div class="col-md-4">
+            <strong>Délai règlement : </strong>
+            <span>{{ detail.delaiReglement }} Jours</span>
+          </div>
+          <div class="col-md-4">
+            <strong>Date écheance : </strong>
+            <span>{{ detail.dateEcheance | date }}</span>
+          </div>
         </div>
         <table *ngIf="operation == 'detail'" class="table table-bordered table-hover">
           <thead class="table-success">
