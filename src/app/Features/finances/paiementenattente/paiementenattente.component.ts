@@ -72,20 +72,29 @@ export class PaiementenattenteComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetPaiementList(page: number) {
+
+  filterGlobal(event:any) {
+    const inputElement = event.target as HTMLInputElement;
+    const value = inputElement?.value || ''; // Utilisez une valeur par défaut
+    this.GetPaiementList(1,value);
+  }
+
+  GetPaiementList(page: number,numeroCommande?: string) {
     let data = {
       paginate: true,
       page: page,
       limit: 8,
+      numeroCommande: numeroCommande
     };
     this._spinner.show();
-    this.financeService.GetPaiementList(data).then((res: any) => {
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+    this.financeService.GetPaiementListAttente(data).then((res: any) => {
+      this.totalPages = res.total; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages);
 
-      this.dataList = res.data.filter((item: any) =>
-        item.statut === Status.ATTENTE && Number(item.montantPercu) >= 0
-      );
+      this.dataList = res.data
+      //   .filter((item: any) =>
+      //   item.statut === Status.ATTENTE && Number(item.montantPercu) >= 0
+      // );
       console.log('ALL paiement en attente:::>',   this.dataList );
 
       this._spinner.hide();

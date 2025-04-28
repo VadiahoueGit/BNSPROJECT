@@ -236,7 +236,7 @@ export class RegroupementEmballagesComponent {
     this._activite.GetRetourWithArtilesList(data).then((res: any) => {
       console.log('retour list:::>', res);
       this.dataList = res.data;
-      this.totalPages =  this.dataList.length * data.limit;
+      this.totalPages = res.total;
       this._spinner.hide();
     });
   }

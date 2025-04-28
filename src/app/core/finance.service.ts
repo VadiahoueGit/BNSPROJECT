@@ -106,11 +106,48 @@ export class FinanceService {
   }
 
   // COMPTABILITE
+  GetPaiementListPaye(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http
+        .get(
+          `${this.apiUrl}/v1/comptabilite/transactions/paye?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&numeroCommande=${data.numeroCommande}`
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+  GetPaiementListAttente(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http
+        .get(
+          `${this.apiUrl}/v1/comptabilite/transactions/en-attente?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&numeroCommande=${data.numeroCommande}`
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
   GetPaiementList(data: any) {
     return new Promise((resolve: any, reject: any) => {
       this._http
         .get(
-          `${this.apiUrl}/v1/comptabilite/transactions?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/comptabilite/transactions/validation?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&numeroCommande=${data.numeroCommande}`
         )
         .subscribe(
           (res: any) => {
@@ -245,7 +282,7 @@ export class FinanceService {
         )
         .subscribe(
           (res: any) => {
-          
+
             console.log(res);
             resolve(res);
           },
