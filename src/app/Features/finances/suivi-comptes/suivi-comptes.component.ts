@@ -47,6 +47,7 @@ export class SuiviComptesComponent {
       codeClient: [null, Validators.required],
       creditLiquide: [null, Validators.required],
       creditEmballage: [null, Validators.required],
+      delaiReglement: [null, Validators.required],
       totalCredit: [{ value: 0,  }],
     });
     this.CreditForm.controls['totalCredit'].disable();
@@ -60,7 +61,7 @@ export class SuiviComptesComponent {
   }
   updateTotal(): void {
     const creditLiquide = this.CreditForm.get('creditLiquide')?.value || 0;
-    const creditEmballage = this.CreditForm.get('creditEmballage')?.value || 0;
+    const creditEmballage = this.CreditForm.get('creditEmballage' )?.value || 0;
     const total = creditLiquide + creditEmballage;
 
     this.CreditForm.get('totalCredit')?.setValue(total, { emitEvent: false });
@@ -192,6 +193,7 @@ export class SuiviComptesComponent {
       creditEmballage: this.updateData.creditEmballage,
       creditLiquide: this.updateData.creditLiquide,
       totalCredit: this.updateData.totalCredit,
+      delaiReglement: this.updateData.delaiReglement,
     });
   }
   OnDelete(Id: any) {
