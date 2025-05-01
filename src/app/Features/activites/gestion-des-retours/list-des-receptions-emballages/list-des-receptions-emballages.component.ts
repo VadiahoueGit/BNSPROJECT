@@ -17,8 +17,8 @@ import {Status} from "../../../../utils/utils";
 export class ListDesReceptionsEmballagesComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
-  dataList!: any[];
-
+  dataList!: any;
+  allArticles:any
   totalPages: number = 0;
   loading: boolean = true;
   isModalOpen = false;
@@ -78,6 +78,7 @@ export class ListDesReceptionsEmballagesComponent {
   OnEdit(data: any) {
     console.log(data);
     this.updateData = data;
+    this.extractAllArticles(this.updateData.retours)
     this.isModalOpen = true;
   }
 
@@ -296,6 +297,42 @@ export class ListDesReceptionsEmballagesComponent {
     this.GetRetourList(this.currentPage);
   }
 
+  extractAllArticles(data:any) {
+    const articleSet = new Set<string>();
+    data.forEach((retour:any) => {
+      retour.articles.forEach((article: any) => {
+        articleSet.add(article.produit.libelle);
+      });
+    });
+    this.allArticles = Array.from(articleSet);
+  }
+
+  getQuantity(retour: any, libelle: string): number {
+    let total = 0;
+    retour.articles.forEach((article: any) => {
+      if (article.produit.libelle === libelle) {
+        total += article.quantity;
+      }
+    });
+    return total;
+  }
+
+  getTotalForArticle(article: any): number {
+    let total = 0;
+    for (const retour of this.updateData.retours) {
+      total += this.getQuantity(retour, article) || 0;
+    }
+
+    return total;
+  }
+
+  prechargerQuantites() {
+    for (const article of this.allArticles) {
+      if (article.quantitePhysique == null) {
+        article.quantitePhysique = this.getTotalForArticle(article);
+      }
+    }
+  }
   protected readonly Status = Status;
   protected readonly console = console;
 }

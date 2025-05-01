@@ -116,12 +116,6 @@
                   </span>
               </div>
               <div class="col-md-4">
-                <strong>Client à livrer : </strong>
-                <span>
-                   {{ updateData?.clientALivrer?.nomEtablissement || 'NEANT' }}
-                  </span>
-              </div>
-              <div class="col-md-4">
                 <strong>Type retour : </strong>
                 <span>
                    {{ updateData?.returnType || 'NEANT' }}
@@ -143,15 +137,22 @@
             <div class="row">
               <div class="col-md-4">
                 <strong>Type client : </strong>
-                <span>{{ updateData?.commandeClient?.clientType || 'NEANT' }}</span>
+                <span>{{ updateData?.commandeClient?.clientType || updateData?.venteChine?.clientType || updateData?.commandeGratuite?.clientType || 'NEANT' }}</span>
               </div>
               <div class="col-md-4">
-                <strong>Raison sociale : </strong>
-                <span>{{ updateData.commandeClient?.raisonSociale || 'NEANT' }}</span>
+                <strong>Établissement : </strong>
+                <span>{{ updateData.clientALivrer?.raisonSocial
+                  ? updateData.clientALivrer?.raisonSocial
+                  : updateData.clientALivrer?.nomEtablissement || 'NEANT' }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Solde emballage : </strong>
-                <span>{{ updateData.commandeClient?.soldeEmballage | currency :'XOF' }}</span>
+                <span>{{
+                    updateData.commandeClient?.soldeEmballage ??
+                    updateData.commandeGratuite?.soldeEmballage ??
+                    updateData.venteChine?.soldeEmballage
+                      | currency: 'XOF':'symbol':'1.0-0'
+                  }}</span>
               </div>
             </div>
           </fieldset>
