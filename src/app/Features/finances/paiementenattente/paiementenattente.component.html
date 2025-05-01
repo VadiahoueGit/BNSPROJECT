@@ -24,7 +24,9 @@
         <th style="color: var(--secondary-color)">Client</th>
         <th style="color: var(--secondary-color)">Montant à verser</th>
         <th style="color: var(--secondary-color)">Montant versé</th>
-        <th style="color: var(--secondary-color)">Date</th>
+        <th style="color: var(--secondary-color)">Délai</th>
+        <th style="color: var(--secondary-color)">Date d'écheance</th>
+        <th style="color: var(--secondary-color)">Date création</th>
         <th style="color: var(--secondary-color)">Statut</th>
       </tr>
     </ng-template>
@@ -87,6 +89,12 @@
         </td>
         <td>
           {{ dataList?.montantPercu }}
+        </td>
+        <td>
+          {{ dataList?.credit?.delaiReglement ||"N/A" }}
+        </td>
+        <td>
+          {{ dataList?.credit?.dateEcheance | date :"dd/MM/yyyy HH:mm"  }}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">

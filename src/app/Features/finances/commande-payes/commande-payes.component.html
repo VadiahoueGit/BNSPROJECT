@@ -91,7 +91,7 @@
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList?.createdAt | date }}
+            {{ dataList?.createdAt | date : "dd/MM/yyyy" }}
           </span>
         </td>
         <td>
@@ -152,7 +152,7 @@
             <legend style="font-size: 14px" class="text-secondary">
               Information de la Commande :
               {{ updateData.paiementsCommandeClient[0]?.NumCommande }} du
-              {{ updateData.createdAt | date }}
+              {{ updateData.createdAt | date : "dd/MM/yyyy HH:mm" }}
             </legend>
             <div class="row">
               <div class="col-md-4">
@@ -240,6 +240,14 @@
               <div class="col-md-4">
                 <strong>Montant restant : </strong>
                 <span>{{ updateData?.montantRestant }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Délai : </strong>
+                <span>{{ updateData?.credit?.delaiReglement || "NA" }}Jours</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Date échéance : </strong>
+                <span>{{ updateData?.credit?.dateEcheance | date: "dd/MM/yyyy HH:mm"  }}</span>
               </div>
             </div>
           </fieldset>
@@ -395,6 +403,14 @@
                 <strong>Montant restant : </strong>
                 <span>{{ updateData?.montantRestant }}</span>
               </div>
+              <div class="col-md-4">
+                <strong>Délai : </strong>
+                <span>{{ updateData?.credit?.delaiReglement || "NA" }}Jours</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Date échéance : </strong>
+                <span>{{ updateData?.credit?.dateEcheance | date : "dd/MM/yyyy HH:mm" }}</span>
+              </div>
             </div>
           </fieldset>
           <fieldset class="row border my-2">
@@ -474,7 +490,7 @@
             <legend style="font-size: 14px" class="text-secondary">
               Informationde la Commande :
               {{ updateData.paiementsCommandeGratuit[0]?.NumCommande }} du
-              {{ updateData.createdAt | date }}
+              {{ updateData.createdAt | date : "dd/MM/yyyy HH:mm" }}
             </legend>
             <div class="row">
               <div class="col-md-4">
@@ -562,6 +578,14 @@
               <div class="col-md-4">
                 <strong>Montant restant : </strong>
                 <span>{{ updateData?.montantRestant }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Délai : </strong>
+                <span>{{ updateData?.credit?.delaiReglement || "NA" }}Jours</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Date échéance : </strong>
+                <span>{{ updateData?.credit?.dateEcheance | date : "dd/MM/yyyy HH:mm"  }}</span>
               </div>
             </div>
           </fieldset>

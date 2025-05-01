@@ -224,7 +224,7 @@
           </div>
           <div class="col-md-4">
             <strong>Date écheance : </strong>
-            <span>{{ detail.dateEcheance | date }}</span>
+            <span>{{ detail.dateEcheance | date : "dd/MM/yyyy HH:mm" }}</span>
           </div>
         </div>
         <table *ngIf="operation == 'detail'" class="table table-bordered table-hover">
