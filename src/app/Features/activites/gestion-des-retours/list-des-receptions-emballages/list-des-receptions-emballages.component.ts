@@ -244,6 +244,42 @@ export class ListDesReceptionsEmballagesComponent {
     });
   }
 
+  TerminerInventaire(id: any,items: any)
+  {
+    const iteration = items.map((article: any) => {
+      const { libelle, ...rest } = article; // on extrait libelle et garde le reste
+      return {
+        ...rest,
+        regroupementEmballageId: id
+      };
+    });
+
+    const data = {
+      "inventories": iteration
+    }
+    ALERT_QUESTION(
+      'warning',
+      'Attention !',
+      'Voulez-vous valider cet inventaire?'
+    ).then((res) => {
+      if (res.isConfirmed == true) {
+        console.log('validation:::>', data);
+        this._spinner.show();
+        this._activite.TerminerInventaire(data).then((res: any) => {
+          console.log('validation inventaire:::>', res);
+          this._spinner.hide();
+          this.GetRetourList(1);
+          this.OnCloseModal();
+
+          this.toastr.success(res.message);
+        })
+      } else {
+        this.isModalOpen = false;
+      }
+    });
+
+  }
+
   TerminerRegroupement(id: any)
   {
     ALERT_QUESTION(
@@ -297,14 +333,28 @@ export class ListDesReceptionsEmballagesComponent {
     this.GetRetourList(this.currentPage);
   }
 
-  extractAllArticles(data:any) {
-    const articleSet = new Set<string>();
-    data.forEach((retour:any) => {
+  extractAllArticles(data: any) {
+    const articleMap = new Map<string, any>();
+
+    data.forEach((retour: any) => {
       retour.articles.forEach((article: any) => {
-        articleSet.add(article.produit.libelle);
+        const libelle = article.produit.libelle;
+        const existing = articleMap.get(libelle);
+
+        if (!existing) {
+          articleMap.set(libelle, {
+            libelle,
+            expectedQuantity: article.quantity,
+            codeEmballage: article.productCode,
+          });
+        } else {
+          existing.expectedQuantity += article.quantity;
+        }
       });
     });
-    this.allArticles = Array.from(articleSet);
+
+    this.allArticles = Array.from(articleMap.values());
+    console.log(this.allArticles)
   }
 
   getQuantity(retour: any, libelle: string): number {
@@ -326,13 +376,7 @@ export class ListDesReceptionsEmballagesComponent {
     return total;
   }
 
-  prechargerQuantites() {
-    for (const article of this.allArticles) {
-      if (article.quantitePhysique == null) {
-        article.quantitePhysique = this.getTotalForArticle(article);
-      }
-    }
-  }
   protected readonly Status = Status;
   protected readonly console = console;
+  protected readonly confirm = confirm;
 }

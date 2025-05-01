@@ -514,6 +514,23 @@ export class ActiviteService {
     });
   }
 
+  TerminerInventaire(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/return-article-inventories`,data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
   TerminerRegroupement(id: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({

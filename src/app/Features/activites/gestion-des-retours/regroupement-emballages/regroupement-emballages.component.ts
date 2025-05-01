@@ -270,4 +270,6 @@ export class RegroupementEmballagesComponent {
     this.rowsPerPage = event.rows;
     this.GetRetourList(this.currentPage);
   }
+
+  protected readonly Number = Number;
 }

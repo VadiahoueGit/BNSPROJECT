@@ -17,7 +17,7 @@
     <ng-template pTemplate="body" let-dataList>
       <tr>
         <td>
-          {{ dataList?.regroupementNumber }}
+          {{ dataList?.regroupementNumber || 'N/A' }}
         </td>
         <td>
                     <span class="ml-1 vertical-align-middle">
@@ -32,10 +32,10 @@
                     </span>
         </td>
         <td>
-          {{ dataList?.transporteur ? dataList?.transporteur.telephone : dataList?.transporteur }}
+          {{ dataList?.transporteur ? dataList?.transporteur.telephone : dataList.commercial?.telephone }}
         </td>
         <td>
-          {{ dataList?.transporteur.role }}
+          {{ dataList.transporteur?.role || dataList.commercial?.role }}
         </td>
         <td>
           <!--          {{ dataList?.vehicule?.marque || dataList.venteChine.vehicule.marque }}-->
@@ -114,25 +114,30 @@
                   <thead>
                   <tr>
                     <th>Raison Sociale</th>
-                    <th style="font-size: 10px;" class="text-center" *ngFor="let article of allArticles">{{ article }}
-                    </th>
+                    <th class="text-center" *ngFor="let article of allArticles">{{ article.libelle }}</th>
                   </tr>
                   </thead>
                   <tbody>
                   <tr *ngFor="let retour of updateData.retours; let i = index">
                     <td>{{ retour.commandeClient.raisonSociale || retour.commandeGatuite.raisonSocial || retour.venteChine.nomEtablissement }}</td>
                     <td class="text-center" *ngFor="let article of allArticles">
-                      {{ getQuantity(retour, article) }}
+                      {{ getQuantity(retour, article.libelle) }}
                     </td>
                   </tr>
                   <tr class="font-weight-bold">
-                    <td class="fw-bold">Total</td>
+                    <td class="fw-bold">Total théorique</td>
+                    <td class="text-center" *ngFor="let article of allArticles">
+                      {{ article.expectedQuantity }}
+                    </td>
+                  <tr class="font-weight-bold">
+                    <td class="fw-bold">Total physique</td>
                     <td class="text-center" *ngFor="let article of allArticles">
                       <input
                         type="number"
-                        class="form-control-custom"
-                        [(ngModel)]="article.quantitePhysique"
+                        class="form-control-custom text-center"
+                        [(ngModel)]="article.receivedQuantity"
                         min="0"
+                        (blur)="console.log(allArticles)"
                       />
                     </td>
                   </tr>
@@ -148,9 +153,10 @@
       <div class="modal-footer gap-3 px-4">
         <div class="modal-footer gap-3 px-4">
           <button
+            *ngIf="updateData?.regroupementStatut ==  Status.TERMINE"
             type="button"
             class="btn btn-primary"
-            (click)="OnCloseModal()"
+            (click)="TerminerInventaire(updateData?.regroupementId,allArticles)"
           >
             Enregistrer l'inventaire
           </button>
@@ -162,7 +168,7 @@
             Fermer
           </button>
           <button
-            *ngIf="updateData?.regroupementStatut ==  Status.TERMINE"
+            *ngIf="updateData?.regroupementStatut !=  Status.TERMINE"
             type="submit"
             class="btn btn-danger px-2"
             (click)="TerminerRegroupement(updateData.regroupementId)"
