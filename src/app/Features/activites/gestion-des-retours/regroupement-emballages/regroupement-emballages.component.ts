@@ -125,7 +125,7 @@ export class RegroupementEmballagesComponent {
 
       Object.entries(articlesParFormatEtType[format]).forEach(([type, articles]: [string, any]) => {
         const totalCasiers = articles.reduce(
-          (total: number, article: any) => total + Number(article.quantite || 0),
+          (total: number, article: any) => total + Number(article.quantity || 0),
           0
         );
 
