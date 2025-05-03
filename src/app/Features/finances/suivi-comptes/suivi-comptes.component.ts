@@ -26,7 +26,7 @@ export class SuiviComptesComponent {
   creditId: any = 0;
   isEditMode: boolean = false;
   historiqueMouvement: any = [];
-  detail :any
+  detail: any;
   dataRevendeur: any[] = [];
   dataPointDeVente: any[] = [];
   currentPage: number;
@@ -48,7 +48,7 @@ export class SuiviComptesComponent {
       creditLiquide: [null, Validators.required],
       creditEmballage: [null, Validators.required],
       delaiReglement: [null, Validators.required],
-      totalCredit: [{ value: 0,  }],
+      totalCredit: [{ value: 0 }],
     });
     this.CreditForm.controls['totalCredit'].disable();
     this.onChanges();
@@ -56,22 +56,25 @@ export class SuiviComptesComponent {
     this.GetCreditList(1);
   }
   onChanges(): void {
-    this.CreditForm.get('creditLiquide')?.valueChanges.subscribe(() => this.updateTotal());
-    this.CreditForm.get('creditEmballage')?.valueChanges.subscribe(() => this.updateTotal());
+    this.CreditForm.get('creditLiquide')?.valueChanges.subscribe(() =>
+      this.updateTotal()
+    );
+    this.CreditForm.get('creditEmballage')?.valueChanges.subscribe(() =>
+      this.updateTotal()
+    );
   }
   updateTotal(): void {
     const creditLiquide = this.CreditForm.get('creditLiquide')?.value || 0;
-    const creditEmballage = this.CreditForm.get('creditEmballage' )?.value || 0;
+    const creditEmballage = this.CreditForm.get('creditEmballage')?.value || 0;
     const total = creditLiquide + creditEmballage;
 
     this.CreditForm.get('totalCredit')?.setValue(total, { emitEvent: false });
 
     const updatedtotalCredit = this.CreditForm.get('totalCredit')?.value;
     console.log(updatedtotalCredit, 'totalCredit');
-
   }
-  OnclientChange(client: any){
-    const selectedClient = this.dataClient.find(x => x.id === client.id);
+  OnclientChange(client: any) {
+    const selectedClient = this.dataClient.find((x) => x.id === client.id);
     if (selectedClient) {
       this.CreditForm.patchValue({
         clientType: selectedClient.role,
@@ -91,7 +94,7 @@ export class SuiviComptesComponent {
   OnCloseModal() {
     this.CreditForm.controls['codeClient'].enable();
     this.isModalOpen = false;
-    this.CreditForm.reset()
+    this.CreditForm.reset();
     console.log(this.isModalOpen);
   }
   OnCreate() {
@@ -107,7 +110,7 @@ export class SuiviComptesComponent {
     this.updateData = data;
     this.creditId = data.id;
     this.isModalOpen = true;
-    this.loadUpdateData()
+    this.loadUpdateData();
     this.CreditForm.controls['codeClient'].disable();
     this.operation = 'edit';
     console.log(this.isModalOpen);
@@ -142,7 +145,6 @@ export class SuiviComptesComponent {
       console.log('this.isEditMode', this.isEditMode);
 
       if (this.isEditMode) {
-
         this._financeService.UpdateCredit(this.creditId, formValues).then(
           (response: any) => {
             console.log('article mis à jour avec succès', response);
@@ -178,17 +180,26 @@ export class SuiviComptesComponent {
       }
     }
   }
-  OnDetails(data:any)
-  {
-    this.detail = data
+  OnDetails(data: any) {
+    this.detail = data;
+    this.detail.dateEchanceCalculer = this.calculeDateEcheance(
+      data.createdBy.createdAt,
+      data.delaiReglement
+    );
+    console.log(data);
     this.isModalOpen = true;
     this.operation = 'detail';
     this.historiqueMouvement = data.mouvements;
   }
-
+  calculeDateEcheance(date: string, delaiEnJours: number): string {
+    const dateCreation = new Date(date);
+    dateCreation.setDate(dateCreation.getDate() + delaiEnJours);
+    const dateEcheance = dateCreation.toISOString().split('T')[0];
+    return dateEcheance;
+  }
   loadUpdateData(): void {
     this.CreditForm.patchValue({
-      codeClient: this.updateData.codeClient || this.updateData.code ,
+      codeClient: this.updateData.codeClient || this.updateData.code,
       clientType: this.updateData.clientType,
       creditEmballage: this.updateData.creditEmballage,
       creditLiquide: this.updateData.creditLiquide,
@@ -240,23 +251,22 @@ export class SuiviComptesComponent {
       if (Array.isArray(commercial.data)) {
         this.dataPointDeVente = commercial.data;
         // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
-        const transformed = commercial.data.map((c:any) => ({
+        const transformed = commercial.data.map((c: any) => ({
           ...c,
-          codeClient: c.codeClient || c.code
+          codeClient: c.codeClient || c.code,
         }));
 
         this.dataClient = [...this.dataClient, ...transformed];
-
       } else {
         console.error('Les données de liquides ne sont pas un tableau');
       }
       this.dataClient = this.dataClient
         .filter((client) => client.credits == null)
         .map((client) => ({
-        ...client,
-        displayName:
-          client.raisonSocial || client.nom+' '+client.prenoms || 'N/A',
-      }));
+          ...client,
+          displayName:
+            client.raisonSocial || client.nom + ' ' + client.prenoms || 'N/A',
+        }));
       console.log('Données combinées dans dataList:', this.dataClient);
     } catch (error) {
       // Gestion des erreurs
