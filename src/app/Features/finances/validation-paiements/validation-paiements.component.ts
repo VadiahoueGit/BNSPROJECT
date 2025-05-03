@@ -6,7 +6,7 @@ import {Table} from 'primeng/table';
 import {ArticleServiceService} from 'src/app/core/article-service.service';
 import {ALERT_QUESTION} from '../../shared-component/utils';
 import {FinanceService} from '../../../core/finance.service';
-import {Status} from "../../../utils/utils";
+import {calculeDateEcheance, Status} from "../../../utils/utils";
 
 @Component({
   selector: 'app-validation-paiements',
@@ -71,11 +71,15 @@ export class ValidationPaiementsComponent {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
+    this.updateData.dateEchanceCalculer = calculeDateEcheance(
+      data?.createdAt,
+      data?.credit?.delaiReglement
+    );
     this.isModalOpen = true;
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-
+ 
   filterGlobal(event:any) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement?.value || ''; // Utilisez une valeur par défaut

@@ -7,7 +7,7 @@ import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { FinanceService } from 'src/app/core/finance.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
-import {StatutCommande} from "../../../../utils/utils";
+import {calculeDateEcheance, StatutCommande} from "../../../../utils/utils";
 
 @Component({
   selector: 'app-validation-commande-gratuite',
@@ -166,6 +166,10 @@ export class ValidationCommandeGratuiteComponent {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
+     this.updateData.dateEchanceCalculer = calculeDateEcheance(
+          data?.createdAt,
+          data?.credit?.delaiReglement
+        );
     data.articles.forEach((article: any) => {
       this.totalEmballage += Number(article.montantEmballage);
       this.totalLiquide += Number(article.montantLiquide);
