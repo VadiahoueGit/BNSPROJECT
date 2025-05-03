@@ -148,7 +148,7 @@ export class ValidationPaiementsComponent {
     console.log(this.isModalOpen);
   }
 
-  ValidatePaiement(id: number) {
+  ValidatePaiement(data: any) {
     ALERT_QUESTION(
       'warning',
       'Attention !',
@@ -156,12 +156,14 @@ export class ValidationPaiementsComponent {
     ).then((res) => {
       if (res.isConfirmed == true) {
         this._spinner.show();
-        this.financeService.ValidatePaiement(id).then((res: any) => {
-          console.log('validation:::>', res);
+        console.log('validation:::>', data);
+        this.financeService.ValidatePaiement(data.id).then((res: any) => {
+          // console.log('validation:::>', res);
           if (res.statusCode == 200) {
             this.GetPaiementList(1);
-            const matchedItem = this.dataList.find(item => item.id === this.updateData.id);
-            this.OnEdit(matchedItem);
+            const match = this.dataList.find(item => item.id === this.updateData.id);
+            this.OnEdit(match);
+
 
             this.toastr.success(res.message);
             // this.OnCloseModal();

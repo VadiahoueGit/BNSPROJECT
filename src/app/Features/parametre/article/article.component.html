@@ -22,9 +22,7 @@
         <ng-template pTemplate="body" let-dataList>
             <tr>
                 <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.image }}
-                    </span>
+                  <img [src]="dataList.image ? docUrl + dataList.image : 'assets/icon/bottle.png'" alt="Photo" class="img-thumbnail profile-pic vertical-align-middle" />
                 </td>
                 <td>
                     {{ dataList.libelle }}
