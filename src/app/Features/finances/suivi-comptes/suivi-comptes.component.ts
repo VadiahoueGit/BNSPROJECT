@@ -7,6 +7,7 @@ import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { ALERT_QUESTION } from '../../shared-component/utils';
 import { UtilisateurResolveService } from '../../../core/utilisateur-resolve.service';
 import { FinanceService } from 'src/app/core/finance.service';
+import { calculeDateEcheance } from 'src/app/utils/utils';
 
 @Component({
   selector: 'app-suivi-comptes',
@@ -182,21 +183,16 @@ export class SuiviComptesComponent {
   }
   OnDetails(data: any) {
     this.detail = data;
-    this.detail.dateEchanceCalculer = this.calculeDateEcheance(
-      data.createdBy.createdAt,
-      data.delaiReglement
+    this.detail.dateEchanceCalculer = calculeDateEcheance(
+      data?.createdAt,
+      data?.delaiReglement
     );
     console.log(data);
     this.isModalOpen = true;
     this.operation = 'detail';
     this.historiqueMouvement = data.mouvements;
   }
-  calculeDateEcheance(date: string, delaiEnJours: number): string {
-    const dateCreation = new Date(date);
-    dateCreation.setDate(dateCreation.getDate() + delaiEnJours);
-    const dateEcheance = dateCreation.toISOString().split('T')[0];
-    return dateEcheance;
-  }
+ 
   loadUpdateData(): void {
     this.CreditForm.patchValue({
       codeClient: this.updateData.codeClient || this.updateData.code,

@@ -351,6 +351,14 @@
                 <strong>Téléphone :</strong>
                 <span>{{ updateData.client.telephoneProprietaire }}</span>
               </div>
+              <div class="col-md-4">
+                <strong>Délai : </strong>
+                <span>{{ updateData?.credit?.delaiReglement || "NA" }}Jours</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Date échéance : </strong>
+                <span>{{ updateData?.dateEchanceCalculer | date: "dd/MM/yyyy HH:mm"  }}</span>
+              </div>
             </div>
           </fieldset>
           <div class="p-2 mt-3">

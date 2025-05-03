@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { ALERT_QUESTION } from '../../shared-component/utils';
-import {Status} from "../../../utils/utils";
+import {calculeDateEcheance, Status} from "../../../utils/utils";
 import {FinanceService} from "../../../core/finance.service";
 
 @Component({
@@ -70,6 +70,10 @@ export class CommandePayesComponent {
     this.updateData = data;
     this.articleId = data.id;
     this.isModalOpen = true;
+    this.updateData.dateEchanceCalculer = calculeDateEcheance(
+      data?.createdAt,
+      data?.credit?.delaiReglement
+    );
     this.loadArticleDetails();
     this.operation = 'edit';
     console.log(this.isModalOpen);
@@ -112,7 +116,7 @@ export class CommandePayesComponent {
   loadArticleDetails(): void {
 
   }
-
+ 
   GetHistoriquePayment(id: number)
   {
     this._spinner.show();

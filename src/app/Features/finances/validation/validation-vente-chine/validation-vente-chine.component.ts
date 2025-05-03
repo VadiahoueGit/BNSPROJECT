@@ -8,7 +8,7 @@ import { FinanceService } from 'src/app/core/finance.service';
 import { LogistiqueService } from 'src/app/core/logistique.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
-import {StatutCommande} from "../../../../utils/utils";
+import {calculeDateEcheance, StatutCommande} from "../../../../utils/utils";
 
 @Component({
   selector: 'app-validation-vente-chine',
@@ -308,6 +308,10 @@ export class ValidationVenteChineComponent {
     this.isEditMode = true;
     console.log(data, 'updateData');
     this.updateData = data;
+      this.updateData.dateEchanceCalculer = calculeDateEcheance(
+              data?.createdAt,
+              data?.credit?.delaiReglement
+            );
     this.updateData.articles.map((article: any) => {
       article.prixTotal =
         parseInt(article.prixUnitaireLiquide) +

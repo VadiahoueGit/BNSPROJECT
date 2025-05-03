@@ -183,6 +183,14 @@
                   <strong>Dépot: </strong>
                   <span>{{ updateData.commercial.depot.nomDepot }}</span>
                 </div>
+                <div class="col-md-4">
+                  <strong>Délai : </strong>
+                  <span>{{ updateData?.credit?.delaiReglement || "NA" }}Jours</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Date échéance : </strong>
+                  <span>{{ updateData?.dateEchanceCalculer | date: "dd/MM/yyyy HH:mm"  }}</span>
+                </div>
                </div>
             </fieldset>
             <fieldset class="row border my-2" *ngIf="operation == 'edit'">
