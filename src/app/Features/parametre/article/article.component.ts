@@ -1,10 +1,11 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { ALERT_QUESTION } from '../../shared-component/utils';
-import { Table } from 'primeng/table';
-import { ArticleServiceService } from 'src/app/core/article-service.service';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
+import {AfterViewInit, Component, ViewChild} from '@angular/core';
+import {ALERT_QUESTION} from '../../shared-component/utils';
+import {Table} from 'primeng/table';
+import {ArticleServiceService} from 'src/app/core/article-service.service';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {ToastrService} from 'ngx-toastr';
+import {ConfigService} from "../../../core/config-service.service";
 
 @Component({
   selector: 'app-article',
@@ -16,6 +17,7 @@ export class ArticleComponent {
   statuses!: any[];
   dataList!: any[];
   ArticleForm!: FormGroup;
+  docUrl: any
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
@@ -34,12 +36,15 @@ export class ArticleComponent {
   currentPage: number;
   rowsPerPage: any;
   totalPages: number;
+
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
+    private _config: ConfigService,
     private toastr: ToastrService
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.ArticleForm = this.fb.group({
@@ -88,6 +93,7 @@ export class ArticleComponent {
     this.articleService.ListGroupesArticles.subscribe((res: any) => {
       this.dataListGroupeArticles = res;
     });
+    this.docUrl = this._config.docUrl;
     this.GetArticleList(1);
   }
 
@@ -105,6 +111,7 @@ export class ArticleComponent {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
   }
+
   OnCreate() {
     this.isEditMode = false;
     this.isModalOpen = true;
@@ -122,7 +129,8 @@ export class ArticleComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetArticleList(page:number) {
+
+  GetArticleList(page: number) {
     let data = {
       paginate: true,
       page: page,
@@ -131,19 +139,20 @@ export class ArticleComponent {
     this._spinner.show();
     this.articleService.GetArticleList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
-      console.log('totalPages:::>', this.totalPages);
+      this.totalPages = res.total;
 
       this.dataList = res.data;
       this._spinner.hide();
     });
   }
+
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
-    console.log('currentPage',this.currentPage);
+    console.log('currentPage', this.currentPage);
     this.GetArticleList(this.currentPage);
   }
+
   onSubmit(): void {
 
     console.log(this.ArticleForm.value);
@@ -193,6 +202,7 @@ export class ArticleComponent {
       }
     }
   }
+
   loadArticleDetails(): void {
     this.ArticleForm.patchValue({
       reference: this.updateData.reference,
@@ -207,6 +217,7 @@ export class ArticleComponent {
       liquideId: 1,
     });
   }
+
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
       (res) => {

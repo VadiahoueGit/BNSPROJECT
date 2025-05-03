@@ -119,7 +119,7 @@
                   </thead>
                   <tbody>
                   <tr *ngFor="let retour of updateData.retours; let i = index">
-                    <td>{{ retour.commandeClient.raisonSociale || retour.commandeGatuite.raisonSocial || retour.venteChine.nomEtablissement }}</td>
+                    <td>{{ retour.clientALivrer.raisonSocial || retour.clientALivrer.nomEtablissement }}</td>
                     <td class="text-center" *ngFor="let article of allArticles">
                       {{ getQuantity(retour, article.libelle) }}
                     </td>
@@ -133,11 +133,12 @@
                     <td class="fw-bold">Total physique</td>
                     <td class="text-center" *ngFor="let article of allArticles">
                       <input
+                        [disabled]="updateData.inventaires.length > 0"
                         type="number"
+                        [ngStyle]="{ 'color': article.receivedQuantity != article.expectedQuantity ? 'red' : 'green' }"
                         class="form-control-custom text-center"
                         [(ngModel)]="article.receivedQuantity"
                         min="0"
-                        (blur)="console.log(allArticles)"
                       />
                     </td>
                   </tr>
@@ -153,10 +154,11 @@
       <div class="modal-footer gap-3 px-4">
         <div class="modal-footer gap-3 px-4">
           <button
-            *ngIf="updateData?.regroupementStatut ==  Status.TERMINE"
+            *ngIf="updateData?.inventaires.length == 0"
+            [disabled]="updateData?.regroupementStatut !=  Status.TERMINE"
             type="button"
             class="btn btn-primary"
-            (click)="TerminerInventaire(updateData?.regroupementId,allArticles)"
+            (click)="TerminerInventaire(updateData,allArticles)"
           >
             Enregistrer l'inventaire
           </button>
@@ -171,7 +173,7 @@
             *ngIf="updateData?.regroupementStatut !=  Status.TERMINE"
             type="submit"
             class="btn btn-danger px-2"
-            (click)="TerminerRegroupement(updateData.regroupementId)"
+            (click)="TerminerRegroupement(updateData)"
           >
             Terminer le ramassage
           </button>

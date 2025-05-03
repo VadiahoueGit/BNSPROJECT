@@ -9,7 +9,7 @@
 <div class="card">
   <div>
     <span style="font-size:13px;">Nombre: </span>
-    <span style="font-size:13px;" class="fw-bold text-secondary">{{ filteredCount }}</span>
+    <span style="font-size:13px;" class="fw-bold text-secondary">{{ totalPages }}</span>
   </div>
   <p-table
     [styleClass]="'p-datatable-sm'"
@@ -18,8 +18,7 @@
     dataKey="id"
     [rows]="8"
     [rowsPerPageOptions]="[10, 25, 50]"
-    [globalFilterFields]="['raisonSocial', 'nomProprietaire', 'nomGerant']"
-    (onFilter)="updateFilteredCount(dt)"
+    [totalRecords]="totalPages" [lazy]="true"
     [paginator]="true"
     (onPage)="onPage($event)"
   >

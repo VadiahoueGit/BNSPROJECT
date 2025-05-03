@@ -118,7 +118,7 @@ export class RevendeurComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
-    // this.GetRevendeurList(this.currentPage);
+    this.GetRevendeurList(this.currentPage);
   }
   OnCreate() {
     this.revendeurForm.enable();

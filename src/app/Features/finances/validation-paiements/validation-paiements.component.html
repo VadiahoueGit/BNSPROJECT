@@ -92,7 +92,7 @@
         <td>
           {{ dataList?.montantPercu }}
         </td>
-   
+
         <td>
           <span class="ml-1 vertical-align-middle">
             {{ dataList?.createdAt | date : "dd/MM/yyyy" }}
@@ -284,7 +284,7 @@
                       *ngIf="item?.statut !== Status.PAYE"
                       type="submit"
                       class="btn btn-primary px-2"
-                      (click)="ValidatePaiement(item.id)"
+                      (click)="ValidatePaiement(item)"
                     >
                       Payer
                     </button>
@@ -450,7 +450,7 @@
                       *ngIf="item?.statut !== Status.PAYE"
                       type="submit"
                       class="btn btn-primary px-2"
-                      (click)="ValidatePaiement(item.id)"
+                      (click)="ValidatePaiement(item)"
                     >
                       Payer
                     </button>
@@ -631,7 +631,7 @@
                       *ngIf="item?.statut !== Status.PAYE"
                       type="submit"
                       class="btn btn-primary px-2"
-                      (click)="ValidatePaiement(item.id)"
+                      (click)="ValidatePaiement(item)"
                     >
                       Payer
                     </button>
