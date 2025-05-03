@@ -16,6 +16,7 @@ import {Table} from "primeng/table";
 })
 export class RevendeurComponent {
   dataList: any[] = [];
+  typePrixList: any[] = [];
   selectedRevendeur:any;
   isActive: boolean = false;
   revendeurConfirmed: any[] = [];
@@ -42,6 +43,7 @@ export class RevendeurComponent {
   selectedCniFile: File | null = null;
   selectedDfeFile: File | null = null;
   numeroSap: any;
+  typePrixId: any;
   filteredCount: number = 0;
   @ViewChild('dt') dt!: Table;
   totalPages: number;
@@ -59,6 +61,7 @@ export class RevendeurComponent {
     this.revendeurForm = this.fb.group({
       isAssocie: [null],
       parentRevendeurId: [null],
+      typePrixId: [null, Validators.required],
       groupeClientId: [null, Validators.required],
       numeroRegistre: [null],
       raisonSocial: [null, Validators.required],
@@ -94,6 +97,7 @@ export class RevendeurComponent {
     // this.GetLocaliteList();
     this.GetDepotList();
     this.GetZoneList();
+    this.GetListTypePrix(1)
     this.GetRevendeurList(1);
   }
   onRccmSelected(event: any) {
@@ -260,6 +264,7 @@ export class RevendeurComponent {
           formData.append('registre', this.selectedRccmFile!);
           formData.append('dfe', this.selectedDfeFile!);
           formData.append('numeroSAP', this.numeroSap);
+          formData.append('typePrixId', this.typePrixId);
 
           this._articleService.ValidateRevendeur(revendeur.id, formData).then(
             (response: any) => {
@@ -376,6 +381,22 @@ export class RevendeurComponent {
 
   }
 
+  GetListTypePrix(page:number) {
+    let data = {
+      paginate: false,
+      page: page,
+      limit: 100,
+    };
+    this._spinner.show();
+    this._articleService.GetListTypePrix(data).then((res: any) => {
+      console.log('DATAPRIX:::>', res);
+      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      console.log('totalPages:::>', this.totalPages);
+
+      this.typePrixList = res.data;
+      this._spinner.hide();
+    });
+  }
 
   GetRevendeurList(page: number) {
     let data = {

@@ -506,13 +506,16 @@ export class SaisieCommandeGratuiteComponent {
     try {
       // Attendre la réponse de la promesse
       const response:any = await this.articleService.GetPrixByProduit(data);
-      console.log(response)
+      const prixDetail = response.data.find((item: any) => item.libelle === 'PRIX DETAIL');
+
+      console.log(prixDetail);
       // Vérifier si le statusCode est 200
-      if (response.data) {
-        this.prixLiquide[item.id] = 0;
-        this.prixEmballage[item.id] = response.data.PrixConsigne;
-        console.log('prixLiquide',this.prixLiquide[item.id])
-        console.log('prixEmballage',this.prixEmballage[item.id])
+      if (prixDetail.prix.length > 0) {
+        this.prixLiquide[item.id] = prixDetail.prix[0].PrixLiquide;
+        this.prixEmballage[item.id] = prixDetail.prix[0].PrixConsigne;
+        console.log('prixByArticle', this.prixLiquide[item.id]);
+      }else {
+        this.toastr.error("Ce article n'a pas de prix détail, veuillez le renseigner avant de continuer");
       }
     } catch (error:any) {
       console.log(error);

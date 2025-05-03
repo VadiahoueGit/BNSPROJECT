@@ -493,14 +493,16 @@ export class SaisieCommandeComponent {
     try {
       // Attendre la réponse de la promesse
       const response: any = await this.articleService.GetPrixByProduit(data);
-      console.log(response);
+      const prixDetail = response.data.find((item: any) => item.libelle === this.detailPointDevente.typePrix.libelle);
+
+      console.log(prixDetail);
       // Vérifier si le statusCode est 200
-      if (response.data) {
-        this.prixLiquide[item.id] = response.data.PrixLiquide;
-        this.prixEmballage[item.id] = response.data.PrixConsigne;
-        // this.prixLiquideArticleSelected =  this.prixEmballage[item.id]
-        // this.prixEmballageArticleSelected =  this.prixLiquide[item.id]
+      if (prixDetail.prix.length > 0) {
+        this.prixLiquide[item.id] = prixDetail.prix[0].PrixLiquide;
+        this.prixEmballage[item.id] = prixDetail.prix[0].PrixConsigne;
         console.log('prixByArticle', this.prixLiquide[item.id]);
+      }else {
+        this.toastr.error("Ce article n'a pas de prix détail, veuillez le renseigner avant de continuer");
       }
     } catch (error: any) {
       console.log(error);
