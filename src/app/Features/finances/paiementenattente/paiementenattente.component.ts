@@ -84,7 +84,7 @@ export class PaiementenattenteComponent {
       paginate: true,
       page: page,
       limit: 8,
-      numeroCommande: numeroCommande
+      numeroCommande: numeroCommande || ''
     };
     this._spinner.show();
     this.financeService.GetPaiementListAttente(data).then((res: any) => {
@@ -104,6 +104,7 @@ export class PaiementenattenteComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
+    this.GetPaiementList(this.currentPage)
   }
 
   loadArticleDetails(): void {

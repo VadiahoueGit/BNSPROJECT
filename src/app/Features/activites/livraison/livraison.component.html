@@ -316,90 +316,60 @@
 
           </div>
         </div>
-          <!-- Table des commandes -->
-          <div class="col-md-12">
+        <div class="col-md-12">
 
-            <div class="row">
-              <div id="accordionExample" class="accordion col-12 fieldset1" style="overflow-y: auto; max-height: 400px;">
-                <div *ngFor="let item of updateData.commandes; let idx = index" class="accordion-item my-2">
-                  <h2 class="accordion-header" id="heading{{idx}}">
-                    <button
-                      class="accordion-button collapsed "
-                      type="button"
-                      data-bs-toggle="collapse"
-                      [attr.data-bs-target]="'#collapse' + idx"
-                      aria-expanded="false"
-                      [attr.aria-controls]="'collapse' + idx">
-                      <div class="w-100 d-flex justify-content-between" >
-                        <div class="d-flex flex-column">
-                          <label class="text-secondary fw-bold">
-                            {{ item.clientType }} - {{ item.clientInfo.nomEtablissement ? item.clientInfo.nomEtablissement : item.clientInfo.raisonSocial}}
-                          </label>
-                          <label class="ml-0">
-                            Montant : {{ item.montantTotal | currency :'XOF' }}
-                          </label>
-                          <label class="ml-0 text-success">
-                           {{ item.statutCommande }}
-                          </label>
-                        </div>
+          <div class="row">
+            <div class="container">
+              <table class="table table-bordered">
+                <thead>
+                <tr>
+                  <th>Raison Sociale</th>
+                  <th class="text-center" *ngFor="let article of allArticles">{{ article.libelle }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let retour of updateData.commandes; let i = index">
+                  <td>{{ retour.clientInfo.raisonSocial || retour.clientInfo.nomEtablissement }}</td>
+                  <td class="text-center" *ngFor="let article of allArticles">
+                    {{ getQuantity(retour, article.libelle) }}
+                  </td>
+                </tr>
+                <tr class="font-weight-bold">
+                  <td class="fw-bold">Total</td>
+                  <td class="text-center" *ngFor="let article of allArticles">
+                    {{ article.expectedQuantity }}
+                  </td>
+                </tbody>
+              </table>
 
-                        <div class="d-flex flex-column">
-                          <label class="fw-light ">
-                            {{item.type}} - {{item.numCommande}}
-                          </label>
-                          <label class="ml-0">
-                            À livrer le :
-                          </label>
-                        </div>
-
-                      </div>
-                    </button>
-                  </h2>
-                  <div
-                    id="collapse{{idx}}"
-                    class="accordion-collapse collapse"
-                    [attr.aria-labelledby]="'heading' + idx"
-                    data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
-                      <!-- Nested Fieldset -->
-                      <fieldset class="row border my-2">
-                        <legend style="font-size: 14px;" class="text-secondary">Articles</legend>
-                        <table class="table">
-                          <thead>
-                          <tr>
-                            <th scope="col"><label>Codes</label></th>
-                            <th scope="col"><label>Désignations</label></th>
-                            <th scope="col"><label>formats</label></th>
-                            <th scope="col"><label>Quantité</label></th>
-                            <th scope="col"><label>Coûts</label></th>
-                          </tr>
-                          </thead>
-                          <tbody>
-                          <tr *ngFor="let article of item.articles; let i = index">
-                            <td><label>{{article.liquide.code}}</label></td>
-                            <td><label>{{ article.liquide.libelle }}</label></td>
-                            <td><label>{{ article.liquide.format }}</label></td>
-                            <td><label>{{ article.quantite }}</label></td>
-                            <td>
-                              <label>
-                                {{ (+article.montantLiquide || 0) + (+article.montantEmballage || 0) | currency:'XOF' }}
-                              </label>
-                            </td>
-
-                          </tr>
-                          <tr *ngIf="item.articles.length === 0">
-                            <td colspan="3" class="text-danger text-center">Pas d'article dans la commande</td>
-                          </tr>
-                          </tbody>
-                        </table>
-                      </fieldset>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <table class="table table-bordered table-hover">
+                <thead class="table-success">
+                <tr>
+                  <th>Format</th>
+                  <th>Type</th>
+                  <th>Palette</th>
+                  <th>Casier</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Boucle sur chaque format -->
+                <ng-container *ngFor="let item of regroupementFinal | keyvalue">
+                  <!-- Boucle sur chaque type d'article pour ce format -->
+                  <tr *ngFor="let subItem of item.value">
+                    <td>{{ item.key }}</td>
+                    <td>{{ subItem.type }}</td>
+                    <td>{{ subItem.palettes }}</td>
+                    <td>{{ subItem.casier }}</td>
+                  </tr>
+                </ng-container>
+                </tbody>
+              </table>
             </div>
           </div>
+        </div>
+      </div>
 
+          <!-- Table des commandes -->
       <div class="modal-footer gap-3 px-4">
         <button
           type="button"

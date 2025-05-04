@@ -112,11 +112,12 @@ export class CommandePayesComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
+    this.GetPaiementList(this.currentPage)
   }
   loadArticleDetails(): void {
 
   }
- 
+
   GetHistoriquePayment(id: number)
   {
     this._spinner.show();

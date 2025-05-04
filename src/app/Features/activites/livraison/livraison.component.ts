@@ -37,6 +37,7 @@ export class LivraisonComponent {
       nom: 'test',
     },
   ];
+  allArticles: any[] = [];
   tableData: any[] = [];
   livraisonForm!: FormGroup;
   loading: boolean = true;
@@ -318,6 +319,7 @@ export class LivraisonComponent {
   }
 
   getTotalQuantite(articles: any[]): number {
+    console.log(articles)
     return articles.reduce(
       (total, article) => total + Number(article.quantite || 0),
       0
@@ -388,6 +390,11 @@ export class LivraisonComponent {
     console.log(data, 'regroupement');
     this.updateData = data;
     this.isModalOpenDetail = true;
+    this.updateData.commandes.forEach((commande:any)=>{
+      this.calculate(commande);
+    })
+
+    this.extractAllArticles(this.updateData.commandes)
   }
 
   closeDetailModal() {
@@ -402,7 +409,7 @@ export class LivraisonComponent {
     this.isModalOpen = true;
     this.loadArticleDetails();
     this.operation = 'edit';
-    console.log(this.isModalOpen);
+
   }
 
   UploadDoc(item: any) {
@@ -786,5 +793,50 @@ export class LivraisonComponent {
         },
       },
     ];
+  }
+
+
+  extractAllArticles(data: any) {
+    const articleMap = new Map<string, any>();
+
+    data.forEach((retour: any) => {
+      retour.articles.forEach((article: any) => {
+        const libelle = article.liquide.libelle;
+        const existing = articleMap.get(libelle);
+
+        if (!existing) {
+          articleMap.set(libelle, {
+            libelle,
+            expectedQuantity: article.quantite,
+          });
+        } else {
+          existing.expectedQuantity += article.quantite;
+        }
+      });
+    });
+
+    this.allArticles = Array.from(articleMap.values());
+    console.log(this.allArticles)
+  }
+
+  getQuantity(retour: any, libelle: string): number {
+    let total = 0;
+    retour.articles.forEach((article: any) => {
+      if (article.liquide.libelle === libelle) {
+        total += article.quantite;
+      }
+    });
+    return total;
+  }
+
+  preloadInventaire(inventaires: any) {
+
+    for (const inv of inventaires) {
+      const article = this.allArticles.find((a: any) => a.codeEmballage === inv.codeEmballage);
+      console.log('preloadInventaire:', article);
+      if (article) {
+        article.receivedQuantity = inv.receivedQuantity;
+      }
+    }
   }
 }

@@ -493,6 +493,7 @@ export class SaisieCommandeComponent {
     try {
       // Attendre la réponse de la promesse
       const response: any = await this.articleService.GetPrixByProduit(data);
+      console.log(response);
       const prixDetail = response.data.find((item: any) => item.libelle === this.detailPointDevente.typePrix.libelle);
 
       console.log(prixDetail);

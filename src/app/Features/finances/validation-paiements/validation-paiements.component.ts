@@ -79,7 +79,7 @@ export class ValidationPaiementsComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
- 
+
   filterGlobal(event:any) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement?.value || ''; // Utilisez une valeur par défaut
@@ -110,6 +110,7 @@ export class ValidationPaiementsComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
+    this.GetPaiementList(this.currentPage)
   }
 
   loadArticleDetails(): void {
