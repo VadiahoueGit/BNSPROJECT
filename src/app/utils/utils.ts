@@ -27,8 +27,8 @@ export enum Status {
 export function calculeDateEcheance(date: string, delai: number): Date |null {
     const dateCreation = new Date(date);
   
-    if (isNaN(dateCreation.getTime()) || !delai) {
-      return null; 
+    if (isNaN(dateCreation.getTime()) || delai === null || delai === undefined) {
+      return null;
     }
   
     dateCreation.setDate(dateCreation.getDate() + delai);

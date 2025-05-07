@@ -6,7 +6,7 @@ import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { ALERT_QUESTION } from '../../shared-component/utils';
 import { FinanceService } from '../../../core/finance.service';
-import {Status} from "../../../utils/utils";
+import {calculeDateEcheance, Status} from "../../../utils/utils";
 
 @Component({
   selector: 'app-paiementenattente',
@@ -92,6 +92,10 @@ export class PaiementenattenteComponent {
       console.log('totalPages:::>', this.totalPages);
 
       this.dataList = res.data
+      this.dataList = this.dataList.map(paiement => ({
+        ...paiement,
+        dateEchanceCalculer: calculeDateEcheance(paiement?.createdAt, paiement?.credit?.delaiReglement)
+      }));
       //   .filter((item: any) =>
       //   item.statut === Status.ATTENTE && Number(item.montantPercu) >= 0
       // );
