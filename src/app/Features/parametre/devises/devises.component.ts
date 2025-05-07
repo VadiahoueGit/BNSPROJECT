@@ -19,7 +19,7 @@ export class DevisesComponent {
   dataList!: any[];
   zones!: any[];
   DeviseForm!: FormGroup;
-  plastiquenuId = 0
+  currencyId = 0
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
@@ -28,10 +28,8 @@ export class DevisesComponent {
   localiteId: any = 0;
   isEditMode: boolean = false;
   dataListFormats: any = [];
-  dataListConditionnements: any = [];
-  dataListProduits: any = [];
+  currencyList: any = [];
 
-  dataListPlastiqueNu: any = [];
   currentPage: number;
   rowsPerPage: any;
   totalPages: number;
@@ -48,19 +46,14 @@ export class DevisesComponent {
     // $('.selectpicker').selectpicker('refresh');
   }
   ngOnInit() {
-    this._articleService.GetConditionnementList().then((res: any) => {
-      this.dataListConditionnements = res;
-      console.log(
-        'dataListConditionnements:::>',
-        this.dataListConditionnements
-      );
-    });
+
+
     this.DeviseForm = this.fb.group({
-      description: [null, Validators.required],
-      libelle: [null, Validators.required],
-      valeur: [null, Validators.required],
+      code: [null, Validators.required],
+      nom: [null, Validators.required],
+      valeur: [null, [Validators.required, Validators.min(0)]]
     });
-    this.GetPlastiqueNuList(1)
+    this.GetCurrencyList(1)
 
   }
   goBack() {
@@ -93,40 +86,47 @@ export class DevisesComponent {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
-    this.plastiquenuId = data.id;
+    this.currencyId = data.id;
     this.isModalOpen = true;
     this.loadDetails();
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetPlastiqueNuList(page:number) {
+  GetCurrencyList(page:number) {
     let data = {
       paginate: true,
       page: page,
       limit: 8,
     };
     this._spinner.show();
-    this._articleService.GetPlastiqueNuList(data).then((res: any) => {
-      console.log('DEVISE:::>', res);
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
-      console.log('totalPages:::>', this.totalPages);
-
-      this.dataList = [];
+    this._coreService.GetCurrencyList(data).then((res: any) => {
+      this.currencyList = res.data;
+      this.totalPages = res.total
       this._spinner.hide();
+      console.log(
+        'currencyList:::>',
+        this.currencyList
+      );
     });
   }
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
-    this.GetPlastiqueNuList(this.currentPage);
+    this.GetCurrencyList(this.currentPage);
   }
   onSubmit(): void {
     console.log(this.DeviseForm);
+    const raw = this.DeviseForm.value;
+
+    const payload = {
+      ...raw,
+      valeur: parseFloat(raw.valeur)
+    };
     if (this.DeviseForm.valid) {
       console.log('formValues', this.DeviseForm.value);
 
       if (this.isEditMode) {
-        this._articleService.UpdatePlastiqueNu(this.plastiquenuId, this.DeviseForm.value).then(
+        this._coreService.UpdateCurrency(this.currencyId, payload).then(
           (response: any) => {
             console.log('Utilisateur mis à jour avec succès', response);
             // this.toastr.success('Succès!', 'Utilisateur  mis à jour avec succès.');
@@ -134,7 +134,7 @@ export class DevisesComponent {
 
             this.OnCloseModal();
             this.DeviseForm.reset();
-            this.GetPlastiqueNuList(1);
+            this.GetCurrencyList(1);
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -142,10 +142,10 @@ export class DevisesComponent {
           }
         );
       } else {
-        this._articleService.CreatePlastiqueNu(this.DeviseForm.value).then(
+        this._coreService.CreateCurrency(payload).then(
           (response: any) => {
             this.OnCloseModal();
-            this.GetPlastiqueNuList(1);
+            this.GetCurrencyList(1);
             this.DeviseForm.reset();
             // this.toastr.success('Succès!', 'Utilisateur créé avec succès.');
             this.toastr.success(response.message);
@@ -163,9 +163,8 @@ export class DevisesComponent {
   loadDetails(): void {
     this.DeviseForm.patchValue({
       code: this.updateData.code,
-      libelle: this.updateData.libelle,
-      prixUnitaire: this.updateData.prixUnitaire,
-      conditionnement: this.updateData.conditionnement,
+      nom: this.updateData.nom,
+      valeur: this.updateData.valeur,
     });
   }
   OnDelete(Id: any) {
@@ -173,10 +172,10 @@ export class DevisesComponent {
       (res) => {
         if (res.isConfirmed == true) {
           this._spinner.show();
-          this._articleService.DeletePlastiqueNu(Id).then((res: any) => {
+          this._coreService.DeleteCurrency(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetPlastiqueNuList(1);
+            this.GetCurrencyList(1);
             this._spinner.hide();
           });
         } else {

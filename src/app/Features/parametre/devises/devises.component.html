@@ -6,16 +6,16 @@
     <div class=" d-flex justify-content-end py-3">
         <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer une devise</button>
     </div>
-    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [totalRecords]="totalPages" [lazy]="true" [rows]="8"
+    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="currencyList" dataKey="id" [totalRecords]="totalPages" [lazy]="true" [rows]="8"
         [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
 
         <ng-template pTemplate="header">
             <tr>
                 <!-- <th style="color: var(--secondary-color);">Code</th> -->
-                <th style="color: var(--secondary-color);">Nom</th>
-                <th style="color: var(--secondary-color);">Description</th>
+                <th style="color: var(--secondary-color);">Code</th>
+                <th style="color: var(--secondary-color);">Libelle</th>
                 <th style="color: var(--secondary-color);">Valeur</th>
-                <th style="color: var(--secondary-color);">Actions</th>
+                <th style="color: var(--secondary-color);" class="d-flex justify-content-center">Actions</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-dataList>
@@ -28,14 +28,11 @@
                 </td>
                 <td>
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.libelle }}
+                        {{ dataList.nom}}
                     </span>
                 </td>
                 <td>
-                    {{ dataList.prixUnitaire }}
-                </td>
-                <td>
-                    {{ dataList.conditionnement }}
+                    {{ dataList.valeur +' en F CFA'}}
                 </td>
                 <td>
             <tr class="d-flex justify-content-center gap-3">
@@ -51,7 +48,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
             <tr>
-                <td colspan="5">Aucun plastique nu trouvé.</td>
+                <td colspan="5">Aucune devise trouvée.</td>
             </tr>
         </ng-template>
     </p-table>
@@ -79,13 +76,13 @@
                             <div class="mb-3">
                                 <label for="libelle" class="form-label">Nom <span
                                         class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="libelle" formControlName="libelle"
+                                <input type="text" class="form-control" id="libelle" formControlName="nom"
                                     placeholder="Entrez le nom">
                             </div>
                             <div class="mb-3">
-                                <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="description" formControlName="description"
-                                    placeholder="Entrez la description">
+                                <label for="description" class="form-label">Code <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="description" formControlName="code"
+                                    placeholder="Entrez la description (XOF)">
                             </div>
 
                         </div>
@@ -93,16 +90,9 @@
                           <div class="mb-3">
                             <label for="valeur" class="form-label">Valeur <span
                               class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="valeur" formControlName="valeur"
-                                   placeholder="Entrez le valeur">
+                            <input type="number" class="form-control" id="valeur" formControlName="valeur"
+                                   placeholder="Entrez le valeur en F CFA">
                           </div>
-                            <!-- <div class="mb-3">
-                                <label for="conditionnement" class="form-label">Conditionnement <span class="text-danger">*</span></label>
-                                <select class="form-control form-select form-select-sm" formControlName="conditionnement" aria-label=".form-select-sm example">
-                                  <option value="" disabled selected>Choisir le conditionnement</option>
-                                  <option [value]="item" *ngFor="let item of dataListConditionnements">{{item}}</option>
-                                </select>
-                              </div> -->
                         </div>
                     </div>
                 </form>

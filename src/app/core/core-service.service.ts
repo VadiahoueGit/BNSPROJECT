@@ -237,6 +237,89 @@ export class CoreServiceService {
     });
   }
 
+  //DEVISE
+  async CreateCurrency(data: any) {
+    await this.initializeApiUrl();
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/devises`, data, { headers }).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  async GetCurrencyList(data: any) {
+    await this.initializeApiUrl();
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/devises?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`, { headers }
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+  async UpdateCurrency(id: number, data: any) {
+    await this.initializeApiUrl();
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/devises/${id}`, data, { headers }).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  async DeleteCurrency(id: number) {
+    await this.initializeApiUrl();
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .delete(`${this.apiUrl}/v1/devises/${id}`, { headers })
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
   //groupe client
   async CreateGroupeClient(data: any) {
     await this.initializeApiUrl();
