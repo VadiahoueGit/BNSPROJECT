@@ -91,14 +91,14 @@
           {{ dataList?.montantPercu }}
         </td>
         <td>
-          {{ dataList?.credit?.delaiReglement ||"N/A" }}
+          {{ dataList?.credit?.delaiReglement || 0 }}
         </td>
         <td>
-          {{ dataList?.credit?.dateEcheance | date :"dd/MM/yyyy HH:mm"  }}
+          {{ dataList?.dateEchanceCalculer | date :"dd/MM/yyyy"  }}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList?.createdAt | date }}
+            {{ dataList?.createdAt | date :"dd/MM/yyyy" }}
           </span>
         </td>
         <td>
