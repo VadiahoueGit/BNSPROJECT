@@ -125,7 +125,7 @@ export class SuiviComptesComponent {
     this._spinner.show();
     this._financeService.GetCreditList(data).then((res: any) => {
       console.log('GetCreditList:::>', res);
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages); // nombre total d’enregistrements
 
       this.dataList = res.data;
@@ -192,7 +192,7 @@ export class SuiviComptesComponent {
     this.operation = 'detail';
     this.historiqueMouvement = data.mouvements;
   }
- 
+
   loadUpdateData(): void {
     this.CreditForm.patchValue({
       codeClient: this.updateData.codeClient || this.updateData.code,
