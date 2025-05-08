@@ -100,7 +100,7 @@
                     <div class="col-md-6">
                       <div class="mb-3">
                         <label for="photo" class="form-label">Photo <span class="text-danger">*</span></label>
-                        <input type="file" class="form-control" id="photo" formControlName="photo" placeholder="Entrez la photo de l'article">
+                        <input type="file" class="form-control" id="photo" (change)="onFileSelected($event)"   placeholder="Entrez la photo de l'article">
                       </div>
 
                       <div class="mb-3">

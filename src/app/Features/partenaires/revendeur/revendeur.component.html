@@ -472,10 +472,6 @@
         <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
           Détails revendeur
         </h1>
-        <!-- <div class="d-flex align-items-center">
-          <i class="fas fa-box-check text-primary fs-3"></i>
-          <h5 class="modal-title" id="staticBackdropLabel">Détails Client</h5>
-        </div> -->
         <button
           type="button"
           class="btn-close justify-content-end"
@@ -591,8 +587,7 @@
         <button
           *ngIf="!RevendeurDetail.isValide"
           (click)="confirmValidateOperation(RevendeurDetail)"
-          class="btn btn-success"
-        >
+          class="btn btn-success">
           Valider
         </button>
       </div>

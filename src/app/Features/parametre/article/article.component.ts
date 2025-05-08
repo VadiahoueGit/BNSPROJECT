@@ -97,6 +97,15 @@ export class ArticleComponent {
     this.GetArticleList(1);
   }
 
+  onFileSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      this.ArticleForm.patchValue({ photo: file });
+      this.ArticleForm.get('photo')?.updateValueAndValidity();
+    }
+  }
+
+
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -121,8 +130,8 @@ export class ArticleComponent {
 
   OnEdit(data: any) {
     this.isEditMode = true;
-    console.log(data);
-    this.updateData = data;
+    console.log(this.docUrl + data.image);
+    this.updateData = data
     this.articleId = data.id;
     this.isModalOpen = true;
     this.loadArticleDetails();
@@ -154,23 +163,22 @@ export class ArticleComponent {
   }
 
   onSubmit(): void {
-
     console.log(this.ArticleForm.value);
+
     if (this.ArticleForm.valid) {
-      // const formValues = this.ArticleForm.value;
       this._spinner.show();
-      const formValues = {
-        ...this.ArticleForm.value,
-        categorieId: +this.ArticleForm.value.categorieId,
-        groupeId: +this.ArticleForm.value.groupeId,
-        plastiquenuId: +this.ArticleForm.value.plastiquenuId,
-        bouteillevideId: +this.ArticleForm.value.bouteillevideId,
-        liquideId: +this.ArticleForm.value.liquideId,
-      };
-      console.log('this.isEditMode', this.isEditMode);
+
+      const formData = new FormData();
+      Object.entries(this.ArticleForm.value).forEach(([key, value]) => {
+        if (value instanceof File) {
+          formData.append(key, value);
+        } else if (value !== null && value !== undefined) {
+          formData.append(key, value.toString());
+        }
+      });
 
       if (this.isEditMode) {
-        this.articleService.UpdateArticle(this.articleId, formValues).then(
+        this.articleService.UpdateArticle(this.articleId, formData).then(
           (response: any) => {
             console.log('article mis à jour avec succès', response);
             this._spinner.hide();
@@ -184,14 +192,13 @@ export class ArticleComponent {
           }
         );
       } else {
-        this.articleService.CreateArticle(formValues).then(
+        this.articleService.CreateArticle(formData).then(
           (response: any) => {
             this.OnCloseModal();
             this._spinner.hide();
             this.GetArticleList(1);
             this.ArticleForm.reset();
             this.toastr.success(response.message);
-
             console.log('Nouvel article créé avec succès', response);
           },
           (error: any) => {
@@ -202,6 +209,7 @@ export class ArticleComponent {
       }
     }
   }
+
 
   loadArticleDetails(): void {
     this.ArticleForm.patchValue({

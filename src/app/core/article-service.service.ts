@@ -654,6 +654,7 @@ export class ArticleServiceService {
   DeletedArticle(id: number) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${this.token}`
       });
       this._http.delete(`${this.apiUrl}/v1/product/${id}`,{headers}).subscribe(
@@ -669,7 +670,7 @@ export class ArticleServiceService {
     });
   }
 
-  UpdateArticle(id: number, article: any) {
+  UpdateArticle(id: number, article: FormData) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
