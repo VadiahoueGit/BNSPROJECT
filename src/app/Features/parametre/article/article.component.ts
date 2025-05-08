@@ -214,7 +214,7 @@ export class ArticleComponent {
       groupeId: this.updateData.groupearticle.id,
       plastiquenuId: this.updateData.plastiquenu.id,
       bouteillevideId: this.updateData.bouteillevide.id,
-      liquideId: 1,
+      liquideId: this.updateData.liquide.id
     });
   }
 
