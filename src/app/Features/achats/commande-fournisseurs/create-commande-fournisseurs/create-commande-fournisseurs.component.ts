@@ -50,7 +50,7 @@ export class CreateCommandeFournisseursComponent {
   listRevendeurs: any[] = [];
   dataRevendeur: any[] = [];
   dataPointDeVente: any[] = [];
-  ListCommandeGratuites: any[] = [];
+  ListCommandeFournisseurs: any[] = [];
   depotId: any = 0;
   
   minDate = new Date().toISOString().split('T')[0];
@@ -70,12 +70,12 @@ export class CreateCommandeFournisseursComponent {
   ngOnInit() {
     this.CommandeForm = this.fb.group({
       fournisseurId: [null, Validators.required],
-      datecommande: [this.now, Validators.required],
+      dateCommande: [this.now, Validators.required],
       dateLivraisonEstimee: [this.minDate, Validators.required],
       depotId: [null, Validators.required],
       articles: this.fb.array([]),
     });
-    this.CommandeForm.controls['datecommande'].setValue(this.now)
+    this.CommandeForm.controls['dateCommande'].setValue(this.now)
     this.CommandeForm.controls['dateLivraisonEstimee'].setValue(this.now)
   // this.CommandeForm.get('datecommande')?.disable();
     this.GetArticleList(1)
@@ -138,7 +138,7 @@ export class CreateCommandeFournisseursComponent {
     this._spinner.show();
     this.articleService.GetListCommandeFournisseurs(data).then((res: any) => {
       console.log('GetListCommandeFournisseurs:::>', res);
-      this.ListCommandeGratuites = res.data;
+      this.ListCommandeFournisseurs = res.data;
       this._spinner.hide();
     });
   }

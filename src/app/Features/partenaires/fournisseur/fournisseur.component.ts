@@ -47,6 +47,7 @@ export class FournisseurComponent {
   filteredCount: number = 0;
   @ViewChild('dt2') dt2!: Table;
   totalPages: number;
+  Listfournisseurs: any;
   constructor(
     private cd: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -69,7 +70,7 @@ export class FournisseurComponent {
       telephone2: ['', Validators.pattern('^[0-9]+$')],
       siteWeb: ['', Validators.pattern('https?://.+')]
     });
-
+this.GetFournisseursList(1)
   }
 
   goBack() {
@@ -82,7 +83,7 @@ export class FournisseurComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
-    this.GetRevendeurList(this.currentPage);
+    this.GetFournisseursList(this.currentPage);
   }
   OnCreate() {
     this.fournisseurForm.enable();
@@ -186,15 +187,6 @@ export class FournisseurComponent {
     this.selectedFile = event.target.files[0];
   }
   confirmValidateOperation(revendeur: any) {
-    // Vérifier que la CNI et le numéro SAP sont sélectionnés
-    // if (!this.selectedCniFile || !this.numeroSap) {
-    //   this.toastr.warning(
-    //     'Erreur!',
-    //     'Veuillez sélectionner la CNI et le numéro SAP.'
-    //   );
-    //   return;
-    // }
-
     if (!revendeur.isValide) {
       ALERT_QUESTION(
         'warning',
@@ -217,7 +209,7 @@ export class FournisseurComponent {
               this.toastr.success(response.message);
               this.OnCloseDetailModal();
               this._spinner.hide();
-              this.GetRevendeurList(1);
+              this.GetFournisseursList(1);
             },
             (error: any) => {
               this._spinner.hide();
@@ -326,40 +318,53 @@ export class FournisseurComponent {
 
   }
 
-
-  GetRevendeurList(page: number) {
+  GetFournisseursList(page:number) {
     let data = {
-      paginate: true,
+      paginate: false,
       page: page,
       limit: 8,
     };
-    this._spinner.show();
-    this._articleService.GetListRevendeur(data).then((res: any) => {
-      console.log('GetListRevendeur:::>', res);
-      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
-
-      this.dataList = res.data;
-      this.revendeurConfirmed = res.data.filter(
-        (i: any) => i.isAssocie === false && i.isValide === true
-      );
-
+    this.utilisateurService.GetFournisseursList(data).then((res: any) => {
+      this.dataList = res.data
+      console.log('Listfournisseurs', res)
       this.filteredCount = this.dataList.length;
-      this._spinner.hide();
-    });
+    }, (error: any) => {
+      this._spinner.hide()
+    })
   }
+  // GetRevendeurList(page: number) {
+  //   let data = {
+  //     paginate: true,
+  //     page: page,
+  //     limit: 8,
+  //   };
+  //   this._spinner.show();
+  //   this._articleService.GetListRevendeur(data).then((res: any) => {
+  //     console.log('GetListRevendeur:::>', res);
+  //     this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+
+  //     this.dataList = res.data;
+  //     this.revendeurConfirmed = res.data.filter(
+  //       (i: any) => i.isAssocie === false && i.isValide === true
+  //     );
+
+  //     this.filteredCount = this.dataList.length;
+  //     this._spinner.hide();
+  //   });
+  // }
   onSubmit() {
     this._spinner.show();
     console.log(this.fournisseurForm, 'form value');
     if (this.isEditMode) {
-      this._articleService
-        .UpdateRevendeur(this.id, this.fournisseurForm.value)
+      this.utilisateurService
+        .UpdateFournisseurs(this.id, this.fournisseurForm.value)
         .then(
           (response: any) => {
             console.log(' mis à jour avec succès', response);
             this._spinner.hide();
             this.fournisseurForm.reset();
             this.OnCloseModal();
-            this.GetRevendeurList(1);
+            this.GetFournisseursList(1);
             this.toastr.success(response.message);
           },
           (error: any) => {
@@ -369,19 +374,14 @@ export class FournisseurComponent {
           }
         );
     } else {
-      this.fournisseurForm.controls['isAssocie'].setValue(this.isActive)
-
-      if (this.isActive)
-      {
-        this.fournisseurForm.controls['parentRevendeurId'].setValue(this.selectedRevendeur.id)
-      }
-      this._articleService.CreateRevendeur(this.fournisseurForm.value).then(
+      
+      this.utilisateurService.CreateFournisseurs(this.fournisseurForm.value).then(
         (response: any) => {
           console.log('Nouveau revendeur créé avec succès', response);
           this._spinner.hide();
           this.fournisseurForm.reset();
           this.OnCloseModal();
-          this.GetRevendeurList(1);
+          this.GetFournisseursList(1);
           this.toastr.success(response.message);
         },
         (error: any) => {
@@ -402,7 +402,7 @@ export class FournisseurComponent {
             .then((res: any) => {
               console.log('DATA:::>', res);
               this.toastr.success(res.message);
-              this.GetRevendeurList(1);
+              this.GetFournisseursList(1);
               this._spinner.hide();
             })
             .catch((err) => {

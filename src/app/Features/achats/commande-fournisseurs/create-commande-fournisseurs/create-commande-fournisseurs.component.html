@@ -8,7 +8,7 @@
     <p-table
       [styleClass]="'p-datatable-sm'"
       #dt2
-      [value]="ListCommandeGratuites"
+      [value]="ListCommandeFournisseurs"
       dataKey="id"
       [rows]="8"
       [rowsPerPageOptions]="[10, 25, 50]"
@@ -33,45 +33,45 @@
           </th> 
         </tr> -->
       </ng-template>
-      <ng-template pTemplate="body" let-ListCommandeGratuites let-i="index">
+      <ng-template pTemplate="body" let-ListCommandeFournisseurs let-i="index">
         <tr>
           <td>
-            {{ ListCommandeGratuites.NumCommande }}
+            {{ ListCommandeFournisseurs?.NumCommande }}
           </td>
   
           <td>
-            {{ ListCommandeGratuites.client.nomEtablissement ? ListCommandeGratuites.client.nomEtablissement : ListCommandeGratuites.client.raisonSocial}}
+            {{ ListCommandeFournisseurs?.fournisseur?.nom}}
           </td>
           <td>
-            {{ ListCommandeGratuites.client.depot.nomDepot }}
+            {{ ListCommandeFournisseurs?.dateCommande }}
           </td>
   
           <td>
             <span class="ml-1 vertical-align-middle">
-  <!--            {{ ListCommandeGratuites.articles[i].quantite }}-->
+             {{ ListCommandeFournisseurs?.dateLivraisonEstimee }}
             </span>
           </td>
           <td>
             <span class="ml-1 vertical-align-middle">
-  <!--            {{ ListCommandeGratuites.articles[i].quantite }}-->
+             {{ ListCommandeFournisseurs?.depot?.nomDepot}}
             </span>
           </td>
           <td>
             <tr class="d-flex justify-content-center gap-3">
               <td>
                 <i
-                  (click)="OnEdit(ListCommandeGratuites)"
+                  (click)="OnEdit(ListCommandeFournisseurs)"
                   style="cursor: pointer"
                   class="fas fa-eye text-secondary"
                 ></i>
               </td>
-              <td>
+              <!-- <td>
                 <i
-                  (click)="OnDelete(ListCommandeGratuites.id)"
+                  (click)="OnDelete(ListCommandeFournisseurs?.id)"
                   style="cursor: pointer"
                   class="fas fa-trash-alt text-danger"
                 ></i>
-              </td>
+              </td> -->
             </tr>
           </td>
         </tr>
@@ -140,7 +140,7 @@
                     type="date"
                     class="form-control"
                     id="datecommande"
-                    formControlName="datecommande"
+                    formControlName="dateCommande"
                     [disabled]="true"
                   />
                 </div>
@@ -216,46 +216,34 @@
             </div> -->
           </form>
           <fieldset class="row border my-1"  *ngIf="operation == 'edit'">
-            <legend style="font-size: 14px;" class="text-secondary">Numero Commande : {{updateData.NumCommande}} du {{updateData.createdAt | date}}</legend>
+            <legend style="font-size: 14px;" class="text-secondary">Numero Commande : {{updateData.NumCommande}} du {{updateData.createdAt | date :"dd/MM/yyyy" }}</legend>
           </fieldset>
           <fieldset class="row border my-2"  *ngIf="operation == 'edit'">
-            <legend style="font-size: 14px;" class="text-secondary">Informations du client</legend>
+            <legend style="font-size: 14px;" class="text-secondary">Informations du fournisseur</legend>
             <div class="row">
               <div class="col-md-4">
-                <strong>Groupe de client :</strong>
-                <span>{{updateData.client?.groupeClient?.nomGroupe || updateData.client?.GroupeClient?.nomGroupe}}</span>
+                <strong>Fournisseur :</strong>
+                <span>{{updateData?.fournisseur?.nom}}</span>
               </div>
               <div class="col-md-4">
-                <strong>Type de client :</strong>
-                <span>{{updateData.client.role}}</span>
+                <strong>Groupe :</strong>
+                <span>{{updateData?.fournisseur?.codeGroupe}}</span>
               </div>
               <div class="col-md-4">
-                <strong>Propriétaire :</strong>
-                <span>{{ updateData.client.nomProprietaire }}</span>
+                <strong>Pays :</strong>
+                <span>{{ updateData?.fournisseur?.pays }}</span>
               </div>
               <div class="col-md-4">
-                <strong>Gérant :</strong>
-                <span>{{ updateData.client.nomGerant }}</span>
+                <strong>Adresse :</strong>
+                <span>{{ updateData?.fournisseur?.adresse }}</span>
               </div>
               <div class="col-md-4">
-                <strong>Établissement :</strong>
-                <span>{{ updateData.client.nomEtablissement ? updateData.client.nomEtablissement : updateData.client.raisonSocial }}</span>
+                <strong>Site Web :</strong>
+                <span>{{ updateData.fournisseur.siteWeb }}</span>
               </div>
               <div class="col-md-4">
-                <strong>Numero de registre :</strong>
-                <span>{{ updateData.client.numeroRegistre }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Numero contribuable :</strong>
-                <span>{{ updateData.client.numeroCompteContribuable }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Contact Gérant :</strong>
-                <span>{{ updateData.client.telephoneGerant }}</span>
-              </div>
-              <div class="col-md-4 mb-4">
-                <strong>Téléphone :</strong>
-                <span>{{ updateData.client.telephoneProprietaire }}</span>
+                <strong>Devise :</strong>
+                <span>{{ updateData.fournisseur.devise }}</span>
               </div>
             </div>
           </fieldset>
@@ -347,7 +335,7 @@
                 </thead>
   
                 <tbody>
-                <tr *ngFor="let item of updateData.articles">
+                <tr *ngFor="let item of updateData?.articles">
                   <td>{{ item.liquide.libelle }}1</td>
                   <td>{{ item.prixUnitaireLiquide }}</td>
                   <td>{{ item.prixUnitaireEmballage}}</td>
