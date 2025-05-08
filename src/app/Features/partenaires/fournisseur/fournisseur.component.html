@@ -39,7 +39,6 @@
     </ng-template>
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color)">Code Fss</th>
         <th style="color: var(--secondary-color)">Nom Fournisseur</th>
         <th style="color: var(--secondary-color)">Code groupe</th>
         <th style="color: var(--secondary-color)">Adresse</th>
@@ -60,49 +59,47 @@
       <tr>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.codeClient }}
+            {{ dataList?.nom }}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.agentCommercial.nom + ' ' + dataList.agentCommercial.prenoms }}
+            {{ dataList?.codeGroupe }}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.raisonSocial }}
+            {{ dataList?.adresse }}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.nomGerant }}
+            {{ dataList?.pays }}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.nomProprietaire }}
+            {{ dataList?.devise?.nom }}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.groupeClient.nomGroupe }}
+            {{ dataList?.telephone1 }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList?.telephone2 }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList?.siteWeb }}
           </span>
         </td>
         <td>
       <tr class="d-flex justify-content-center gap-3">
-        <td>
-          <i *ngIf="dataList.isValide && !dataList.isAssocie" class="fa-solid fa-crown" style="color:#ffc400"
-          ></i>
-          <i
-            *ngIf="!dataList.isValide && !dataList.isAssocie"
-            [ngStyle]="{
-                        'color': dataList.isValide ? 'gray' : '#08AD36',
-                      }"
-            (click)="OnValidate(dataList)"
-            style="cursor: pointer"
-            class="fas fa-check fw-bold"
-          ></i>
-        </td>
+   
         <td>
           <i
             (click)="OnEdit(dataList)"
@@ -160,7 +157,7 @@
           <div class="row">
             <div class="col-md-6 mb-3">
               <label for="nomFournisseur" class="form-label">Nom Fournisseur</label>
-              <input id="nomFournisseur" type="text" class="form-control" formControlName="nomFournisseur" />
+              <input id="nomFournisseur" type="text" class="form-control" formControlName="nom" />
             </div>
 
             <div class="col-md-6 mb-3">
@@ -186,8 +183,17 @@
               <input id="pays" type="text" class="form-control" formControlName="pays" />
             </div>
             <div class="col-md-6 mb-3">
-              <label for="devise" class="form-label">Devise</label>
-              <input id="devise" type="text" class="form-control" formControlName="devise" />
+                <label for="" class="form-label">Devise</label>
+                <span class="text-danger">*</span>
+                <ng-select
+                  class="form-control"
+                  [items]="CurrencyList"
+                  bindLabel="nom"
+                  bindValue="id"
+                  formControlName="deviseId"
+                  [searchable]="true"
+                >
+                </ng-select>
             </div>
           </div>
 
@@ -215,6 +221,7 @@
               type="submit"
               [disabled]="fournisseurForm.invalid"
               class="btn btn-primary"
+              (click)="onSubmit()" 
             >
               Enregistrer
             </button>
