@@ -13,6 +13,7 @@ export class UtilisateurResolveService {
   apiUrl: any;
   ListUsers: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   listPointDeVente: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
+  listFournisseurs: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListPermissions: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListProfils: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   token:string;
@@ -604,4 +605,97 @@ export class UtilisateurResolveService {
       );
     });
    }
+
+    //FOURNISSEURS
+    CreateFournisseurs(data: any) {
+      return new Promise((resolve: any, reject: any) => {
+        const headers = new HttpHeaders({
+          Authorization: `Bearer ${this.token}`
+        });
+        this._http.post(`${this.apiUrl}/v1/fournisseurs`, data,{headers}).subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+      });
+    }
+  
+    GetFournisseursList(data: any) {
+      return new Promise((resolve: any, reject: any) => {
+        const headers = new HttpHeaders({
+          Authorization: `Bearer ${this.token}`
+        });
+        this._http
+          .get(
+            `${this.apiUrl}/v1/fournisseurs?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{ headers }
+          )
+          .subscribe(
+            (res: any) => {
+              console.log(res);
+              this.listFournisseurs.next(res.data)
+              resolve(res);
+            },
+            (err) => {
+              console.log(err);
+              reject(err);
+            }
+          );
+      });
+    }
+    UpdateFournisseurs(id: number, formData: FormData) {
+      return new Promise((resolve: any, reject: any) => {
+        const headers = new HttpHeaders({
+          Authorization: `Bearer ${this.token}`
+        });
+        this._http.put(`${this.apiUrl}/v1/fournisseurs/${id}`, formData,{headers}).subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+      });
+    }
+    GetFournisseursDetailById(id: number) {
+      return new Promise((resolve: any, reject: any) => {
+        const headers = new HttpHeaders({
+          Authorization: `Bearer ${this.token}`
+        });
+        this._http.get(`${this.apiUrl}/v1/fournisseurs/${id}`,{headers}).subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+      });
+    }
+    DeletedFournisseurs(id: number) {
+      return new Promise((resolve: any, reject: any) => {
+        const headers = new HttpHeaders({
+          Authorization: `Bearer ${this.token}`
+        });
+        this._http.delete(`${this.apiUrl}/v1/fournisseurs/${id}`,{headers}).subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+      });
+    }
 }

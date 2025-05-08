@@ -4,6 +4,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
+import { CoreServiceService } from 'src/app/core/core-service.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
 
@@ -54,8 +55,11 @@ export class CreateCommandeFournisseursComponent {
   
   minDate = new Date().toISOString().split('T')[0];
   now = new Date().toISOString().split('T')[0];
+  Listfournisseurs:  any[] = [];
+  depotList: any;
   constructor(
     private cdr: ChangeDetectorRef,
+    private _coreService: CoreServiceService,
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
@@ -66,21 +70,35 @@ export class CreateCommandeFournisseursComponent {
   ngOnInit() {
     this.CommandeForm = this.fb.group({
       fournisseurId: [null, Validators.required],
-      datecommande: ['', Validators.required],
-      datelivraison: [this.minDate, Validators.required],
+      datecommande: [this.now, Validators.required],
+      dateLivraisonEstimee: [this.minDate, Validators.required],
       depotId: [null, Validators.required],
-      clientId: [null, Validators.required],
       articles: this.fb.array([]),
     });
     this.CommandeForm.controls['datecommande'].setValue(this.now)
-    // this.CommandeForm.controls['datelivraison'].setValue(this.now)
-  this.CommandeForm.get('datecommande')?.disable();
+    this.CommandeForm.controls['dateLivraisonEstimee'].setValue(this.now)
+  // this.CommandeForm.get('datecommande')?.disable();
     this.GetArticleList(1)
-    this.LoadPdv()
-    this.GetRevendeurList(1)
-    this.GetListCommandeGratuite(1)
+    this.GetFournisseursList()
+    this.GetListCommandeFournisseurs(1)
     this.fetchData()
+    this.GetDepotList(1)
   }
+  GetDepotList(page: number) {
+    let data = {
+      paginate: false,
+      page: page,
+      limit: 8,
+    };
+    this._spinner.show();
+    this._coreService.GetDepotList(data).then((res: any) => {
+      console.log('GetDepotList:::>', res.data);
+
+      this.depotList = res.data;
+      this._spinner.hide();
+    });
+  }
+
   GetRevendeurList(page: number) {
     let data = {
       paginate: false,
@@ -102,24 +120,24 @@ export class CreateCommandeFournisseursComponent {
     };
     this._spinner.show();
     this.articleService.GetArticleList(data).then((res: any) => {
-      console.log('DATATYPEPRIX:::>', res);
+      console.log('GetArticleList:::>', res);
       this.dataListLiquides = res.data;
-      this.dataListLiquides.forEach((item: any) => {
-        this.GetStockDisponibleByDepot(item)
-      })
+      // this.dataListLiquides.forEach((item: any) => {
+      //   this.GetStockDisponibleByDepot(item)
+      // })
       this.filteredArticleList = this.dataListLiquides;
       this._spinner.hide();
     });
   }
-  GetListCommandeGratuite(page:number) {
+  GetListCommandeFournisseurs(page:number) {
     let data = {
       paginate: false,
       page:page,
       limit: 8,
     };
     this._spinner.show();
-    this.articleService.GetListCommandeGratuite(data).then((res: any) => {
-      console.log('ListCommandeGratuites:::>', res);
+    this.articleService.GetListCommandeFournisseurs(data).then((res: any) => {
+      console.log('GetListCommandeFournisseurs:::>', res);
       this.ListCommandeGratuites = res.data;
       this._spinner.hide();
     });
@@ -181,15 +199,14 @@ export class CreateCommandeFournisseursComponent {
   }
 
   onSubmit(): void {
-    this.CommandeForm.controls['depotId'].setValue(this.depotId);
-    console.log(this.CommandeForm.value);
+    console.log(this.CommandeForm.value,'this.CommandeForm.value');
     if (this.CommandeForm.valid) {
       this._spinner.show()
-      this.articleService.CreateCommandGratuite(this.CommandeForm.value).then((res: any) => {
+      this.articleService.CreateCommandeFournisseurs(this.CommandeForm.value).then((res: any) => {
         console.log(res,'enregistré avec succes')
         this._spinner.hide();
         this.CommandeForm.reset();
-        this.GetListCommandeGratuite(1)
+        this.GetListCommandeFournisseurs(1)
         this.OnCloseModal()
         this.toastr.success(res.message);
       }, (error: any) => {
@@ -202,15 +219,15 @@ export class CreateCommandeFournisseursComponent {
     }
 
   }
-  LoadPdv() {
+  GetFournisseursList() {
     let data = {
       paginate: false,
       page: 1,
       limit: 8,
     };
-    this.utilisateurService.GetPointDeVenteList(data).then((res: any) => {
-      this.pointDeVente = res.data
-      console.log('pointDeVente', res)
+    this.utilisateurService.GetFournisseursList(data).then((res: any) => {
+      this.Listfournisseurs = res.data
+      console.log('Listfournisseurs', res)
     }, (error: any) => {
       this._spinner.hide()
     })
@@ -314,12 +331,7 @@ export class CreateCommandeFournisseursComponent {
       }
     );
   }
-  onRevendeurChange(selectedItem: any): void {
-    console.log('Élément sélectionné :', selectedItem);
-    this.depotId = selectedItem.depot.id;
-    this.CommandeForm.controls["clientType"].setValue(selectedItem.role);
-    this.GetArticleList(1)
-  }
+
   async GetStockDisponibleByDepot(item: any): Promise<any> {
     let data = {
       productId: item.liquide.code,
@@ -508,16 +520,20 @@ export class CreateCommandeFournisseursComponent {
 
     try {
       // Attendre la réponse de la promesse
-      const response:any = await this.articleService.GetPrixByProduit(data);
-      console.log(response)
+      const response: any = await this.articleService.GetPrixByProduit(data);
+      console.log(response);
+      const prixDetail = response.data.find((item: any) => item.libelle === 'PRIX USINE');
+
+      console.log(prixDetail);
       // Vérifier si le statusCode est 200
-      if (response.data) {
-        this.prixLiquide[item.id] = 0;
-        this.prixEmballage[item.id] = response.data.PrixConsigne;
-        console.log('prixLiquide',this.prixLiquide[item.id])
-        console.log('prixEmballage',this.prixEmballage[item.id])
+      if (prixDetail.prix.length > 0) {
+        this.prixLiquide[item.id] = prixDetail.prix[0].PrixLiquide;
+        this.prixEmballage[item.id] = prixDetail.prix[0].PrixConsigne;
+        console.log('prixByArticle', this.prixLiquide[item.id]);
+      }else {
+        this.toastr.error("Ce article n'a pas de prix détail, veuillez le renseigner avant de continuer");
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.log(error);
     }
   }
