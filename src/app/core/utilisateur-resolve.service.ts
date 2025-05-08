@@ -647,12 +647,12 @@ export class UtilisateurResolveService {
           );
       });
     }
-    UpdateFournisseurs(id: number, formData: FormData) {
+    UpdateFournisseurs(id: number, data: any) {
       return new Promise((resolve: any, reject: any) => {
         const headers = new HttpHeaders({
           Authorization: `Bearer ${this.token}`
         });
-        this._http.put(`${this.apiUrl}/v1/fournisseurs/${id}`, formData,{headers}).subscribe(
+        this._http.patch(`${this.apiUrl}/v1/fournisseurs/${id}`, data,{headers}).subscribe(
           (res: any) => {
             console.log(res);
             resolve(res);
