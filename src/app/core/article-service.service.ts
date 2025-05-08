@@ -1253,7 +1253,8 @@ export class ArticleServiceService {
   CreateCommandClient(data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
-        Authorization: `Bearer ${this.token}`
+        Authorization: `Bearer ${this.token}`,
+        'x-app-source': 'BO'
       });
       this._http.post(`${this.apiUrl}/v1/commandes-client`, data,{headers}).subscribe(
         (res: any) => {
