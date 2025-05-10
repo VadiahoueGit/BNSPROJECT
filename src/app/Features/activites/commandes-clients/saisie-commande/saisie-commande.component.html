@@ -16,6 +16,7 @@
   >
     <ng-template pTemplate="header">
       <tr>
+        <th style="color: var(--secondary-color)">Source</th>
         <th style="color: var(--secondary-color)">Date</th>
         <th style="color: var(--secondary-color)">Numéro de commande</th>
         <th style="color: var(--secondary-color)">Etablissements</th>
@@ -35,6 +36,10 @@
     </ng-template>
     <ng-template pTemplate="body" let-dataList>
       <tr>
+        <td>
+          <i *ngIf="dataList.source == 'APPMOB'" class="fa-solid text-secondary fa-mobile-notch"></i>
+          <i *ngIf="dataList.source == 'BO'" class="fa-regular text-secondary fa-desktop"></i>
+        </td>
         <td>
           <span class="ml-1 vertical-align-middle">
         {{ dataList.dateCreation |date }}
