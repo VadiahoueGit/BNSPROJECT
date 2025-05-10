@@ -1,5 +1,5 @@
 import { LOCALE_ID, NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, registerLocaleData } from '@angular/common';
 
 import { AchatsRoutingModule } from './achats-routing.module';
 import { AchatsComponent } from './achats.component';
@@ -112,7 +112,8 @@ import { ParametreRoutingModule } from '../parametre/parametre-routing.module';
 import { SaisieEntreeGratuitesComponent } from './entree-gratuite/saisie-entree-gratuites/saisie-entree-gratuites.component';
 import { ListeCommandesMarchandisesComponent } from './reception-marchandise/liste-commandes-marchandises/liste-commandes-marchandises.component';
 import { ListEmballagesComponent } from './reception-marchandise/list-emballages/list-emballages.component';
-
+import localeFr from '@angular/common/locales/fr';
+registerLocaleData(localeFr);
 
 @NgModule({
   declarations: [

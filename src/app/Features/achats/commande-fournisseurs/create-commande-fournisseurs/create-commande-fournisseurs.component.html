@@ -215,38 +215,58 @@
               </div>
             </div> -->
           </form>
-          <fieldset class="row border my-1"  *ngIf="operation == 'edit'">
-            <legend style="font-size: 14px;" class="text-secondary">Numero Commande : {{updateData.NumCommande}} du {{updateData.createdAt | date :"dd/MM/yyyy" }}</legend>
+           <div *ngIf="operation == 'edit'">
+          <fieldset class="row border my-1"  >
+            <legend style="font-size: 14px;" class="text-secondary">Numero Commande : {{updateData?.NumCommande}} du {{updateData?.createdAt | date :"dd/MM/yyyy" }}</legend>
           </fieldset>
-          <fieldset class="row border my-2"  *ngIf="operation == 'edit'">
-            <legend style="font-size: 14px;" class="text-secondary">Informations du fournisseur</legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Fournisseur :</strong>
-                <span>{{updateData?.fournisseur?.nom}}</span>
+         
+            <fieldset class="row border my-2">
+              <legend style="font-size: 14px;" class="text-secondary">Informations du fournisseur</legend>
+              <div class="row">
+                <div class="col-md-4">
+                  <strong>Fournisseur : </strong>
+                  <span>{{updateData?.fournisseur?.nom}}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Groupe :</strong>
+                  <span>{{updateData?.fournisseur?.codeGroupe}}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Pays : </strong>
+                  <span>{{ updateData?.fournisseur?.pays }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Adresse : </strong>
+                  <span>{{ updateData?.fournisseur?.adresse }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Site Web : </strong>
+                  <span>{{ updateData?.fournisseur?.siteWeb }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Devise : </strong>
+                  <span>{{ updateData?.fournisseur?.devise }}</span>
+                </div>
               </div>
-              <div class="col-md-4">
-                <strong>Groupe :</strong>
-                <span>{{updateData?.fournisseur?.codeGroupe}}</span>
+            </fieldset>
+            <fieldset class="row border my-2" >
+              <legend style="font-size: 14px;" class="text-secondary">Autres informations</legend>
+              <div class="row">
+                <div class="col-md-4">
+                  <strong>Date commande : </strong>
+                  <span>{{updateData?.dateCommande}}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Date livraison estimée : </strong>
+                  <span>{{updateData?.dateLivraisonEstimee}}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Statut : </strong>
+                  <span>{{ updateData?.statut }}</span>
+                </div>
               </div>
-              <div class="col-md-4">
-                <strong>Pays :</strong>
-                <span>{{ updateData?.fournisseur?.pays }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Adresse :</strong>
-                <span>{{ updateData?.fournisseur?.adresse }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Site Web :</strong>
-                <span>{{ updateData.fournisseur.siteWeb }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Devise :</strong>
-                <span>{{ updateData.fournisseur.devise }}</span>
-              </div>
-            </div>
-          </fieldset>
+            </fieldset>
+          </div>
           <div class="p-2 mt-3">
             <div style="max-height: 350px; overflow-y: auto">
               <table  *ngIf="operation == 'create'" class="table table-bordered">
@@ -272,7 +292,7 @@
   
                 <tbody>
                   <tr *ngFor="let item of selectedArticles">
-                    <td>{{ item.liquide.libelle }}</td>
+                    <td>{{ item?.liquide?.libelle }}</td>
                     <td>{{ prixLiquide[item.id] }}</td>
                     <td>{{ prixEmballage[item.id] }}</td>
                     <td>{{ prixEmballage[item.id] + prixLiquide[item.id] }}</td>

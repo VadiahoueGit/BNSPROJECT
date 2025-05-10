@@ -47,6 +47,7 @@ export class FournisseurComponent {
   totalPages: number;
   Listfournisseurs: any;
   CurrencyList: any;
+  PaysList: any;
   constructor(
     private cd: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -71,6 +72,7 @@ export class FournisseurComponent {
     });
     this.GetFournisseursList(1);
     this.GetCurrencyList(1)
+    this.GetPaysList(1)
   }
 
   goBack() {
@@ -249,6 +251,23 @@ export class FournisseurComponent {
       (res: any) => {
         this.CurrencyList = res.data;
         console.log('GetCurrencyList', res);
+        // this.filteredCount = this.dataList.length;
+      },
+      (error: any) => {
+        this._spinner.hide();
+      }
+    );
+  }
+  GetPaysList(page: number) {
+    let data = {
+      paginate: false,
+      page: page,
+      limit: 8,
+    };
+    this.coreService.GetPaysList(data).then(
+      (res: any) => {
+        this.PaysList = res.data;
+        console.log('GetPaysList', res);
         // this.filteredCount = this.dataList.length;
       },
       (error: any) => {

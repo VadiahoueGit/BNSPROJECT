@@ -188,7 +188,16 @@
           <div class="row">
             <div class="col-md-6 mb-3">
               <label for="pays" class="form-label">Pays</label>
-              <input id="pays" type="text" class="form-control" formControlName="pays" />
+              <!-- <span class="text-danger">*</span> -->
+                <ng-select
+                  class="form-control"
+                  [items]="PaysList"
+                  bindLabel="name"
+                  bindValue="name"
+                  formControlName="pays"
+                  [searchable]="true"
+                >
+                </ng-select>
             </div>
             <div class="col-md-6 mb-3">
                 <label for="" class="form-label">Devise</label>
