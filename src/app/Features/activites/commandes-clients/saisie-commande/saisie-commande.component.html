@@ -546,6 +546,7 @@
                 <table class="table">
                   <thead>
                   <tr style="font-size: small">
+                    <th scope="col" class="text-secondary"></th>
                     <th scope="col" class="text-secondary">Produits</th>
                     <th scope="col" class="text-secondary">Disponibilité</th>
                     <th scope="col" class="text-secondary text-center">
@@ -558,10 +559,16 @@
                     *ngFor="let article of filteredArticleList; let i = index"
                     style="font-size: small"
                   >
-                    <th scope="row">{{ article.libelle }}</th>
-                    <th scope="row">
+                    <td>
+                      <div>
+                        <img [src]="article.image ? docUrl + article.image : 'assets/icon/bottle.png'" alt="Photo"
+                             class="img-thumbnail profile-pic vertical-align-middle"/>
+                      </div>
+                    </td>
+                    <td >{{ article.libelle }}</td>
+                    <td >
                       {{ stocksDisponibles[article.liquide.id] }}
-                    </th>
+                    </td>
                     <td class="">
                       <input
                         type="checkbox"

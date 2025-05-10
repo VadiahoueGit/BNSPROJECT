@@ -12,7 +12,14 @@ strong,span{
 .modal-content{
   background-color:white ;
 }
-
+.profile-pic {
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+}
+.img-thumbnail{
+  border:none;
+}
 .form-control {
   margin-bottom: -0.5rem; /* Espacer les champs */
 }

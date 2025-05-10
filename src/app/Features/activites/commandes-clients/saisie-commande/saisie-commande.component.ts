@@ -6,6 +6,7 @@ import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
+import {ConfigService} from "../../../../core/config-service.service";
 
 @Component({
   selector: 'app-saisie-commande',
@@ -62,6 +63,7 @@ export class SaisieCommandeComponent {
   clients: any = [];
   currentPage: number;
   rowsPerPage: any;
+  docUrl: any;
   listRevendeurs: any[] = [];
   totalGlobalAfterRemise: number = 0;
   prixLiquideArticleSelected: any;
@@ -72,6 +74,7 @@ export class SaisieCommandeComponent {
     private utilisateurService: UtilisateurResolveService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
+    private _config: ConfigService,
     private toastr: ToastrService,
     private cdr: ChangeDetectorRef
   ) {}
@@ -96,7 +99,7 @@ export class SaisieCommandeComponent {
       fraisTransport: [0,Validators.required ],
       articles: this.fb.array([]),
     });
-
+    this.docUrl = this._config.docUrl;
     this.fetchData();
 
     this.articleService.ListPlastiquesNu.subscribe((res: any) => {

@@ -59,7 +59,7 @@ export class FournisseurComponent {
   ) {}
   ngOnInit(): void {
     this.fournisseurForm = this.fb.group({
-      codeFss: [''],
+      codeFs: [''],
       nom: ['', Validators.required],
       codeGroupe: ['', Validators.required],
       adresse: ['', Validators.required],
@@ -122,6 +122,7 @@ export class FournisseurComponent {
 
   loadClientDetails(): void {
     this.fournisseurForm.patchValue({
+      codeFs : this.updateData.codeFs,
       codeGroupe: this.updateData.codeGroupe,
       nom: this.updateData.nom,
       telephone1: this.updateData.telephone1,
@@ -129,7 +130,7 @@ export class FournisseurComponent {
       pays: this.updateData.pays,
       adresse: this.updateData.adresse,
       siteWeb: this.updateData.siteWeb,
-      deviseId: this.updateData.devise.id,
+      deviseId: this.updateData.devise?.id,
     });
   }
 
@@ -222,13 +223,14 @@ export class FournisseurComponent {
 
   GetFournisseursList(page: number) {
     let data = {
-      paginate: false,
+      paginate: true,
       page: page,
       limit: 8,
     };
     this.utilisateurService.GetFournisseursList(data).then(
       (res: any) => {
         this.dataList = res.data;
+        this.totalPages = res.total;
         console.log('Listfournisseurs', res);
         this.filteredCount = this.dataList.length;
       },
