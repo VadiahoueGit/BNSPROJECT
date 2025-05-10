@@ -7,7 +7,12 @@
   height: 40px;
   object-fit: cover;
 }
-
+.img-thumbnail{
+  border:none;
+}
+span{
+  font-size: 11px;
+}
 .custom-modal {
     position: fixed;
     top: 0;

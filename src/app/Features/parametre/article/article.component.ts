@@ -20,6 +20,7 @@ export class ArticleComponent {
   docUrl: any
   loading: boolean = true;
   isModalOpen = false;
+  isModalDetailOpen = false;
   activityValues: number[] = [0, 100];
   operation: string = '';
   updateData: any = {};
@@ -120,6 +121,9 @@ export class ArticleComponent {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
   }
+  OnCloseDetailModal() {
+    this.isModalDetailOpen = false;
+  }
 
   OnCreate() {
     this.isEditMode = false;
@@ -127,10 +131,15 @@ export class ArticleComponent {
     this.operation = 'create';
     console.log(this.isModalOpen);
   }
-
+  OnView(data: any) {
+    this.updateData = data
+    this.loadArticleDetails();
+    this.isModalDetailOpen = true;
+    console.log(this.isModalOpen);
+  }
   OnEdit(data: any) {
     this.isEditMode = true;
-    console.log(this.docUrl + data.image);
+    console.log(data);
     this.updateData = data
     this.articleId = data.id;
     this.isModalOpen = true;

@@ -59,7 +59,7 @@ export class FournisseurComponent {
   ) {}
   ngOnInit(): void {
     this.fournisseurForm = this.fb.group({
-      // codeFss: [''],
+      codeFss: [''],
       nom: ['', Validators.required],
       codeGroupe: ['', Validators.required],
       adresse: ['', Validators.required],
@@ -207,7 +207,7 @@ export class FournisseurComponent {
     }
   }
 
-  
+
   OnCloseModal() {
     this.isModalOpen = false;
     this.fournisseurForm.reset();
@@ -254,7 +254,7 @@ export class FournisseurComponent {
       }
     );
   }
- 
+
   onSubmit() {
     this._spinner.show();
     console.log(this.fournisseurForm, 'form value');
