@@ -319,6 +319,29 @@ export class CoreServiceService {
         );
     });
   }
+  // PAYS
+ async GetPaysList(data: any) {
+    await this.initializeApiUrl();
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/pays?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`, { headers }
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
 
   //groupe client
   async CreateGroupeClient(data: any) {
