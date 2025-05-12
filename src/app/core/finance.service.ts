@@ -110,7 +110,7 @@ export class FinanceService {
     return new Promise((resolve: any, reject: any) => {
       this._http
         .get(
-          `${this.apiUrl}/v1/comptabilite/transactions/paye?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&numeroCommande=${data.numeroCommande}`
+          `${this.apiUrl}/v1/comptabilite/transactions/paye?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&numeroCommande=${data.numeroCommande}&agent=${data.agent}&clientNom=${data.clientNom}&statut=${data.statut}`
         )
         .subscribe(
           (res: any) => {
