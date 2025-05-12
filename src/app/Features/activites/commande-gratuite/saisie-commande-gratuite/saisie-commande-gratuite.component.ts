@@ -52,6 +52,11 @@ export class SaisieCommandeGratuiteComponent {
   dataPointDeVente: any[] = [];
   ListCommandeGratuites: any[] = [];
   depotId: any = 0;
+   filters :any  = {
+    numeroCommande: '',
+    date: '',
+    etablissement: '',
+  };
   constructor(
     private cdr: ChangeDetectorRef,
     private articleService: ArticleServiceService,
@@ -104,12 +109,25 @@ export class SaisieCommandeGratuiteComponent {
       this._spinner.hide();
     });
   }
-  GetListCommandeGratuite(page:number) {
+  filterGlobal() {
+    this.GetListCommandeGratuite(
+      1,
+      this.filters.numeroCommande,
+      this.filters.date,
+      this.filters.etablissement
+    );
+  }
+  GetListCommandeGratuite(page:number,numeroCommande?:string,date?:string,etablissement?:string) {
     let data = {
       paginate: false,
       page:page,
       limit: 8,
+      numeroCommande: numeroCommande || '',
+      date:date || '',
+      etablissement: etablissement || '',
     };
+      console.log('data sended:::>', data);
+
     this._spinner.show();
     this.articleService.GetListCommandeGratuite(data).then((res: any) => {
       console.log('ListCommandeGratuites:::>', res);
