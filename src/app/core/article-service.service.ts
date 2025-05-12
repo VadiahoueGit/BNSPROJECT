@@ -1233,7 +1233,7 @@ export class ArticleServiceService {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
-      this._http.get(`${this.apiUrl}/v1/commandes-gratuites?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}).subscribe(
+      this._http.get(`${this.apiUrl}/v1/commandes-gratuites?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&numeroCommande=${data.numeroCommande}&date=${data.date}&etablissement=${data.etablissement}`,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           if (res.statusCode === 200) {
@@ -1274,7 +1274,7 @@ export class ArticleServiceService {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
-      this._http.get(`${this.apiUrl}/v1/commandes-client?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}).subscribe(
+      this._http.get(`${this.apiUrl}/v1/commandes-client?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&numeroCommande=${data.numeroCommande}&date=${data.date}&etablissement=${data.etablissement}&statut=${data.statut}`,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           if (res.statusCode === 200) {
