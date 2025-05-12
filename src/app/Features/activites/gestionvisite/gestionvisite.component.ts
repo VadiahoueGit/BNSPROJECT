@@ -73,7 +73,6 @@ export class GestionvisiteComponent {
   ngOnInit() {
     this.LoadTypeVisite();
     this.LoadCommercial();
-    this.LoadPdv();
     this.LoadVisite()
     this.GetVehiculeList()
 
@@ -245,13 +244,14 @@ export class GestionvisiteComponent {
   }
 
 
-  LoadPdv() {
+  LoadPdv(item:any) {
     let data = {
       paginate: false,
       page: 1,
       limit: 8,
+      id:item.depot.id
     };
-    this.utilisateurService.GetPointDeVenteList(data).then((res: any) => {
+    this.utilisateurService.GetPointDeVenteListByDepot(data).then((res: any) => {
       this.pointDeVente = res.data
       this.filteredPointDeVente = this.pointDeVente;
       console.log('pointDeVente', res)

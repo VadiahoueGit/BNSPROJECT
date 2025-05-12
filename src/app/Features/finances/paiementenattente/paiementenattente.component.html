@@ -1,9 +1,50 @@
 <div class="card">
-   <span class="p-input-icon-left ml-auto d-flex align-items-center">
-                    <i class="fas fa-search"></i>
-                    <input style="width: 300px; border-radius: 7px;" pInputText type="text"
-                           (keydown.enter)="filterGlobal($event)" placeholder="Recherche"/>
-                </span>
+  <div class="row">
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+      <span>Commande :</span>
+      <span class="p-input-icon-left w-100 d-flex align-items-center">
+      <i class="fas fa-search"></i>
+      <input class="w-100" style="border-radius: 7px;"
+             pInputText type="text"
+             [(ngModel)]="filters.commande"
+             (keydown.enter)="filterGlobal()"
+             placeholder="Recherche"/>
+    </span>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+      <span>Agent :</span>
+      <span class="p-input-icon-left w-100 d-flex align-items-center">
+      <i class="fas fa-search"></i>
+      <input class="w-100" style="border-radius: 7px;"
+             pInputText type="text"
+             [(ngModel)]="filters.agent"
+             (keydown.enter)="filterGlobal()"
+             placeholder="Recherche"/>
+    </span>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+      <span>Client :</span>
+      <span class="p-input-icon-left w-100 d-flex align-items-center">
+      <i class="fas fa-search"></i>
+      <input class="w-100" style="border-radius: 7px;"
+             pInputText type="text"
+             [(ngModel)]="filters.client"
+             (keydown.enter)="filterGlobal()"
+             placeholder="Recherche"/>
+    </span>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+      <span>Statut :</span>
+      <span class="p-input-icon-left w-100 d-flex align-items-center">
+      <i class="fas fa-search"></i>
+      <input class="w-100" style="border-radius: 7px;"
+             pInputText type="text"
+             [(ngModel)]="filters.statut"
+             (keydown.enter)="filterGlobal()"
+             placeholder="Recherche"/>
+    </span>
+    </div>
+  </div>
   <p-table
     [styleClass]="'p-datatable-sm'"
     #dt2

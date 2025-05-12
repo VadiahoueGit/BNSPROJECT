@@ -139,7 +139,7 @@ export class UtilisateurResolveService {
     });
   }
 
-   //POINT DE VENTE 
+   //POINT DE VENTE
    CreatePointDeVente(formData: FormData) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -158,6 +158,28 @@ export class UtilisateurResolveService {
     });
   }
 
+  GetPointDeVenteListByDepot(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/point-de-vente/depot/${data.id}?&paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{ headers }
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            this.listPointDeVente.next(res.data)
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
   GetPointDeVenteList(data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -527,7 +549,7 @@ export class UtilisateurResolveService {
         );
     });
   }
-  
+
 // VENTE CHINE
   CreateVenteChine(data: any) {
     return new Promise((resolve: any, reject: any) => {
@@ -624,7 +646,7 @@ export class UtilisateurResolveService {
         );
       });
     }
-  
+
     GetFournisseursList(data: any) {
       return new Promise((resolve: any, reject: any) => {
         const headers = new HttpHeaders({

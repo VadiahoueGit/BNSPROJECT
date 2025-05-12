@@ -15,6 +15,12 @@ import {calculeDateEcheance, Status} from "../../../utils/utils";
 })
 export class PaiementenattenteComponent {
   @ViewChild('dt2') dt2!: Table;
+  filters = {
+    commande: '',
+    agent: '',
+    client: '',
+    statut: ''
+  };
   statuses!: any[];
   dataList!: any[];
   validatedPaiementForm!: FormGroup;
@@ -73,18 +79,26 @@ export class PaiementenattenteComponent {
     console.log(this.isModalOpen);
   }
 
-  filterGlobal(event:any) {
-    const inputElement = event.target as HTMLInputElement;
-    const value = inputElement?.value || ''; // Utilisez une valeur par défaut
-    this.GetPaiementList(1,value);
+  filterGlobal() {
+    this.GetPaiementList(
+      1,
+      this.filters.commande,
+      this.filters.agent,
+      this.filters.client,
+      this.filters.statut
+    );
   }
 
-  GetPaiementList(page: number,numeroCommande?: string) {
+
+  GetPaiementList(page: number,numeroCommande?: string,agent?: string,clientNom?: string,statut?: string) {
     let data = {
       paginate: true,
       page: page,
       limit: 8,
-      numeroCommande: numeroCommande || ''
+      numeroCommande: numeroCommande || '',
+      agent:agent || '',
+      clientNom: clientNom || '',
+      statut:statut || ''
     };
     this._spinner.show();
     this.financeService.GetPaiementListAttente(data).then((res: any) => {

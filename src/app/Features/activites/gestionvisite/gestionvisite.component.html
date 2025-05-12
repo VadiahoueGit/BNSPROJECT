@@ -54,7 +54,7 @@
                     <label for="format" class="form-label">Commercial <span
                       class="text-danger">*</span></label>
                     <ng-select class="form-control" [items]="commerciaux" bindLabel="fullLabel" bindValue="id"
-                               formControlName="commercialId" [searchable]="true">
+                             (change)="LoadPdv($event);"  formControlName="commercialId" [searchable]="true">
                     </ng-select>
                   </div>
                   <div class="mb-3">
