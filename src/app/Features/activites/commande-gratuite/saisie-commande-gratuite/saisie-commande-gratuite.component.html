@@ -5,6 +5,42 @@
       Saisir une commande
     </button>
   </div>
+    <div class="row">
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+      <span>Numéro commande :</span>
+      <span class="p-input-icon-left w-100 d-flex align-items-center">
+      <i class="fas fa-search"></i>
+      <input class="w-100" style="border-radius: 7px;"
+             pInputText type="text"
+             [(ngModel)]="filters.numeroCommande"
+             (keydown.enter)="filterGlobal()"
+             placeholder="Recherche"/>
+    </span>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+      <span>Date :</span>
+      <span class="p-input-icon-left w-100 d-flex align-items-center">
+      <i class="fas fa-search"></i>
+      <input class="w-100" style="border-radius: 7px;"
+             pInputText type="text"
+             [(ngModel)]="filters.date"
+             (keydown.enter)="filterGlobal()"
+             placeholder="Recherche"/>
+    </span>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+      <span>Etablissement :</span>
+      <span class="p-input-icon-left w-100 d-flex align-items-center">
+      <i class="fas fa-search"></i>
+      <input class="w-100" style="border-radius: 7px;"
+             pInputText type="text"
+             [(ngModel)]="filters.etablissement"
+             (keydown.enter)="filterGlobal()"
+             placeholder="Recherche"/>
+    </span>
+    </div>
+
+  </div>
   <p-table
     [styleClass]="'p-datatable-sm'"
     #dt2
@@ -23,14 +59,6 @@
         <th style="color: var(--secondary-color)">Quantité</th>
         <th style="color: var(--secondary-color)">Montant</th>
         <th style="color: var(--secondary-color)">Actions</th>
-      </tr>
-      <tr>
-        <th>
-          <p-columnFilter matchMode="contains"  type="text" field="NumCommande" placeholder="" />
-        </th>
-        <th>
-          <p-columnFilter matchMode="contains"  type="text" field="raisonSocial" placeholder="" />
-        </th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-ListCommandeGratuites let-i="index">

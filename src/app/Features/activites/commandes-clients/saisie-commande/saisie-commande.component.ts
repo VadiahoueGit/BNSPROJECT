@@ -69,6 +69,13 @@ export class SaisieCommandeComponent {
   prixLiquideArticleSelected: any;
   prixEmballageArticleSelected: any;
   ListCommandeClient: any;
+   filters :any  = {
+    numeroCommande: '',
+    date: '',
+    etablissement: '',
+    statut: '',
+    
+  };
   constructor(
     private articleService: ArticleServiceService,
     private utilisateurService: UtilisateurResolveService,
@@ -426,12 +433,27 @@ export class SaisieCommandeComponent {
       this.toastr.warning('Formulaire invalide');
     }
   }
-  GetListCommandeClient(page: number) {
+   filterGlobal() {
+    this.GetListCommandeClient(
+      1,
+      this.filters.numeroCommande,
+      this.filters.date,
+      this.filters.etablissement,
+      this.filters.statut
+    );
+  }
+  GetListCommandeClient(page: number,numeroCommande?:string,date?:string,etablissement?:string,statut?:string) {
     let data = {
       paginate: false,
       page: page,
       limit: 8,
+        numeroCommande: numeroCommande || '',
+      date:date || '',
+      etablissement: etablissement || '',
+      statut: statut || '',
     };
+      console.log('data sended:::>', data);
+
     this._spinner.show();
     this.articleService.GetListCommandeClient(data).then((res: any) => {
       console.log('dataList:::>', res);
