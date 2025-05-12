@@ -74,7 +74,7 @@ export class SaisieCommandeComponent {
     date: '',
     etablissement: '',
     statut: '',
-    
+
   };
   constructor(
     private articleService: ArticleServiceService,
@@ -144,6 +144,7 @@ export class SaisieCommandeComponent {
 
   onRevendeurChange(selectedItem: any): void {
     this.detailPointDevente = selectedItem;
+    console.log(this.detailPointDevente, 'detailPointDevente');
     this.commandClientForm.controls['numeroCompte'].setValue(
       this.detailPointDevente.numeroCompteContribuable
     );
@@ -170,7 +171,6 @@ export class SaisieCommandeComponent {
     this.commandClientForm.controls['enCours'].setValue(
       this.detailPointDevente.encours
     );
-    console.log(this.detailPointDevente, 'detailPointDevente');
     console.log('Élément sélectionné :', selectedItem);
     console.log('commandClientForm:', this.commandClientForm.value);
     this.depotId = selectedItem.depot.id;
