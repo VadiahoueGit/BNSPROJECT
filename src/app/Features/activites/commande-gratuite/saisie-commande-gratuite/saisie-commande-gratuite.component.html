@@ -38,12 +38,23 @@
              (keydown.enter)="filterGlobal()"
              placeholder="Recherche"/>
     </span>
+      <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <span>Statut :</span>
+        <span class="p-input-icon-left w-100 d-flex align-items-center">
+      <i class="fas fa-search"></i>
+      <input class="w-100" style="border-radius: 7px;"
+             pInputText type="text"
+             [(ngModel)]="filters.statut"
+             (keydown.enter)="filterGlobal()"
+             placeholder="Recherche"/>
+    </span>
     </div>
 
   </div>
   <p-table
     [styleClass]="'p-datatable-sm'"
     #dt2
+    [totalRecords]="totalPages" [lazy]="true"
     [value]="ListCommandeGratuites"
     dataKey="id"
     [rows]="8"

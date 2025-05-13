@@ -46,6 +46,8 @@ export class ListDesReceptionsEmballagesComponent {
       {casiers: 60, type: 'SUCRERIE'},
       {casiers: 66, type: 'BIERE'}
     ],
+    100: [{casiers: 64, type: 'EAU'}],
+    150: [{casiers: 64, type: 'EAU'}],
   };
   currentPage: number;
   rowsPerPage: any;

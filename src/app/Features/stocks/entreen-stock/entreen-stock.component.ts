@@ -173,6 +173,10 @@ export class EntreenStockComponent {
     console.log(this.selectedArticles)
     this.setArticles(this.selectedArticles)
     console.log(this.stockForm)
+    if(this.stockForm.controls['type'].value == null)
+    {
+      this.stockForm.controls['type'].setValue('ENTREE') ;
+    }
     // this.stockForm.controls['depotId'].value
     if (this.stockForm.valid) {
       this._spinner.show()

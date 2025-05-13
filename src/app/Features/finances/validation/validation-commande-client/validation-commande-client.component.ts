@@ -368,18 +368,20 @@ export class ValidationCommandeClientComponent {
   GetListCommandeClient(page: number) {
     let data = {
       paginate: true,
-      page: page,
+      page:page,
       limit: 8,
+      numeroCommande: '',
+      date: '',
+      etablissement: '',
+      statut: StatutCommande.ATTENTE_VALIDATION,
     };
     this._spinner.show();
     this.articleService.GetListCommandeClient(data).then((res: any) => {
       console.log('dataList:::>', res);
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages);
 
-      this.dataList = res.data.filter(
-        (x: any) => x.statut === StatutCommande.ATTENTE_VALIDATION
-      );
+      this.dataList = res.data
       this._spinner.hide();
     });
   }

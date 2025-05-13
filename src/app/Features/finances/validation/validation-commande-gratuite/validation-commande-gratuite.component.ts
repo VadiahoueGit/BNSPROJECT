@@ -115,7 +115,7 @@ export class ValidationCommandeGratuiteComponent {
     };
     this._spinner.show();
     this.articleService.GetListCommandeGratuite(data).then((res: any) => {
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages);
 
       console.log('ListCommandeGratuites:::>', res);

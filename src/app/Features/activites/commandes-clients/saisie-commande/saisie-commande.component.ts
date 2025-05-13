@@ -444,7 +444,7 @@ export class SaisieCommandeComponent {
   }
   GetListCommandeClient(page: number,numeroCommande?:string,date?:string,etablissement?:string,statut?:string) {
     let data = {
-      paginate: false,
+      paginate: true,
       page: page,
       limit: 8,
         numeroCommande: numeroCommande || '',

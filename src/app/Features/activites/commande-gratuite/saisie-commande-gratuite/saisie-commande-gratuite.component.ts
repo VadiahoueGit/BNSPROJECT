@@ -56,6 +56,7 @@ export class SaisieCommandeGratuiteComponent {
     numeroCommande: '',
     date: '',
     etablissement: '',
+     statut: ''
   };
   constructor(
     private cdr: ChangeDetectorRef,
@@ -117,7 +118,7 @@ export class SaisieCommandeGratuiteComponent {
       this.filters.etablissement
     );
   }
-  GetListCommandeGratuite(page:number,numeroCommande?:string,date?:string,etablissement?:string) {
+  GetListCommandeGratuite(page:number,numeroCommande?:string,date?:string,etablissement?:string,statut?:string) {
     let data = {
       paginate: false,
       page:page,
@@ -125,13 +126,14 @@ export class SaisieCommandeGratuiteComponent {
       numeroCommande: numeroCommande || '',
       date:date || '',
       etablissement: etablissement || '',
+      statut: statut || '',
     };
       console.log('data sended:::>', data);
 
     this._spinner.show();
     this.articleService.GetListCommandeGratuite(data).then((res: any) => {
       console.log('ListCommandeGratuites:::>', res);
-      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.totalPages; // nombre total d’enregistrements
       this.ListCommandeGratuites = res.data;
       this._spinner.hide();
     });

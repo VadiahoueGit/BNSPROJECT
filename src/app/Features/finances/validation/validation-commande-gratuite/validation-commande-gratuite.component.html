@@ -18,7 +18,7 @@
           <th style="color: var(--secondary-color)">Etablissement</th>
   <!--        <th style="color: var(&#45;&#45;secondary-color)">Depôt</th>-->
           <th style="color: var(--secondary-color)">Quantité</th>
-          <th style="color: var(--secondary-color)">Montant</th>
+          <th style="color: var(--secondary-color)">Statut</th>
           <th style="color: var(--secondary-color)">Actions</th>
         </tr>
       </ng-template>
@@ -34,7 +34,6 @@
   <!--        <td>-->
   <!--          {{ ListCommandeGratuites.revendeur.depot.nomDepot }}-->
   <!--        </td>-->
-
           <td>
             <span class="ml-1 vertical-align-middle">
   <!--            {{ ListCommandeGratuites.articles[i].quantite }}-->
@@ -42,8 +41,8 @@
           </td>
           <td>
             <span class="ml-1 vertical-align-middle">
-  <!--            {{ ListCommandeGratuites.articles[i].quantite }}-->
-            </span>
+                          {{ ListCommandeGratuites.statut }}
+                      </span>
           </td>
           <td>
             <tr class="d-flex justify-content-center gap-3">

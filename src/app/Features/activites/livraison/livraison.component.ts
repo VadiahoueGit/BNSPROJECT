@@ -100,6 +100,8 @@ export class LivraisonComponent {
       {casiers: 60, type: 'SUCRERIE'},
       {casiers: 66, type: 'BIERE'}
     ],
+    100: [{casiers: 64, type: 'EAU'}],
+    150: [{casiers: 64, type: 'EAU'}],
   };
 
 
@@ -329,8 +331,12 @@ export class LivraisonComponent {
   async GetListCommande(page: number) {
     let data = {
       paginate: false,
-      page: page,
+      page:page,
       limit: 8,
+      numeroCommande: '',
+      date: '',
+      etablissement: '',
+      statut: StatutCommande.NON_REGROUPE,
     };
     this._spinner.show();
     const [commandeClient, commandeGratuite]: [any, any] = await Promise.all([
@@ -341,7 +347,6 @@ export class LivraisonComponent {
     this.ListCommande = [...commandeClient.data, ...commandeGratuite.data];
     console.log('ListCommande', this.ListCommande);
     this.filteredList = this.ListCommande
-      .filter((commande: any) => commande.statut === StatutCommande.NON_REGROUPE)
       .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     console.log('filteredList', this.filteredList);
 
