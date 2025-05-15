@@ -5,7 +5,8 @@ export enum StatutCommande {
   COMMANDE_LIVREE = 'Commande Livrée',
   APPROUVEE = 'Approuvée',
   NON_APPROUVEE = 'Non approuvée',
-  NON_REGROUPE= 'Non regroupé'
+  NON_REGROUPE= 'Non regroupé',
+  VALIDEE = 'Validée'
 }
 
 export enum TypeCommandeFournisseur {

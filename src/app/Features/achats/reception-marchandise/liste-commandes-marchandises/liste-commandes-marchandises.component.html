@@ -8,7 +8,7 @@
     <p-table
       [styleClass]="'p-datatable-sm'"
       #dt2
-      [value]="ListCommandeMarchandises"
+      [value]="ListCommandeFournisseurs"
       dataKey="id"
       [rows]="8"
       [rowsPerPageOptions]="[10, 25, 50]"
@@ -18,60 +18,60 @@
       <ng-template pTemplate="header">
         <tr>
           <th style="color: var(--secondary-color)">N° commande</th>
-          <th style="color: var(--secondary-color)">Etablissement</th>
-          <th style="color: var(--secondary-color)">Depôt</th>
-          <th style="color: var(--secondary-color)">Quantité</th>
-          <th style="color: var(--secondary-color)">Montant</th>
+          <th style="color: var(--secondary-color)">Fournisseur</th>
+          <th style="color: var(--secondary-color)">Date commande</th>
+          <th style="color: var(--secondary-color)">Date livraison estimé</th>
+          <th style="color: var(--secondary-color)">Magasin à approvisionner</th>
           <th style="color: var(--secondary-color)">Actions</th>
         </tr>
-        <tr>
+        <!-- <tr>
           <th>
             <p-columnFilter matchMode="contains"  type="text" field="NumCommande" placeholder="" />
           </th>
           <th>
             <p-columnFilter matchMode="contains"  type="text" field="raisonSociale" placeholder="" />
-          </th>
-        </tr>
+          </th> 
+        </tr> -->
       </ng-template>
-      <ng-template pTemplate="body" let-ListCommandeMarchandises let-i="index">
+      <ng-template pTemplate="body" let-ListCommandeFournisseurs let-i="index">
         <tr>
           <td>
-            {{ ListCommandeMarchandises.NumCommande }}
+            {{ ListCommandeFournisseurs?.NumCommande }}
           </td>
   
           <td>
-            {{ ListCommandeMarchandises.client.nomEtablissement ? ListCommandeMarchandises.client.nomEtablissement : ListCommandeMarchandises.client.raisonSocial}}
+            {{ ListCommandeFournisseurs?.fournisseur?.nom}}
           </td>
           <td>
-            {{ ListCommandeMarchandises.client.depot.nomDepot }}
+            {{ ListCommandeFournisseurs?.dateCommande }}
           </td>
   
           <td>
             <span class="ml-1 vertical-align-middle">
-  <!--            {{ ListCommandeMarchandises.articles[i].quantite }}-->
+             {{ ListCommandeFournisseurs?.dateLivraisonEstimee }}
             </span>
           </td>
           <td>
             <span class="ml-1 vertical-align-middle">
-  <!--            {{ ListCommandeMarchandises.articles[i].quantite }}-->
+             {{ ListCommandeFournisseurs?.depot?.nomDepot}}
             </span>
           </td>
           <td>
             <tr class="d-flex justify-content-center gap-3">
               <td>
                 <i
-                  (click)="OnEdit(ListCommandeMarchandises)"
+                  (click)="OnEdit(ListCommandeFournisseurs)"
                   style="cursor: pointer"
                   class="fas fa-eye text-secondary"
                 ></i>
               </td>
-              <td>
+              <!-- <td>
                 <i
-                  (click)="OnDelete(ListCommandeMarchandises.id)"
+                  (click)="OnDelete(ListCommandeFournisseurs?.id)"
                   style="cursor: pointer"
                   class="fas fa-trash-alt text-danger"
                 ></i>
-              </td>
+              </td> -->
             </tr>
           </td>
         </tr>
@@ -115,83 +115,58 @@
           </h1>
         </div>
         <div class="modal-body">
-          <form [formGroup]="CommandeForm" *ngIf="operation == 'create'">
-            <div class="row">
-              <div
-                class="col-12 d-flex align-items-center justify-content-between"
-              >
-                <div class="">
-                  <label for="" class="form-label">Client</label>
-                  <span class="text-danger">*</span>
-                  <ng-select
-                    class="form-control"
-                    [items]="listRevendeurs"
-                    bindLabel="displayName"
-                    bindValue="id"
-                    formControlName="clientId"
-                    [searchable]="true"
-                    (change)="onRevendeurChange($event)"
-                  >
-                  </ng-select>
-                </div>
-                <div class="">
-                  <label for="" class="form-label"></label>
-                  <button
-                    type="button"
-                    [disabled]="CommandeForm.controls['clientId'].invalid"
-                    class="btn btn-secondary"
-                    (click)="selectArticle()"
-                  >
-                    Ajouter des articles
-                  </button>
-                </div>
-              </div>
-            </div>
-          </form>
-          <fieldset class="row border my-1"  *ngIf="operation == 'edit'">
-            <legend style="font-size: 14px;" class="text-secondary">Numero Commande : {{updateData.NumCommande}} du {{updateData.createdAt | date}}</legend>
+           <div *ngIf="operation == 'edit'">
+          <fieldset class="row border my-1"  >
+            <legend style="font-size: 14px;" class="text-secondary">Numero Commande : {{updateData?.NumCommande}} du {{updateData?.createdAt | date :"dd/MM/yyyy" }}</legend>
           </fieldset>
-          <fieldset class="row border my-2"  *ngIf="operation == 'edit'">
-            <legend style="font-size: 14px;" class="text-secondary">Informations du client</legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Groupe de client :</strong>
-                <span>{{updateData.client?.groupeClient?.nomGroupe || updateData.client?.GroupeClient?.nomGroupe}}</span>
+         
+            <fieldset class="row border my-2">
+              <legend style="font-size: 14px;" class="text-secondary">Informations du fournisseur</legend>
+              <div class="row">
+                <div class="col-md-4">
+                  <strong>Fournisseur : </strong>
+                  <span>{{updateData?.fournisseur?.nom}}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Groupe :</strong>
+                  <span>{{updateData?.fournisseur?.codeGroupe}}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Pays : </strong>
+                  <span>{{ updateData?.fournisseur?.pays }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Adresse : </strong>
+                  <span>{{ updateData?.fournisseur?.adresse }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Site Web : </strong>
+                  <span>{{ updateData?.fournisseur?.siteWeb }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Devise : </strong>
+                  <span>{{ updateData?.fournisseur?.devise?.nom }}</span>
+                </div>
               </div>
-              <div class="col-md-4">
-                <strong>Type de client :</strong>
-                <span>{{updateData.client.role}}</span>
+            </fieldset>
+            <fieldset class="row border my-2" >
+              <legend style="font-size: 14px;" class="text-secondary">Autres informations</legend>
+              <div class="row">
+                <div class="col-md-4">
+                  <strong>Date commande : </strong>
+                  <span>{{updateData?.dateCommande}}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Date livraison estimée : </strong>
+                  <span>{{updateData?.dateLivraisonEstimee}}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Statut : </strong>
+                  <span>{{ updateData?.statut }}</span>
+                </div>
               </div>
-              <div class="col-md-4">
-                <strong>Propriétaire :</strong>
-                <span>{{ updateData.client.nomProprietaire }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Gérant :</strong>
-                <span>{{ updateData.client.nomGerant }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Établissement :</strong>
-                <span>{{ updateData.client.nomEtablissement ? updateData.client.nomEtablissement : updateData.client.raisonSocial }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Numero de registre :</strong>
-                <span>{{ updateData.client.numeroRegistre }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Numero contribuable :</strong>
-                <span>{{ updateData.client.numeroCompteContribuable }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Contact Gérant :</strong>
-                <span>{{ updateData.client.telephoneGerant }}</span>
-              </div>
-              <div class="col-md-4 mb-4">
-                <strong>Téléphone :</strong>
-                <span>{{ updateData.client.telephoneProprietaire }}</span>
-              </div>
-            </div>
-          </fieldset>
+            </fieldset>
+          </div>
           <div class="p-2 mt-3">
             <div style="max-height: 350px; overflow-y: auto">
               <table  *ngIf="operation == 'create'" class="table table-bordered">
@@ -217,7 +192,7 @@
   
                 <tbody>
                   <tr *ngFor="let item of selectedArticles">
-                    <td>{{ item.liquide.libelle }}</td>
+                    <td>{{ item?.liquide?.libelle }}</td>
                     <td>{{ prixLiquide[item.id] }}</td>
                     <td>{{ prixEmballage[item.id] }}</td>
                     <td>{{ prixEmballage[item.id] + prixLiquide[item.id] }}</td>
@@ -234,7 +209,7 @@
                         }"
                         (blur)="validateQuantite(item)"
                       />
-                      / {{stocksDisponibles[item.liquide.id]}}
+                     
                     </td>
                     <td>{{ prixLiquideTotal[item.id] }}</td>
                     <td>{{ prixEmballageTotal[item.id] }}</td>
@@ -280,12 +255,21 @@
                 </thead>
   
                 <tbody>
-                <tr *ngFor="let item of updateData.articles">
+                <tr *ngFor="let item of updateData?.articles">
                   <td>{{ item.liquide.libelle }}1</td>
                   <td>{{ item.prixUnitaireLiquide }}</td>
                   <td>{{ item.prixUnitaireEmballage}}</td>
                   <td>{{  Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) }}</td>
-                  <td>{{ item.quantite }}</td>
+                  <!-- <td>{{ item.quantite }}</td> -->
+              <td>
+                      <input
+                        type="number"
+                        class="form-control-custom"
+                        [(ngModel)]="item.quantite"
+                        (blur)="validateQuantite(item)"
+                      />
+                     
+                    </td>
                   <td>{{ item.montantLiquide }}</td>
                   <td>{{ item.montantEmballage }}</td>
                   <td>{{Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) }}</td>

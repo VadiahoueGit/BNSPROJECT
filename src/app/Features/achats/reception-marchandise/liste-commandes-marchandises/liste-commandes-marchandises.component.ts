@@ -6,6 +6,7 @@ import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
+import { StatutCommande } from 'src/app/utils/utils';
 
 @Component({
   selector: 'app-liste-commandes-marchandises',
@@ -50,7 +51,7 @@ export class ListeCommandesMarchandisesComponent {
   listRevendeurs: any[] = [];
   dataRevendeur: any[] = [];
   dataPointDeVente: any[] = [];
-  ListCommandeMarchandises: any[] = [];
+  ListCommandeFournisseurs: any[] = [];
   depotId: any = 0;
   constructor(
     private cdr: ChangeDetectorRef,
@@ -71,7 +72,7 @@ export class ListeCommandesMarchandisesComponent {
     this.GetArticleList(1)
     this.LoadPdv()
     this.GetRevendeurList(1)
-    this.GetListCommandeGratuite(1)
+    this.GetListCommandeFournisseurs(1)
     this.fetchData()
   }
   GetRevendeurList(page: number) {
@@ -104,16 +105,19 @@ export class ListeCommandesMarchandisesComponent {
       this._spinner.hide();
     });
   }
-  GetListCommandeGratuite(page:number) {
+  GetListCommandeFournisseurs(page:number) {
     let data = {
       paginate: false,
       page:page,
       limit: 8,
     };
     this._spinner.show();
-    this.articleService.GetListCommandeGratuite(data).then((res: any) => {
-      console.log('ListCommandeMarchandises:::>', res);
-      this.ListCommandeMarchandises = res.data;
+    this.articleService.GetListCommandeFournisseurs(data).then((res: any) => {
+      console.log('GetListCommandeFournisseurs:::>', res);
+      // this.ListCommandeFournisseurs = res.data;
+          this.ListCommandeFournisseurs = res?.data.filter(
+                (x: any) => x.statut === StatutCommande.VALIDEE
+              );
       this._spinner.hide();
     });
   }
@@ -182,7 +186,7 @@ export class ListeCommandesMarchandisesComponent {
         console.log(res,'enregistré avec succes')
         this._spinner.hide();
         this.CommandeForm.reset();
-        this.GetListCommandeGratuite(1)
+        this.GetListCommandeFournisseurs(1)
         this.OnCloseModal()
         this.toastr.success(res.message);
       }, (error: any) => {
