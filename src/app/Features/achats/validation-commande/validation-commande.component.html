@@ -71,13 +71,13 @@
             class="fas fa-eye text-secondary"
           ></i>
         </td>
-        <td>
-          <i
-            (click)="OnDelete(ListCommandeFournisseurs?.id)"
-            style="cursor: pointer"
-            class="fas fa-trash-alt text-danger"
-          ></i>
-        </td>
+<!--        <td>-->
+<!--          <i-->
+<!--            (click)="OnDelete(ListCommandeFournisseurs?.id)"-->
+<!--            style="cursor: pointer"-->
+<!--            class="fas fa-trash-alt text-danger"-->
+<!--          ></i>-->
+<!--        </td>-->
       </tr>
       </td>
       </tr>
@@ -313,6 +313,7 @@
           Fermer
         </button>
         <button
+          [disabled]="ValidationForm.invalid"
           type="submit"
           (click)="onSubmit()"
           class="btn btn-primary px-2"

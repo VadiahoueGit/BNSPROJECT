@@ -1347,5 +1347,22 @@ export class ArticleServiceService {
     });
   }
 
+  ValidateCommandeFournisseur(id: number, data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.patch(`${this.apiUrl}/v1/commande-fournisseur/${id}/valider`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
   }
 

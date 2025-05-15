@@ -1,11 +1,11 @@
-import { Component, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
-import { Table } from 'primeng/table';
-import { ArticleServiceService } from 'src/app/core/article-service.service';
+import {Component, ViewChild} from '@angular/core';
+import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {ToastrService} from 'ngx-toastr';
+import {Table} from 'primeng/table';
+import {ArticleServiceService} from 'src/app/core/article-service.service';
 import {ALERT_INFO, ALERT_QUESTION} from '../../shared-component/utils';
-import { Location } from '@angular/common';
+import {Location} from '@angular/common';
 import {StatutCommande, TypeCommandeFournisseur} from "../../../utils/utils";
 import {UtilisateurResolveService} from "../../../core/utilisateur-resolve.service";
 
@@ -16,10 +16,10 @@ import {UtilisateurResolveService} from "../../../core/utilisateur-resolve.servi
 })
 export class ValidationCommandeComponent {
 
- @ViewChild('dt2') dt2!: Table;
+  @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
-  ArticleForm!:FormGroup
+  ArticleForm!: FormGroup
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
@@ -29,12 +29,12 @@ export class ValidationCommandeComponent {
   isEditMode: boolean = false;
   dataListFormats: any = [];
   dataListConditionnements: any = [];
-  dataListProduits: any= [];
-  dataListGroupeArticles: any =[];
-  dataListBouteilleVide: any=[];
-  dataListPlastiqueNu: any=[];
-  dataListLiquides: any=[];
-  dataListArticlesProduits: any=[];
+  dataListProduits: any = [];
+  dataListGroupeArticles: any = [];
+  dataListBouteilleVide: any = [];
+  dataListPlastiqueNu: any = [];
+  dataListLiquides: any = [];
+  dataListArticlesProduits: any = [];
   currentPage: number;
   rowsPerPage: any;
   ListCommandeFournisseurs: any[] = [];
@@ -59,6 +59,7 @@ export class ValidationCommandeComponent {
   Listfournisseurs: any[] = [];
   minDate = new Date().toISOString().split('T')[0];
   now = new Date().toISOString().split('T')[0];
+
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -66,7 +67,8 @@ export class ValidationCommandeComponent {
     private toastr: ToastrService,
     private location: Location,
     private utilisateurService: UtilisateurResolveService
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.ValidationForm = this.fb.group({
@@ -84,6 +86,7 @@ export class ValidationCommandeComponent {
       this.filters.statut
     );
   }
+
   GetFournisseursList() {
     let data = {
       paginate: false,
@@ -97,7 +100,8 @@ export class ValidationCommandeComponent {
       this._spinner.hide()
     })
   }
-  GetListCommandeFournisseurs(page: number, numero?: string, statut?: string,typeCommande?: string) {
+
+  GetListCommandeFournisseurs(page: number, numero?: string, statut?: string, typeCommande?: string) {
     let data = {
       paginate: true,
       page: page,
@@ -123,9 +127,11 @@ export class ValidationCommandeComponent {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
   }
+
   OnCloseValidModal() {
     this.isModalValidOpen = false;
   }
+
   OnCreate() {
     this.isEditMode = false;
     this.isModalOpen = true;
@@ -133,7 +139,7 @@ export class ValidationCommandeComponent {
     console.log(this.isModalOpen);
   }
 
-  OnEdit(data:any) {
+  OnEdit(data: any) {
     this.totalEmballage = 0;
     this.totalLiquide = 0;
     this.totalGlobal = 0;
@@ -152,7 +158,8 @@ export class ValidationCommandeComponent {
     })
     console.log(this.isModalOpen);
   }
-  GetArticleList(page: number ) {
+
+  GetArticleList(page: number) {
     let data = {
       paginate: false,
       page: page,
@@ -166,32 +173,31 @@ export class ValidationCommandeComponent {
       this._spinner.hide();
     });
   }
-  onValidate()
-  {
+
+  onValidate() {
     this.isModalValidOpen = true;
   }
+
   onSubmit(): void {
-
-          this._spinner.show();
-          this.articleService.UpdateArticle(this.articleId, {}).then(
-            (response: any) => {
-              console.log('article mis à jour avec succès', response);
-              this.toastr.success(response.message);
-
-              this.OnCloseModal();
-              this.GetArticleList(1);
-            },
-            (error: any) => {
-              this.toastr.error('Erreur!', 'Erreur lors de la validation.');
-              console.error('Erreur lors de la mise à jour', error);
-            }
-          );
+    this._spinner.show();
+    this.articleService.ValidateCommandeFournisseur(this.articleId, this.ValidationForm.value).then(
+      (response: any) => {
+        this.toastr.success(response.message);
+        this.OnCloseModal();
+        this.OnCloseValidModal()
+        this.GetListCommandeFournisseurs(1);
+      },
+      (error: any) => {
+        this._spinner.hide();
+        this.toastr.error('Erreur!', 'Erreur lors de la validation.');
+      }
+    );
 
   }
 
   loadArticleDetails(): void {
     this.ArticleForm.patchValue({
-      photo: this.updateData.photo??"",
+      photo: this.updateData.photo ?? "",
       libelle: this.updateData.libelle,
       format: this.updateData.format,
       Conditionnement: this.updateData.Conditionnement,
@@ -209,12 +215,14 @@ export class ValidationCommandeComponent {
     this.rowsPerPage = event.rows;
     this.GetListCommandeFournisseurs(this.currentPage)
   }
-goBack() {
-  this.location.back()
-}
+
+  goBack() {
+    this.location.back()
+  }
+
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
-      (res:any) => {
+      (res: any) => {
         if (res.isConfirmed == true) {
           this._spinner.show();
           this.articleService.DeletedArticle(Id).then((res: any) => {
