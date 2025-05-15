@@ -4,8 +4,10 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
-import { ALERT_QUESTION } from '../../shared-component/utils';
+import {ALERT_INFO, ALERT_QUESTION} from '../../shared-component/utils';
 import { Location } from '@angular/common';
+import {StatutCommande, TypeCommandeFournisseur} from "../../../utils/utils";
+import {UtilisateurResolveService} from "../../../core/utilisateur-resolve.service";
 
 @Component({
   selector: 'app-validation-commande',
@@ -35,71 +37,94 @@ export class ValidationCommandeComponent {
   dataListArticlesProduits: any=[];
   currentPage: number;
   rowsPerPage: any;
+  ListCommandeFournisseurs: any[] = [];
+  depotId: any = 0;
+  totalPages: number = 0;
+  prixLiquide: any = {};
+  prixEmballage: any = {};
+  prixLiquideTotal: any = {};
+  totalLiquide: number = 0;
+  totalEmballage: number = 0;
+  totalGlobal: number = 0;
+  totalQte: number = 0;
+  prixEmballageTotal: any = {};
+  montantTotal: any = {};
+  filters: any = {
+    numeroCommande: '',
+    typeCommande: '',
+    statut: '',
+  };
+  isModalValidOpen = false;
+  ValidationForm!: FormGroup
+  Listfournisseurs: any[] = [];
+  minDate = new Date().toISOString().split('T')[0];
+  now = new Date().toISOString().split('T')[0];
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService,
-    private location: Location
+    private location: Location,
+    private utilisateurService: UtilisateurResolveService
   ) {}
 
   ngOnInit() {
-    this.ArticleForm = this.fb.group({
-      photo: [null, Validators.required],
-      libelle: [null, Validators.required],
-      format: [null, Validators.required],
-      Conditionnement: [null, Validators.required],
-      categorieId: [0, Validators.required],
-      groupeId: [0, Validators.required],
-      plastiquenuId: [0, Validators.required],
-      bouteillevideId: [0, Validators.required],
-      liquideId: [0, Validators.required],
+    this.ValidationForm = this.fb.group({
+      fournisseurId: [null, Validators.required],
+      dateLivraisonEstimee: [this.now, Validators.required],
     });
-    this.articleService.ListPlastiquesNu.subscribe((res: any) => {
-      this.dataListPlastiqueNu = res;
-    });
-    this.articleService.ListLiquides.subscribe((res: any) => {
-      this.dataListLiquides = res;
-    });
-    this.articleService.ListBouteilleVide.subscribe((res: any) => {
-      this.dataListBouteilleVide = res;
-    });
-    // this.articleService.ListArticles.subscribe((res: any) => {
-    //   this.dataList = res;
-    //   console.log('dataList:::>', this.dataList);
-    // });
-    this.articleService.GetFormatList().then((res: any) => {
-      this.dataListFormats = res;
-      console.log('dataListFormats:::>', this.dataListFormats);
-    });
-
-    this.articleService.GetConditionnementList().then((res: any) => {
-      this.dataListConditionnements = res;
-      console.log('dataListConditionnements:::>', this.dataListConditionnements);
-    });
-    this.articleService.ListTypeArticles.subscribe((res: any) => {
-      this.dataListProduits = res;
-      console.log(this.dataListProduits, 'this.dataListProduits ');
-    });
-    this.articleService.ListGroupesArticles.subscribe((res: any) => {
-      this.dataListGroupeArticles = res;
-    });
-    this.GetArticleList(1);
-  }
-  
-  onFilterGlobal(event: Event) {
-    const inputElement = event.target as HTMLInputElement;
-    const value = inputElement.value;
-    this.dt2.filterGlobal(value, 'contains');
+    this.GetFournisseursList()
+    this.GetListCommandeFournisseurs(1)
   }
 
-  clear(table: Table) {
-    table.clear();
+  filterGlobal() {
+    this.GetListCommandeFournisseurs(
+      1,
+      this.filters.numeroCommande,
+      this.filters.statut
+    );
+  }
+  GetFournisseursList() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    this.utilisateurService.GetFournisseursList(data).then((res: any) => {
+      this.Listfournisseurs = res.data
+      console.log('Listfournisseurs', res)
+    }, (error: any) => {
+      this._spinner.hide()
+    })
+  }
+  GetListCommandeFournisseurs(page: number, numero?: string, statut?: string,typeCommande?: string) {
+    let data = {
+      paginate: true,
+      page: page,
+      limit: 8,
+      numero: numero || '',
+      statut: 'Attente de Validation',
+      typeCommande: 'REVENDEUR_VERS_BNS',
+    };
+    this._spinner.show();
+    this.articleService.GetListCommandeFournisseurs(data).then((res: any) => {
+      console.log('GetListCommandeFournisseurs:::>', res);
+      this.totalPages = res.total;
+      this.ListCommandeFournisseurs = res.data;
+      this._spinner.hide();
+    });
   }
 
   OnCloseModal() {
+    this.totalEmballage = 0;
+    this.totalLiquide = 0;
+    this.totalGlobal = 0;
+    this.totalQte = 0;
     this.isModalOpen = false;
     console.log(this.isModalOpen);
+  }
+  OnCloseValidModal() {
+    this.isModalValidOpen = false;
   }
   OnCreate() {
     this.isEditMode = false;
@@ -109,13 +134,22 @@ export class ValidationCommandeComponent {
   }
 
   OnEdit(data:any) {
+    this.totalEmballage = 0;
+    this.totalLiquide = 0;
+    this.totalGlobal = 0;
+    this.totalQte = 0;
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
     this.articleId = data.id;
     this.isModalOpen = true;
-    this.loadArticleDetails();
     this.operation = 'edit';
+    data.articles.forEach((article: any) => {
+      this.totalEmballage += Number(article.montantEmballage);
+      this.totalLiquide += Number(article.montantLiquide);
+      this.totalGlobal = this.totalLiquide + this.totalEmballage
+      this.totalQte += article.quantite
+    })
     console.log(this.isModalOpen);
   }
   GetArticleList(page: number ) {
@@ -132,51 +166,29 @@ export class ValidationCommandeComponent {
       this._spinner.hide();
     });
   }
-  onSubmit(): void {
-    console.log(this.ArticleForm.value);
-    if (this.ArticleForm.valid) {
-      // const formValues = this.ArticleForm.value;
-      const formValues = {
-        ...this.ArticleForm.value,
-        categorieId: +this.ArticleForm.value.categorieId,
-        groupeId: +this.ArticleForm.value.groupeId,
-        plastiquenuId: +this.ArticleForm.value.plastiquenuId,
-        bouteillevideId: +this.ArticleForm.value.bouteillevideId,
-        liquideId: +this.ArticleForm.value.liquideId,
-      };
-      console.log('formValues', formValues);
-
-      if (this.isEditMode) {
-        this.articleService.UpdateArticle(this.articleId, formValues).then(
-          (response: any) => {
-            console.log('article mis à jour avec succès', response);
-            this.toastr.success(response.message);
-
-            this.OnCloseModal();
-            this.GetArticleList(1);
-          },
-          (error: any) => {
-            this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
-            console.error('Erreur lors de la mise à jour', error);
-          }
-        );
-      } else {
-        this.articleService.CreateArticle(formValues).then(
-          (response: any) => {
-            this.OnCloseModal();
-            this.GetArticleList(1);
-            this.ArticleForm.reset();
-            this.toastr.success(response.message);
-            console.log('Nouvel article créé avec succès', response);
-          },
-          (error: any) => {
-            this.toastr.error('Erreur!', 'Erreur lors de la création.');
-            console.error('Erreur lors de la création', error);
-          }
-        );
-      }
-    }
+  onValidate()
+  {
+    this.isModalValidOpen = true;
   }
+  onSubmit(): void {
+
+          this._spinner.show();
+          this.articleService.UpdateArticle(this.articleId, {}).then(
+            (response: any) => {
+              console.log('article mis à jour avec succès', response);
+              this.toastr.success(response.message);
+
+              this.OnCloseModal();
+              this.GetArticleList(1);
+            },
+            (error: any) => {
+              this.toastr.error('Erreur!', 'Erreur lors de la validation.');
+              console.error('Erreur lors de la mise à jour', error);
+            }
+          );
+
+  }
+
   loadArticleDetails(): void {
     this.ArticleForm.patchValue({
       photo: this.updateData.photo??"",
@@ -190,13 +202,13 @@ export class ValidationCommandeComponent {
       liquideId: 1,
     });
   }
-  
+
   // Méthode pour gérer la pagination
-onPage(event: any) {
-  this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
-  this.rowsPerPage = event.rows;
-  this.GetArticleList(this.currentPage);
-}
+  onPage(event: any) {
+    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.rowsPerPage = event.rows;
+    this.GetListCommandeFournisseurs(this.currentPage)
+  }
 goBack() {
   this.location.back()
 }
@@ -217,4 +229,8 @@ goBack() {
       }
     );
   }
+
+  protected readonly TypeCommandeFournisseur = TypeCommandeFournisseur;
+  protected readonly Number = Number;
+  protected readonly StatutCommande = StatutCommande;
 }

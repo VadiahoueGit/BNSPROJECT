@@ -1331,7 +1331,7 @@ export class ArticleServiceService {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
-      this._http.get(`${this.apiUrl}/v1/commande-fournisseur?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}).subscribe(
+      this._http.get(`${this.apiUrl}/v1/commande-fournisseur?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&numero=${data.numero}&statut=${data.statut}&typeCommande=${data.typeCommande}`,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           if (res.statusCode === 200) {
