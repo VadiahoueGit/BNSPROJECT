@@ -1,12 +1,13 @@
-import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
-import { Table } from 'primeng/table';
-import { ArticleServiceService } from 'src/app/core/article-service.service';
-import { CoreServiceService } from 'src/app/core/core-service.service';
-import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
-import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
+import {ChangeDetectorRef, Component, ViewChild} from '@angular/core';
+import {FormGroup, FormBuilder, Validators, FormArray} from '@angular/forms';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {ToastrService} from 'ngx-toastr';
+import {Table} from 'primeng/table';
+import {ArticleServiceService} from 'src/app/core/article-service.service';
+import {CoreServiceService} from 'src/app/core/core-service.service';
+import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
+import {ALERT_QUESTION} from 'src/app/Features/shared-component/utils';
+import {StatutCommande, TypeCommandeFournisseur} from "../../../../utils/utils";
 
 @Component({
   selector: 'app-create-commande-fournisseurs',
@@ -14,12 +15,12 @@ import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
   styleUrls: ['./create-commande-fournisseurs.component.scss']
 })
 export class CreateCommandeFournisseursComponent {
-@ViewChild('dt2') dt2!: Table;
+  @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
-  dataList : any[] = [];
+  dataList: any[] = [];
   selectedArticles: any[] = [];
   pointDeVente!: any[];
-  CommandeForm!:FormGroup
+  CommandeForm!: FormGroup
   isChoiceModalOpen: boolean
   loading: boolean = true;
   isModalOpen = false;
@@ -30,33 +31,39 @@ export class CreateCommandeFournisseursComponent {
   isEditMode: boolean = false;
   searchTerm: string = '';
   filteredArticleList: any[] = [];
-  dataListLiquides: any=[];
-  dataListPlastiqueNu: any=[];
-  dataListEmballage: any=[];
-  dataListArticlesProduits: any=[];
+  dataListLiquides: any = [];
+  dataListPlastiqueNu: any = [];
+  dataListEmballage: any = [];
+  dataListArticlesProduits: any = [];
   currentPage: number;
   rowsPerPage: any;
   stocksDisponibles: any = {};
   prixLiquide: any = {};
   prixEmballage: any = {};
   prixLiquideTotal: any = {};
-  totalLiquide:number = 0;
-  totalEmballage:number = 0;
-  totalGlobal:number = 0;
-  totalQte:number = 0;
+  totalLiquide: number = 0;
+  totalEmballage: number = 0;
+  totalGlobal: number = 0;
+  totalQte: number = 0;
   prixEmballageTotal: any = {};
   montantTotal: any = {};
-  selectedOption: string = 'gratuitClient';
+  selectedOption: string = '';
   listRevendeurs: any[] = [];
   dataRevendeur: any[] = [];
-  dataPointDeVente: any[] = [];
+  dataDepot: any[] = [];
   ListCommandeFournisseurs: any[] = [];
   depotId: any = 0;
-  
+  totalPages: number = 0;
   minDate = new Date().toISOString().split('T')[0];
   now = new Date().toISOString().split('T')[0];
-  Listfournisseurs:  any[] = [];
+  Listfournisseurs: any[] = [];
   depotList: any;
+  filters: any = {
+    numeroCommande: '',
+    typeCommande: '',
+    statut: '',
+
+  };
   constructor(
     private cdr: ChangeDetectorRef,
     private _coreService: CoreServiceService,
@@ -64,8 +71,9 @@ export class CreateCommandeFournisseursComponent {
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService,
-    private utilisateurService:UtilisateurResolveService
-  ) {}
+    private utilisateurService: UtilisateurResolveService
+  ) {
+  }
 
   ngOnInit() {
     this.CommandeForm = this.fb.group({
@@ -75,47 +83,21 @@ export class CreateCommandeFournisseursComponent {
       depotId: [null, Validators.required],
       articles: this.fb.array([]),
     });
+
     this.CommandeForm.controls['dateCommande'].setValue(this.now)
     this.CommandeForm.controls['dateLivraisonEstimee'].setValue(this.now)
-  // this.CommandeForm.get('datecommande')?.disable();
+    // this.CommandeForm.get('datecommande')?.disable();
     this.GetArticleList(1)
     this.GetFournisseursList()
     this.GetListCommandeFournisseurs(1)
     this.fetchData()
-    this.GetDepotList(1)
+
   }
-  GetDepotList(page: number) {
+
+  GetArticleList(page: number) {
     let data = {
       paginate: false,
       page: page,
-      limit: 8,
-    };
-    this._spinner.show();
-    this._coreService.GetDepotList(data).then((res: any) => {
-      console.log('GetDepotList:::>', res.data);
-
-      this.depotList = res.data;
-      this._spinner.hide();
-    });
-  }
-
-  GetRevendeurList(page: number) {
-    let data = {
-      paginate: false,
-      page: page,
-      limit: 8,
-    };
-    this._spinner.show();
-    this.articleService.GetListRevendeur(data).then((res: any) => {
-      console.log('GetListRevendeur:::>', res);
-      this.listRevendeurs = res.data;
-      this._spinner.hide();
-    });
-  }
-  GetArticleList(page:number) {
-    let data = {
-      paginate: false,
-      page:page,
       limit: 8,
     };
     this._spinner.show();
@@ -129,32 +111,44 @@ export class CreateCommandeFournisseursComponent {
       this._spinner.hide();
     });
   }
-  GetListCommandeFournisseurs(page:number) {
+
+  GetListCommandeFournisseurs(page: number, numero?: string, statut?: string,typeCommande?: string) {
     let data = {
-      paginate: false,
-      page:page,
+      paginate: true,
+      page: page,
       limit: 8,
+      numero: numero || '',
+      statut: statut || '',
+      typeCommande: typeCommande || '',
     };
     this._spinner.show();
     this.articleService.GetListCommandeFournisseurs(data).then((res: any) => {
       console.log('GetListCommandeFournisseurs:::>', res);
+      this.totalPages = res.total;
       this.ListCommandeFournisseurs = res.data;
       this._spinner.hide();
     });
   }
-  onFilterGlobal(event: Event) {
-    const inputElement = event.target as HTMLInputElement;
-    const value = inputElement.value;
-    this.dt2.filterGlobal(value, 'contains');
+
+  filterGlobal() {
+    this.GetListCommandeFournisseurs(
+      1,
+      this.filters.numeroCommande,
+      this.filters.statut
+    );
   }
 
-  clear(table: Table) {
-    table.clear();
+  change(event: any) {
+    if(event.groupeClient){
+      this.selectedOption = event.groupeClient.nomGroupe
+      console.log(this.selectedOption);
+    }
+
   }
 
   OnCloseModal() {
     this.totalEmballage = 0;
-    this.totalLiquide  = 0;
+    this.totalLiquide = 0;
     this.totalGlobal = 0;
     this.totalQte = 0;
     this.filteredArticleList = [];
@@ -163,6 +157,7 @@ export class CreateCommandeFournisseursComponent {
     (this.CommandeForm.get('articles') as FormArray).clear();
     console.log(this.isModalOpen);
   }
+
   OnCreate() {
     this.isEditMode = false;
     this.isModalOpen = true;
@@ -177,17 +172,17 @@ export class CreateCommandeFournisseursComponent {
     console.log(this.isModalOpen);
   }
 
-  OnEdit(data:any) {
+  OnEdit(data: any) {
     this.totalEmballage = 0;
-    this.totalLiquide  = 0;
+    this.totalLiquide = 0;
     this.totalGlobal = 0;
     this.totalQte = 0;
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
-    data.articles.forEach((article:any) => {
+    data.articles.forEach((article: any) => {
       this.totalEmballage += Number(article.montantEmballage);
-      this.totalLiquide  += Number(article.montantLiquide);
+      this.totalLiquide += Number(article.montantLiquide);
       this.totalGlobal = this.totalLiquide + this.totalEmballage
       this.totalQte += article.quantite
     })
@@ -199,26 +194,49 @@ export class CreateCommandeFournisseursComponent {
   }
 
   onSubmit(): void {
-    console.log(this.CommandeForm.value,'this.CommandeForm.value');
+
+    console.log(this.CommandeForm.value, 'this.CommandeForm.value');
     if (this.CommandeForm.valid) {
+      let payload = {}
+      if (this.selectedOption == "Sous Distributeur") {
+         payload = {
+          typeCommande: 'BNS_VERS_REVENDEUR',
+          fournisseurId: this.CommandeForm.controls['fournisseurId'].value,
+          dateCommande: this.CommandeForm.controls['dateCommande'].value,
+          dateLivraisonEstimee: this.CommandeForm.controls['dateLivraisonEstimee'].value,
+          revendeurId: this.CommandeForm.controls['depotId'].value,
+          articles: this.CommandeForm.controls['articles'].value,
+        }
+      } else {
+         payload = {
+          typeCommande: 'BNS_VERS_FOURNISSEUR',
+          fournisseurId: this.CommandeForm.controls['fournisseurId'].value,
+          dateCommande: this.CommandeForm.controls['dateCommande'].value,
+          dateLivraisonEstimee: this.CommandeForm.controls['dateLivraisonEstimee'].value,
+          depotId: this.CommandeForm.controls['depotId'].value,
+          articles: this.CommandeForm.controls['articles'].value,
+        }
+      }
+      console.log(payload, 'payload')
       this._spinner.show()
-      this.articleService.CreateCommandeFournisseurs(this.CommandeForm.value).then((res: any) => {
-        console.log(res,'enregistré avec succes')
+      this.articleService.CreateCommandeFournisseurs(payload).then((res: any) => {
+        console.log(res, 'enregistré avec succes')
         this._spinner.hide();
         this.CommandeForm.reset();
         this.GetListCommandeFournisseurs(1)
         this.OnCloseModal()
         this.toastr.success(res.message);
       }, (error: any) => {
-          this._spinner.hide();
-          this.toastr.info(error.error.message);
-          console.error('Erreur lors de la création', error);
+        this._spinner.hide();
+        this.toastr.info(error.error.message);
+        console.error('Erreur lors de la création', error);
       })
-    }else{
+    } else {
       this.toastr.warning('Formulaire invalide');
     }
 
   }
+
   GetFournisseursList() {
     let data = {
       paginate: false,
@@ -232,6 +250,7 @@ export class CreateCommandeFournisseursComponent {
       this._spinner.hide()
     })
   }
+
   onCheckboxChange(article: any): void {
     this.GetPrixByArticle(article)
     if (article.isChecked) {
@@ -240,7 +259,7 @@ export class CreateCommandeFournisseursComponent {
     } else {
       delete article.quantite;
       const indexToRemove = this.selectedArticles.findIndex(
-        (selectedArticle:any) => selectedArticle.libelle === article.libelle
+        (selectedArticle: any) => selectedArticle.libelle === article.libelle
       );
       if (indexToRemove !== -1) {
         this.selectedArticles.splice(indexToRemove, 1);
@@ -248,12 +267,13 @@ export class CreateCommandeFournisseursComponent {
       }
     }
   }
+
   removeArticle(item: any): void {
     // Créer une copie de l'article avec la quantité définie à 0
     const data = {
       ...item,
       quantite: 0,
-      groupearticle: { id: item.groupearticle.id },
+      groupearticle: {id: item.groupearticle.id},
       id: item.groupearticle.id, // Assurez-vous que l'ID correspond
     };
 
@@ -284,6 +304,7 @@ export class CreateCommandeFournisseursComponent {
   afficherArticlesSelectionnes() {
     console.log(this.selectedArticles);
   }
+
   filterArticles(): void {
     console.log(this.searchTerm)
     if (this.searchTerm) {
@@ -296,11 +317,13 @@ export class CreateCommandeFournisseursComponent {
       this.filteredArticleList = [...this.dataListLiquides];
     }
   }
+
   OnCloseChoiceModal() {
     this.deselectAllItems()
     this.isChoiceModalOpen = false;
     console.log(this.isModalOpen)
   }
+
   deselectAllItems(): void {
     this.selectedArticles.forEach((item: any) => {
       delete item.quantite;
@@ -312,13 +335,16 @@ export class CreateCommandeFournisseursComponent {
     this.selectedArticles = [];
 
   }
+
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
+    this.GetListCommandeFournisseurs(this.currentPage)
   }
+
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
-      (res:any) => {
+      (res: any) => {
         if (res.isConfirmed == true) {
           this._spinner.show();
           this.articleService.DeletedArticle(Id).then((res: any) => {
@@ -335,41 +361,43 @@ export class CreateCommandeFournisseursComponent {
   async GetStockDisponibleByDepot(item: any): Promise<any> {
     let data = {
       productId: item.liquide.code,
-      depotId:this.depotId
+      depotId: this.depotId
     };
 
     try {
       // Attendre la réponse de la promesse
-      const response:any = await this.articleService.GetStockDisponibleByDepot(data);
+      const response: any = await this.articleService.GetStockDisponibleByDepot(data);
       console.log(response)
       // Vérifier si le statusCode est 200
       if (response) {
         this.stocksDisponibles[item.liquide.id] = response.quantiteDisponible;
       } else if (response.statusCode === 404) {
-        this.stocksDisponibles[item.liquide.id] =  0; // Si le code est 404, retourner 0
+        this.stocksDisponibles[item.liquide.id] = 0; // Si le code est 404, retourner 0
       } else {
         return null; // Si un autre code, retourner null ou une valeur par défaut
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.log(error);
       if (error.status === 404) {
         this.stocksDisponibles[item.liquide.id] = 0; // Si le code est 404, retourner 0
       }
     }
 
-    console.log('totalite',this.stocksDisponibles);
+    console.log('totalite', this.stocksDisponibles);
   }
+
   validateQuantite(data: any): void {
     // Vérifier si la quantité saisie dépasse la quantité disponible
     if (data.quantite > this.stocksDisponibles[data.liquide.id]) {
       // Réinitialiser la quantité à la quantité disponible
-      data.quantite ='';
+      data.quantite = '';
       // Afficher un message de warning
       this.toastr.warning('La quantité saisie dépasse la quantité disponible.');
-    }else{
+    } else {
       this.calculatePrix(data)
     }
   }
+
   get articles(): FormArray {
     return this.CommandeForm.get('articles') as FormArray;
   }
@@ -472,36 +500,37 @@ export class CreateCommandeFournisseursComponent {
     };
     try {
       // Effectuer les deux appels API en parallèle
-      const [revendeur, pointDeVente]: [any, any] = await Promise.all([
+      const [depot, revendeur]: [any, any] = await Promise.all([
+        this._coreService.GetDepotList(data),
         this.articleService.GetListRevendeur(data), // Remplacez par votre méthode API
-        this.utilisateurService.GetPointDeVenteList(data),
       ]);
 
-      console.log('Données revendeur:', revendeur);
-      console.log('Données pointDeVente:', pointDeVente);
+
+      console.log('Données pointDeVente:', depot);
       // Vérifier si plastiques et liquides sont bien des tableaux
       if (Array.isArray(revendeur.data)) {
-        this.dataRevendeur = revendeur.data;
+        this.dataRevendeur = revendeur.data.filter((rev: any) => rev.groupeClient.nomGroupe === 'Sous Distributeur' && rev.credit != null);
+        console.log('Données revendeur:', this.dataRevendeur);
         // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
-        this.listRevendeurs.push(...revendeur.data);
+        this.listRevendeurs.push(...this.dataRevendeur);
       } else {
         console.error('Les données de plastiques ne sont pas un tableau');
       }
 
-      if (Array.isArray(pointDeVente.data)) {
-        this.dataPointDeVente = pointDeVente.data;
+      if (Array.isArray(depot.data)) {
+        this.dataDepot = depot.data
         // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
-        this.listRevendeurs.push(...pointDeVente.data);
+        this.listRevendeurs.push(...depot.data);
       } else {
         console.error('Les données de liquides ne sont pas un tableau');
       }
 
       this.listRevendeurs = this.listRevendeurs
-        .filter((client:any) => client.credit != null)
-        .map((client:any) => ({
+        // .filter((client:any) => client.credit != null)
+        .map((client: any) => ({
           ...client,
           displayName:
-            client.raisonSocial || client.nomEtablissement || 'N/A',
+            client.raisonSocial || client.nomDepot || 'N/A',
         }))
         .filter(
           (client: any, index: number, self: any[]) =>
@@ -513,6 +542,7 @@ export class CreateCommandeFournisseursComponent {
       console.error('Erreur lors de la récupération des données:', error);
     }
   }
+
   async GetPrixByArticle(item: any): Promise<any> {
     let data = {
       id: item.id,
@@ -530,7 +560,7 @@ export class CreateCommandeFournisseursComponent {
         this.prixLiquide[item.id] = prixDetail.prix[0].PrixLiquide;
         this.prixEmballage[item.id] = prixDetail.prix[0].PrixConsigne;
         console.log('prixByArticle', this.prixLiquide[item.id]);
-      }else {
+      } else {
         this.toastr.error("Ce article n'a pas de prix détail, veuillez le renseigner avant de continuer");
       }
     } catch (error: any) {
@@ -540,4 +570,6 @@ export class CreateCommandeFournisseursComponent {
 
   protected readonly parseInt = parseInt;
   protected readonly Number = Number;
+  protected readonly StatutCommande = StatutCommande;
+  protected readonly TypeCommandeFournisseur = TypeCommandeFournisseur;
 }

@@ -1,11 +1,11 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
 import {FormGroup, FormBuilder, Validators, FormArray, FormControl} from '@angular/forms';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
-import { Table } from 'primeng/table';
-import { ArticleServiceService } from 'src/app/core/article-service.service';
-import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
-import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {ToastrService} from 'ngx-toastr';
+import {Table} from 'primeng/table';
+import {ArticleServiceService} from 'src/app/core/article-service.service';
+import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
+import {ALERT_QUESTION} from 'src/app/Features/shared-component/utils';
 import {ConfigService} from "../../../../core/config-service.service";
 
 @Component({
@@ -42,11 +42,6 @@ export class SaisieCommandeComponent {
   items: any = [];
   filteredArticleList: any[] = [];
   depotId: number = 0;
-  // articles = [
-  //   { id: 1, libelle: 'Article A', liquide: 500, emballage: 200, total: 700 },
-  //   { id: 2, libelle: 'Article B', liquide: 800, emballage: 300, total: 1100 },
-  //   { id: 3, libelle: 'Article C', liquide: 400, emballage: 100, total: 500 },
-  // ];
   selectedArticle: any = [];
   dataListLiquides: any = [];
   stocksDisponibles: any = {};
@@ -69,13 +64,14 @@ export class SaisieCommandeComponent {
   prixLiquideArticleSelected: any;
   prixEmballageArticleSelected: any;
   ListCommandeClient: any;
-   filters :any  = {
+  filters: any = {
     numeroCommande: '',
     date: '',
     etablissement: '',
     statut: '',
 
   };
+
   constructor(
     private articleService: ArticleServiceService,
     private utilisateurService: UtilisateurResolveService,
@@ -84,26 +80,27 @@ export class SaisieCommandeComponent {
     private _config: ConfigService,
     private toastr: ToastrService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.commandClientForm = this.fb.group({
       clientId: [null, Validators.required],
-      clientType: ['revendeur', ],
-      numeroCompte: [{ value: ''}, ],
-      raisonSociale: [{ value: 0, disabled: true }, ],
-      montantCredit: [{ value: 0, disabled: true }, ],
-      statutCompte: [{ value: '', disabled: true } ],
-      enCours: [{ value: 0, disabled: true } ],
-      soldeEmballage: [{ value: '', disabled: true }, ],
-      numeroSAP: [{ value: '', disabled: true }, ],
+      clientType: ['revendeur',],
+      numeroCompte: [{value: ''},],
+      raisonSociale: [{value: 0, disabled: true},],
+      montantCredit: [{value: 0, disabled: true},],
+      statutCompte: [{value: '', disabled: true}],
+      enCours: [{value: 0, disabled: true}],
+      soldeEmballage: [{value: '', disabled: true},],
+      numeroSAP: [{value: '', disabled: true},],
       remise: [
         0,
         [Validators.required, Validators.min(0), Validators.max(100)],
       ],
-      contact: [{ value: '', disabled: true }, ],
-      soldeLiquide: [{ value: '', disabled: true }, ],
-      fraisTransport: [0,Validators.required ],
+      contact: [{value: '', disabled: true},],
+      soldeLiquide: [{value: '', disabled: true},],
+      fraisTransport: [0, Validators.required],
       articles: this.fb.array([]),
     });
     this.docUrl = this._config.docUrl;
@@ -132,6 +129,7 @@ export class SaisieCommandeComponent {
   onDelete(item: any) {
     console.log(item);
   }
+
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -148,7 +146,7 @@ export class SaisieCommandeComponent {
     this.commandClientForm.controls['numeroCompte'].setValue(
       this.detailPointDevente.numeroCompteContribuable
     );
-    this.commandClientForm.controls['statutCompte'].patchValue( this.detailPointDevente.isValide ? 'ACTIF' : 'INACTIF')
+    this.commandClientForm.controls['statutCompte'].patchValue(this.detailPointDevente.isValide ? 'ACTIF' : 'INACTIF')
     this.commandClientForm.controls['raisonSociale'].setValue(
       this.detailPointDevente.raisonSocial
     );
@@ -176,9 +174,10 @@ export class SaisieCommandeComponent {
     this.depotId = selectedItem.depot.id;
     this.GetArticleList(1);
   }
+
   OnCloseModal() {
     this.totalEmballage = 0;
-    this.totalLiquide  = 0;
+    this.totalLiquide = 0;
     this.totalGlobal = 0;
     this.totalQte = 0;
     this.filteredArticleList = [];
@@ -186,6 +185,7 @@ export class SaisieCommandeComponent {
     this.selectedArticles = [];
     (this.commandClientForm.get('articles') as FormArray).clear();
   }
+
   OnCreate() {
     this.isEditMode = false;
     this.isModalOpen = true;
@@ -194,17 +194,17 @@ export class SaisieCommandeComponent {
     console.log(this.isModalOpen);
   }
 
-  OnEdit(data:any) {
+  OnEdit(data: any) {
     this.totalEmballage = 0;
-    this.totalLiquide  = 0;
+    this.totalLiquide = 0;
     this.totalGlobal = 0;
     this.totalQte = 0;
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
-    data.articles.forEach((article:any) => {
+    data.articles.forEach((article: any) => {
       this.totalEmballage += Number(article.montantEmballage);
-      this.totalLiquide  += Number(article.montantLiquide);
+      this.totalLiquide += Number(article.montantLiquide);
       this.totalGlobal = this.totalLiquide + this.totalEmballage
       this.totalQte += article.quantite
     })
@@ -214,6 +214,7 @@ export class SaisieCommandeComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
+
   GetArticleList(page: number) {
     let data = {
       paginate: false,
@@ -258,6 +259,7 @@ export class SaisieCommandeComponent {
 
     console.log('Montant final après frais de transport :', this.totalGlobal);
   }
+
   removeArticle(item: any): void {
     item.isChecked = false;
     this.onCheckboxChange(item);
@@ -391,6 +393,7 @@ export class SaisieCommandeComponent {
   get articles(): FormArray {
     return this.commandClientForm.get('articles') as FormArray;
   }
+
   onSubmit(): void {
     const formData = this.commandClientForm.getRawValue();
     console.log('Données à envoyer au service :', formData)
@@ -433,7 +436,8 @@ export class SaisieCommandeComponent {
       this.toastr.warning('Formulaire invalide');
     }
   }
-   filterGlobal() {
+
+  filterGlobal() {
     this.GetListCommandeClient(
       1,
       this.filters.numeroCommande,
@@ -442,17 +446,18 @@ export class SaisieCommandeComponent {
       this.filters.statut
     );
   }
-  GetListCommandeClient(page: number,numeroCommande?:string,date?:string,etablissement?:string,statut?:string) {
+
+  GetListCommandeClient(page: number, numeroCommande?: string, date?: string, etablissement?: string, statut?: string) {
     let data = {
       paginate: true,
       page: page,
       limit: 8,
-        numeroCommande: numeroCommande || '',
-      date:date || '',
+      numeroCommande: numeroCommande || '',
+      date: date || '',
       etablissement: etablissement || '',
       statut: statut || '',
     };
-      console.log('data sended:::>', data);
+    console.log('data sended:::>', data);
 
     this._spinner.show();
     this.articleService.GetListCommandeClient(data).then((res: any) => {
@@ -462,21 +467,21 @@ export class SaisieCommandeComponent {
       this._spinner.hide();
     });
   }
+
   selectArticle() {
     this.isEditMode = false;
     this.isChoiceModalOpen = true;
     this.operation = 'create';
-    if(!this.commandClientForm.controls['fraisTransport'].value)
-    {
-      this.commandClientForm.patchValue({ fraisTransport: 0 });
+    if (!this.commandClientForm.controls['fraisTransport'].value) {
+      this.commandClientForm.patchValue({fraisTransport: 0});
     }
-    if (!this.commandClientForm.controls['remise'].value)
-    {
-      this.commandClientForm.patchValue({ remise: 0 });
+    if (!this.commandClientForm.controls['remise'].value) {
+      this.commandClientForm.patchValue({remise: 0});
     }
     this.cdr.detectChanges();
     console.log(this.isChoiceModalOpen);
   }
+
   validateQuantite(data: any): void {
     console.log(data, 'validateQuantiteData');
 
@@ -510,6 +515,7 @@ export class SaisieCommandeComponent {
     }
     console.log(this.selectedArticles, 'selectedArticles');
   }
+
   async GetPrixByArticle(item: any): Promise<any> {
     let data = {
       id: item.id,
@@ -527,13 +533,14 @@ export class SaisieCommandeComponent {
         this.prixLiquide[item.id] = prixDetail.prix[0].PrixLiquide;
         this.prixEmballage[item.id] = prixDetail.prix[0].PrixConsigne;
         console.log('prixByArticle', this.prixLiquide[item.id]);
-      }else {
+      } else {
         this.toastr.error("Ce article n'a pas de prix détail, veuillez le renseigner avant de continuer");
       }
     } catch (error: any) {
       console.log(error);
     }
   }
+
   afficherArticlesSelectionnes() {
     console.log(this.selectedArticles);
   }
@@ -541,12 +548,14 @@ export class SaisieCommandeComponent {
   onSubmitSelection() {
     this.isChoiceModalOpen = false;
   }
+
   OnCloseChoiceModal() {
     this.deselectAllItems();
     this.isChoiceModalOpen = false;
     console.log(this.isModalOpen);
     // this.filteredArticleList = []
   }
+
   deselectAllItems(): void {
     this.selectedArticles.forEach((item: any) => {
       delete item.quantite;
@@ -556,6 +565,7 @@ export class SaisieCommandeComponent {
 
     this.selectedArticles = [];
   }
+
   // onSearchClient(): void {}
   loadArticleDetails(): void {
     this.commandClientForm.patchValue({
@@ -570,6 +580,7 @@ export class SaisieCommandeComponent {
       liquideId: 1,
     });
   }
+
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
@@ -579,8 +590,8 @@ export class SaisieCommandeComponent {
 
   filterArticles(): void {
     console.log(this.searchTerm);
-    console.log(this.dataListLiquides,'dataListLiquides');
-    console.log(this.filteredArticleList,'filteredArticleList');
+    console.log(this.dataListLiquides, 'dataListLiquides');
+    console.log(this.filteredArticleList, 'filteredArticleList');
     if (this.searchTerm) {
       this.filteredArticleList = this.dataListLiquides.filter(
         (article: any) =>
@@ -594,6 +605,7 @@ export class SaisieCommandeComponent {
       this.filteredArticleList = [...this.dataListLiquides];
     }
   }
+
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
       (res: any) => {
@@ -648,5 +660,6 @@ export class SaisieCommandeComponent {
       console.error('Erreur lors de la récupération des données:', error);
     }
   }
+
   protected readonly Number = Number;
 }

@@ -1,16 +1,49 @@
 <div class="card">
     <div class="d-flex justify-content-end py-3">
-  
+
       <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
         Saisir une commande
       </button>
     </div>
+  <div class="row">
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+      <span>Numéro commande :</span>
+      <span class="p-input-icon-left w-100 d-flex align-items-center">
+        <i class="fas fa-search"></i>
+        <input
+          class="w-100"
+          style="border-radius: 7px"
+          pInputText
+          type="text"
+          [(ngModel)]="filters.numero"
+          (keydown.enter)="filterGlobal()"
+          placeholder="Recherche"
+        />
+      </span>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+      <span>Statut :</span>
+      <span class="p-input-icon-left w-100 d-flex align-items-center">
+        <i class="fas fa-search"></i>
+        <input
+          class="w-100"
+          style="border-radius: 7px"
+          pInputText
+          type="text"
+          [(ngModel)]="filters.statut"
+          (keydown.enter)="filterGlobal()"
+          placeholder="Recherche"
+        />
+      </span>
+    </div>
+  </div>
     <p-table
       [styleClass]="'p-datatable-sm'"
       #dt2
       [value]="ListCommandeFournisseurs"
       dataKey="id"
       [rows]="8"
+      [totalRecords]="totalPages" [lazy]="true"
       [rowsPerPageOptions]="[10, 25, 50]"
       [paginator]="true"
       (onPage)="onPage($event)"
@@ -18,34 +51,30 @@
       <ng-template pTemplate="header">
         <tr>
           <th style="color: var(--secondary-color)">N° commande</th>
+          <th style="color: var(--secondary-color)">Nature</th>
           <th style="color: var(--secondary-color)">Fournisseur</th>
           <th style="color: var(--secondary-color)">Date commande</th>
           <th style="color: var(--secondary-color)">Date livraison estimé</th>
           <th style="color: var(--secondary-color)">Magasin à approvisionner</th>
+          <th style="color: var(--secondary-color)">Statut</th>
           <th style="color: var(--secondary-color)">Actions</th>
         </tr>
-        <!-- <tr>
-          <th>
-            <p-columnFilter matchMode="contains"  type="text" field="NumCommande" placeholder="" />
-          </th>
-          <th>
-            <p-columnFilter matchMode="contains"  type="text" field="raisonSociale" placeholder="" />
-          </th> 
-        </tr> -->
       </ng-template>
       <ng-template pTemplate="body" let-ListCommandeFournisseurs let-i="index">
         <tr>
           <td>
             {{ ListCommandeFournisseurs?.NumCommande }}
           </td>
-  
+          <td>
+            {{ ListCommandeFournisseurs?.typeCommande == 'BNS_VERS_REVENDEUR' ? TypeCommandeFournisseur.BNS_VERS_REVENDEUR : TypeCommandeFournisseur.BNS_VERS_FOURNISSEUR }}
+          </td>
           <td>
             {{ ListCommandeFournisseurs?.fournisseur?.nom}}
           </td>
           <td>
             {{ ListCommandeFournisseurs?.dateCommande }}
           </td>
-  
+
           <td>
             <span class="ml-1 vertical-align-middle">
              {{ ListCommandeFournisseurs?.dateLivraisonEstimee }}
@@ -53,7 +82,12 @@
           </td>
           <td>
             <span class="ml-1 vertical-align-middle">
-             {{ ListCommandeFournisseurs?.depot?.nomDepot}}
+             {{ ListCommandeFournisseurs?.depot?.nomDepot || ListCommandeFournisseurs.revendeur.raisonSocial}}
+            </span>
+          </td>
+          <td>
+            <span class="ml-1 vertical-align-middle">
+             {{ ListCommandeFournisseurs?.statut}}
             </span>
           </td>
           <td>
@@ -83,7 +117,7 @@
       </ng-template>
     </p-table>
   </div>
-  
+
   <!-- Modal creation -->
   <!-- Modal -->
   <div *ngIf="isModalOpen" class="custom-modal">
@@ -144,7 +178,7 @@
                     [disabled]="true"
                   />
                 </div>
-  
+
                 <div class="col-md-4">
                   <label for="datelivraison" class="form-label"
                   >Date livraison estimée<span class="text-danger">*</span></label
@@ -157,15 +191,16 @@
                     [min]="minDate"
                   />
                 </div>
-  
+
                 <div class="col-md-4">
                     <label for="" class="form-label">Magasin à approvisionner</label>
                     <span class="text-danger">*</span>
                     <ng-select
                       class="form-control"
-                      [items]="depotList"
-                      bindLabel="nomDepot"
+                      [items]="listRevendeurs"
+                      bindLabel="displayName"
                       bindValue="id"
+                      (change)="change($event)"
                       formControlName="depotId"
                       [searchable]="true"
                     >
@@ -219,7 +254,7 @@
           <fieldset class="row border my-1"  >
             <legend style="font-size: 14px;" class="text-secondary">Numero Commande : {{updateData?.NumCommande}} du {{updateData?.createdAt | date :"dd/MM/yyyy" }}</legend>
           </fieldset>
-         
+
             <fieldset class="row border my-2">
               <legend style="font-size: 14px;" class="text-secondary">Informations du fournisseur</legend>
               <div class="row">
@@ -289,7 +324,7 @@
                     <th scope="col">Actions</th>
                   </tr>
                 </thead>
-  
+
                 <tbody>
                   <tr *ngFor="let item of selectedArticles">
                     <td>{{ item?.liquide?.libelle }}</td>
@@ -309,7 +344,7 @@
                         }"
                         (blur)="validateQuantite(item)"
                       />
-                     
+
                     </td>
                     <td>{{ prixLiquideTotal[item.id] }}</td>
                     <td>{{ prixEmballageTotal[item.id] }}</td>
@@ -353,7 +388,7 @@
                   <th scope="col">Total (FCFA)</th>
                 </tr>
                 </thead>
-  
+
                 <tbody>
                 <tr *ngFor="let item of updateData?.articles">
                   <td>{{ item.liquide.libelle }}1</td>
@@ -364,7 +399,7 @@
                   <td>{{ item.montantLiquide }}</td>
                   <td>{{ item.montantEmballage }}</td>
                   <td>{{Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) }}</td>
-  
+
                 </tr>
                 <tr class="table-dark">
                   <th scope="col" colspan="4">Total :</th>
@@ -378,14 +413,14 @@
             </div>
           </div>
         </div>
-  
+
         <div class="modal-footer gap-3 px-4">
           <button
             (click)="OnCloseModal()"
             type="button"
             class="btn btn-secondary px-2"
           >
-            Annuler
+            Fermer
           </button>
           <button
             type="submit"
@@ -394,13 +429,13 @@
             (click)="onSubmit()"
             class="btn btn-primary px-2"
           >
-            Terminer
+            Enrégistrer
           </button>
         </div>
       </div>
     </div>
   </div>
-  
+
   <!--CHOIX ARTICLE-->
   <div *ngIf="isChoiceModalOpen" class="custom-modal">
     <div class="modal-dialog2 modal-dialog-centered">
@@ -421,7 +456,7 @@
             Selection des articles
           </h1>
         </div>
-  
+
         <div class="modal-body">
           <form>
             <div class="row">
@@ -469,7 +504,7 @@
                             (change)="onCheckboxChange(article)"
                             [disabled]="stocksDisponibles[article.liquide.id] <=0"
                           />
-  
+
                         </td>
                       </tr>
                     </tbody>
@@ -488,7 +523,7 @@
             Annuler
           </button>
           <button
-  
+
             type="submit"
             (click)="onSubmitSelection()"
             class="btn btn-primary px-2"
@@ -499,4 +534,3 @@
       </div>
     </div>
   </div>
-  
