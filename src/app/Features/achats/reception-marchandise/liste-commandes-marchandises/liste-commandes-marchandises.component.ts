@@ -73,7 +73,7 @@ export class ListeCommandesMarchandisesComponent {
     this.GetArticleList(1);
     this.LoadPdv();
     this.GetRevendeurList(1);
-    this.GetListReceptionCommandeFournisseurs(1);
+    this.GetListCommandeFournisseurs(1);
     this.fetchData();
   }
   GetRevendeurList(page: number) {
@@ -99,37 +99,52 @@ export class ListeCommandesMarchandisesComponent {
     this.articleService.GetArticleList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.dataListLiquides = res.data;
-      this.dataListLiquides.forEach((item: any) => {
-        this.GetStockDisponibleByDepot(item);
-      });
       this.filteredArticleList = this.dataListLiquides;
       this._spinner.hide();
     });
   }
-  GetListReceptionCommandeFournisseurs(
-    page: number,
-    numeroReception?: string,
-    numeroBonLivraison?: string,
-    dateDebut?: string,
-    dateFin?: string
-  ) {
+
+   GetListCommandeFournisseurs(page: number, numero?: string, statut?: string,typeCommande?: string) {
     let data = {
       paginate: true,
       page: page,
       limit: 8,
-      numeroReception: numeroReception || '',
-      numeroBonLivraison: numeroBonLivraison || '',
-      dateDebut: dateDebut || '',
-      dateFin: dateFin || '',
+      numero: numero || '',
+      statut: statut || '',
+      typeCommande: typeCommande || '',
     };
     this._spinner.show();
-    this.articleService.GetListReceptionCommandeFournisseurs(data).then((res: any) => {
+    this.articleService.GetListCommandeFournisseurs(data).then((res: any) => {
       console.log('GetListCommandeFournisseurs:::>', res);
       this.totalPages = res.total;
       this.ListCommandeFournisseurs = res.data;
       this._spinner.hide();
     });
   }
+  // GetListReceptionCommandeFournisseurs(
+  //   page: number,
+  //   numeroReception?: string,
+  //   numeroBonLivraison?: string,
+  //   dateDebut?: string,
+  //   dateFin?: string
+  // ) {
+  //   let data = {
+  //     paginate: true,
+  //     page: page,
+  //     limit: 8,
+  //     numeroReception: numeroReception || '',
+  //     numeroBonLivraison: numeroBonLivraison || '',
+  //     dateDebut: dateDebut || '',
+  //     dateFin: dateFin || '',
+  //   };
+  //   this._spinner.show();
+  //   this.articleService.GetListReceptionCommandeFournisseurs(data).then((res: any) => {
+  //     console.log('GetListCommandeFournisseurs:::>', res);
+  //     this.totalPages = res.total;
+  //     this.ListCommandeFournisseurs = res.data;
+  //     this._spinner.hide();
+  //   });
+  // }
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -194,20 +209,15 @@ export class ListeCommandesMarchandisesComponent {
         this.dataSendedToReceptionMarchandiseRequest.numeroBonLivraison,
       articlesRecus: this.articlesRecues.map((article: any) => {
         return {
-          articleCommandeId: article.id,
-          quantiteRecue: article.quantiteAffectee,
-          liquideId: article.liquide?.id,
-          emballageId: article.emballage?.id,
+          articleCommandeId: article?.id,
+          quantiteRecue: article?.quantiteAffectee,
+          liquideId: article?.liquide?.id,
+          emballageId: article?.emballage?.id,
+          // prixUnitaireLiquide: article?.
           commentaireEcart: article.commentaireEcart || '',
         };
       }),
-      // emballagesRendus:
-      //   this.dataSendedToReceptionMarchandiseRequest.emballagesRendus.map(
-      //     (emballage: any) => ({
-      //       emballageId: emballage.emballageId,
-      //       quantite: emballage.quantite,
-      //     })
-      //   ),
+ 
     };
     console.log(payload, 'payload');
 
@@ -217,7 +227,7 @@ export class ListeCommandesMarchandisesComponent {
         (res: any) => {
           console.log(res, 'enregistré avec succes');
           this._spinner.hide();
-          this.GetListReceptionCommandeFournisseurs(1);
+          this.GetListCommandeFournisseurs(1);
           this.OnCloseModal();
           this.toastr.success(res.message);
         },
@@ -248,20 +258,21 @@ export class ListeCommandesMarchandisesComponent {
     );
   }
   onCheckboxChange(article: any): void {
+    console.log(article,'articles')
     // this.GetPrixByArticle(article);
-    // if (article.isChecked) {
+    if (article.isChecked) {
       this.articlesRecues.push(article);
       this.afficherArticlesSelectionnes();
-    // } else {
-    //   delete article.quantite;
-    //   const indexToRemove = this.articlesRecues.findIndex(
-    //     (selectedArticle: any) => selectedArticle.libelle === article.libelle
-    //   );
-    //   if (indexToRemove !== -1) {
-    //     this.articlesRecues.splice(indexToRemove, 1);
-    //     this.afficherArticlesSelectionnes();
-    //   }
-    // }
+    } else {
+      delete article.quantite;
+      const indexToRemove = this.articlesRecues.findIndex(
+        (selectedArticle: any) => selectedArticle.libelle === article.libelle
+      );
+      if (indexToRemove !== -1) {
+        this.articlesRecues.splice(indexToRemove, 1);
+        this.afficherArticlesSelectionnes();
+      }
+    }
   }
   removeArticle(item: any): void {
     // Créer une copie de l'article avec la quantité définie à 0
@@ -549,26 +560,26 @@ export class ListeCommandesMarchandisesComponent {
       console.error('Erreur lors de la récupération des données:', error);
     }
   }
-  async GetPrixByArticle(item: any): Promise<any> {
-    let data = {
-      id: item.id,
-    };
+  // async GetPrixByArticle(item: any): Promise<any> {
+  //   let data = {
+  //     id: item.id,
+  //   };
 
-    try {
-      // Attendre la réponse de la promesse
-      const response: any = await this.articleService.GetPrixByProduit(data);
-      console.log(response);
-      // Vérifier si le statusCode est 200
-      if (response.data) {
-        this.prixLiquide[item.id] = 0;
-        this.prixEmballage[item.id] = response.data.PrixConsigne;
-        console.log('prixLiquide', this.prixLiquide[item.id]);
-        console.log('prixEmballage', this.prixEmballage[item.id]);
-      }
-    } catch (error: any) {
-      console.log(error);
-    }
-  }
+  //   try {
+  //     // Attendre la réponse de la promesse
+  //     const response: any = await this.articleService.GetPrixByProduit(data);
+  //     console.log(response);
+  //     // Vérifier si le statusCode est 200
+  //     if (response.data) {
+  //       this.prixLiquide[item.id] = 0;
+  //       this.prixEmballage[item.id] = response.data.PrixConsigne;
+  //       console.log('prixLiquide', this.prixLiquide[item.id]);
+  //       console.log('prixEmballage', this.prixEmballage[item.id]);
+  //     }
+  //   } catch (error: any) {
+  //     console.log(error);
+  //   }
+  // }
 
   protected readonly parseInt = parseInt;
   protected readonly Number = Number;

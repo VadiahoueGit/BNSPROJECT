@@ -1533,4 +1533,71 @@ export class ArticleServiceService {
         );
     });
   }
+  // RETOURS EMBALLAGES FOURNISSEURS
+
+  CreateRetourEmballageFournisseurs(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .post(`${this.apiUrl}/v1/retours-emballages-fournisseur`, data, {
+          headers,
+        })
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+  GetListRetourEmballageFournisseurs(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/retours-emballages-fournisseur?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&numeroRetour=${data.numeroRetour}&dateDebut=${data.dateDebut}&dateFin=${data.dateFin}`,
+          { headers }
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            // if (res.statusCode === 200) {
+            //   this.ListRevendeurs.next(res.data);
+            // }
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+    DeleteRetoursEmballagesFournisseur(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .delete(`${this.apiUrl}/v1/retours-emballages-fournisseur/${id}`, { headers })
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
 }

@@ -194,10 +194,10 @@
                     <p>{{ data.id }}</p>
                   </td>
                   <td class="">
-                    <p>{{ data.liquide.libelle }}</p>
+                    <p>{{ data?.liquide?.libelle }}</p>
                   </td>
                   <td class="">
-                    <p>{{ data.emballage.libelle }}</p>
+                    <p>{{ data?.emballage?.libelle }}</p>
                   </td>
                   <td>
                     <input
@@ -297,7 +297,6 @@
                     <tr style="font-size: small">
                       <th scope="col" class="text-secondary">Code</th>
                       <th scope="col" class="text-secondary">Produits</th>
-                      <th scope="col" class="text-secondary">Disponibilité</th>
                       <th scope="col" class="text-secondary text-center">
                         Choix
                       </th>
@@ -310,9 +309,7 @@
                     >
                       <th scope="row">{{ article.reference }}</th>
                       <th scope="row">{{ article.libelle }}</th>
-                      <th scope="row">
-                        {{ stocksDisponibles[article.liquide.id] }}
-                      </th>
+                     
                       <td class="">
                         <input
                           type="checkbox"
@@ -320,9 +317,7 @@
                           [name]="'checkbox_' + i"
                           [(ngModel)]="article.isChecked"
                           (change)="onCheckboxChange(article)"
-                          [disabled]="
-                            stocksDisponibles[article.liquide.id] <= 0
-                          "
+                         
                         />
                       </td>
                     </tr>
