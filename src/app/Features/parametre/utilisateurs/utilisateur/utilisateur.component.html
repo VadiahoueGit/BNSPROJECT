@@ -2,7 +2,7 @@
     <div class=" d-flex justify-content-end py-3">
         <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer un utilisateur</button>
     </div>
-    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"[totalRecords]="totalPages" [lazy]="true"
+    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8" [totalRecords]="totalPages" [lazy]="true"
         [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
 
         <ng-template pTemplate="header">
@@ -18,7 +18,7 @@
         </ng-template>
         <ng-template pTemplate="body" let-dataList>
             <tr>
-               
+
                 <td>
                     <span class="ml-1 vertical-align-middle">
                         {{ dataList.profilePhoto ?? null }}
@@ -40,7 +40,7 @@
                         {{ dataList.telephone_one }}
                     </span>
                 </td>
-             
+
                 <td>
                     <span class="ml-1 vertical-align-middle">
                         {{ dataList.role.description }}
@@ -49,7 +49,7 @@
                 <td>
             <tr class="d-flex justify-content-center gap-3">
                 <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
-              
+
                 <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
                         class="fas fa-trash-alt text-danger"></i>
                     </td>
@@ -90,18 +90,18 @@
                         <label for="photo" class="form-label">Photo <span class="text-danger">*</span></label>
                         <input type="file" class="form-control" id="photo" formControlName="photo" placeholder="Entrez la photo de l'article">
                       </div>
-              
+
                       <div class="mb-3">
                         <label for="nom" class="form-label">Nom <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="nom" formControlName="nom" placeholder="Entrez le nom">
                       </div>
-              
+
                       <div class="mb-3">
                         <label for="prenom" class="form-label">Prénoms <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="prenom" formControlName="prenoms" placeholder="Entrez le prénom">
 
                       </div>
-              
+
                       <div class="mb-3">
                         <label for="email" class="form-label">Adresse email <span class="text-danger">*</span></label>
                         <input type="email" class="form-control" id="email" formControlName="email" placeholder="Entrez l'email'">
@@ -111,35 +111,35 @@
                       <div class="mb-3">
                         <label for="telephone_one" class="form-label">Numéro de téléphone principal <span class="text-danger">*</span></label>
                         <input type="telephone_one" class="form-control" id="telephone_one" formControlName="telephone_one" placeholder="Entrez le numéro principal">
-                     
+
                       </div>
                     </div>
-              
+
                     <div class="col-md-6">
                       <div class="mb-3">
                         <label for="telephone_two" class="form-label">Numéro de téléphone secondaire <span class="text-danger">*</span></label>
                         <input type="telephone_two" class="form-control" id="telephone_two" formControlName="telephone_two" placeholder="Entrez le numéro secondaire">
 
                       </div>
-              
+
                       <div class="mb-3">
                         <label for="password" class="form-label">Mot de passe utilisateur <span class="text-danger">*</span></label>
                         <input type="password" class="form-control" id="password" formControlName="password" placeholder="Entrez le mot de passe'">
-                      
+
                       </div>
-              
+
                       <div class="mb-3">
                         <label for="matricule" class="form-label">Matricule <span class="text-danger">*</span></label>
                         <input type="matricule" class="form-control" id="matricule" formControlName="matricule" placeholder="Entrez le matricule">
-                      
+
                       </div>
-              
-                    
+
+
                       <div class="mb-3">
                         <label for="fonction" class="form-label">Fonction<span class="text-danger">*</span></label>
                         <input type="fonction" class="form-control" id="fonction" formControlName="fonction" placeholder="Entrez la fonction">
                       </div>
-              
+
                       <div class="mb-3">
                         <label for="roleId" class="form-label">Role <span class="text-danger">*</span></label>
 
@@ -152,8 +152,8 @@
                   </div>
                 </form>
               </div>
-              
-              
+
+
             <div class="modal-footer gap-3 px-4">
                 <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
                 <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>

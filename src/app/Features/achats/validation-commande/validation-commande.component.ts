@@ -160,8 +160,14 @@ export class ValidationCommandeComponent {
   }
 
   saveGoods(data: any) {
-    this.operation = 'edit';
-    this.AjouterCommandeFournisseurs()
+    if(data == 'create') {
+      console.log(data)
+      this.AjouterCommandeFournisseurs()
+    }else if(data == 'update') {
+      console.log(data)
+      this.UpdateCommandeFournisseurs()
+    }
+
     console.log(this.operation);
   }
 
@@ -172,10 +178,38 @@ export class ValidationCommandeComponent {
       this.getLocalPrice(item)
     })
 
-    // this.AjouterCommandeFournisseurs()
     console.log(this.operation);
   }
 
+  UpdateCommandeFournisseurs(){
+    const data = this.newCommande.map((item: any) => ({
+      id: item.id,
+      groupeArticleId: item.groupearticle.id,
+      codeArticleLiquide: item.liquide.code,
+      codeArticleEmballage: item.emballage.code,
+      prixUnitaireLiquide: Number(this.prixLiquide[item.id]),
+      prixUnitaireEmballage: Number(this.prixEmballage[item.id]),
+      quantite: Number(item.quantite) || 0,
+    })).filter((item: any) => item.quantite != 0);
+
+    const payload = {
+      revendeurId:this.updateData.revendeur.id,
+      articles: data
+    };
+    this.articleService.UpdateCommandeFournisseurs(this.updateData.id, payload).then(
+      (response: any) => {
+        this._spinner.hide();
+        this.toastr.success(response.message);
+        this.GetListCommandeFournisseursById()
+        this.operation = 'edit';
+      },
+      (error: any) => {
+        this._spinner.hide();
+        this.toastr.error('Erreur!', 'Erreur lors de la modification.');
+      }
+    );
+
+  }
   OnAddGoods(data: any, newCommande: any) {
     let item = []
     this.totalEmballage = 0;
@@ -231,6 +265,7 @@ export class ValidationCommandeComponent {
         this._spinner.hide();
         this.toastr.success(response.message);
         this.GetListCommandeFournisseursById()
+        this.operation = 'edit';
       },
       (error: any) => {
         this._spinner.hide();
@@ -240,15 +275,12 @@ export class ValidationCommandeComponent {
   }
 
   GetListCommandeFournisseursById(){
-    this._spinner.show();
     this.articleService.GetListCommandeFournisseursById(this.updateData.id).then(
       (response: any) => {
-        this._spinner.hide();
+        console.log('xxx')
         this.updateData = response.data;
-        this.toastr.success(response.message);
       },
       (error: any) => {
-        this._spinner.hide();
         this.toastr.error('Erreur!', error.message);
       }
     );
@@ -261,6 +293,7 @@ export class ValidationCommandeComponent {
     this._spinner.show();
     this.articleService.ValidateCommandeFournisseur(this.articleId, this.ValidationForm.value).then(
       (response: any) => {
+        this._spinner.hide();
         this.toastr.success(response.message);
         this.OnCloseModal();
         this.OnCloseValidModal()

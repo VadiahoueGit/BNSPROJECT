@@ -300,7 +300,7 @@ export class VentechinepageComponent {
     this._spinner.show();
     this.utilisateurService.GetVenteChineList(data).then((res: any) => {
       console.log('GetVenteChineList:::>', res.data);
-      this.totalPages = res.totalPages * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total; // nombre total d’enregistrements
       this.dataList = res.data;
       this._spinner.hide();
     });

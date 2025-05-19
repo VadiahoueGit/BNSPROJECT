@@ -120,19 +120,19 @@
             <i class="fas fa-plus"></i>
             <span class="ms-2">Ajouter</span>
           </button>
-<!--          <button-->
-<!--            *ngIf="operation == 'edit'"-->
-<!--            type="submit"-->
-<!--            class="btn btn-secondary px-2"-->
-<!--            (click)="updateGoods(operation)"-->
-<!--          >-->
-<!--            <i class="fas fa-edit"></i>-->
-<!--            <span class="ms-2">{{ operation === 'edit' ? 'Modifier' : 'Valider les changements' }}</span>-->
-<!--          </button>-->
+                    <button
+                      *ngIf="operation == 'edit'"
+                      type="submit"
+                      class="btn btn-secondary px-2"
+                      (click)="updateGoods(operation)"
+                    >
+                      <i class="fas fa-edit"></i>
+                      <span class="ms-2">{{ operation === 'edit' ? 'Modifier' : 'Valider les changements' }}</span>
+                    </button>
         </div>
       </div>
 
-      <div class="modal-body">
+      <div class="modal-body" style="max-height: 500px;  overflow-y: auto">
 
         <div>
           <fieldset class="row border my-1">
@@ -193,7 +193,7 @@
           </fieldset>
         </div>
         <div class="p-2 mt-3">
-          <div style="max-height: 350px; overflow-y: auto">
+          <div >
             <div class="d-flex align-items-center gap-2 flex-wrap my-2">
               <button
                 *ngIf="operation == 'create'"
@@ -204,7 +204,7 @@
                 Ajouter des articles
               </button>
               <button
-                *ngIf="operation == 'create'"
+                *ngIf="operation == 'create' || operation == 'update' "
                 (click)="saveGoods(operation)"
                 type="button"
                 class="btn btn-primary"
@@ -297,8 +297,8 @@
               <tbody>
               <tr *ngFor="let item of newCommande">
                 <td>{{ item?.liquide?.libelle }}</td>
-                <td>{{item.prixUnitaireLiquide}}</td>
-                <td>{{item.prixUnitaireEmballage }}</td>
+                <td>{{ item.prixUnitaireLiquide }}</td>
+                <td>{{ item.prixUnitaireEmballage }}</td>
                 <td>{{ (item.prixUnitaireLiquide || 0) * 1 + (item.prixUnitaireEmballage || 0) * 1 }}</td>
                 <td>
                   <input
@@ -388,7 +388,7 @@
         </button>
         <button
           type="submit"
-          [disabled]="operation == 'create'"
+          [disabled]="operation == 'create' || operation == 'update' "
           (click)="onValidate()"
           class="btn btn-primary px-2"
         >

@@ -59,7 +59,7 @@ export class TransporteurComponent {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
 
-    // this.GetListTypePrix(this.currentPage);
+    this.GetTransporteurList(this.currentPage);
   }
 
   GetTransporteurList(page: number) {
@@ -71,7 +71,7 @@ export class TransporteurComponent {
     };
     this._logistiqueService.GetTransporteurList(data).then((res: any) => {
       console.log('DATA:::>', res);
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages);
 
       this.dataList = res.data;

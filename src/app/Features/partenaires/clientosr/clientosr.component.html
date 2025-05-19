@@ -12,6 +12,7 @@
   </div>
   <p-table #dt [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
   (onFilter)="updateFilteredCount(dt)"
+           [totalRecords]="totalPages" [lazy]="true"
            [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
 
     <ng-template pTemplate="header">

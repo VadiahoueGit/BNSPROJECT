@@ -1488,6 +1488,7 @@ export class ArticleServiceService {
       });
       this._http.get(`${this.apiUrl}/v1/commande-fournisseur/${id}`,{headers}).subscribe(
         (res: any) => {
+          resolve(res);
           console.log(res);
        (res);
         },
@@ -1520,6 +1521,23 @@ export class ArticleServiceService {
     });
   }
 
+  UpdateCommandeFournisseurs(id:any,data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/commande-fournisseur/${id}`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
   // RECEPTIONS COMMANDE FOURNISSEURS
 
   CreateReceptionCommandeFournisseurs(data: any) {

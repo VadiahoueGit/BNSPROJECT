@@ -56,14 +56,13 @@ export class DepotComponent {
   }
   ngOnInit() {
     let data = {
-      paginate: true,
+      paginate: false,
       page: 1,
       limit: 8,
     };
     this._spinner.show();
     this._coreService.GetLocaliteList(data).then((res: any) => {
       console.log('GetLocaliteList:::>', res);
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages);
       this.dataListlocalite = res.data;
       this._spinner.hide();
@@ -131,7 +130,7 @@ export class DepotComponent {
   }
   GetDepotList(page:number) {
     let data = {
-      paginate: false,
+      paginate: true,
       page: page,
       limit: 8,
     };
@@ -139,6 +138,7 @@ export class DepotComponent {
     this._coreService.GetDepotList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.dataList = res.data;
+      this.totalPages = res.total
       this._spinner.hide();
     });
   }
@@ -147,7 +147,7 @@ export class DepotComponent {
     this.rowsPerPage = event.rows;
     this.GetDepotList(this.currentPage);
   }
- 
+
   onSubmit(): void {
     console.log(this.DepotForm);
     if (this.DepotForm.valid) {

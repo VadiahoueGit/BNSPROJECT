@@ -96,7 +96,7 @@ export class ProfilUtilisateurComponent {
     this._userService.GetListProfil(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.dataList = res.data;
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total ; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages);
 
       this._spinner.hide();
