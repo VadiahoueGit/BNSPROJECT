@@ -1326,6 +1326,24 @@ export class ArticleServiceService {
       );
     });
   }
+
+  AjouterCommandeFournisseurs(id:any,data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/commande-fournisseur/${id}/articles`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
   GetListCommandeFournisseurs(data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -1347,6 +1365,23 @@ export class ArticleServiceService {
     });
   }
 
+  GetListCommandeFournisseursById(id: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.get(`${this.apiUrl}/v1/commande-fournisseur/${id}`,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+       (res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
   ValidateCommandeFournisseur(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
