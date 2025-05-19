@@ -1,334 +1,323 @@
 <div class="card">
-  
-    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
-        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" [globalFilterFields]="['plastiquenu.libelle', 'libelle']"
-        [globalFilterFields]="['plastiquenu.libelle', 'libelle']" (onPage)="onPage($event)">
-        <ng-template pTemplate="caption">
-            <div class=" d-flex justify-content-between py-3">
-                <span class="p-input-icon-left ml-auto d-flex align-items-center">
-                    <i class="fas fa-search"></i>
-                    <input pInputText type="text" (input)="filterGlobal($event)" placeholder="Recherche" />
-                </span>
-                <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Saisie d'emballage rendu </button>
-            </div>
-        </ng-template>
-        <ng-template pTemplate="header">
-            <tr>
-                <th style="color: var(--secondary-color);">Nom</th>
-                <th style="color: var(--secondary-color);">Format</th>
-                <th style="color: var(--secondary-color);">Condition</th>
-                <th style="color: var(--secondary-color);">Plastique Nu</th>
-                <th style="color: var(--secondary-color);">Bouteille vide</th>
-                <th style="color: var(--secondary-color);">Catégorie</th>
-                <th style="color: var(--secondary-color);">Groupe article</th>
-                <th style="color: var(--secondary-color);">Actions</th>
-            </tr>
-
-        </ng-template>
-        <ng-template pTemplate="body" let-dataList>
-            <tr>
-                <td class="">
-                    {{ dataList.libelle }}
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.format }}
-                    </span>
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.condition }}
-                    </span>
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.plastiquenu.libelle }}
-                    </span>
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.bouteillevide.libelle }}
-                    </span>
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.categorieproduit.libelle }}
-                    </span>
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.groupearticle.libelle }}
-                    </span>
-                </td>
-                <td>
-                    <tr class="d-flex justify-content-center gap-3">
-                        <td><i (click)="OnEdit(dataList)" style="cursor: pointer;"
-                                class="fas fa-edit text-secondary"></i></td>
-                        <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
-                                class="fas fa-trash-alt text-danger"></i>
-                        </td>
-                    </tr>
-                </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="5">Aucun emballage trouvé!</td>
-            </tr>
-        </ng-template>
-    </p-table>
+  <div class="d-flex justify-content-end py-3">
+    <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
+      Saisie d'emballage rendu
+    </button>
   </div>
-  
-  <!-- Modal creation -->
-  <!-- Modal -->
-  
-  <div *ngIf="isModalOpen" class="custom-modal">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <!-- Modal Header -->
-        <div class="modal-header d-flex align-items-center">
-          <div
-            class="d-flex justify-content-center align-items-center"
-            style="
-              background-color: #dbffe8;
-              border-radius: 50%;
-              width: 3rem;
-              height: 3rem;
-            "
-          >
-            <i class="fas fa-box-check text-success fs-4"></i>
-          </div>
-          <h1 class="modal-title fs-5 ms-3">Gestion des emballages</h1>
-          <button
-            type="button"
-            class="btn-close"
-            aria-label="Close"
-            (click)="OnCloseModal()"
-          ></button>
+  <div class="row d-flex justify-items-center">
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+      <span>Numero retour :</span>
+      <span class="p-input-icon-left w-100 d-flex align-items-center">
+        <i class="fas fa-search"></i>
+        <input
+          class="w-100"
+          style="border-radius: 7px"
+          pInputText
+          type="text"
+          [(ngModel)]="filters.numeroRetour"
+          (keydown.enter)="filterGlobal()"
+          placeholder="Recherche"
+        />
+      </span>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+      <span>Date debut :</span>
+      <span class="p-input-icon-left w-100 d-flex align-items-center">
+        <i class="fas fa-search"></i>
+        <input
+          class="w-100"
+          style="border-radius: 7px"
+          pInputText
+          type="text"
+          [(ngModel)]="filters.dateDebut"
+          (keydown.enter)="filterGlobal()"
+          placeholder="Recherche"
+        />
+      </span>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+      <span>Date fin :</span>
+      <span class="p-input-icon-left w-100 d-flex align-items-center">
+        <i class="fas fa-search"></i>
+        <input
+          class="w-100"
+          style="border-radius: 7px"
+          pInputText
+          type="text"
+          [(ngModel)]="filters.dateFin"
+          (keydown.enter)="filterGlobal()"
+          placeholder="Recherche"
+        />
+      </span>
+    </div>
+  </div>
+  <p-table
+    [styleClass]="'p-datatable-sm'"
+    #dt2
+    [value]="dataList"
+    dataKey="id"
+    [rows]="8"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [paginator]="true"
+    [globalFilterFields]="['plastiquenu.libelle', 'libelle']"
+    [globalFilterFields]="['plastiquenu.libelle', 'libelle']"
+    (onPage)="onPage($event)"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="color: var(--secondary-color)">Nom</th>
+        <th style="color: var(--secondary-color)">Format</th>
+        <th style="color: var(--secondary-color)">Condition</th>
+        <th style="color: var(--secondary-color)">Plastique Nu</th>
+        <th style="color: var(--secondary-color)">Bouteille vide</th>
+        <th style="color: var(--secondary-color)">Catégorie</th>
+        <th style="color: var(--secondary-color)">Groupe article</th>
+        <th style="color: var(--secondary-color)">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-dataList>
+      <tr>
+        <td class="">
+          {{ dataList.libelle }}
+        </td>
+        <td class="">
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.format }}
+          </span>
+        </td>
+        <td class="">
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.condition }}
+          </span>
+        </td>
+        <td class="">
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.plastiquenu.libelle }}
+          </span>
+        </td>
+        <td class="">
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.bouteillevide.libelle }}
+          </span>
+        </td>
+        <td class="">
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.categorieproduit.libelle }}
+          </span>
+        </td>
+        <td class="">
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.groupearticle.libelle }}
+          </span>
+        </td>
+        <td>
+          <tr class="d-flex justify-content-center gap-3">
+            <td>
+              <i
+                (click)="OnEdit(dataList)"
+                style="cursor: pointer"
+                class="fas fa-edit text-secondary"
+              ></i>
+            </td>
+            <td>
+              <i
+                (click)="OnDelete(dataList.id)"
+                style="cursor: pointer"
+                class="fas fa-trash-alt text-danger"
+              ></i>
+            </td>
+          </tr>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">Aucun emballage trouvé!</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Modal creation -->
+<!-- Modal -->
+
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header d-flex align-items-center">
+        <div
+          class="d-flex justify-content-center align-items-center"
+          style="
+            background-color: #dbffe8;
+            border-radius: 50%;
+            width: 3rem;
+            height: 3rem;
+          "
+        >
+          <i class="fas fa-box-check text-success fs-4"></i>
         </div>
-  
-        <!-- Barre de recherche client centrée -->
-        <div class="modal-body" style="max-height: 70vh; overflow-y: auto">
-          <form [formGroup]="emballageRenduForm" *ngIf="operation == 'create'">
-            <!-- Section: Saisie commande -->
-       
-              <div class="row g-3">
-             
-                <div class="col-md-4" style="margin-top: 3rem">
-                  <button
-                    type="submit"
-                    class="btn btn-primary"
-                    (click)="selectArticle()"
-                  >
-                    Ajouter des emballages
-                  </button>
-                </div>
-              </div>
-          </form>
-     
-          <div class="p-2 mt-3">
-            <div style="max-height: 355px; overflow-y: auto">
-              <table *ngIf="operation == 'create'" class="table table-bordered">
-                <thead class="table-success">
-                <!-- Première ligne d'en-tête -->
+        <h1 class="modal-title fs-5 ms-3">Gestion des emballages</h1>
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          (click)="OnCloseModal()"
+        ></button>
+      </div>
+
+      <!-- Barre de recherche client centrée -->
+      <div class="modal-body" style="max-height: 70vh; overflow-y: auto">
+        <form [formGroup]="emballageRenduForm" *ngIf="operation == 'create'">
+          <!-- Section: Saisie commande -->
+
+          <div class="row g-3">
+            <div class="col-md-4" style="margin-top: 3rem">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                (click)="selectArticle()"
+              >
+                Ajouter des emballages
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <div class="p-2 mt-3">
+         <table class="table table-bordered">
+              <thead class="table-light">
                 <tr>
-                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
-                  <th scope="col" colspan="4">MONTANT TTC(FCFA)</th>
-                </tr>
-                <!-- Deuxième ligne d'en-tête -->
-                <tr>
-                  <th scope="col">Liquide</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Qte</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
+                  <th scope="col">Emballage</th>
+                  <th scope="col">Format</th>
+                  <th scope="col">Condition</th>
+                  <th scope="col">Quantité</th>
+                  <th scope="col">Prix unitaire</th>
                   <th scope="col">Actions</th>
                 </tr>
-                </thead>
-  
-                <tbody>
-                <tr *ngFor="let item of selectedArticles">
-                  <td>{{ item.liquide.libelle }}</td>
-                  <td>{{ prixLiquide[item.id] }}</td>
-                  <td>{{ prixEmballage[item.id] }}</td>
-                  <td>{{ prixEmballage[item.id] + prixLiquide[item.id] }}</td>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of selectedArticles; let i = index">
+                  <td class="">
+                    <p>{{ data?.libelle }}</p>
+                  </td>
+                  <td class="">
+                    <p>{{ data?.format}}</p>
+                  </td>
+                  <td class="">
+                    <p>{{ data?.condition}}</p>
+                  </td>
                   <td>
                     <input
                       type="number"
                       class="form-control-custom"
-                      [(ngModel)]="item.quantite"
+                      [(ngModel)]="data.quantiteAffectee"
                       [min]="0"
-                      [max]="stocksDisponibles[item.liquide.id]"
-                      [disabled]="stocksDisponibles[item.liquide.id] === 0"
-                      [ngClass]="{
-                          invalid:
-                            item.quantite > stocksDisponibles[item.liquide.id]
-                        }"
-                      (blur)="validateQuantite(item)"
+                      required="true"
                     />
-                    / {{ stocksDisponibles[item.liquide.id] }}
                   </td>
-                  <td>{{ prixLiquideTotal[item.id] }}</td>
-                  <td>{{ prixEmballageTotal[item.id] }}</td>
-                  <td>{{ montantTotal[item.id] }}</td>
+                  <td>
+                    <input
+                      type="text"
+                      class="form-control-custom"
+                      [(ngModel)]="data.prixUnitaireEmballage"
+                      [min]="0"
+                    />
+                  </td>
                   <td class="d-flex justify-content-center">
                     <button
                       type="button"
                       class="btn btn-danger btn-sm"
-                      (click)="removeArticle(item)"
+                      (click)="removeArticle(data)"
                     >
                       <i class="fas fa-trash"></i>
                     </button>
                   </td>
                 </tr>
-                <tr class="table-dark">
-                  <th scope="col" colspan="4">Total :</th>
-                  <td>{{ totalQte }}</td>
-                  <td>{{ totalLiquide }}</td>
-                  <td>{{ totalEmballage }}</td>
-                  <td>{{ totalGlobal }}</td>
-                  <td></td>
-                </tr>
-                </tbody>
-              </table>
-              <table *ngIf="operation == 'edit'" class="table table-bordered">
-                <thead class="table-success">
-                <!-- Première ligne d'en-tête -->
-                <tr>
-                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
-                  <th scope="col" colspan="3">MONTANT TTC(FCFA)</th>
-                </tr>
-                <!-- Deuxième ligne d'en-tête -->
-                <tr>
-                  <th scope="col">Liquide</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Qte</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                </tr>
-                </thead>
-  
-                <tbody>
-                <tr *ngFor="let item of updateData.articles">
-                  <td>{{ item.liquide.libelle }}</td>
-                  <td>{{ item.prixUnitaireLiquide }}</td>
-                  <td>{{ item.prixUnitaireEmballage }}</td>
-                  <td>
-                    {{
-                      Number(item.prixUnitaireLiquide ?? 0) +
-                      Number(item.prixUnitaireEmballage ?? 0)
-                    }}
-                  </td>
-                  <td>{{ item.quantite }}</td>
-                  <td>{{ item.montantLiquide }}</td>
-                  <td>{{ item.montantEmballage }}</td>
-                  <td>
-                    {{
-                      Number(item.montantLiquide ?? 0) +
-                      Number(item.montantEmballage ?? 0)
-                    }}
-                  </td>
-                </tr>
-                <tr class="table-dark">
-                  <th scope="col" colspan="4">Total :</th>
-                  <td>{{ totalQte }}</td>
-                  <td>{{ totalLiquide }}</td>
-                  <td>{{ totalEmballage }}</td>
-                  <td>{{ totalGlobal }}</td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+              </tbody>
+            </table>
         </div>
-  
-        <!-- Modal Footer -->
-        <div class="modal-footer gap-3 px-4">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            (click)="OnCloseModal()"
-          >
-            Annuler
-          </button>
-          <button
-            type="submit"
-            *ngIf="operation == 'create'"
-            class="btn btn-primary"
-            (click)="onSubmit()"
-            [disabled]="totalQte === 0 || detailPointDevente.encours <= 0"
-          >
-            Valider
-          </button>
-        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer gap-3 px-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="OnCloseModal()"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          (click)="onSubmit()"
+        >
+          Valider
+        </button>
       </div>
     </div>
   </div>
-  
-  <!--CHOIX ARTICLE-->
-  <div *ngIf="isChoiceModalOpen" class="custom-modal">
-    <div class="modal-dialog2 modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header d-flex align-items-center">
-          <div
-            class="d-flex justify-content-center align-items-center"
-            style="
-              background-color: rgb(219, 255, 232);
-              border-radius: 3rem;
-              width: 3rem;
-              height: 3rem;
-            "
-          >
-            <i class="fas fa-box-check text-primary fs-3"></i>
-          </div>
-          <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
-            Selection des emballages
-          </h1>
+</div>
+
+<!--CHOIX ARTICLE-->
+<div *ngIf="isChoiceModalOpen" class="custom-modal">
+  <div class="modal-dialog2 modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex align-items-center">
+        <div
+          class="d-flex justify-content-center align-items-center"
+          style="
+            background-color: rgb(219, 255, 232);
+            border-radius: 3rem;
+            width: 3rem;
+            height: 3rem;
+          "
+        >
+          <i class="fas fa-box-check text-primary fs-3"></i>
         </div>
-  
-        <div class="modal-body">
-          <form>
-            <div class="row">
-              <fieldset class="row border my-2">
-                <div class="p-3">
-                  <!-- Champ de recherche -->
-                  <input
-                    type="text"
-                    name="search"
-                    (input)="filterArticles()"
-                    [(ngModel)]="searchTerm"
-                    placeholder="Rechercher un produit"
-                    class="form-control mb-3"
-                  />
-                </div>
-                <div
-                  class="table-responsive"
-                  style="max-height: 200px; overflow-y: auto"
-                >
-                  <table class="table">
-                    <thead>
+        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
+          Selection des emballages
+        </h1>
+      </div>
+
+      <div class="modal-body">
+        <form>
+          <div class="row">
+            <fieldset class="row border my-2">
+              <div class="p-3">
+                <!-- Champ de recherche -->
+                <input
+                  type="text"
+                  name="search"
+                  (input)="filterArticles()"
+                  [(ngModel)]="searchTerm"
+                  placeholder="Rechercher un produit"
+                  class="form-control mb-3"
+                />
+              </div>
+              <div
+                class="table-responsive"
+                style="max-height: 200px; overflow-y: auto"
+              >
+                <table class="table">
+                  <thead>
                     <tr style="font-size: small">
+                      <th scope="col" class="text-secondary">Code</th>
                       <th scope="col" class="text-secondary">Produits</th>
                       <th scope="col" class="text-secondary text-center">
                         Choix
                       </th>
                     </tr>
-                    </thead>
-                    <tbody>
+                  </thead>
+                  <tbody>
                     <tr
                       *ngFor="let article of filteredArticleList; let i = index"
                       style="font-size: small"
                     >
+                      <th scope="row">{{ article.code }}</th>
                       <th scope="row">{{ article.libelle }}</th>
-                      <!-- <th scope="row">
-                        {{ stocksDisponibles[article.liquide.id] }}
-                      </th> -->
+
                       <td class="">
                         <input
                           type="checkbox"
@@ -336,34 +325,32 @@
                           [name]="'checkbox_' + i"
                           [(ngModel)]="article.isChecked"
                           (change)="onCheckboxChange(article)"
-                     
                         />
                       </td>
                     </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </fieldset>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer gap-3 px-4y">
-          <button
-            (click)="OnCloseChoiceModal()"
-            type="button"
-            class="btn btn-secondary px-2"
-          >
-            Annuler
-          </button>
-          <button
-            type="submit"
-            (click)="onSubmitSelection()"
-            class="btn btn-primary px-2"
-          >
-            Valider
-          </button>
-        </div>
+                  </tbody>
+                </table>
+              </div>
+            </fieldset>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer gap-3 px-4y">
+        <button
+          (click)="OnCloseChoiceModal()"
+          type="button"
+          class="btn btn-secondary px-2"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          (click)="onSubmitSelection()"
+          class="btn btn-primary px-2"
+        >
+          Valider
+        </button>
       </div>
     </div>
   </div>
-  
+</div>

@@ -1,30 +1,29 @@
 <div class="card">
-    <div class="d-flex justify-content-end py-3">
-  
-      <!-- <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
+  <div class="d-flex justify-content-end py-3">
+    <!-- <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
         Saisir une commande
       </button> -->
-    </div>
-    <p-table
-      [styleClass]="'p-datatable-sm'"
-      #dt2
-      [value]="ListCommandeFournisseurs"
-      dataKey="id"
-      [rows]="8"
-      [rowsPerPageOptions]="[10, 25, 50]"
-      [paginator]="true"
-      (onPage)="onPage($event)"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th style="color: var(--secondary-color)">N° commande</th>
-          <th style="color: var(--secondary-color)">Fournisseur</th>
-          <th style="color: var(--secondary-color)">Date commande</th>
-          <th style="color: var(--secondary-color)">Date livraison estimé</th>
-          <th style="color: var(--secondary-color)">Magasin à approvisionner</th>
-          <th style="color: var(--secondary-color)">Actions</th>
-        </tr>
-        <!-- <tr>
+  </div>
+  <p-table
+    [styleClass]="'p-datatable-sm'"
+    #dt2
+    [value]="ListCommandeFournisseurs"
+    dataKey="id"
+    [rows]="8"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [paginator]="true"
+    (onPage)="onPage($event)"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="color: var(--secondary-color)">N° commande</th>
+        <th style="color: var(--secondary-color)">Fournisseur</th>
+        <th style="color: var(--secondary-color)">Date commande</th>
+        <th style="color: var(--secondary-color)">Date livraison estimé</th>
+        <th style="color: var(--secondary-color)">Magasin à approvisionner</th>
+        <th style="color: var(--secondary-color)">Actions</th>
+      </tr>
+      <!-- <tr>
           <th>
             <p-columnFilter matchMode="contains"  type="text" field="NumCommande" placeholder="" />
           </th>
@@ -32,318 +31,319 @@
             <p-columnFilter matchMode="contains"  type="text" field="raisonSociale" placeholder="" />
           </th> 
         </tr> -->
-      </ng-template>
-      <ng-template pTemplate="body" let-ListCommandeFournisseurs let-i="index">
-        <tr>
-          <td>
-            {{ ListCommandeFournisseurs?.NumCommande }}
-          </td>
-  
-          <td>
-            {{ ListCommandeFournisseurs?.fournisseur?.nom}}
-          </td>
-          <td>
-            {{ ListCommandeFournisseurs?.dateCommande }}
-          </td>
-  
-          <td>
-            <span class="ml-1 vertical-align-middle">
-             {{ ListCommandeFournisseurs?.dateLivraisonEstimee }}
-            </span>
-          </td>
-          <td>
-            <span class="ml-1 vertical-align-middle">
-             {{ ListCommandeFournisseurs?.depot?.nomDepot}}
-            </span>
-          </td>
-          <td>
-            <tr class="d-flex justify-content-center gap-3">
-              <td>
-                <i
-                  (click)="OnEdit(ListCommandeFournisseurs)"
-                  style="cursor: pointer"
-                  class="fas fa-eye text-secondary"
-                ></i>
-              </td>
-              <!-- <td>
+    </ng-template>
+    <ng-template pTemplate="body" let-ListCommandeFournisseurs let-i="index">
+      <tr>
+        <td>
+          {{ ListCommandeFournisseurs?.NumCommande }}
+        </td>
+
+        <td>
+          {{ ListCommandeFournisseurs?.fournisseur?.nom }}
+        </td>
+        <td>
+          {{ ListCommandeFournisseurs?.dateCommande }}
+        </td>
+
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ ListCommandeFournisseurs?.dateLivraisonEstimee }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{
+              ListCommandeFournisseurs?.depot?.nomDepot ||
+                ListCommandeFournisseurs.revendeur.raisonSocial
+            }}
+          </span>
+        </td>
+        <td>
+          <tr class="d-flex justify-content-center gap-3">
+            <td>
+              <i
+                (click)="OnEdit(ListCommandeFournisseurs)"
+                style="cursor: pointer"
+                class="fas fa-eye text-secondary"
+              ></i>
+            </td>
+            <!-- <td>
                 <i
                   (click)="OnDelete(ListCommandeFournisseurs?.id)"
                   style="cursor: pointer"
                   class="fas fa-trash-alt text-danger"
                 ></i>
               </td> -->
-            </tr>
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="5">Aucune commande trouvé.</td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </div>
+          </tr>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">Aucune commande trouvé.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
 
-  <div *ngIf="isModalOpen" class="custom-modal">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header d-flex align-items-center">
-          <div
-            class="d-flex justify-content-center align-items-center"
-            style="
-              background-color: rgb(219, 255, 232);
-              border-radius: 3rem;
-              width: 3rem;
-              height: 3rem;
-            "
-          >
-            <i class="fas fa-box-check text-primary fs-3"></i>
-          </div>
-      
-          <h1
-            class="modal-title fs-5 ms-3"
-            id="staticBackdropLabel"
-          >
-            Détails de la commande
-          </h1>
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex align-items-center">
+        <div
+          class="d-flex justify-content-center align-items-center"
+          style="
+            background-color: rgb(219, 255, 232);
+            border-radius: 3rem;
+            width: 3rem;
+            height: 3rem;
+          "
+        >
+          <i class="fas fa-box-check text-primary fs-3"></i>
         </div>
-        <div class="modal-body">
-           <div >
-          <fieldset class="row border my-1"  >
-            <legend style="font-size: 14px;" class="text-secondary">Numero Commande : {{updateData?.NumCommande}} du {{updateData?.createdAt | date :"dd/MM/yyyy" }}</legend>
+
+        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
+          Détails de la commande
+        </h1>
+      </div>
+      <div class="modal-body">
+        <div>
+          <fieldset class="row border my-1">
+            <legend style="font-size: 14px" class="text-secondary">
+              Numero Commande : {{ updateData?.NumCommande }} du
+              {{ updateData?.createdAt | date : "dd/MM/yyyy" }}
+            </legend>
           </fieldset>
-         
-            <fieldset class="row border my-2">
-              <legend style="font-size: 14px;" class="text-secondary">Informations du fournisseur</legend>
-              <div class="row">
-                <div class="col-md-4">
-                  <strong>Fournisseur : </strong>
-                  <span>{{updateData?.fournisseur?.nom}}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Groupe :</strong>
-                  <span>{{updateData?.fournisseur?.codeGroupe}}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Pays : </strong>
-                  <span>{{ updateData?.fournisseur?.pays }}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Adresse : </strong>
-                  <span>{{ updateData?.fournisseur?.adresse }}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Site Web : </strong>
-                  <span>{{ updateData?.fournisseur?.siteWeb }}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Devise : </strong>
-                  <span>{{ updateData?.fournisseur?.devise?.nom }}</span>
-                </div>
-              </div>
-            </fieldset>
-            <fieldset class="row border my-2" >
-              <legend style="font-size: 14px;" class="text-secondary">Autres informations</legend>
-              <div class="row">
-                <div class="col-md-4">
-                  <strong>Date commande : </strong>
-                  <span>{{updateData?.dateCommande}}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Date livraison estimée : </strong>
-                  <span>{{updateData?.dateLivraisonEstimee}}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Statut : </strong>
-                  <span>{{ updateData?.statut }}</span>
-                </div>
-              </div>
-            </fieldset>
-          </div>
-          <div class="p-2 mt-3">
 
-            <div style="max-height: 350px; overflow-y: auto">
-              <div class="d-flex justify-content-end">
-
-                <button
-                  (click)="AddArticles()"
-                  type="button"
-                  class="btn btn-secondary mb-2 px-2"
-                >
-                  Ajouter
-                </button>
-              </div>
-              <table   class="table table-bordered">
-                <thead class="table-success">
-                <!-- Première ligne d'en-tête -->
-                <tr>
-                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
-                  <th scope="col" colspan="3">MONTANT TTC(FCFA)</th>
-                </tr>
-                <!-- Deuxième ligne d'en-tête -->
-                <tr>
-                  <th scope="col">Liquide</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Qte</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                </tr>
-                </thead>
-  
-                <tbody>
-                <tr *ngFor="let item of updateData?.articles">
-                  <td>{{ item.liquide.libelle }}1</td>
-                  <td>{{ item.prixUnitaireLiquide }}</td>
-                  <td>{{ item.prixUnitaireEmballage}}</td>
-                  <td>{{  Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) }}</td>
-                  <!-- <td>{{ item.quantite }}</td> -->
-              <td>
-                      <input
-                        type="number"
-                        class="form-control-custom"
-                        [(ngModel)]="item.quantite"
-                        (blur)="validateQuantite(item)"
-                      />
-                     
-                    </td>
-                  <td>{{ item.montantLiquide }}</td>
-                  <td>{{ item.montantEmballage }}</td>
-                  <td>{{Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) }}</td>
-  
-                </tr>
-                <tr class="table-dark">
-                  <th scope="col" colspan="4">Total :</th>
-                  <td>{{ totalQte }}</td>
-                  <td>{{ totalLiquide }}</td>
-                  <td>{{ totalEmballage }}</td>
-                  <td>{{ totalGlobal }}</td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-  
-        <div class="modal-footer gap-3 px-4">
-          <button
-            (click)="OnCloseModal()"
-            type="button"
-            class="btn btn-secondary px-2"
-          >
-            Annuler
-          </button>
-          <button
-            type="submit"
-            *ngIf="operation == 'create'"
-            [disabled]="totalQte === 0"
-            (click)="onSubmit()"
-            class="btn btn-primary px-2"
-          >
-            Valider
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!--CHOIX ARTICLE-->
-  <div *ngIf="isChoiceModalOpen" class="custom-modal">
-    <div class="modal-dialog2 modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header d-flex align-items-center">
-          <div
-            class="d-flex justify-content-center align-items-center"
-            style="
-              background-color: rgb(219, 255, 232);
-              border-radius: 3rem;
-              width: 3rem;
-              height: 3rem;
-            "
-          >
-            <i class="fas fa-box-check text-primary fs-3"></i>
-          </div>
-          <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
-            Selection des articles
-          </h1>
-        </div>
-  
-        <div class="modal-body">
-          <form>
+          <fieldset class="row border my-2">
+            <legend style="font-size: 14px" class="text-secondary">
+              Informations du fournisseur
+            </legend>
             <div class="row">
-              <fieldset class="row border my-2">
-                <div class="p-3">
-                  <!-- Champ de recherche -->
-                  <input
-                    type="text"
-                    name="search"
-                    (input)="filterArticles()"
-                    [(ngModel)]="searchTerm"
-                    placeholder="Rechercher un produit"
-                    class="form-control mb-3"
-                  />
-                </div>
-                <div
-                  class="table-responsive"
-                  style="max-height: 200px; overflow-y: auto"
-                >
-                  <table class="table">
-                    <thead>
-                      <tr style="font-size: small">
-                        <th scope="col" class="text-secondary">Code</th>
-                        <th scope="col" class="text-secondary">Produits</th>
-                        <th scope="col" class="text-secondary">Disponibilité</th>
-                        <th scope="col" class="text-secondary text-center">
-                          Choix
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr
-                        *ngFor="let article of filteredArticleList ; let i = index"
-                        style="font-size: small"
-                      >
-                        <th scope="row">{{ article.reference }}</th>
-                        <th scope="row">{{ article.libelle }}</th>
-                        <th scope="row">{{stocksDisponibles[article.liquide.id]}}</th>
-                        <td class="">
-                          <input
-                            type="checkbox"
-                            class="form-control-custom"
-                            [name]="'checkbox_' + i"
-                            [(ngModel)]="article.isChecked"
-                            (change)="onCheckboxChange(article)"
-                            [disabled]="stocksDisponibles[article.liquide.id] <=0"
-                          />
-  
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </fieldset>
+              <div class="col-md-4">
+                <strong>Fournisseur : </strong>
+                <span>{{ updateData?.fournisseur?.nom }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Groupe :</strong>
+                <span>{{ updateData?.fournisseur?.codeGroupe }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Pays : </strong>
+                <span>{{ updateData?.fournisseur?.pays }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Adresse : </strong>
+                <span>{{ updateData?.fournisseur?.adresse }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Site Web : </strong>
+                <span>{{ updateData?.fournisseur?.siteWeb }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Devise : </strong>
+                <span>{{ updateData?.fournisseur?.devise?.nom }}</span>
+              </div>
             </div>
-          </form>
+          </fieldset>
+          <fieldset class="row border my-2">
+            <legend style="font-size: 14px" class="text-secondary">
+              Autres informations
+            </legend>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Date commande : </strong>
+                <span>{{ updateData?.dateCommande }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Date livraison estimée : </strong>
+                <span>{{ updateData?.dateLivraisonEstimee }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Statut : </strong>
+                <span>{{ updateData?.statut }}</span>
+              </div>
+            </div>
+          </fieldset>
         </div>
-        <div class="modal-footer gap-3 px-4y">
-          <button
-            (click)="OnCloseChoiceModal()"
-            type="button"
-            class="btn btn-secondary px-2"
-          >
-            Annuler
-          </button>
-          <button
-  
-            type="submit"
-            (click)="onSubmitSelection()"
-            class="btn btn-primary px-2"
-          >
-            Valider
-          </button>
+        <div class="p-2 mt-3">
+          <div style="max-height: 350px; overflow-y: auto">
+            <div class="d-flex justify-content-end">
+              <button
+                (click)="selectArticle()"
+                type="button"
+                class="btn btn-secondary mb-2 px-2"
+              >
+                Ajouter
+              </button>
+            </div>
+            <table class="table table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Article Id</th>
+                  <th scope="col">Liquide</th>
+                  <th scope="col">Emballage</th>
+                  <th scope="col">Quantité</th>
+                  <th scope="col">Commentaire</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of articlesRecues; let i = index">
+                  <td class="">
+                    <p>{{ data.id }}</p>
+                  </td>
+                  <td class="">
+                    <p>{{ data?.liquide?.libelle }}</p>
+                  </td>
+                  <td class="">
+                    <p>{{ data?.emballage?.libelle }}</p>
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      class="form-control-custom"
+                      [(ngModel)]="data.quantiteAffectee"
+                      [min]="0"
+                      required="true"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      class="form-control-custom"
+                      [(ngModel)]="data.commentaireEcart"
+                      [min]="0"
+                    />
+                  </td>
+                  <td class="d-flex justify-content-center">
+                    <button
+                      type="button"
+                      class="btn btn-danger btn-sm"
+                      (click)="removeArticle(data)"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
+
+      <div class="modal-footer gap-3 px-4">
+        <button
+          (click)="OnCloseModal()"
+          type="button"
+          class="btn btn-secondary px-2"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          (click)="onSubmit()"
+          class="btn btn-primary px-2"
+        >
+          Valider
+        </button>
       </div>
     </div>
   </div>
+</div>
+
+<!--CHOIX ARTICLE-->
+<div *ngIf="isChoiceModalOpen" class="custom-modal">
+  <div class="modal-dialog2 modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex align-items-center">
+        <div
+          class="d-flex justify-content-center align-items-center"
+          style="
+            background-color: rgb(219, 255, 232);
+            border-radius: 3rem;
+            width: 3rem;
+            height: 3rem;
+          "
+        >
+          <i class="fas fa-box-check text-primary fs-3"></i>
+        </div>
+        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
+          Selection des articles
+        </h1>
+      </div>
+
+      <div class="modal-body">
+        <form>
+          <div class="row">
+            <fieldset class="row border my-2">
+              <div class="p-3">
+                <!-- Champ de recherche -->
+                <input
+                  type="text"
+                  name="search"
+                  (input)="filterArticles()"
+                  [(ngModel)]="searchTerm"
+                  placeholder="Rechercher un produit"
+                  class="form-control mb-3"
+                />
+              </div>
+              <div
+                class="table-responsive"
+                style="max-height: 200px; overflow-y: auto"
+              >
+                <table class="table">
+                  <thead>
+                    <tr style="font-size: small">
+                      <th scope="col" class="text-secondary">Code</th>
+                      <th scope="col" class="text-secondary">Produits</th>
+                      <th scope="col" class="text-secondary text-center">
+                        Choix
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="let article of filteredArticleList; let i = index"
+                      style="font-size: small"
+                    >
+                      <th scope="row">{{ article.reference }}</th>
+                      <th scope="row">{{ article.libelle }}</th>
+                     
+                      <td class="">
+                        <input
+                          type="checkbox"
+                          class="form-control-custom"
+                          [name]="'checkbox_' + i"
+                          [(ngModel)]="article.isChecked"
+                          (change)="onCheckboxChange(article)"
+                         
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </fieldset>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer gap-3 px-4y">
+        <button
+          (click)="OnCloseChoiceModal()"
+          type="button"
+          class="btn btn-secondary px-2"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          (click)="onSubmitSelection()"
+          class="btn btn-primary px-2"
+        >
+          Valider
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

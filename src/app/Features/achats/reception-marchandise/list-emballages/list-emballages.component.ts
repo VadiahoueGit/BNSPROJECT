@@ -10,7 +10,7 @@ import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
 @Component({
   selector: 'app-list-emballages',
   templateUrl: './list-emballages.component.html',
-  styleUrls: ['./list-emballages.component.scss']
+  styleUrls: ['./list-emballages.component.scss'],
 })
 export class ListEmballagesComponent {
   @ViewChild('dt2') dt2!: Table;
@@ -66,6 +66,11 @@ export class ListEmballagesComponent {
   prixLiquideArticleSelected: any;
   prixEmballageArticleSelected: any;
   ListCommandeClient: any;
+  filters = {
+    numeroRetour: '',
+    dateDebut: '',
+    dateFin: '',
+  };
   constructor(
     private articleService: ArticleServiceService,
     private utilisateurService: UtilisateurResolveService,
@@ -78,67 +83,41 @@ export class ListEmballagesComponent {
   ngOnInit() {
     this.emballageRenduForm = this.fb.group({
       clientId: [null, Validators.required],
-      clientType: ['revendeur', ],
-      numeroCompte: [{ value: ''}, ],
-      raisonSociale: [{ value: 0, disabled: true }, ],
-      montantCredit: [{ value: 0, disabled: true }, ],
-      statutCompte: [{ value: '', disabled: true } ],
-      enCours: [{ value: 0, disabled: true } ],
-      soldeEmballage: [{ value: '', disabled: true }, ],
-      numeroSAP: [{ value: '', disabled: true }, ],
+      clientType: ['revendeur'],
+      numeroCompte: [{ value: '' }],
+      raisonSociale: [{ value: 0, disabled: true }],
+      montantCredit: [{ value: 0, disabled: true }],
+      statutCompte: [{ value: '', disabled: true }],
+      enCours: [{ value: 0, disabled: true }],
+      soldeEmballage: [{ value: '', disabled: true }],
+      numeroSAP: [{ value: '', disabled: true }],
       remise: [
         0,
         [Validators.required, Validators.min(0), Validators.max(100)],
       ],
-      contact: [{ value: '', disabled: true }, ],
-      soldeLiquide: [{ value: '', disabled: true }, ],
-      fraisTransport: [0,Validators.required ],
+      contact: [{ value: '', disabled: true }],
+      soldeLiquide: [{ value: '', disabled: true }],
+      fraisTransport: [0, Validators.required],
       articles: this.fb.array([]),
     });
 
     this.fetchData();
+    this.GetListRetourEmballageFournisseurs(1);
 
-    this.articleService.ListPlastiquesNu.subscribe((res: any) => {
-      this.dataListPlastiqueNu = res;
-    });
-
-    this.articleService.ListBouteilleVide.subscribe((res: any) => {
-      this.dataListBouteilleVide = res;
-    });
-
-    this.articleService.ListTypeArticles.subscribe((res: any) => {
-      this.dataListProduits = res;
-      console.log(this.dataListProduits, 'this.dataListProduits ');
-    });
-    this.articleService.ListGroupesArticles.subscribe((res: any) => {
-      this.dataListGroupeArticles = res;
-    });
-    this.GetListCommandeClient(1);
-
-this.GetArticleList(1)
+    this.GetArticleList(1);
   }
 
   onDelete(item: any) {
     console.log(item);
   }
-  onFilterGlobal(event: Event) {
-    const inputElement = event.target as HTMLInputElement;
-    const value = inputElement.value;
-    this.dt2.filterGlobal(value, 'contains');
-  }
 
   clear(table: Table) {
     table.clear();
   }
-  filterGlobal(event: any) {
-    const inputElement = event.target as HTMLInputElement;
-    const value = inputElement?.value || '';
-    this.dt2.filterGlobal(value, 'contains');
-  }
 
   OnCloseModal() {
     this.totalEmballage = 0;
-    this.totalLiquide  = 0;
+    this.totalLiquide = 0;
     this.totalGlobal = 0;
     this.totalQte = 0;
     this.filteredArticleList = [];
@@ -154,20 +133,20 @@ this.GetArticleList(1)
     console.log(this.isModalOpen);
   }
 
-  OnEdit(data:any) {
+  OnEdit(data: any) {
     this.totalEmballage = 0;
-    this.totalLiquide  = 0;
+    this.totalLiquide = 0;
     this.totalGlobal = 0;
     this.totalQte = 0;
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
-    data.articles.forEach((article:any) => {
+    data.articles.forEach((article: any) => {
       this.totalEmballage += Number(article.montantEmballage);
-      this.totalLiquide  += Number(article.montantLiquide);
-      this.totalGlobal = this.totalLiquide + this.totalEmballage
-      this.totalQte += article.quantite
-    })
+      this.totalLiquide += Number(article.montantLiquide);
+      this.totalGlobal = this.totalLiquide + this.totalEmballage;
+      this.totalQte += article.quantite;
+    });
 
     this.articleId = data.id;
     this.isModalOpen = true;
@@ -192,22 +171,26 @@ this.GetArticleList(1)
     });
   }
 
-
   removeArticle(item: any): void {
     item.isChecked = false;
     this.onCheckboxChange(item);
 
-    const articlesControl = this.emballageRenduForm.controls['articles'] as FormArray;
+    const articlesControl = this.emballageRenduForm.controls[
+      'articles'
+    ] as FormArray;
     const articlesValue = articlesControl.value || [];
 
     // Trouver l'article à retirer
-    const articleToRemove = articlesValue.find((i: any) => i.codeArticleLiquide === item.reference);
+    const articleToRemove = articlesValue.find(
+      (i: any) => i.codeArticleLiquide === item.reference
+    );
 
     if (articleToRemove) {
       // Calcul des totaux à retirer
       const quantite = articleToRemove.quantite;
       const prixLiquide = this.prixLiquide[articleToRemove.codeArticleLiquide];
-      const prixEmballage = this.prixEmballage[articleToRemove.codeArticleEmballage];
+      const prixEmballage =
+        this.prixEmballage[articleToRemove.codeArticleEmballage];
       const montantTotal = (prixLiquide + prixEmballage) * quantite;
 
       // Soustraire les valeurs des totaux
@@ -234,10 +217,9 @@ this.GetArticleList(1)
       // Forcer la mise à jour de la validité
       articlesControl.updateValueAndValidity();
 
-      console.log("Articles après suppression :", updatedArticles);
+      console.log('Articles après suppression :', updatedArticles);
 
       // Appliquer la remise sans recalculer les prix
-     
     }
   }
 
@@ -250,21 +232,23 @@ this.GetArticleList(1)
     }
 
     this.prixLiquideTotal[data.id] = data.quantite * this.prixLiquide[data.id];
-    this.prixEmballageTotal[data.id] = data.quantite * this.prixEmballage[data.id];
-    this.montantTotal[data.id] = this.prixLiquideTotal[data.id] + this.prixEmballageTotal[data.id];
+    this.prixEmballageTotal[data.id] =
+      data.quantite * this.prixEmballage[data.id];
+    this.montantTotal[data.id] =
+      this.prixLiquideTotal[data.id] + this.prixEmballageTotal[data.id];
 
     this.totalEmballage += this.prixEmballageTotal[data.id];
     this.totalLiquide += this.prixLiquideTotal[data.id];
     this.totalGlobalBeforeRemise += this.montantTotal[data.id];
     this.totalQte += data.quantite;
 
-   
-
     console.log(data, 'data article');
     data.oldQuantite = data.quantite;
 
     // Accéder aux valeurs du FormArray
-    const articlesControl = this.emballageRenduForm.controls['articles'] as FormArray;
+    const articlesControl = this.emballageRenduForm.controls[
+      'articles'
+    ] as FormArray;
     const articlesValue = articlesControl.value;
 
     // Vérifier si l'article existe déjà dans 'this.articles' (articlesValue)
@@ -327,34 +311,25 @@ this.GetArticleList(1)
     return this.emballageRenduForm.get('articles') as FormArray;
   }
   onSubmit(): void {
-    const formData = this.emballageRenduForm.getRawValue();
-    console.log('Données à envoyer au service :', formData)
-
     const payload = {
-      clientType: this.detailPointDevente.credit.clientType,
-      clientId: this.detailPointDevente.id,
-      numeroCompte: this.detailPointDevente.numeroCompteContribuable,
-      raisonSociale: this.detailPointDevente.raisonSocial,
-      contact: this.detailPointDevente.telephoneGerant,
-      montantCredit: parseInt(this.detailPointDevente.credit.totalCredit),
-      soldeLiquide: parseInt(this.detailPointDevente.credit.creditLiquide),
-      soldeEmballage: parseInt(this.detailPointDevente.credit.creditEmballage),
-      statutCompte: this.detailPointDevente.isValide ? 'ACTIF' : 'INACTIF',
-      numeroSAP: this.detailPointDevente.numeroSAP.numeroSAP,
-      fraisTransport: formData.fraisTransport,
-      enCours: formData.enCours,
-      remise: formData.remise,
-      articles: formData.articles,
+      // receptionId: this.dataList.,
+      articlesRecus: this.selectedArticles.map((article: any) => {
+        return {
+          quantite: article?.quantiteAffectee,
+          prixUnitaireEmballage: article?.prixUnitaireEmballage,
+          emballageId: article?.emballage?.id,
+        };
+      }),
     };
 
-    if (this.emballageRenduForm.valid) {
+    // if (this.emballageRenduForm.valid) {
       this._spinner.show();
       this.articleService.CreateCommandClient(payload).then(
         (res: any) => {
           console.log(res, 'enregistré avec succes');
           this._spinner.hide();
           this.emballageRenduForm.reset();
-          this.GetListCommandeClient(1);
+          this.GetListRetourEmballageFournisseurs(1);
           this.OnCloseModal();
           this.toastr.success(res.message);
         },
@@ -364,22 +339,41 @@ this.GetArticleList(1)
           console.error('Erreur lors de la création', error);
         }
       );
-    } else {
-      this.toastr.warning('Formulaire invalide');
-    }
+    // } else {
+    //   this.toastr.warning('Formulaire invalide');
+    // }
   }
-  GetListCommandeClient(page: number) {
+
+  filterGlobal() {
+    this.GetListRetourEmballageFournisseurs(
+      1,
+      this.filters.dateDebut,
+      this.filters.dateFin,
+      this.filters.numeroRetour
+    );
+  }
+  GetListRetourEmballageFournisseurs(
+    page: number,
+    numeroRetour?: string,
+    dateDebut?: string,
+    dateFin?: string
+  ) {
     let data = {
-      paginate: false,
+      paginate: true,
       page: page,
       limit: 8,
+      numeroRetour: numeroRetour || '',
+      dateDebut: dateDebut || '',
+      dateFin: dateFin || '',
     };
     this._spinner.show();
-    this.articleService.GetListCommandeClient(data).then((res: any) => {
-      console.log('dataList:::>', res);
-      this.dataList = res.data;
-      this._spinner.hide();
-    });
+    this.articleService
+      .GetListRetourEmballageFournisseurs(data)
+      .then((res: any) => {
+        console.log('dataList:::>', res);
+        this.dataList = res.data;
+        this._spinner.hide();
+      });
   }
   selectArticle() {
     this.isEditMode = false;
@@ -486,15 +480,17 @@ this.GetArticleList(1)
 
   filterArticles(): void {
     console.log(this.searchTerm);
-    console.log(this.dataListLiquides,'dataListLiquides');
-    console.log(this.filteredArticleList,'filteredArticleList');
+    console.log(this.dataListLiquides, 'dataListLiquides');
+    console.log(this.filteredArticleList, 'filteredArticleList');
     if (this.searchTerm) {
       this.filteredArticleList = this.dataListLiquides.filter(
         (article: any) =>
           article.libelle
             .toLowerCase()
             .includes(this.searchTerm.toLowerCase()) ||
-          article.reference.toLowerCase().includes(this.searchTerm.toLowerCase())
+          article.reference
+            .toLowerCase()
+            .includes(this.searchTerm.toLowerCase())
       );
       console.log(this.filteredArticleList);
     } else {

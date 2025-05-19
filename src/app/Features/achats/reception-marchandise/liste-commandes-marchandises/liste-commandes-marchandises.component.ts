@@ -19,7 +19,7 @@ export class ListeCommandesMarchandisesComponent {
   dataList: any[] = [];
   selectedArticles: any[] = [];
   pointDeVente!: any[];
-  CommandeForm!: FormGroup;
+  receptionCommandForm!: FormGroup;
   isChoiceModalOpen: boolean;
   loading: boolean = true;
   isModalOpen = false;
@@ -48,10 +48,18 @@ export class ListeCommandesMarchandisesComponent {
   montantTotal: any = {};
   selectedOption: string = 'gratuitClient';
   listRevendeurs: any[] = [];
+  articlesRecues: any[] = [];
   dataRevendeur: any[] = [];
   dataPointDeVente: any[] = [];
   ListCommandeFournisseurs: any[] = [];
   depotId: any = 0;
+  totalPages: any;
+    public dataSendedToReceptionMarchandiseRequest = {
+    commandeId: 0,
+    numeroBonLivraison: '',
+    articlesRecus: [],
+    emballagesRendus: [],
+  };
   constructor(
     private cdr: ChangeDetectorRef,
     private articleService: ArticleServiceService,
@@ -62,12 +70,6 @@ export class ListeCommandesMarchandisesComponent {
   ) {}
 
   ngOnInit() {
-    this.CommandeForm = this.fb.group({
-      clientId: [null, Validators.required],
-      clientType: [null, Validators.required],
-      depotId: [null, Validators.required],
-      articles: this.fb.array([]),
-    });
     this.GetArticleList(1);
     this.LoadPdv();
     this.GetRevendeurList(1);
@@ -97,29 +99,52 @@ export class ListeCommandesMarchandisesComponent {
     this.articleService.GetArticleList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.dataListLiquides = res.data;
-      this.dataListLiquides.forEach((item: any) => {
-        this.GetStockDisponibleByDepot(item);
-      });
       this.filteredArticleList = this.dataListLiquides;
       this._spinner.hide();
     });
   }
-  GetListCommandeFournisseurs(page: number) {
+
+   GetListCommandeFournisseurs(page: number, numero?: string, statut?: string,typeCommande?: string) {
     let data = {
-      paginate: false,
+      paginate: true,
       page: page,
       limit: 8,
+      numero: numero || '',
+      statut: statut || '',
+      typeCommande: typeCommande || '',
     };
     this._spinner.show();
     this.articleService.GetListCommandeFournisseurs(data).then((res: any) => {
       console.log('GetListCommandeFournisseurs:::>', res);
-      // this.ListCommandeFournisseurs = res.data;
-      this.ListCommandeFournisseurs = res?.data.filter(
-        (x: any) => x.statut === StatutCommande.VALIDEE
-      );
+      this.totalPages = res.total;
+      this.ListCommandeFournisseurs = res.data;
       this._spinner.hide();
     });
   }
+  // GetListReceptionCommandeFournisseurs(
+  //   page: number,
+  //   numeroReception?: string,
+  //   numeroBonLivraison?: string,
+  //   dateDebut?: string,
+  //   dateFin?: string
+  // ) {
+  //   let data = {
+  //     paginate: true,
+  //     page: page,
+  //     limit: 8,
+  //     numeroReception: numeroReception || '',
+  //     numeroBonLivraison: numeroBonLivraison || '',
+  //     dateDebut: dateDebut || '',
+  //     dateFin: dateFin || '',
+  //   };
+  //   this._spinner.show();
+  //   this.articleService.GetListReceptionCommandeFournisseurs(data).then((res: any) => {
+  //     console.log('GetListCommandeFournisseurs:::>', res);
+  //     this.totalPages = res.total;
+  //     this.ListCommandeFournisseurs = res.data;
+  //     this._spinner.hide();
+  //   });
+  // }
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -138,7 +163,7 @@ export class ListeCommandesMarchandisesComponent {
     this.filteredArticleList = [];
     this.isModalOpen = false;
     this.selectedArticles = [];
-    (this.CommandeForm.get('articles') as FormArray).clear();
+    (this.receptionCommandForm.get('articlesRecus') as FormArray).clear();
     console.log(this.isModalOpen);
   }
   OnCreate() {
@@ -162,6 +187,7 @@ export class ListeCommandesMarchandisesComponent {
     this.totalQte = 0;
     this.isEditMode = true;
     console.log(data);
+    this.dataSendedToReceptionMarchandiseRequest.commandeId = data.id
     this.updateData = data;
     data.articles.forEach((article: any) => {
       this.totalEmballage += Number(article.montantEmballage);
@@ -169,23 +195,38 @@ export class ListeCommandesMarchandisesComponent {
       this.totalGlobal = this.totalLiquide + this.totalEmballage;
       this.totalQte += article.quantite;
     });
-
+    this.articlesRecues = data.articles;
     this.articleId = data.id;
     this.isModalOpen = true;
     // this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  AddArticles() {}
+
   onSubmit(): void {
-    this.CommandeForm.controls['depotId'].setValue(this.depotId);
-    console.log(this.CommandeForm.value);
-    if (this.CommandeForm.valid) {
+    const payload = {
+      commandeId: this.dataSendedToReceptionMarchandiseRequest.commandeId,
+      numeroBonLivraison:
+        this.dataSendedToReceptionMarchandiseRequest.numeroBonLivraison,
+      articlesRecus: this.articlesRecues.map((article: any) => {
+        return {
+          articleCommandeId: article?.id,
+          quantiteRecue: article?.quantiteAffectee,
+          liquideId: article?.liquide?.id,
+          emballageId: article?.emballage?.id,
+          // prixUnitaireLiquide: article?.
+          commentaireEcart: article.commentaireEcart || '',
+        };
+      }),
+ 
+    };
+    console.log(payload, 'payload');
+
+    if (payload) {
       this._spinner.show();
-      this.articleService.CreateCommandGratuite(this.CommandeForm.value).then(
+      this.articleService.CreateReceptionCommandeFournisseurs(payload).then(
         (res: any) => {
           console.log(res, 'enregistré avec succes');
           this._spinner.hide();
-          this.CommandeForm.reset();
           this.GetListCommandeFournisseurs(1);
           this.OnCloseModal();
           this.toastr.success(res.message);
@@ -217,17 +258,18 @@ export class ListeCommandesMarchandisesComponent {
     );
   }
   onCheckboxChange(article: any): void {
-    this.GetPrixByArticle(article);
+    console.log(article,'articles')
+    // this.GetPrixByArticle(article);
     if (article.isChecked) {
-      this.selectedArticles.push(article);
+      this.articlesRecues.push(article);
       this.afficherArticlesSelectionnes();
     } else {
       delete article.quantite;
-      const indexToRemove = this.selectedArticles.findIndex(
+      const indexToRemove = this.articlesRecues.findIndex(
         (selectedArticle: any) => selectedArticle.libelle === article.libelle
       );
       if (indexToRemove !== -1) {
-        this.selectedArticles.splice(indexToRemove, 1);
+        this.articlesRecues.splice(indexToRemove, 1);
         this.afficherArticlesSelectionnes();
       }
     }
@@ -320,12 +362,7 @@ export class ListeCommandesMarchandisesComponent {
       }
     );
   }
-  onRevendeurChange(selectedItem: any): void {
-    console.log('Élément sélectionné :', selectedItem);
-    this.depotId = selectedItem.depot.id;
-    this.CommandeForm.controls['clientType'].setValue(selectedItem.role);
-    this.GetArticleList(1);
-  }
+
   async GetStockDisponibleByDepot(item: any): Promise<any> {
     let data = {
       productId: item.liquide.code,
@@ -369,7 +406,7 @@ export class ListeCommandesMarchandisesComponent {
     // }
   }
   get articles(): FormArray {
-    return this.CommandeForm.get('articles') as FormArray;
+    return this.receptionCommandForm.get('articles') as FormArray;
   }
 
   calculatePrix(data: any) {
@@ -523,26 +560,26 @@ export class ListeCommandesMarchandisesComponent {
       console.error('Erreur lors de la récupération des données:', error);
     }
   }
-  async GetPrixByArticle(item: any): Promise<any> {
-    let data = {
-      id: item.id,
-    };
+  // async GetPrixByArticle(item: any): Promise<any> {
+  //   let data = {
+  //     id: item.id,
+  //   };
 
-    try {
-      // Attendre la réponse de la promesse
-      const response: any = await this.articleService.GetPrixByProduit(data);
-      console.log(response);
-      // Vérifier si le statusCode est 200
-      if (response.data) {
-        this.prixLiquide[item.id] = 0;
-        this.prixEmballage[item.id] = response.data.PrixConsigne;
-        console.log('prixLiquide', this.prixLiquide[item.id]);
-        console.log('prixEmballage', this.prixEmballage[item.id]);
-      }
-    } catch (error: any) {
-      console.log(error);
-    }
-  }
+  //   try {
+  //     // Attendre la réponse de la promesse
+  //     const response: any = await this.articleService.GetPrixByProduit(data);
+  //     console.log(response);
+  //     // Vérifier si le statusCode est 200
+  //     if (response.data) {
+  //       this.prixLiquide[item.id] = 0;
+  //       this.prixEmballage[item.id] = response.data.PrixConsigne;
+  //       console.log('prixLiquide', this.prixLiquide[item.id]);
+  //       console.log('prixEmballage', this.prixEmballage[item.id]);
+  //     }
+  //   } catch (error: any) {
+  //     console.log(error);
+  //   }
+  // }
 
   protected readonly parseInt = parseInt;
   protected readonly Number = Number;
