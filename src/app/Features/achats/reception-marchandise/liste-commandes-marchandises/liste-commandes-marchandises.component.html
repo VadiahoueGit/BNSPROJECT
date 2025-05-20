@@ -16,45 +16,37 @@
   >
     <ng-template pTemplate="header">
       <tr>
+        <th style="color: var(--secondary-color)">N° réception</th>
         <th style="color: var(--secondary-color)">N° commande</th>
-        <th style="color: var(--secondary-color)">Fournisseur</th>
         <th style="color: var(--secondary-color)">Date commande</th>
-        <th style="color: var(--secondary-color)">Date livraison estimé</th>
-        <th style="color: var(--secondary-color)">Magasin à approvisionner</th>
+        <th style="color: var(--secondary-color)">Type de commande</th>
+        <th style="color: var(--secondary-color)">Statut</th>
         <th style="color: var(--secondary-color)">Actions</th>
       </tr>
-      <!-- <tr>
-          <th>
-            <p-columnFilter matchMode="contains"  type="text" field="NumCommande" placeholder="" />
-          </th>
-          <th>
-            <p-columnFilter matchMode="contains"  type="text" field="raisonSociale" placeholder="" />
-          </th> 
-        </tr> -->
+   
     </ng-template>
     <ng-template pTemplate="body" let-ListCommandeFournisseurs let-i="index">
       <tr>
         <td>
-          {{ ListCommandeFournisseurs?.NumCommande }}
+          {{ ListCommandeFournisseurs?.numeroReceptionCommande }}
         </td>
 
         <td>
-          {{ ListCommandeFournisseurs?.fournisseur?.nom }}
+          {{ ListCommandeFournisseurs?.commande?.NumCommande }}
         </td>
         <td>
-          {{ ListCommandeFournisseurs?.dateCommande }}
+          {{ ListCommandeFournisseurs?.commande?.dateCommande }}
         </td>
 
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ ListCommandeFournisseurs?.dateLivraisonEstimee }}
+            {{ ListCommandeFournisseurs?.commande?.typeCommande }}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
             {{
-              ListCommandeFournisseurs?.depot?.nomDepot ||
-                ListCommandeFournisseurs.revendeur.raisonSocial
+              ListCommandeFournisseurs?.commande?.statut
             }}
           </span>
         </td>
@@ -110,12 +102,12 @@
         <div>
           <fieldset class="row border my-1">
             <legend style="font-size: 14px" class="text-secondary">
-              Numero Commande : {{ updateData?.NumCommande }} du
+              Numero reception commande : {{ updateData?.numeroReceptionCommande }} du
               {{ updateData?.createdAt | date : "dd/MM/yyyy" }}
             </legend>
           </fieldset>
 
-          <fieldset class="row border my-2">
+          <!-- <fieldset class="row border my-2">
             <legend style="font-size: 14px" class="text-secondary">
               Informations du fournisseur
             </legend>
@@ -145,23 +137,23 @@
                 <span>{{ updateData?.fournisseur?.devise?.nom }}</span>
               </div>
             </div>
-          </fieldset>
+          </fieldset> -->
           <fieldset class="row border my-2">
             <legend style="font-size: 14px" class="text-secondary">
-              Autres informations
+              Information commande
             </legend>
             <div class="row">
               <div class="col-md-4">
                 <strong>Date commande : </strong>
-                <span>{{ updateData?.dateCommande }}</span>
+                <span>{{ updateData?.commande?.dateCommande }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Date livraison estimée : </strong>
-                <span>{{ updateData?.dateLivraisonEstimee }}</span>
+                <span>{{ updateData?.commande?.dateLivraisonEstimee }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Statut : </strong>
-                <span>{{ updateData?.statut }}</span>
+                <span>{{ updateData?.commande?.statut }}</span>
               </div>
             </div>
           </fieldset>
@@ -197,7 +189,7 @@
                     <p>{{ data?.liquide?.libelle }}</p>
                   </td>
                   <td class="">
-                    <p>{{ data?.emballage?.libelle }}</p>
+                    <p>{{ data?.liquide?.emballage?.libelle ?? data?.emballage?.libelle }}</p>
                   </td>
                   <td>
                     <input
