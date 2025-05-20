@@ -159,12 +159,13 @@ export class ClientosrComponent {
 
 
   updateFilteredCount(table: any) {
-    this.filteredCount = table.filteredValue ? table.filteredValue.length : this.dataList.length;
+    // this.filteredCount = table.filteredValue ? table.filteredValue.length : this.dataList.length;
   }
 
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
+    this.GetClientOSRList(this.currentPage);
   }
 
   onSubmit(): void {
@@ -312,7 +313,8 @@ export class ClientosrComponent {
     this.utilisateurService.GetPointDeVenteList(data).then((res: any) => {
       console.log('GetClientOSRList:::>', res);
       this.dataList = res.data;
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      this.filteredCount = res.total
+      this.totalPages = res.total; // nombre total d’enregistrements
       this._spinner.hide();
     });
   }

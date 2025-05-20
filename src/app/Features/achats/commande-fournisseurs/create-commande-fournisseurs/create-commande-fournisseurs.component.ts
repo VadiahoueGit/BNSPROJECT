@@ -552,7 +552,14 @@ export class CreateCommandeFournisseursComponent {
       // Attendre la réponse de la promesse
       const response: any = await this.articleService.GetPrixByProduit(data);
       console.log(response);
-      const prixDetail = response.data.find((item: any) => item.libelle === 'PRIX USINE');
+      const prixDetail = response.data.find((item: any) => {
+        if(this.selectedOption == 'Sous distributeur')
+        {
+          item.libelle === 'PRIX S/DISTRIBUTEUR'
+        }else {
+          item.libelle === 'PRIX USINE'
+        }
+      });
 
       console.log(prixDetail);
       // Vérifier si le statusCode est 200

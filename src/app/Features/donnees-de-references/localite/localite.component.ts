@@ -103,7 +103,7 @@ export class LocaliteComponent {
     this._spinner.show();
     this._coreService.GetLocaliteList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total ; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages);
       this.dataList = res.data;
       this._spinner.hide();
@@ -118,7 +118,7 @@ export class LocaliteComponent {
     console.log(this.LocaliteForm.value);
     if (this.LocaliteForm.valid) {
        const formValues = this.LocaliteForm.value;
-      
+
       console.log('formValues', formValues);
 
       if (this.isEditMode) {

@@ -106,7 +106,7 @@ export class BouteilleVideComponent {
     this._spinner.show();
     this._articleService.GetBouteilleVideList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages);
       this.dataList = res.data;
       this._spinner.hide();
