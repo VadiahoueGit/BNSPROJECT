@@ -6,7 +6,7 @@ import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
-import { StatutCommande } from 'src/app/utils/utils';
+import { Status, StatutCommande } from 'src/app/utils/utils';
 
 @Component({
   selector: 'app-liste-commandes-marchandises',
@@ -73,8 +73,8 @@ export class ListeCommandesMarchandisesComponent {
     this.GetArticleList(1);
     this.LoadPdv();
     this.GetRevendeurList(1);
-    this.GetListReceptionCommandeFournisseurs(1);
-    // this.GetListCommandeFournisseurs(1)
+    // this.GetListReceptionCommandeFournisseurs(1);
+    this.GetListCommandeFournisseurs(1);
     this.fetchData();
   }
   GetRevendeurList(page: number) {
@@ -105,49 +105,33 @@ export class ListeCommandesMarchandisesComponent {
     });
   }
 
-  //  GetListCommandeFournisseurs(page: number, numero?: string, statut?: string,typeCommande?: string) {
-  //   let data = {
-  //     paginate: true,
-  //     page: page,
-  //     limit: 8,
-  //     numero: numero || '',
-  //     statut: statut || '',
-  //     typeCommande: typeCommande || '',
-  //   };
-  //   this._spinner.show();
-  //   this.articleService.GetListCommandeFournisseurs(data).then((res: any) => {
-  //     console.log('GetListCommandeFournisseurs:::>', res);
-  //     this.totalPages = res.total;
-  //     this.ListCommandeFournisseurs = res.data;
-  //     this._spinner.hide();
-  //   });
-  // }
-  GetListReceptionCommandeFournisseurs(
+  GetListCommandeFournisseurs(
     page: number,
-    numeroReception?: string,
-    numeroBonLivraison?: string,
-    dateDebut?: string,
-    dateFin?: string
+    numero?: string,
+    statut?: string,
+    typeCommande?: string
   ) {
     let data = {
       paginate: true,
       page: page,
       limit: 8,
-      numeroReception: numeroReception || '',
-      numeroBonLivraison: numeroBonLivraison || '',
-      dateDebut: dateDebut || '',
-      dateFin: dateFin || '',
+      numero: numero || '',
+      statut: statut || '',
+      typeCommande: typeCommande || '',
     };
     this._spinner.show();
-    this.articleService
-      .GetListReceptionCommandeFournisseurs(data)
-      .then((res: any) => {
-        console.log('GetListCommandeFournisseurs:::>', res);
-        this.totalPages = res.total;
-        this.ListCommandeFournisseurs = res.data;
-        this._spinner.hide();
-      });
+    this.articleService.GetListCommandeFournisseurs(data).then((res: any) => {
+      console.log('GetListCommandeFournisseurs:::>', res);
+      this.totalPages = res.total;
+      this.ListCommandeFournisseurs = res.data.filter(
+        (item: any) => item.statut === StatutCommande.VALIDEE
+      );
+      console.log('GetListCommandeFournisseurs:::>', this.ListCommandeFournisseurs );
+
+      this._spinner.hide();
+    });
   }
+
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -166,8 +150,6 @@ export class ListeCommandesMarchandisesComponent {
     this.filteredArticleList = [];
     this.isModalOpen = false;
     this.selectedArticles = [];
-    // (this.receptionCommandForm.get('articlesRecus') as FormArray).clear();
-    console.log(this.isModalOpen);
   }
   OnCreate() {
     this.isEditMode = false;
@@ -192,16 +174,9 @@ export class ListeCommandesMarchandisesComponent {
     console.log(data);
     this.dataSendedToReceptionMarchandiseRequest.commandeId = data.id;
     this.updateData = data;
-    // data.articlesRecus.forEach((article: any) => {
-    //   this.totalEmballage += Number(article.montantEmballage);
-    //   this.totalLiquide += Number(article.montantLiquide);
-    //   this.totalGlobal = this.totalLiquide + this.totalEmballage;
-    //   this.totalQte += article.quantite;
-    // });s
-    this.articlesRecues = data.articlesRecus;
+    this.articlesRecues = data.articles;
     this.articleId = data.id;
     this.isModalOpen = true;
-    // this.operation = 'edit';
     console.log(this.isModalOpen);
   }
 
@@ -209,20 +184,25 @@ export class ListeCommandesMarchandisesComponent {
     const payload = {
       commandeId: this.dataSendedToReceptionMarchandiseRequest.commandeId,
       // numeroBonLivraison:
-      //   this.dataSendedToReceptionMarchandiseRequest.numeroBonLivraison,
+      // this.dataSendedToReceptionMarchandiseRequest.numeroBonLivraison,
       numeroBonLivraison: 'BL-2024-001',
       scanBonLivraison: 'https://monserveur.com/uploads/bon_livraison_001.pdf',
       articlesRecus: this.articlesRecues.map((article: any) => {
-         const prixSousDistributeur = article.prix?.find(
-    (p: any) => p.typePrix?.libelle === "PRIX S/DISTRIBUTEUR"
-  );
+        const prixSousDistributeur = article.prix?.find(
+          (p: any) => p.typePrix?.libelle === 'PRIX S/DISTRIBUTEUR'
+        );
         return {
-          articleCommandeId: !article?.new ?article?.id : null,
+          articleCommandeId: !article?.new ? article?.id : null,
           quantiteRecue: article?.quantiteAffectee,
           liquideId: article?.liquide?.id,
-          emballageId: article?.liquide?.emballage?.id ?? article?.emballage?.id ,
-           prixUnitaireLiquide: parseInt(prixSousDistributeur?.PrixLiquide ?? article?.prixUnitaireLiquide) ,
-           prixUnitaireEmballage: parseInt(prixSousDistributeur?.PrixConsigne ?? article?.prixUnitaireEmballage) ,
+          emballageId:
+            article?.liquide?.emballage?.id ?? article?.emballage?.id,
+          prixUnitaireLiquide: parseInt(
+            prixSousDistributeur?.PrixLiquide ?? article?.prixUnitaireLiquide
+          ),
+          prixUnitaireEmballage: parseInt(
+            prixSousDistributeur?.PrixConsigne ?? article?.prixUnitaireEmballage
+          ),
           commentaireEcart: article.commentaireEcart || '',
         };
       }),
@@ -235,8 +215,8 @@ export class ListeCommandesMarchandisesComponent {
         (res: any) => {
           console.log(res, 'enregistré avec succes');
           this._spinner.hide();
-          this.GetListReceptionCommandeFournisseurs(1);
-          // this.GetListCommandeFournisseurs(1);
+          // this.GetListReceptionCommandeFournisseurs(1);
+          this.GetListCommandeFournisseurs(1);
           this.OnCloseModal();
           this.toastr.success(res.message);
         },
@@ -270,7 +250,7 @@ export class ListeCommandesMarchandisesComponent {
     console.log(article, 'articles');
     // this.GetPrixByArticle(article);
     if (article.isChecked) {
-      article.new = true
+      article.new = true;
       this.articlesRecues.push(article);
       this.afficherArticlesSelectionnes();
     } else {
@@ -589,7 +569,7 @@ export class ListeCommandesMarchandisesComponent {
     } catch (error: any) {
       console.log(error);
     }
-   }
+  }
 
   protected readonly parseInt = parseInt;
   protected readonly Number = Number;

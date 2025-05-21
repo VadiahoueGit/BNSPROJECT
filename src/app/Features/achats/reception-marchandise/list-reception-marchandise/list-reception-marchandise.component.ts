@@ -6,14 +6,15 @@ import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
+import { StatutCommande } from 'src/app/utils/utils';
 
 @Component({
-  selector: 'app-list-emballages',
-  templateUrl: './list-emballages.component.html',
-  styleUrls: ['./list-emballages.component.scss'],
+  selector: 'app-list-reception-marchandise',
+  templateUrl: './list-reception-marchandise.component.html',
+  styleUrls: ['./list-reception-marchandise.component.scss']
 })
-export class ListEmballagesComponent {
-  @ViewChild('dt2') dt2!: Table;
+export class ListReceptionMarchandiseComponent {
+ @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
   emballageRenduForm!: FormGroup;
@@ -74,7 +75,6 @@ export class ListEmballagesComponent {
   };
   totalPages: any;
   ListReceptionCommandeFournisseurs: any;
-  emballagesrecues: any;
   constructor(
     private articleService: ArticleServiceService,
     private utilisateurService: UtilisateurResolveService,
@@ -138,16 +138,19 @@ export class ListEmballagesComponent {
   }
 
   OnEdit(data: any) {
-    console.log(data,'data emballage');
+    this.totalEmballage = 0;
+    this.totalLiquide = 0;
+    this.totalGlobal = 0;
+    this.totalQte = 0;
     this.isEditMode = true;
+    console.log(data);
     this.updateData = data;
-    this.emballagesrecues = data.emballagesRendus;
-    // data.emballagesRendus.forEach((article: any) => {
-    //   this.totalEmballage += Number(article.montantEmballage);
-    //   this.totalLiquide += Number(article.montantLiquide);
-    //   this.totalGlobal = this.totalLiquide + this.totalEmballage;
-    //   this.totalQte += article.quantite;
-    // });
+    data.articles.forEach((article: any) => {
+      this.totalEmballage += Number(article.montantEmballage);
+      this.totalLiquide += Number(article.montantLiquide);
+      this.totalGlobal = this.totalLiquide + this.totalEmballage;
+      this.totalQte += article.quantite;
+    });
 
     this.articleId = data.id;
     this.isModalOpen = true;
@@ -334,27 +337,24 @@ export class ListEmballagesComponent {
       .then((res: any) => {
         console.log('GetListCommandeFournisseurs:::>', res);
         this.totalPages = res.total;
-        this.dataList = res.data;
+        this.dataList = res.data.filter(
+                (item: any) => item.estRecue === true
+              );
         this._spinner.hide();
       });
   }
   onSubmit(): void {
     const payload = {
-      receptionId: this.updateData.id,
-      articles: this.emballagesrecues.map((article: any) => {
-        const prixSousDistributeur = article.prix?.find(
-          (p: any) => p.typePrix?.libelle === 'PRIX S/DISTRIBUTEUR'
-        );
+      // receptionId: this.dataList.,
+      articlesRecus: this.selectedArticles.map((article: any) => {
         return {
-          emballageId: !article?.new ? article?.id : null,
           quantite: article?.quantiteAffectee,
-          prixUnitaireEmballage: parseInt(
-            prixSousDistributeur?.PrixConsigne ?? article?.prixUnitaireEmballage
-          ),
-          commentaireEcart: article.commentaireEcart || '',
+          prixUnitaireEmballage: article?.prixUnitaireEmballage,
+          emballageId: article?.emballage?.id,
         };
       }),
     };
+
     // if (this.emballageRenduForm.valid) {
     this._spinner.show();
     this.articleService.CreateCommandClient(payload).then(
@@ -432,22 +432,22 @@ export class ListEmballagesComponent {
   }
 
   onCheckboxChange(article: any): void {
-    // this.GetPrixByArticle(article);
+    this.GetPrixByArticle(article);
     // this.GetStockDisponibleByDepot(article)
     if (article.isChecked) {
-      this.emballagesrecues.push(article);
+      this.selectedArticles.push(article);
       this.afficherArticlesSelectionnes();
     } else {
       delete article.quantite;
-      const indexToRemove = this.emballagesrecues.findIndex(
+      const indexToRemove = this.selectedArticles.findIndex(
         (selectedArticle: any) => selectedArticle.libelle === article.libelle
       );
       if (indexToRemove !== -1) {
-        this.emballagesrecues.splice(indexToRemove, 1);
+        this.selectedArticles.splice(indexToRemove, 1);
         this.afficherArticlesSelectionnes();
       }
     }
-    console.log(this.emballagesrecues, 'emballagesrecues');
+    console.log(this.selectedArticles, 'selectedArticles');
   }
   async GetPrixByArticle(item: any): Promise<any> {
     let data = {
@@ -471,7 +471,7 @@ export class ListEmballagesComponent {
     }
   }
   afficherArticlesSelectionnes() {
-    console.log(this.emballagesrecues);
+    console.log(this.selectedArticles);
   }
 
   onSubmitSelection() {
@@ -587,3 +587,4 @@ export class ListEmballagesComponent {
   }
   protected readonly Number = Number;
 }
+
