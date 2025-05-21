@@ -1499,6 +1499,26 @@ export class ArticleServiceService {
       );
     });
   }
+
+  DeleteArticleCommande(id: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/commande-fournisseur/articles/${id}`,{headers}).subscribe(
+        (res: any) => {
+          resolve(res);
+          console.log(res);
+          (res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
   ValidateCommandeFournisseur(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({

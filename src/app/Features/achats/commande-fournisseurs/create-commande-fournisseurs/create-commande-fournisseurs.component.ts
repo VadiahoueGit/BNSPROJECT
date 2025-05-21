@@ -644,9 +644,26 @@ export class CreateCommandeFournisseursComponent {
     this.articleService.GetListCommandeFournisseursById(this.updateData.id).then(
       (response: any) => {
         console.log('xxx')
+        this.GetListCommandeFournisseurs(1)
         this.updateData = response.data;
+        this.newCommande = this.updateData.articles;
       },
       (error: any) => {
+        this.toastr.error('Erreur!', error.message);
+      }
+    );
+  }
+
+  DeleteArticleCommande(data:any){
+    this._spinner.show();
+    this.articleService.DeleteArticleCommande(data.id).then(
+      (response: any) => {
+        this._spinner.hide();
+        this.toastr.success('Succès!', response.message);
+        this.GetListCommandeFournisseursById()
+      },
+      (error: any) => {
+        this._spinner.hide();
         this.toastr.error('Erreur!', error.message);
       }
     );
