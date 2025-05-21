@@ -37,6 +37,7 @@ export class CreateCommandeFournisseursComponent {
   dataListArticlesProduits: any = [];
   currentPage: number;
   rowsPerPage: any;
+  newCommande: any[] = [];
   stocksDisponibles: any = {};
   prixLiquide: any = {};
   prixEmballage: any = {};
@@ -172,6 +173,12 @@ export class CreateCommandeFournisseursComponent {
     console.log(this.isModalOpen);
   }
 
+  selectArticleNew() {
+    this.isEditMode = false;
+    this.isChoiceModalOpen = true;
+    this.operation = 'createNew';
+    console.log(this.isModalOpen);
+  }
   OnEdit(data: any) {
     this.totalEmballage = 0;
     this.totalLiquide = 0;
@@ -255,6 +262,7 @@ export class CreateCommandeFournisseursComponent {
     this.GetPrixByArticle(article)
     if (article.isChecked) {
       this.selectedArticles.push(article);
+      this.newCommande = this.selectedArticles
       this.afficherArticlesSelectionnes()
     } else {
       delete article.quantite;
@@ -463,7 +471,7 @@ export class CreateCommandeFournisseursComponent {
         this.fb.group({
           groupeArticleId: data.groupearticle.id,
           codeArticleLiquide: data.liquide.code,
-          codeArticleEmballage: data.liquide.emballage.code,
+          codeArticleEmballage: data.liquide.emballage ? data.liquide.emballage.code : data.emballage.code,
           prixUnitaireLiquide: prixLiquide,
           prixUnitaireEmballage: prixEmballage,
           quantite: quantite,
@@ -542,7 +550,116 @@ export class CreateCommandeFournisseursComponent {
       console.error('Erreur lors de la récupération des données:', error);
     }
   }
+  async getLocalPrice(item:any) {
+    this.prixLiquide[item.id] = item.prixUnitaireLiquide;
+    this.prixEmballage[item.id] = item.prixUnitaireEmballage;
+    this.calculatePrix(item);
 
+  }
+  UpdateCommandeFournisseurs(){
+    const data = this.newCommande.map((item: any) => ({
+      id: item.id,
+      groupeArticleId: item.groupearticle.id,
+      codeArticleLiquide: item.liquide.code,
+      codeArticleEmballage: item.emballage.code,
+      prixUnitaireLiquide: Number(this.prixLiquide[item.id]),
+      prixUnitaireEmballage: Number(this.prixEmballage[item.id]),
+      quantite: Number(item.quantite) || 0,
+    })).filter((item: any) => item.quantite != 0);
+
+    const payload = {
+      revendeurId:this.updateData.revendeur.id,
+      articles: data
+    };
+    this.articleService.UpdateCommandeFournisseurs(this.updateData.id, payload).then(
+      (response: any) => {
+        this._spinner.hide();
+        this.toastr.success(response.message);
+        this.GetListCommandeFournisseursById()
+        this.operation = 'edit';
+      },
+      (error: any) => {
+        this._spinner.hide();
+        this.toastr.error('Erreur!', 'Erreur lors de la modification.');
+      }
+    );
+
+  }
+  OnAddGoods(data: any, newCommande: any) {
+    let item = []
+    this.totalEmballage = 0;
+    this.totalLiquide = 0;
+    this.totalGlobal = 0;
+    this.totalQte = 0;
+    if (data == 'edit') {
+      this.operation = 'createNew';
+    } else {
+      this.operation = 'edit';
+    }
+
+  }
+
+  saveGoods(data: any) {
+    if(data == 'createNew') {
+      console.log(data)
+      this.AjouterCommandeFournisseurs()
+    }else if(data == 'update') {
+      console.log(data)
+      this.UpdateCommandeFournisseurs()
+    }
+
+    console.log(this.operation);
+  }
+  AjouterCommandeFournisseurs() {
+    const data = this.newCommande.map((item: any) => ({
+      id: item.id,
+      groupeArticleId: item.groupearticle.id,
+      codeArticleLiquide: item.liquide.code,
+      codeArticleEmballage: item.liquide.emballage.code,
+      prixUnitaireLiquide: this.prixLiquide[item.id],
+      prixUnitaireEmballage: this.prixEmballage[item.id],
+      quantite: item.quantite,
+    }));
+
+    const payload = {
+      articles: data
+    };
+
+    this._spinner.show();
+    this.articleService.AjouterCommandeFournisseurs(this.updateData.id, payload).then(
+      (response: any) => {
+        this._spinner.hide();
+        this.toastr.success(response.message);
+        this.GetListCommandeFournisseursById()
+        this.operation = 'edit';
+      },
+      (error: any) => {
+        this._spinner.hide();
+        this.toastr.error('Erreur!', 'Erreur lors de la modification.');
+      }
+    );
+  }
+
+  GetListCommandeFournisseursById(){
+    this.articleService.GetListCommandeFournisseursById(this.updateData.id).then(
+      (response: any) => {
+        console.log('xxx')
+        this.updateData = response.data;
+      },
+      (error: any) => {
+        this.toastr.error('Erreur!', error.message);
+      }
+    );
+  }
+  updateGoods(data: any) {
+    this.operation = 'update';
+    this.newCommande = this.updateData.articles
+    this.newCommande.forEach((item: any) => {
+      this.getLocalPrice(item)
+    })
+
+    console.log(this.operation);
+  }
   async GetPrixByArticle(item: any): Promise<any> {
     let data = {
       id: item.id,
@@ -553,13 +670,11 @@ export class CreateCommandeFournisseursComponent {
       const response: any = await this.articleService.GetPrixByProduit(data);
       console.log(response);
       const prixDetail = response.data.find((item: any) => {
-        if(this.selectedOption == 'Sous distributeur')
-        {
-          item.libelle === 'PRIX S/DISTRIBUTEUR'
-        }else {
-          item.libelle === 'PRIX USINE'
-        }
+        return this.selectedOption === 'Sous distributeur'
+          ? item.libelle === 'PRIX S/DISTRIBUTEUR'
+          : item.libelle === 'PRIX USINE';
       });
+
 
       console.log(prixDetail);
       // Vérifier si le statusCode est 200
