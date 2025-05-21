@@ -113,6 +113,7 @@ import { SaisieEntreeGratuitesComponent } from './entree-gratuite/saisie-entree-
 import { ListeCommandesMarchandisesComponent } from './reception-marchandise/liste-commandes-marchandises/liste-commandes-marchandises.component';
 import { ListEmballagesComponent } from './reception-marchandise/list-emballages/list-emballages.component';
 import localeFr from '@angular/common/locales/fr';
+import { ListReceptionMarchandiseComponent } from './reception-marchandise/list-reception-marchandise/list-reception-marchandise.component';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -126,7 +127,8 @@ registerLocaleData(localeFr);
     CreateCommandeFournisseursComponent,
     SaisieEntreeGratuitesComponent,
     ListeCommandesMarchandisesComponent,
-    ListEmballagesComponent
+    ListEmballagesComponent,
+    ListReceptionMarchandiseComponent
   ],
   imports: [
     CommonModule,

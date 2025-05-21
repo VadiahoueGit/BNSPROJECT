@@ -9,8 +9,11 @@
         (click)="activeElement('saisiecommande')">Commandes</a>
 
 
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'suivicommmande'"
-        (click)="activeElement('suivicommmande')">Emballages</a>
+    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'emballages'"
+        (click)="activeElement('emballages')">Emballages</a>
+
+    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'receptionmarchandise'"
+        (click)="activeElement('receptionmarchandise')">Reception marchandises</a>
 
 </nav>
 
@@ -19,8 +22,11 @@
         <app-liste-commandes-marchandises></app-liste-commandes-marchandises>
     </div>
 
-    <div *ngIf="activeTab === 'suivicommmande'" class="tab-pane fade show active">
+    <div *ngIf="activeTab === 'emballages'" class="tab-pane fade show active">
         <app-list-emballages></app-list-emballages>
+    </div>
+    <div *ngIf="activeTab === 'receptionmarchandise'" class="tab-pane fade show active">
+        <app-list-reception-marchandise></app-list-reception-marchandise>
     </div>
 
 </div>
