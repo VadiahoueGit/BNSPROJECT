@@ -141,7 +141,7 @@ export class ListEmballagesComponent {
     console.log(data,'data emballage');
     this.isEditMode = true;
     this.updateData = data;
-    this.emballagesrecues = data.emballagesRendus;
+    this.emballagesrecues = data.articlesRecus;
     // data.emballagesRendus.forEach((article: any) => {
     //   this.totalEmballage += Number(article.montantEmballage);
     //   this.totalLiquide += Number(article.montantLiquide);
@@ -342,27 +342,21 @@ export class ListEmballagesComponent {
     const payload = {
       receptionId: this.updateData.id,
       articles: this.emballagesrecues.map((article: any) => {
-        const prixSousDistributeur = article.prix?.find(
-          (p: any) => p.typePrix?.libelle === 'PRIX S/DISTRIBUTEUR'
-        );
+     console.log(article, 'article');
         return {
-          emballageId: !article?.new ? article?.id : null,
-          quantite: article?.quantiteAffectee,
-          prixUnitaireEmballage: parseInt(
-            prixSousDistributeur?.PrixConsigne ?? article?.prixUnitaireEmballage
-          ),
-          commentaireEcart: article.commentaireEcart || '',
+          emballageId:  article?.id,
+          quantite: article?.quantiteRecue,
+          prixUnitaireEmballage:  parseInt( article?.prixUnitaireEmballage ?? article?.articleCommande?.prixUnitaireEmballage)
         };
       }),
     };
-    // if (this.emballageRenduForm.valid) {
+     console.log(payload, 'payload');
     this._spinner.show();
-    this.articleService.CreateCommandClient(payload).then(
+    this.articleService.CreateRetourEmballageFournisseurs(payload).then(
       (res: any) => {
         console.log(res, 'enregistré avec succes');
         this._spinner.hide();
-        this.emballageRenduForm.reset();
-        // this.GetListRetourEmballageFournisseurs(1);
+        this.GetListReceptionCommandeFournisseurs(1);
         this.OnCloseModal();
         this.toastr.success(res.message);
       },
@@ -372,9 +366,7 @@ export class ListEmballagesComponent {
         console.error('Erreur lors de la création', error);
       }
     );
-    // } else {
-    //   this.toastr.warning('Formulaire invalide');
-    // }
+
   }
 
   filterGlobal() {

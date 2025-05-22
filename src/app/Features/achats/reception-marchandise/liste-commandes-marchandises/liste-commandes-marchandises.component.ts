@@ -183,9 +183,9 @@ export class ListeCommandesMarchandisesComponent {
   onSubmit(): void {
     const payload = {
       commandeId: this.dataSendedToReceptionMarchandiseRequest.commandeId,
-      // numeroBonLivraison:
-      // this.dataSendedToReceptionMarchandiseRequest.numeroBonLivraison,
-      numeroBonLivraison: 'BL-2024-001',
+      numeroBonLivraison:
+      this.dataSendedToReceptionMarchandiseRequest.numeroBonLivraison,
+      // numeroBonLivraison: 'BL-2024-001',
       scanBonLivraison: 'https://monserveur.com/uploads/bon_livraison_001.pdf',
       articlesRecus: this.articlesRecues.map((article: any) => {
         const prixSousDistributeur = article.prix?.find(

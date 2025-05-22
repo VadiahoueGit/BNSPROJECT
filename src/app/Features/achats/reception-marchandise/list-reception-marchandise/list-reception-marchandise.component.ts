@@ -337,9 +337,7 @@ export class ListReceptionMarchandiseComponent {
       .then((res: any) => {
         console.log('GetListCommandeFournisseurs:::>', res);
         this.totalPages = res.total;
-        this.dataList = res.data.filter(
-                (item: any) => item.estRecue === true
-              );
+        this.dataList = res.data
         this._spinner.hide();
       });
   }

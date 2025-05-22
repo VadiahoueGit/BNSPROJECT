@@ -151,14 +151,20 @@
         </div>
         <div class="p-2 mt-3">
           <div style="max-height: 350px; overflow-y: auto">
-            <div class="d-flex justify-content-end">
-              <button
-                (click)="selectArticle()"
-                type="button"
-                class="btn btn-secondary mb-2 px-2"
-              >
-                Ajouter
-              </button>
+            <div class="d-flex justify-content-between">
+               <div class="mb-3">
+                <input type="text" class="form-control" id="numeroBonLivraison" [(ngModel)]="dataSendedToReceptionMarchandiseRequest.numeroBonLivraison"
+                       placeholder="Entrez le numéro bon">
+              </div>
+              <div>
+                <button
+                  (click)="selectArticle()"
+                  type="button"
+                  class="btn btn-secondary mb-2 px-2"
+                >
+                  Ajouter
+                </button>
+              </div>
             </div>
             <table class="table table-bordered">
               <thead class="table-light">
@@ -227,7 +233,9 @@
           type="submit"
           (click)="onSubmit()"
           class="btn btn-primary px-2"
+          [disabled]="!dataSendedToReceptionMarchandiseRequest.numeroBonLivraison "
         >
+        
           Valider
         </button>
       </div>

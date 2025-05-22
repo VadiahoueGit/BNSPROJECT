@@ -162,7 +162,7 @@
         </div>
 
         <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
-          Détails de la commande
+          Retour emballage
         </h1>
       </div>
       <div class="modal-body">
@@ -227,7 +227,7 @@
         </div>
         <div class="p-2 mt-3">
           <div style="max-height: 350px; overflow-y: auto">
-            <div class="d-flex justify-content-end">
+            <!-- <div class="d-flex justify-content-end">
               <button
                 (click)="selectArticle()"
                 type="button"
@@ -235,47 +235,28 @@
               >
                 Ajouter
               </button>
-            </div>
+            </div> -->
             <table class="table table-bordered">
               <thead class="table-light">
                 <tr>
-                  <th scope="col">Article Id</th>
-                  <th scope="col">Liquide</th>
+                  <th scope="col">Code</th>
                   <th scope="col">Emballage</th>
                   <th scope="col">Quantité</th>
-                  <th scope="col">Commentaire</th>
-                  <th scope="col">Actions</th>
+                  <!-- <th scope="col">Actions</th> -->
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let data of emballagesrecues; let i = index">
                   <td class="">
-                    <p>{{ data.id }}</p>
+                    <p>{{data.articleCommande?data.articleCommande.id: data.id }}</p>
                   </td>
                   <td class="">
-                    <p>{{ data?.liquide?.libelle }}</p>
-                  </td>
-                  <td class="">
-                    <p>{{ data?.liquide?.emballage?.libelle ?? data?.emballage?.libelle }}</p>
+                    <p>{{ data?.articleCommande ? data?.articleCommande?.emballage?.libelle:data?.emballage?.libelle }}</p>
                   </td>
                   <td>
-                    <input
-                      type="number"
-                      class="form-control-custom"
-                      [(ngModel)]="data.quantiteAffectee"
-                      [min]="0"
-                      required="true"
-                    />
+                    <p>{{data?.articleCommande?data?.articleCommande?.quantiteAffectee:data?.quantiteRecue}}</p>
                   </td>
-                  <td>
-                    <input
-                      type="text"
-                      class="form-control-custom"
-                      [(ngModel)]="data.commentaireEcart"
-                      [min]="0"
-                    />
-                  </td>
-                  <td class="d-flex justify-content-center">
+                  <!-- <td class="d-flex justify-content-center">
                     <button
                       type="button"
                       class="btn btn-danger btn-sm"
@@ -283,7 +264,7 @@
                     >
                       <i class="fas fa-trash"></i>
                     </button>
-                  </td>
+                  </td> -->
                 </tr>
               </tbody>
             </table>
