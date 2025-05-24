@@ -101,7 +101,7 @@
           Détails de la commande
         </h1>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" style="max-height: 500px;  overflow-y: auto">
         <div>
                <fieldset class="row border my-2">
               <legend style="font-size: 14px;" class="text-secondary">Informations du fournisseur</legend>
@@ -158,6 +158,15 @@
                        placeholder="Entrez le numéro bon">
               </div>
               <div>
+                <button
+                  (click)="imprimer(updateData.bonLivraison)"
+                  type="button"
+                  class="btn btn-warning mb-2 px-2 mx-2"
+                  [disabled]="updateData.bonLivraison == null"
+                >
+                  <i class="fa-solid fa-print"></i>
+                  Imprimer le BON
+                </button>
                 <button
                   (click)="selectArticle()"
                   type="button"

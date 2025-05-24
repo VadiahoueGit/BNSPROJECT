@@ -1,12 +1,13 @@
-import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
-import { Table } from 'primeng/table';
-import { ArticleServiceService } from 'src/app/core/article-service.service';
-import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
-import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
-import { Status, StatutCommande } from 'src/app/utils/utils';
+import {ChangeDetectorRef, Component, ViewChild} from '@angular/core';
+import {FormGroup, FormBuilder, Validators, FormArray} from '@angular/forms';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {ToastrService} from 'ngx-toastr';
+import {Table} from 'primeng/table';
+import {ArticleServiceService} from 'src/app/core/article-service.service';
+import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
+import {ALERT_QUESTION} from 'src/app/Features/shared-component/utils';
+import {Status, StatutCommande} from 'src/app/utils/utils';
+import {ConfigService} from "../../../../core/config-service.service";
 
 @Component({
   selector: 'app-liste-commandes-marchandises',
@@ -54,20 +55,24 @@ export class ListeCommandesMarchandisesComponent {
   ListCommandeFournisseurs: any[] = [];
   depotId: any = 0;
   totalPages: any;
+  docUrl = ''
   public dataSendedToReceptionMarchandiseRequest = {
     commandeId: 0,
     numeroBonLivraison: '',
     articlesRecus: [],
     emballagesRendus: [],
   };
+
   constructor(
     private cdr: ChangeDetectorRef,
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService,
-    private utilisateurService: UtilisateurResolveService
-  ) {}
+    private utilisateurService: UtilisateurResolveService,
+    private _config: ConfigService
+  ) {
+  }
 
   ngOnInit() {
     this.GetArticleList(1);
@@ -76,7 +81,9 @@ export class ListeCommandesMarchandisesComponent {
     // this.GetListReceptionCommandeFournisseurs(1);
     this.GetListCommandeFournisseurs(1);
     this.fetchData();
+    this.docUrl = this._config.docUrl;
   }
+
   GetRevendeurList(page: number) {
     let data = {
       paginate: false,
@@ -90,6 +97,7 @@ export class ListeCommandesMarchandisesComponent {
       this._spinner.hide();
     });
   }
+
   GetArticleList(page: number) {
     let data = {
       paginate: false,
@@ -126,7 +134,7 @@ export class ListeCommandesMarchandisesComponent {
       this.ListCommandeFournisseurs = res.data.filter(
         (item: any) => item.statut === StatutCommande.VALIDEE
       );
-      console.log('GetListCommandeFournisseurs:::>', this.ListCommandeFournisseurs );
+      console.log('GetListCommandeFournisseurs:::>', this.ListCommandeFournisseurs);
 
       this._spinner.hide();
     });
@@ -151,6 +159,7 @@ export class ListeCommandesMarchandisesComponent {
     this.isModalOpen = false;
     this.selectedArticles = [];
   }
+
   OnCreate() {
     this.isEditMode = false;
     this.isModalOpen = true;
@@ -230,6 +239,7 @@ export class ListeCommandesMarchandisesComponent {
       this.toastr.warning('Formulaire invalide');
     }
   }
+
   LoadPdv() {
     let data = {
       paginate: false,
@@ -246,6 +256,7 @@ export class ListeCommandesMarchandisesComponent {
       }
     );
   }
+
   onCheckboxChange(article: any): void {
     console.log(article, 'articles');
     // this.GetPrixByArticle(article);
@@ -264,12 +275,13 @@ export class ListeCommandesMarchandisesComponent {
       }
     }
   }
+
   removeArticle(item: any): void {
     // Créer une copie de l'article avec la quantité définie à 0
     const data = {
       ...item,
       quantite: 0,
-      groupearticle: { id: item.groupearticle.id },
+      groupearticle: {id: item.groupearticle.id},
       id: item.groupearticle.id, // Assurez-vous que l'ID correspond
     };
 
@@ -302,6 +314,7 @@ export class ListeCommandesMarchandisesComponent {
   afficherArticlesSelectionnes() {
     console.log(this.selectedArticles);
   }
+
   filterArticles(): void {
     console.log(this.searchTerm);
     if (this.searchTerm) {
@@ -319,11 +332,13 @@ export class ListeCommandesMarchandisesComponent {
       this.filteredArticleList = [...this.dataListLiquides];
     }
   }
+
   OnCloseChoiceModal() {
     this.deselectAllItems();
     this.isChoiceModalOpen = false;
     console.log(this.isModalOpen);
   }
+
   deselectAllItems(): void {
     this.selectedArticles.forEach((item: any) => {
       delete item.quantite;
@@ -333,11 +348,17 @@ export class ListeCommandesMarchandisesComponent {
 
     this.selectedArticles = [];
   }
+
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1;
     this.rowsPerPage = event.rows;
     this.GetListCommandeFournisseurs(this.currentPage)
   }
+
+  imprimer(path:any) {
+    window.open(this.docUrl+path, '_blank');
+  }
+
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
       (res: any) => {
@@ -383,6 +404,7 @@ export class ListeCommandesMarchandisesComponent {
 
     console.log('totalite', this.stocksDisponibles);
   }
+
   validateQuantite(data: any): void {
     console.log('data', data);
 
@@ -396,6 +418,7 @@ export class ListeCommandesMarchandisesComponent {
     this.calculatePrix(data);
     // }
   }
+
   get articles(): FormArray {
     return this.receptionCommandForm.get('articles') as FormArray;
   }
@@ -551,6 +574,7 @@ export class ListeCommandesMarchandisesComponent {
       console.error('Erreur lors de la récupération des données:', error);
     }
   }
+
   async GetPrixByArticle(item: any): Promise<any> {
     let data = {
       id: item.id,
