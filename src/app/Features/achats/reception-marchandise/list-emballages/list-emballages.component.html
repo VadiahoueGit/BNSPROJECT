@@ -249,7 +249,7 @@
               <tbody>
                 <tr *ngFor="let data of emballagesrecues; let i = index">
                   <td class="">
-                    <p>{{data.articleCommande?data.articleCommande.id: data.id }}</p>
+                    <p>{{data.articleCommande?data.articleCommande.emballage.id: data.emballage.id }}</p>
                   </td>
                   <td class="">
                     <p>{{ data?.articleCommande ? data?.articleCommande?.emballage?.libelle:data?.emballage?.libelle }}</p>

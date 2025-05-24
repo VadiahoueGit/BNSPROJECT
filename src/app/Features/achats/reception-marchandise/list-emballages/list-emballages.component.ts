@@ -344,7 +344,7 @@ export class ListEmballagesComponent {
       articles: this.emballagesrecues.map((article: any) => {
      console.log(article, 'article');
         return {
-          emballageId:  article?.id,
+          emballageId:  article.articleCommande ? article?.articleCommande.emballage.id : article.emballage.id,
           quantite: article?.quantiteRecue,
           prixUnitaireEmballage:  parseInt( article?.prixUnitaireEmballage ?? article?.articleCommande?.prixUnitaireEmballage)
         };
