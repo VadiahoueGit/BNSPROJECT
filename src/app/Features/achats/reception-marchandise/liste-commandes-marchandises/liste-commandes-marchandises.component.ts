@@ -336,6 +336,7 @@ export class ListeCommandesMarchandisesComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1;
     this.rowsPerPage = event.rows;
+    this.GetListCommandeFournisseurs(this.currentPage)
   }
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(

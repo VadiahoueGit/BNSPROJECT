@@ -32,6 +32,16 @@ export class GestionvisiteComponent {
   ];
   @Input() locale: string = 'EN';
   loading: boolean = true;
+  daysOfWeek: string[] = [
+    'Lundi',
+    'Mardi',
+    'Mercredi',
+    'Jeudi',
+    'Vendredi',
+    'Samedi',
+    'Dimanche'
+  ];
+  selectedDay: string = '';
   operation: string = '';
   isModalOpen = false;
   isEditMode = false;
@@ -66,11 +76,15 @@ export class GestionvisiteComponent {
       pointDeVenteIds: [null, Validators.required],
       vehiculeId: [null, Validators.required],
       dateVisite: [null, Validators.required],
-      IsRepetitive: [false, Validators.required],
+      repetitionDays: ['', Validators.required],
+      repetitionDuration: [0, Validators.required],
+
     });
   }
 
   ngOnInit() {
+    this.VisiteForm.controls['repetitionDuration'].setValue(12)
+    this.VisiteForm.controls['repetitionDuration'].disabled
     this.LoadTypeVisite();
     this.LoadCommercial();
     this.LoadVisite()
@@ -149,7 +163,8 @@ export class GestionvisiteComponent {
         "commercialId": this.VisiteForm.value.commercialId,
         "pointDeVenteIds": this.VisiteForm.value.pointDeVenteIds,
         "dateDeVisite": this.VisiteForm.value.dateVisite,
-        "IsRepetitive": this.VisiteForm.value.IsRepetitive,
+        "repetitionDays": [this.VisiteForm.value.repetitionDays],
+        "repetitionDuration": this.VisiteForm.value.repetitionDuration,
         "typeVisite": this.VisiteForm.value.typeVisite,
         "vehiculeId": this.VisiteForm.value.vehiculeId
       };

@@ -42,11 +42,12 @@
                                [searchable]="true">
                     </ng-select>
                   </div>
-
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" formControlName="IsRepetitive"
-                           id="flexSwitchCheckDefault">
-                    <label class="form-check-label" for="flexSwitchCheckDefault">Répétitif</label>
+                  <div class="mb-3">
+                    <label  class="form-label" for="day">Choisir un jour  <span
+                      class="text-danger">*</span></label>
+                    <select formControlName="repetitionDays" class="form-control" id="day">
+                      <option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</option>
+                    </select>
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -61,6 +62,11 @@
                     <label for="format" class="form-label">Date de visite <span
                       class="text-danger">*</span></label>
                     <input type="date" class="form-control" formControlName="dateVisite"/>
+                  </div>
+                  <div class="mb-3">
+                    <label for="format" class="form-label">Nombre de mois<span
+                      class="text-danger">*</span></label>
+                    <input type="number" class="form-control" formControlName="repetitionDuration" />
                   </div>
                 </div>
               </div>

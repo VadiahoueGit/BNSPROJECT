@@ -72,6 +72,7 @@
     [value]="dataList"
     dataKey="id"
     [rows]="8"
+    [totalRecords]="totalPages" [lazy]="true"
     [rowsPerPageOptions]="[10, 25, 50]"
     [paginator]="true"
     [globalFilterFields]="['plastiquenu.libelle', 'libelle']"
@@ -87,7 +88,7 @@
         <th style="color: var(--secondary-color)">Statut</th>
         <th style="color: var(--secondary-color)">Actions</th>
       </tr>
-   
+
     </ng-template>
     <ng-template pTemplate="body" let-dataList let-i="index">
       <tr>

@@ -8,6 +8,7 @@
     [styleClass]="'p-datatable-sm'"
     #dt2
     [value]="ListCommandeFournisseurs"
+    [totalRecords]="totalPages" [lazy]="true"
     dataKey="id"
     [rows]="8"
     [rowsPerPageOptions]="[10, 25, 50]"
@@ -235,7 +236,7 @@
           class="btn btn-primary px-2"
           [disabled]="!dataSendedToReceptionMarchandiseRequest.numeroBonLivraison "
         >
-        
+
           Valider
         </button>
       </div>
@@ -300,7 +301,7 @@
                     >
                       <th scope="row">{{ article.reference }}</th>
                       <th scope="row">{{ article.libelle }}</th>
-                     
+
                       <td class="">
                         <input
                           type="checkbox"
@@ -308,7 +309,7 @@
                           [name]="'checkbox_' + i"
                           [(ngModel)]="article.isChecked"
                           (change)="onCheckboxChange(article)"
-                         
+
                         />
                       </td>
                     </tr>
