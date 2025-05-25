@@ -139,8 +139,11 @@ export class ListEmballagesComponent {
 
   OnEdit(data: any) {
     console.log(data,'data emballage');
+    console.log(data?.emballagesRendus.length,'taille');
+    
     this.isEditMode = true;
     this.updateData = data;
+    
     this.emballagesrecues = data.articlesRecus;
     // data.emballagesRendus.forEach((article: any) => {
     //   this.totalEmballage += Number(article.montantEmballage);
@@ -328,6 +331,7 @@ export class ListEmballagesComponent {
       dateDebut: dateDebut || '',
       dateFin: dateFin || '',
     };
+    console.log(data,'data sendeds')
     this._spinner.show();
     this.articleService
       .GetListReceptionCommandeFournisseurs(data)
@@ -372,10 +376,10 @@ export class ListEmballagesComponent {
   filterGlobal() {
     this.GetListReceptionCommandeFournisseurs(
       1,
+      this.filters.numeroReception,
+      this.filters.numeroBonLivraison,
       this.filters.dateDebut,
       this.filters.dateFin,
-      this.filters.numeroBonLivraison,
-      this.filters.numeroReception
     );
   }
   // GetListRetourEmballageFournisseurs(

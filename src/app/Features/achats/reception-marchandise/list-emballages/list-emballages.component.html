@@ -21,7 +21,7 @@
       </span>
     </div>
     <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Numero reception :</span>
+      <span>Numero bon :</span>
       <span class="p-input-icon-left w-100 d-flex align-items-center">
         <i class="fas fa-search"></i>
         <input
@@ -72,33 +72,35 @@
     [value]="dataList"
     dataKey="id"
     [rows]="8"
-    [totalRecords]="totalPages" [lazy]="true"
+    [totalRecords]="totalPages"
+    [lazy]="true"
     [rowsPerPageOptions]="[10, 25, 50]"
     [paginator]="true"
-    [globalFilterFields]="['plastiquenu.libelle', 'libelle']"
-    [globalFilterFields]="['plastiquenu.libelle', 'libelle']"
     (onPage)="onPage($event)"
   >
-     <ng-template pTemplate="header">
+    <ng-template pTemplate="header">
       <tr>
         <th style="color: var(--secondary-color)">N° réception</th>
+        <th style="color: var(--secondary-color)">N° bon livraison</th>
         <th style="color: var(--secondary-color)">N° commande</th>
         <th style="color: var(--secondary-color)">Date commande</th>
         <th style="color: var(--secondary-color)">Type de commande</th>
         <th style="color: var(--secondary-color)">Statut</th>
         <th style="color: var(--secondary-color)">Actions</th>
       </tr>
-
     </ng-template>
     <ng-template pTemplate="body" let-dataList let-i="index">
       <tr>
         <td>
           {{ dataList?.numeroReceptionCommande }}
         </td>
-
+        <td>
+          {{ dataList?.numeroBonLivraison }}
+        </td>
         <td>
           {{ dataList?.commande?.NumCommande }}
         </td>
+
         <td>
           {{ dataList?.commande?.dateCommande }}
         </td>
@@ -110,9 +112,7 @@
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{
-              dataList?.commande?.statut
-            }}
+            {{ dataList?.commande?.statut }}
           </span>
         </td>
         <td>
@@ -170,7 +170,8 @@
         <div>
           <fieldset class="row border my-1">
             <legend style="font-size: 14px" class="text-secondary">
-              Numero reception commande : {{ updateData?.numeroReceptionCommande }} du
+              Numero reception commande :
+              {{ updateData?.numeroReceptionCommande }} du
               {{ updateData?.createdAt | date : "dd/MM/yyyy" }}
             </legend>
           </fieldset>
@@ -249,13 +250,31 @@
               <tbody>
                 <tr *ngFor="let data of emballagesrecues; let i = index">
                   <td class="">
-                    <p>{{data.articleCommande?data.articleCommande.emballage.id: data.emballage.id }}</p>
+                    <p>
+                      {{
+                        data.articleCommande
+                          ? data.articleCommande.emballage.id
+                          : data.emballage.id
+                      }}
+                    </p>
                   </td>
                   <td class="">
-                    <p>{{ data?.articleCommande ? data?.articleCommande?.emballage?.libelle:data?.emballage?.libelle }}</p>
+                    <p>
+                      {{
+                        data?.articleCommande
+                          ? data?.articleCommande?.emballage?.libelle
+                          : data?.emballage?.libelle
+                      }}
+                    </p>
                   </td>
                   <td>
-                    <p>{{data?.articleCommande?data?.articleCommande?.quantiteAffectee:data?.quantiteRecue}}</p>
+                    <p>
+                      {{
+                        data?.articleCommande
+                          ? data?.articleCommande?.quantiteAffectee
+                          : data?.quantiteRecue
+                      }}
+                    </p>
                   </td>
                   <!-- <td class="d-flex justify-content-center">
                     <button
@@ -283,6 +302,7 @@
         </button>
         <button
           type="submit"
+          *ngIf="updateData?.emballagesRendus.length === 0"
           (click)="onSubmit()"
           class="btn btn-primary px-2"
         >
