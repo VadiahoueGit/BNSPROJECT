@@ -129,12 +129,11 @@ export class ListReceptionMarchandiseComponent {
     this.selectedArticles = [];
     (this.emballageRenduForm.get('articles') as FormArray).clear();
   }
-  OnCreate() {
-    this.isEditMode = false;
+  OnView(data:any) {
     this.isModalOpen = true;
-    this.operation = 'create';
-    this.emballageRenduForm.reset();
-    console.log(this.isModalOpen);
+    this.operation = 'view';
+     this.updateData = data;
+    console.log(this.updateData,'updateData');
   }
 
   OnEdit(data: any) {
@@ -378,10 +377,10 @@ export class ListReceptionMarchandiseComponent {
   filterGlobal() {
     this.GetListReceptionCommandeFournisseurs(
       1,
+      this.filters.numeroReception,
+      this.filters.numeroBonLivraison,
       this.filters.dateDebut,
       this.filters.dateFin,
-      this.filters.numeroBonLivraison,
-      this.filters.numeroReception
     );
   }
   // GetListRetourEmballageFournisseurs(

@@ -21,7 +21,7 @@
       </span>
     </div>
     <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Numero reception :</span>
+      <span>Numero bon :</span>
       <span class="p-input-icon-left w-100 d-flex align-items-center">
         <i class="fas fa-search"></i>
         <input
@@ -72,23 +72,24 @@
     [value]="dataList"
     dataKey="id"
     [rows]="8"
-    [totalRecords]="totalPages" [lazy]="true"
+    [totalRecords]="totalPages"
+    [lazy]="true"
     [rowsPerPageOptions]="[10, 25, 50]"
     [paginator]="true"
     [globalFilterFields]="['plastiquenu.libelle', 'libelle']"
     [globalFilterFields]="['plastiquenu.libelle', 'libelle']"
     (onPage)="onPage($event)"
   >
-     <ng-template pTemplate="header">
+    <ng-template pTemplate="header">
       <tr>
         <th style="color: var(--secondary-color)">N° réception</th>
+      <th style="color: var(--secondary-color)">N° bon livraison</th>
         <th style="color: var(--secondary-color)">N° commande</th>
         <th style="color: var(--secondary-color)">Date commande</th>
         <th style="color: var(--secondary-color)">Type de commande</th>
         <th style="color: var(--secondary-color)">Statut</th>
         <!-- <th style="color: var(--secondary-color)">Actions</th> -->
       </tr>
-
     </ng-template>
     <ng-template pTemplate="body" let-dataList let-i="index">
       <tr>
@@ -96,6 +97,9 @@
           {{ dataList?.numeroReceptionCommande }}
         </td>
 
+         <td>
+          {{ dataList?.numeroBonLivraison }}
+        </td>
         <td>
           {{ dataList?.commande?.NumCommande }}
         </td>
@@ -110,20 +114,18 @@
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{
-              dataList?.commande?.statut
-            }}
+            {{ dataList?.commande?.statut }}
           </span>
         </td>
         <td>
-          <!-- <tr class="d-flex justify-content-center gap-3">
+          <tr class="d-flex justify-content-center gap-3">
             <td>
               <i
-                (click)="OnCreate()"
+                (click)="OnView(dataList)"
                 style="cursor: pointer"
                 class="fas fa-eye text-secondary"
               ></i>
-            </td> -->
+            </td>
             <!-- <td>
                 <i
                   (click)="OnDelete(dataList?.id)"
@@ -131,7 +133,7 @@
                   class="fas fa-trash-alt text-danger"
                 ></i>
               </td> -->
-          <!-- </tr> -->
+          </tr>
         </td>
       </tr>
     </ng-template>
@@ -162,7 +164,7 @@
         >
           <i class="fas fa-box-check text-success fs-4"></i>
         </div>
-        <h1 class="modal-title fs-5 ms-3">Gestion des emballages</h1>
+        <h1 class="modal-title fs-5 ms-3">Détail réception marchandise</h1>
         <button
           type="button"
           class="btn-close"
@@ -171,190 +173,201 @@
         ></button>
       </div>
 
-      <!-- Barre de recherche client centrée -->
-      <div class="modal-body" style="max-height: 70vh; overflow-y: auto">
-        <form [formGroup]="emballageRenduForm" *ngIf="operation == 'create'">
-          <!-- Section: Saisie commande -->
+      <div class="modal-body" style="max-height: 500px; overflow-y: auto">
+        <fieldset class="row border my-1">
+          <legend style="font-size: 14px" class="text-secondary">
+            Numero reception : {{ updateData?.numeroReceptionCommande }} du
+            {{ updateData?.createdAt | date : "dd/MM/yyyy" }}
+          </legend>
+        </fieldset>
 
-          <div class="row g-3">
-            <div class="col-md-4" style="margin-top: 3rem">
-              <button
-                type="submit"
-                class="btn btn-primary"
-                (click)="selectArticle()"
-              >
-                Ajouter des emballages
-              </button>
+        <fieldset class="row border my-2">
+          <legend style="font-size: 14px" class="text-secondary">
+            Informations de la commande
+          </legend>
+          <div class="row">
+            <div class="col-md-4">
+              <strong>Numéro commande : </strong>
+              <span>{{ updateData?.commande?.NumCommande }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Date commande :</strong>
+              <span>{{ updateData?.commande?.dateCommande }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Date livraison estimée : </strong>
+              <span>{{ updateData?.commande?.dateLivraisonEstimee }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Type commande : </strong>
+              <span>{{ updateData?.commande?.typeCommande }}</span>
+            </div>
+            <div class="col-md-4">
+              <strong>Statut : </strong>
+              <span>{{ updateData?.commande?.statut }}</span>
             </div>
           </div>
-        </form>
+        </fieldset>
+        <fieldset class="row border my-2">
+          <legend style="font-size: 14px" class="text-secondary">
+            Articles recues
+          </legend>
+          <div class="p-2 mt-3">
+            <div style="max-height: 350px; overflow-y: auto">
+              <table class="table table-bordered">
+                <thead class="table-success">
+                  <tr>
+                    <th scope="col">Emballage</th>
+                    <th scope="col">Liquide</th>
+                    <th scope="col">Quantité</th>
+                    <th scope="col">Commentaire</th>
+                  </tr>
+                </thead>
 
-        <div class="p-2 mt-3">
-         <table class="table table-bordered">
-              <thead class="table-light">
-                <tr>
-                  <th scope="col">Emballage</th>
-                  <th scope="col">Format</th>
-                  <th scope="col">Condition</th>
-                  <th scope="col">Quantité</th>
-                  <th scope="col">Prix unitaire</th>
-                  <th scope="col">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let data of selectedArticles; let i = index">
-                  <td class="">
-                    <p>{{ data?.libelle }}</p>
-                  </td>
-                  <td class="">
-                    <p>{{ data?.format}}</p>
-                  </td>
-                  <td class="">
-                    <p>{{ data?.condition}}</p>
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      class="form-control-custom"
-                      [(ngModel)]="data.quantiteAffectee"
-                      [min]="0"
-                      required="true"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      class="form-control-custom"
-                      [(ngModel)]="data.prixUnitaireEmballage"
-                      [min]="0"
-                    />
-                  </td>
-                  <td class="d-flex justify-content-center">
-                    <button
-                      type="button"
-                      class="btn btn-danger btn-sm"
-                      (click)="removeArticle(data)"
-                    >
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-        </div>
+                <tbody>
+                  <tr *ngFor="let item of updateData?.articlesRecus">
+                    <td>{{ item?.emballage?.libelle ?? item?.articleCommande?.emballage?.libelle }}</td>
+                    <td>{{ item?.liquide?.libelle ?? item?.articleCommande?.liquide?.libelle  }}</td>
+                    <td>{{ item?.quantiteRecue ??  item?.articleCommande?.quantiteRecue  }}</td>
+                    <td>{{ item?.commentaireEcart ??  item?.articleCommande?.commentaireEcart  }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset class="row border my-2">
+          <legend style="font-size: 14px" class="text-secondary">
+            Emballage rendus
+          </legend>
+          <div class="p-2 mt-3">
+            <div style="max-height: 350px; overflow-y: auto">
+              <table class="table table-bordered">
+                <thead class="table-success">
+                  <tr>
+                    <th scope="col">Numéro retour</th>
+                    <th scope="col">Date retour</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr *ngFor="let item of updateData?.emballagesRendus">
+                    <td>{{ item?.numeroRetour }}</td>
+                    <td>{{ item?.dateRetour  | date : "dd/MM/yyyy"}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </fieldset>
       </div>
 
-      <!-- Modal Footer -->
       <div class="modal-footer gap-3 px-4">
         <button
-          type="button"
-          class="btn btn-secondary"
           (click)="OnCloseModal()"
+          type="button"
+          class="btn btn-secondary px-2"
         >
-          Annuler
-        </button>
-        <button
-          type="submit"
-          class="btn btn-primary"
-          (click)="onSubmit()"
-        >
-          Valider
+          Fermer
         </button>
       </div>
     </div>
   </div>
-</div>
 
-<!--CHOIX ARTICLE-->
-<div *ngIf="isChoiceModalOpen" class="custom-modal">
-  <div class="modal-dialog2 modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div
-          class="d-flex justify-content-center align-items-center"
-          style="
-            background-color: rgb(219, 255, 232);
-            border-radius: 3rem;
-            width: 3rem;
-            height: 3rem;
-          "
-        >
-          <i class="fas fa-box-check text-primary fs-3"></i>
-        </div>
-        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
-          Selection des emballages
-        </h1>
-      </div>
-
-      <div class="modal-body">
-        <form>
-          <div class="row">
-            <fieldset class="row border my-2">
-              <div class="p-3">
-                <!-- Champ de recherche -->
-                <input
-                  type="text"
-                  name="search"
-                  (input)="filterArticles()"
-                  [(ngModel)]="searchTerm"
-                  placeholder="Rechercher un produit"
-                  class="form-control mb-3"
-                />
-              </div>
-              <div
-                class="table-responsive"
-                style="max-height: 200px; overflow-y: auto"
-              >
-                <table class="table">
-                  <thead>
-                    <tr style="font-size: small">
-                      <th scope="col" class="text-secondary">Code</th>
-                      <th scope="col" class="text-secondary">Produits</th>
-                      <th scope="col" class="text-secondary text-center">
-                        Choix
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      *ngFor="let article of filteredArticleList; let i = index"
-                      style="font-size: small"
-                    >
-                      <th scope="row">{{ article.code }}</th>
-                      <th scope="row">{{ article.libelle }}</th>
-
-                      <td class="">
-                        <input
-                          type="checkbox"
-                          class="form-control-custom"
-                          [name]="'checkbox_' + i"
-                          [(ngModel)]="article.isChecked"
-                          (change)="onCheckboxChange(article)"
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </fieldset>
+  <!--CHOIX ARTICLE-->
+  <div *ngIf="isChoiceModalOpen" class="custom-modal">
+    <div class="modal-dialog2 modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header d-flex align-items-center">
+          <div
+            class="d-flex justify-content-center align-items-center"
+            style="
+              background-color: rgb(219, 255, 232);
+              border-radius: 3rem;
+              width: 3rem;
+              height: 3rem;
+            "
+          >
+            <i class="fas fa-box-check text-primary fs-3"></i>
           </div>
-        </form>
-      </div>
-      <div class="modal-footer gap-3 px-4y">
-        <button
-          (click)="OnCloseChoiceModal()"
-          type="button"
-          class="btn btn-secondary px-2"
-        >
-          Annuler
-        </button>
-        <button
-          type="submit"
-          (click)="onSubmitSelection()"
-          class="btn btn-primary px-2"
-        >
-          Valider
-        </button>
+          <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
+            Selection des emballages
+          </h1>
+        </div>
+
+        <div class="modal-body">
+          <form>
+            <div class="row">
+              <fieldset class="row border my-2">
+                <div class="p-3">
+                  <!-- Champ de recherche -->
+                  <input
+                    type="text"
+                    name="search"
+                    (input)="filterArticles()"
+                    [(ngModel)]="searchTerm"
+                    placeholder="Rechercher un produit"
+                    class="form-control mb-3"
+                  />
+                </div>
+                <div
+                  class="table-responsive"
+                  style="max-height: 200px; overflow-y: auto"
+                >
+                  <table class="table">
+                    <thead>
+                      <tr style="font-size: small">
+                        <th scope="col" class="text-secondary">Code</th>
+                        <th scope="col" class="text-secondary">Produits</th>
+                        <th scope="col" class="text-secondary text-center">
+                          Choix
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let article of filteredArticleList;
+                          let i = index
+                        "
+                        style="font-size: small"
+                      >
+                        <th scope="row">{{ article.code }}</th>
+                        <th scope="row">{{ article.libelle }}</th>
+
+                        <td class="">
+                          <input
+                            type="checkbox"
+                            class="form-control-custom"
+                            [name]="'checkbox_' + i"
+                            [(ngModel)]="article.isChecked"
+                            (change)="onCheckboxChange(article)"
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </fieldset>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer gap-3 px-4y">
+          <button
+            (click)="OnCloseChoiceModal()"
+            type="button"
+            class="btn btn-secondary px-2"
+          >
+            Annuler
+          </button>
+          <button
+            type="submit"
+            (click)="onSubmitSelection()"
+            class="btn btn-primary px-2"
+          >
+            Valider
+          </button>
+        </div>
       </div>
     </div>
   </div>
