@@ -141,7 +141,7 @@ export class ActiviteService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/visites/planification?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&dateDebut=${data.dateDebut}&dateFin=${data.dateFin}&commercialNomPrenom=${data.commercialNomPrenom}`,{headers}
+          `${this.apiUrl}/v1/visites/planification/visite/commercial?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&dateDebut=${data.dateDebut}&dateFin=${data.dateFin}&commercialNomPrenom=${data.commercialNomPrenom}`,{headers}
         )
         .subscribe(
           (res: any) => {
