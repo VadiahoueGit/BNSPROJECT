@@ -7,20 +7,25 @@
 
     <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'gestvisit'"
       (click)="activeElement('gestvisit')">Gestion des visites</a>
-  
+
+  <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'progvisite'"
+     (click)="activeElement('progvisite')"> Visites programmées</a>
+
       <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'svisite'"
       (click)="activeElement('svisite')">Suivi des visites</a>
-  
+
   </nav>
-  
+
   <div class="tab-content mt-3">
     <div *ngIf="activeTab === 'gestvisit'" class="tab-pane fade show active">
       <app-gestionvisite></app-gestionvisite>
     </div>
-  
+    <div *ngIf="activeTab === 'progvisite'" class="tab-pane fade show active">
+      <app-programmation></app-programmation>
+    </div>
     <div *ngIf="activeTab === 'svisite'" class="tab-pane fade show active">
       <app-suivivisite></app-suivivisite>
     </div>
-  
-     
+
+
   </div>

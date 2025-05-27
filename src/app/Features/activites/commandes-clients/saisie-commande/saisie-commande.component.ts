@@ -69,7 +69,6 @@ export class SaisieCommandeComponent {
     date: '',
     etablissement: '',
     statut: '',
-
   };
 
   constructor(
