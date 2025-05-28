@@ -77,14 +77,13 @@ export class GestionvisiteComponent {
       vehiculeId: [null, Validators.required],
       dateVisite: [null, Validators.required],
       repetitionDays: ['', Validators.required],
-      repetitionDuration: [0, Validators.required],
-
+      repetitionDuration: [{value: 12, disabled: true},],
+      IsRepetitive: [true, Validators.required],
     });
   }
 
   ngOnInit() {
-    this.VisiteForm.controls['repetitionDuration'].setValue(12)
-    this.VisiteForm.controls['repetitionDuration'].disabled
+    // this.VisiteForm.controls['repetitionDuration'].setValue(12)
     this.LoadTypeVisite();
     this.LoadCommercial();
     this.LoadVisite()
@@ -136,6 +135,7 @@ export class GestionvisiteComponent {
     console.log(this.isModalOpen);
   }
 
+
   OnEdit(data: any) {
     this.isEditMode = true;
     console.log(data);
@@ -164,9 +164,10 @@ export class GestionvisiteComponent {
         "pointDeVenteIds": this.VisiteForm.value.pointDeVenteIds,
         "dateDeVisite": this.VisiteForm.value.dateVisite,
         "repetitionDays": [this.VisiteForm.value.repetitionDays],
-        "repetitionDuration": this.VisiteForm.value.repetitionDuration,
+        "repetitionDuration": 12,
         "typeVisite": this.VisiteForm.value.typeVisite,
-        "vehiculeId": this.VisiteForm.value.vehiculeId
+        "vehiculeId": this.VisiteForm.value.vehiculeId,
+        "IsRepetitive": this.VisiteForm.value.IsRepetitive
       };
       console.log('formValues', formValues);
 
@@ -314,4 +315,6 @@ export class GestionvisiteComponent {
     this.selectedItems = [];
 
   }
+
+  protected readonly console = console;
 }

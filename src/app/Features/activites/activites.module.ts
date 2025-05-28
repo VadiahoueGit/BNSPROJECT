@@ -125,9 +125,11 @@ import { FacturationComponent } from './facturation/facturation.component';
 import { LivraisonComponent } from './livraison/livraison.component';
 import { VenteGlobalComponent } from './facturation/vente-global/vente-global.component';
 import { VenteGlobalFacturesComponent } from './facturation/vente-global-factures/vente-global-factures.component';
+import { ProgrammationComponent } from './programmation/programmation.component';
 registerLocaleData(localeFr, 'fr');
 @NgModule({
   declarations: [
+    ProgrammationComponent,
     ActivitesComponent,
     VisitecomComponent,
     GestionvisiteComponent,
@@ -151,7 +153,8 @@ registerLocaleData(localeFr, 'fr');
     FacturationComponent,
     LivraisonComponent,
     VenteGlobalComponent,
-    VenteGlobalFacturesComponent
+    VenteGlobalFacturesComponent,
+    ProgrammationComponent
   ],
   imports: [
     TableModule,
@@ -268,7 +271,7 @@ registerLocaleData(localeFr, 'fr');
 
   ],
   providers: [
-    { provide: LOCALE_ID, useValue: 'fr' } 
+    { provide: LOCALE_ID, useValue: 'fr' }
   ],
   exports: [
     AvatarModule,

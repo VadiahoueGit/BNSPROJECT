@@ -37,7 +37,7 @@
                   <div class="mb-3">
                     <label for="format" class="form-label">Vehicule <span
                       class="text-danger">*</span></label>
-                    <ng-select class="form-control" [multiple]="true" [checkbox]="true" [items]="vehicules"
+                    <ng-select class="form-control" [multiple]="false"  [items]="vehicules"
                                bindLabel="marque" bindValue="id" formControlName="vehiculeId"
                                [searchable]="true">
                     </ng-select>
@@ -49,6 +49,11 @@
                       <option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</option>
                     </select>
                   </div>
+<!--                  <div class="form-check form-switch mb-3">-->
+<!--                    <label for="format" class="form-label">Repeter :<span-->
+<!--                      class="text-danger">*</span></label>-->
+<!--                    <input class="form-check-input" type="checkbox" role="switch" formControlName="IsRepetitive"  />-->
+<!--                  </div>-->
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
