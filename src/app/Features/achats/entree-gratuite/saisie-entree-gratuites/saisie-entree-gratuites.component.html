@@ -1,1 +1,424 @@
-<p>saisie-entree-gratuites works!</p>
+<div class="card">
+  <div class="d-flex justify-content-end py-3">
+
+    <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
+      Saisir une entrée
+    </button>
+  </div>
+  <div class="row">
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+      <span>Numéro entrée :</span>
+      <span class="p-input-icon-left w-100 d-flex align-items-center">
+        <i class="fas fa-search"></i>
+        <input
+          class="w-100"
+          style="border-radius: 7px"
+          pInputText
+          type="text"
+          [(ngModel)]="filters.numeroEntree"
+          (keydown.enter)="filterGlobal()"
+          placeholder="Recherche"
+        />
+      </span>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+      <span>Date début :</span>
+      <span class="p-input-icon-left w-100 d-flex align-items-center">
+        <i class="fas fa-search"></i>
+        <input
+          class="w-100"
+          style="border-radius: 7px"
+          pInputText
+          type="text"
+          [(ngModel)]="filters.dateDebut"
+          (keydown.enter)="filterGlobal()"
+          placeholder="Recherche"
+        />
+      </span>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+      <span>Date fin :</span>
+      <span class="p-input-icon-left w-100 d-flex align-items-center">
+        <i class="fas fa-search"></i>
+        <input
+          class="w-100"
+          style="border-radius: 7px"
+          pInputText
+          type="text"
+          [(ngModel)]="filters.dateFin"
+          (keydown.enter)="filterGlobal()"
+          placeholder="Recherche"
+        />
+      </span>
+    </div>
+  </div>
+  <p-table
+    [styleClass]="'p-datatable-sm'"
+    #dt2
+    [value]="ListEntreeGratuite"
+    dataKey="id"
+    [rows]="8"
+    [totalRecords]="totalPages" [lazy]="true"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [paginator]="true"
+    (onPage)="onPage($event)"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="color: var(--secondary-color)">N° entrée</th>
+        <th style="color: var(--secondary-color)">Fournisseur</th>
+        <th style="color: var(--secondary-color)">Dépôt</th>
+        <th style="color: var(--secondary-color)">Date réception</th>
+        <!-- <th style="color: var(--secondary-color)">Actions</th> -->
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-ListEntreeGratuite let-i="index">
+      <tr>
+        <td>
+          {{ ListEntreeGratuite?.NumEntreeGratuite }}
+        </td>
+     
+        <td>
+          {{ ListEntreeGratuite?.fournisseur?.nom }}
+        </td>
+      
+        <td>
+            <span class="ml-1 vertical-align-middle">
+             {{ ListEntreeGratuite?.depot?.nomDepot }}
+            </span>
+        </td>
+
+        <td>
+            <span class="ml-1 vertical-align-middle">
+             {{ ListEntreeGratuite?.dateReception }}
+            </span>
+        </td>
+        <td>
+      <!-- <tr class="d-flex justify-content-center gap-3">
+        <td>
+          <i
+            (click)="OnEdit(ListEntreeGratuite)"
+            style="cursor: pointer"
+            class="fas fa-eye text-secondary"
+          ></i>
+        </td>
+       
+      </tr> -->
+      </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">Aucune commande trouvé.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Modal creation -->
+<!-- Modal -->
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+          <div
+            class="d-flex justify-content-center align-items-center"
+            style="
+              background-color: rgb(219, 255, 232);
+              border-radius: 3rem;
+              width: 3rem;
+              height: 3rem;
+            "
+          >
+            <i class="fas fa-box-check text-primary fs-3"></i>
+          </div>
+          <h1
+            *ngIf="operation == 'create'"
+            class="modal-title fs-5 ms-3"
+            id="staticBackdropLabel"
+          >
+            Création de l'entrée
+          </h1>
+          <h1
+            *ngIf="operation == 'edit' || operation == 'createNew' || operation == 'update'"
+            class="modal-title fs-5 ms-3"
+            id="staticBackdropLabel"
+          >
+            Détails de la commande
+          </h1>
+        </div>
+        <div>
+          <button
+            *ngIf="operation == 'edit'"
+            type="submit"
+            class="btn btn-secondary px-2 mx-2"
+            (click)="OnAddGoods(operation,updateData?.articles)"
+          >
+            <i class="fas fa-plus"></i>
+            <span class="ms-2">Ajouter</span>
+          </button>
+          <button
+            *ngIf="operation == 'edit'"
+            type="submit"
+            class="btn btn-secondary px-2"
+            (click)="updateGoods(operation)"
+          >
+            <i class="fas fa-edit"></i>
+            <span class="ms-2">{{ operation === 'edit' ? 'Modifier' : 'Valider les changements' }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-body" style="max-height: 500px;  overflow-y: auto">
+        <form [formGroup]="CommandeForm" *ngIf="operation == 'create'">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label for="" class="form-label">Fournisseur</label>
+              <span class="text-danger">*</span>
+              <ng-select
+                class="form-control"
+                [items]="Listfournisseurs"
+                bindLabel="nom"
+                bindValue="id"
+                formControlName="fournisseur"
+                [searchable]="true"
+              >
+              </ng-select>
+            </div>
+
+            <div class="col-md-4">
+              <label for="datelivraison" class="form-label"
+              >Date réception<span class="text-danger">*</span></label
+              >
+              <input
+                type="date"
+                class="form-control"
+                id="datelivraison"
+                formControlName="dateReception"
+                [min]="minDate"
+              />
+            </div>
+
+            <div class="col-md-4">
+              <label for="" class="form-label">Dépôt</label>
+              <span class="text-danger">*</span>
+              <ng-select
+                class="form-control"
+                [items]="depotList"
+                bindLabel="nomDepot"
+                bindValue="id"
+                (change)="change($event)"
+                formControlName="depot"
+                [searchable]="true"
+              >
+              </ng-select>
+            </div>
+            <div class="col-md-4">
+              <label for="" class="form-label"></label>
+              <button
+                type="button"
+                [disabled]="CommandeForm.controls['depot'].invalid"
+                class="btn btn-secondary"
+                (click)="selectArticle()"
+              >
+                Ajouter des articles
+              </button>
+            </div>
+          </div>
+          <!-- <div class="row">
+            <div
+              class="col-12 d-flex align-items-center justify-content-between"
+            >
+              <div class="">
+                <label for="" class="form-label">Fournisseur</label>
+                <span class="text-danger">*</span>
+                <ng-select
+                  class="form-control"
+                  [items]="listRevendeurs"
+                  bindLabel="displayName"
+                  bindValue="id"
+                  formControlName="clientId"
+                  [searchable]="true"
+                  (change)="onRevendeurChange($event)"
+                >
+                </ng-select>
+              </div>
+              <div class="">
+                <label for="" class="form-label"></label>
+                <button
+                  type="button"
+                  [disabled]="CommandeForm.controls['clientId'].invalid"
+                  class="btn btn-secondary"
+                  (click)="selectArticle()"
+                >
+                  Ajouter des articles
+                </button>
+              </div>
+            </div>
+          </div> -->
+        </form>
+      
+        <div class="p-2 mt-3">
+          <div style="max-height: 350px; overflow-y: auto">
+            <table *ngIf="operation == 'create' || operation == 'createNew'" class="table table-bordered">
+              <thead class="table-success">
+            
+              <tr>
+                <th scope="col">Groupe article</th>
+                <th scope="col">Liquide</th>
+                <th scope="col">Emballage </th>
+                <th scope="col">Quantité</th>
+                <th scope="col">Actions</th>
+              </tr>
+              </thead>
+
+              <tbody>
+              <tr *ngFor="let item of  selectedArticles">
+                <td>{{ item?.groupearticle?.id }}</td>
+                <td>{{ item?.liquide?.id }}</td>
+                <td>{{ item?.liquide?.emballage?.id }}</td>
+                <td>
+                  <input
+                    type="number"
+                    class="form-control-custom"
+                    [(ngModel)]="item.quantite"
+                    [min]="0"
+                  />
+
+                </td>
+                <td class="d-flex justify-content-center">
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm"
+                    (click)="removeArticle(item)"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+        
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer gap-3 px-4">
+        <button
+          (click)="OnCloseModal()"
+          type="button"
+          class="btn btn-secondary px-2"
+        >
+          Fermer
+        </button>
+        <button
+          type="submit"
+          *ngIf="operation == 'create'"
+          (click)="onSubmit()"
+          class="btn btn-primary px-2"
+        >
+          Enrégistrer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--CHOIX ARTICLE-->
+<div *ngIf="isChoiceModalOpen" class="custom-modal">
+  <div class="modal-dialog2 modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex align-items-center">
+        <div
+          class="d-flex justify-content-center align-items-center"
+          style="
+              background-color: rgb(219, 255, 232);
+              border-radius: 3rem;
+              width: 3rem;
+              height: 3rem;
+            "
+        >
+          <i class="fas fa-box-check text-primary fs-3"></i>
+        </div>
+        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
+          Selection des articles
+        </h1>
+      </div>
+
+      <div class="modal-body">
+        <form>
+          <div class="row">
+            <fieldset class="row border my-2">
+              <div class="p-3">
+                <!-- Champ de recherche -->
+                <input
+                  type="text"
+                  name="search"
+                  (input)="filterArticles()"
+                  [(ngModel)]="searchTerm"
+                  placeholder="Rechercher un produit"
+                  class="form-control mb-3"
+                />
+              </div>
+              <div
+                class="table-responsive"
+                style="max-height: 200px; overflow-y: auto"
+              >
+                <table class="table">
+                  <thead>
+                  <tr style="font-size: small">
+                    <th scope="col" class="text-secondary">Code</th>
+                    <th scope="col" class="text-secondary">Produits</th>
+                    <!-- <th scope="col" class="text-secondary">Disponibilité</th> -->
+                    <th scope="col" class="text-secondary text-center">
+                      Choix
+                    </th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr
+                    *ngFor="let article of filteredArticleList ; let i = index"
+                    style="font-size: small"
+                  >
+                    <th scope="row">{{ article.reference }}</th>
+                    <th scope="row">{{ article.libelle }}</th>
+                    <!-- <th scope="row">{{stocksDisponibles[article.liquide.id]}}</th> -->
+                    <td class="">
+                      <input
+                        type="checkbox"
+                        class="form-control-custom"
+                        [name]="'checkbox_' + i"
+                        [(ngModel)]="article.isChecked"
+                        (change)="onCheckboxChange(article)"
+                      />
+
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </fieldset>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer gap-3 px-4y">
+        <button
+          (click)="OnCloseChoiceModal()"
+          type="button"
+          class="btn btn-secondary px-2"
+        >
+          Annuler
+        </button>
+        <button
+
+          type="submit"
+          (click)="onSubmitSelection()"
+          class="btn btn-primary px-2"
+        >
+          Valider
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

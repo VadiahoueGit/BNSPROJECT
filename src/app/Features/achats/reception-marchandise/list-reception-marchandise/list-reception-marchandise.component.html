@@ -245,15 +245,17 @@
               <table class="table table-bordered">
                 <thead class="table-success">
                   <tr>
-                    <th scope="col">Numéro retour</th>
-                    <th scope="col">Date retour</th>
+                    <th scope="col">Emballage</th>
+                    <th scope="col">Prix unitaire</th>
+                    <th scope="col">Quantité</th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  <tr *ngFor="let item of updateData?.emballagesRendus">
-                    <td>{{ item?.numeroRetour }}</td>
-                    <td>{{ item?.dateRetour  | date : "dd/MM/yyyy"}}</td>
+                  <tr *ngFor="let item of updateData?.emballagesRendus?.[0]?.articles">
+                    <td>{{ item?.emballage?.libelle }}</td>
+                    <td>{{ item?.prixUnitaireEmballage }}</td>
+                    <td>{{ item?.quantite}}</td>
                   </tr>
                 </tbody>
               </table>

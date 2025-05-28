@@ -1673,4 +1673,70 @@ export class ArticleServiceService {
         );
     });
   }
+
+  // ENTREE GRATUITE
+
+   CreateEntreeGratuite(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .post(`${this.apiUrl}/v1/entree-gratuite`, data, {
+          headers,
+        })
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+    GetListEntreeGratuite(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/entree-gratuite?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&numeroEntree=${data.numeroEntree}&dateDebut=${data.dateDebut}&dateFin=${data.dateFin}`,
+          { headers }
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            if (res.statusCode === 200) {
+              this.ListRevendeurs.next(res.data);
+            }
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+  ValidateEntreeGratuite(id: number, data: FormData): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .patch(`${this.apiUrl}/v1/entree-gratuite/${id}`, data, { headers })
+        .subscribe(
+          (res: any) => {
+            resolve(res);
+          },
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  }
 }
