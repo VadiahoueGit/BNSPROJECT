@@ -134,6 +134,23 @@ export class ActiviteService {
     });
   }
 
+  UpdateVisiteProgrammation(id: number, data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/visites/planification/${id}`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
   GetVisiteProgrammationList(data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -197,13 +214,13 @@ export class ActiviteService {
     });
   }
 
-  DeleteVisite(id: number) {
+  DeletePlanification(id: number) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
       this._http
-        .delete(`${this.apiUrl}/v1/visites/${id}`,{headers})
+        .delete(`${this.apiUrl}/v1/visites/planification/${id}`,{headers})
         .subscribe(
           (res: any) => {
             console.log(res);
