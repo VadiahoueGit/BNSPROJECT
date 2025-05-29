@@ -229,14 +229,17 @@
                   <tr *ngFor="let item of updateData?.articlesRecus">
                     <td>
                       {{
-                        item?.emballage?.libelle ??
-                          item?.articleCommande?.emballage?.libelle
+                        item?.articleCommande ? item?.articleCommande?.emballage?.libelle :
+                        item?.emballage?.libelle 
+                          
                       }}
                     </td>
                     <td>
                       {{
-                        item?.liquide?.libelle ??
-                          item?.articleCommande?.liquide?.libelle
+                        item?.articleCommande ? 
+                        item?.articleCommande?.liquide?.libelle :
+                        item?.liquide?.libelle
+                          
                       }}
                     </td>
                     <td>
