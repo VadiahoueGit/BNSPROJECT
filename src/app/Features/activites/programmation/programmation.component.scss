@@ -57,6 +57,15 @@ strong,span{
   height: 2.5rem;
 }
 
+.table thead th {
+  padding: 10px;
+  position: sticky;
+  top: 0;
+  background-color: var(--primary-color);
+  color: white;
+  z-index: 1;
+  /* Assurez-vous que l'en-tête est au-dessus du corps de la table */
+}
 .p-column-filter-menu-button {
   display: none; /* Masquer l'icône de filtre */
 }
