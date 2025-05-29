@@ -94,7 +94,7 @@
             </span>
         </td>
         <td>
-      <!-- <tr class="d-flex justify-content-center gap-3">
+      <tr class="d-flex justify-content-center gap-3">
         <td>
           <i
             (click)="OnEdit(ListEntreeGratuite)"
@@ -103,7 +103,7 @@
           ></i>
         </td>
        
-      </tr> -->
+      </tr>
       </td>
       </tr>
     </ng-template>
@@ -141,37 +141,82 @@
             Création de l'entrée
           </h1>
           <h1
-            *ngIf="operation == 'edit' || operation == 'createNew' || operation == 'update'"
+            *ngIf="operation == 'edit' "
             class="modal-title fs-5 ms-3"
             id="staticBackdropLabel"
           >
-            Détails de la commande
+            Détails de l'entrée
           </h1>
         </div>
         <div>
-          <button
-            *ngIf="operation == 'edit'"
-            type="submit"
-            class="btn btn-secondary px-2 mx-2"
-            (click)="OnAddGoods(operation,updateData?.articles)"
-          >
-            <i class="fas fa-plus"></i>
-            <span class="ms-2">Ajouter</span>
-          </button>
-          <button
-            *ngIf="operation == 'edit'"
-            type="submit"
-            class="btn btn-secondary px-2"
-            (click)="updateGoods(operation)"
-          >
-            <i class="fas fa-edit"></i>
-            <span class="ms-2">{{ operation === 'edit' ? 'Modifier' : 'Valider les changements' }}</span>
-          </button>
         </div>
       </div>
+<ng-container *ngIf="operation == 'edit' ">
+  
+      <div class="modal-body" style="max-height: 500px; overflow-y: auto">
 
-      <div class="modal-body" style="max-height: 500px;  overflow-y: auto">
-        <form [formGroup]="CommandeForm" *ngIf="operation == 'create'">
+        <fieldset class="row border my-2">
+          <legend style="font-size: 14px" class="text-secondary">
+            Informations
+          </legend>
+          <div class="row">
+            <div class="col-md-12">
+              <strong> Numero reception: </strong>
+              <span>{{ updateData?.NumEntreeGratuite }}</span>
+            </div>
+            </div>
+             <div class="row">
+            <div class="col-md-6">
+              <strong>Nom fournisseur : </strong>
+              <span>{{ updateData?.fournisseur?.nom }}</span>
+            </div>
+            <div class="col-md-6">
+              <strong>Dépôt :</strong>
+              <span>{{ updateData?.depot?.nomDepot }}</span>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset class="row border my-2">
+          <legend style="font-size: 14px" class="text-secondary">
+            Articles
+          </legend>
+          <div class="p-2 mt-3">
+            <div style="max-height: 350px; overflow-y: auto">
+              <table class="table table-bordered">
+                <thead class="table-success">
+                  <tr>
+                    <th scope="col">Emballage</th>
+                    <th scope="col">Liquide</th>
+                    <th scope="col">Quantité</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr *ngFor="let item of updateData?.articles">
+                    <td>{{ item?.emballage?.libelle }}</td>
+                    <td>{{ item?.liquide?.libelle }}</td>
+                    <td>{{ item?.quantite}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="modal-footer gap-3 px-4">
+        <button
+          (click)="OnCloseModal()"
+          type="button"
+          class="btn btn-secondary px-2"
+        >
+          Fermer
+        </button>
+      </div>
+</ng-container>
+<ng-container  *ngIf="operation == 'create'">
+  <div class="modal-body" style="max-height: 500px;  overflow-y: auto">
+        <form [formGroup]="CommandeForm">
           <div class="row g-3">
             <div class="col-md-4">
               <label for="" class="form-label">Fournisseur</label>
@@ -321,6 +366,8 @@
           Enrégistrer
         </button>
       </div>
+</ng-container>
+    
     </div>
   </div>
 </div>
