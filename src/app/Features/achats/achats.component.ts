@@ -29,11 +29,11 @@ export class AchatsComponent {
       title: 'Entrée de gratuité',
       url:'feature/achats/entree-de-gratuite',
     },
-    {
-      image: 'assets/icon/history.png',
-      title: 'Historique & gestion des retours',
-      url: 'feature/achats/historique-de-gestion-retour',
-    },
+    // {
+    //   image: 'assets/icon/history.png',
+    //   title: 'Historique & gestion des retours',
+    //   url: 'feature/achats/historique-de-gestion-retour',
+    // },
 
   ]
     constructor(private _router: Router) { }

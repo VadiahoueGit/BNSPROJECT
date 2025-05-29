@@ -83,7 +83,7 @@
     <ng-template pTemplate="header">
       <tr>
         <th style="color: var(--secondary-color)">N° réception</th>
-      <th style="color: var(--secondary-color)">N° bon livraison</th>
+        <th style="color: var(--secondary-color)">N° bon livraison</th>
         <th style="color: var(--secondary-color)">N° commande</th>
         <th style="color: var(--secondary-color)">Date commande</th>
         <th style="color: var(--secondary-color)">Type de commande</th>
@@ -97,7 +97,7 @@
           {{ dataList?.numeroReceptionCommande }}
         </td>
 
-         <td>
+        <td>
           {{ dataList?.numeroBonLivraison }}
         </td>
         <td>
@@ -220,16 +220,48 @@
                     <th scope="col">Emballage</th>
                     <th scope="col">Liquide</th>
                     <th scope="col">Quantité</th>
+                    <th scope="col">Ecart</th>
                     <th scope="col">Commentaire</th>
                   </tr>
                 </thead>
 
                 <tbody>
                   <tr *ngFor="let item of updateData?.articlesRecus">
-                    <td>{{ item?.emballage?.libelle ?? item?.articleCommande?.emballage?.libelle }}</td>
-                    <td>{{ item?.liquide?.libelle ?? item?.articleCommande?.liquide?.libelle  }}</td>
-                    <td>{{ item?.quantiteRecue ??  item?.articleCommande?.quantiteRecue  }}</td>
-                    <td>{{ item?.commentaireEcart ??  item?.articleCommande?.commentaireEcart  }}</td>
+                    <td>
+                      {{
+                        item?.emballage?.libelle ??
+                          item?.articleCommande?.emballage?.libelle
+                      }}
+                    </td>
+                    <td>
+                      {{
+                        item?.liquide?.libelle ??
+                          item?.articleCommande?.liquide?.libelle
+                      }}
+                    </td>
+                    <td>
+                      {{
+                        item?.articleCommande
+                          ? item?.articleCommande?.quantiteAffectee
+                          : item?.quantiteRecue
+                      }}
+                    </td>
+                    <td
+                      [ngClass]="{
+                        'text-success':
+                          (item?.ecart ?? item?.articleCommande?.ecart) >= 0,
+                        'text-danger':
+                          (item?.ecart ?? item?.articleCommande?.ecart) < 0
+                      }"
+                    >
+                      {{ item?.ecart ?? item?.articleCommande?.ecart }}
+                    </td>
+                    <td>
+                      {{
+                        item?.commentaireEcart ??
+                          item?.articleCommande?.commentaireEcart
+                      }}
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -252,10 +284,12 @@
                 </thead>
 
                 <tbody>
-                  <tr *ngFor="let item of updateData?.emballagesRendus?.[0]?.articles">
+                  <tr
+                    *ngFor="let item of updateData?.emballagesRendus?.[0]?.articles"
+                  >
                     <td>{{ item?.emballage?.libelle }}</td>
                     <td>{{ item?.prixUnitaireEmballage }}</td>
-                    <td>{{ item?.quantite}}</td>
+                    <td>{{ item?.quantite }}</td>
                   </tr>
                 </tbody>
               </table>
