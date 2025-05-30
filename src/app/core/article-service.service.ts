@@ -1210,7 +1210,7 @@ export class ArticleServiceService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/revendeur?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,
+          `${this.apiUrl}/v1/revendeur?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&raisonSocial=${data.raisonSociale}&nomProprietaire=${data.proprietaire}&groupeClient=${data.groupeClient}`,
           { headers }
         )
         .subscribe(

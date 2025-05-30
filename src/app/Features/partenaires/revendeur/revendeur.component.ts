@@ -45,6 +45,11 @@ export class RevendeurComponent {
   numeroSap: any;
   typePrixId: any;
   filteredCount: number = 0;
+  filters: any = {
+    groupeClient:'',
+    proprietaire: '',
+    raisonSociale: '',
+  };
   @ViewChild('dt') dt!: Table;
   totalPages: number;
   constructor(
@@ -225,10 +230,14 @@ export class RevendeurComponent {
 
   }
 
-  filterGlobal(event:any) {
-    const inputElement = event.target as HTMLInputElement;
-    const value = inputElement?.value || ''; // Utilisez une valeur par défaut
-    this.dt.filterGlobal(value, 'contains');
+  filterGlobal() {
+    console.log(this.filters);
+    this.GetRevendeurList(
+      1,
+      this.filters.proprietaire,
+      this.filters.groupeClient,
+      this.filters.raisonSociale
+    );
   }
   OnCloseDetailModal() {
     this.isModalDetail = false;
@@ -398,11 +407,14 @@ export class RevendeurComponent {
     });
   }
 
-  GetRevendeurList(page: number) {
+  GetRevendeurList(page: number, proprietaire?: string,groupeClient?: string, raisonSociale?: string) {
     let data = {
       paginate: true,
       page: page,
       limit: 8,
+      proprietaire: proprietaire || '',
+      groupeClient: groupeClient || '',
+      raisonSociale: raisonSociale || '',
     };
     this._spinner.show();
     this._articleService.GetListRevendeur(data).then((res: any) => {
