@@ -2,7 +2,9 @@
   max-width: 45em;
   min-width: auto;
 }
-
+strong,span{
+  font-size: 13px;
+}
 .custom-modal {
   position: fixed;
   top: 0;

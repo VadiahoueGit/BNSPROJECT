@@ -10,6 +10,53 @@
     </div>
     <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer un client OSR</button>
   </div>
+  <div class="row">
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+      <span>Etablissement :</span>
+      <span class="p-input-icon-left w-100 d-flex align-items-center">
+        <i class="fas fa-search"></i>
+        <input
+          class="w-100"
+          style="border-radius: 7px"
+          pInputText
+          type="text"
+          [(ngModel)]="filters.etablissement"
+          (keydown.enter)="filterGlobal()"
+          placeholder="Recherche"
+        />
+      </span>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+      <span>Dépot :</span>
+      <span class="p-input-icon-left w-100 d-flex align-items-center">
+        <i class="fas fa-search"></i>
+        <input
+          class="w-100"
+          style="border-radius: 7px"
+          pInputText
+          type="text"
+          [(ngModel)]="filters.depot"
+          (keydown.enter)="filterGlobal()"
+          placeholder="Recherche"
+        />
+      </span>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+      <span>Statut :</span>
+      <span class="p-input-icon-left w-100 d-flex align-items-center">
+        <i class="fas fa-search"></i>
+        <input
+          class="w-100"
+          style="border-radius: 7px"
+          pInputText
+          type="text"
+          [(ngModel)]="filters.statut"
+          (keydown.enter)="filterGlobal()"
+          placeholder="Recherche"
+        />
+      </span>
+    </div>
+  </div>
   <p-table #dt [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
   (onFilter)="updateFilteredCount(dt)"
            [totalRecords]="totalPages" [lazy]="true"
@@ -31,14 +78,6 @@
         <th style="color: var(--secondary-color);">Zone</th>
         <th style="color: var(--secondary-color);">Statut</th>
         <th style="color: var(--secondary-color);">Action</th>
-      </tr>
-      <tr>
-        <th>
-          <p-columnFilter matchMode="contains"  type="text" field="nomEtablissement" placeholder="" />
-        </th>
-        <th>
-          <p-columnFilter matchMode="contains"  type="text" field="depot.nomDepot" placeholder="" />
-        </th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList>

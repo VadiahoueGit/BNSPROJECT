@@ -187,7 +187,7 @@ export class UtilisateurResolveService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/point-de-vente?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{ headers }
+          `${this.apiUrl}/v1/point-de-vente?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&depot=${data.depot}&etablissement=${data.etablissement}&statut=${data.statut}`,{ headers }
         )
         .subscribe(
           (res: any) => {

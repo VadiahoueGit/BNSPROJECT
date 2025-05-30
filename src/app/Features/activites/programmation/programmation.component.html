@@ -110,7 +110,7 @@
         <h1 *ngIf="operation == 'edit'"class="modal-title fs-5 ms-3" id="staticBackdropLabel">Détails de la visite</h1>
       </div>
 
-      <div class="modal-body" *ngIf="operation == 'edit'">
+      <div class="modal-body" *ngIf="operation == 'edit'" style="max-height: 500px;  overflow-y: auto">
         <fieldset class="row border my-2">
           <legend style="font-size: 14px" class="text-secondary">
             Informations du commercial
@@ -140,7 +140,7 @@
           </legend>
           <div class="row">
             <div class="col">
-              <table class="table table-bordered table-hover">
+              <table class="table table-bordered table-hover" style="max-height: 300px; overflow-y: auto;">
                 <thead class="table-success">
                 <tr>
                   <th>Type</th>
@@ -191,7 +191,7 @@
 
       </div>
 
-      <div class="modal-body" *ngIf="operation == 'create'">
+      <div class="modal-body" *ngIf="operation == 'create'"  style="max-height: 500px;  overflow-y: auto">
         <div class="row">
           <div class="col-8">
             <form [formGroup]="VisiteForm">

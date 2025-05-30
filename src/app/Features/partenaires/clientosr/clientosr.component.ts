@@ -38,7 +38,11 @@ export class ClientosrComponent {
   imageUrl : any
   docUrl : any
   totalPages: number = 0;
-
+  filters: any = {
+    depot: '',
+    etablissement: '',
+    statut: '',
+  };
   constructor(
     private location: Location,
     private coreService: CoreServiceService,
@@ -81,6 +85,14 @@ export class ClientosrComponent {
     }
   }
 
+  filterGlobal() {
+    this.GetClientOSRList(
+      1,
+      this.filters.depot,
+      this.filters.etablissement,
+      this.filters.statut
+    );
+  }
   goBack() {
     this.location.back();
   }
@@ -303,12 +315,15 @@ export class ClientosrComponent {
     );
   }
 
-  GetClientOSRList(page: number) {
-    let data = {
-      paginate: true,
-      page: page,
-      limit: 8,
-    };
+  GetClientOSRList(page: number, depot?: string, etablissement?: string, statut?: string) {
+  let data = {
+    paginate: true,
+    page: page,
+    limit: 8,
+    depot: depot || '',
+    etablissement: etablissement || '',
+    statut: statut || '',
+  };
     this._spinner.show();
     this.utilisateurService.GetPointDeVenteList(data).then((res: any) => {
       console.log('GetClientOSRList:::>', res);
