@@ -229,15 +229,7 @@
         </div>
         <div class="p-2 mt-3">
           <div style="max-height: 350px; overflow-y: auto">
-            <!-- <div class="d-flex justify-content-end">
-              <button
-                (click)="selectArticle()"
-                type="button"
-                class="btn btn-secondary mb-2 px-2"
-              >
-                Ajouter
-              </button>
-            </div> -->
+         
             <table class="table table-bordered">
               <thead class="table-light">
                 <tr>
@@ -248,31 +240,25 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let data of emballagesrecues; let i = index">
+                <tr *ngFor="let data of updateData?.emballagesRendus[0].articles; let i = index">
                   <td class="">
                     <p>
                       {{
-                        data.articleCommande
-                          ? data.articleCommande.emballage.id
-                          : data.emballage.id
+                        data.emballage.code
                       }}
                     </p>
                   </td>
                   <td class="">
                     <p>
                       {{
-                        data?.articleCommande
-                          ? data?.articleCommande?.emballage?.libelle
-                          : data?.emballage?.libelle
+                        data?.emballage?.libelle
                       }}
                     </p>
                   </td>
                   <td>
                     <p>
                       {{
-                        data?.articleCommande
-                          ? data?.articleCommande?.quantiteAffectee
-                          : data?.quantiteRecue
+                        data?.quantite
                       }}
                     </p>
                   </td>

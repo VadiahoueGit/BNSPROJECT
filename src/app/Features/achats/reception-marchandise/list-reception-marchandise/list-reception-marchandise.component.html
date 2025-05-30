@@ -219,7 +219,8 @@
                   <tr>
                     <th scope="col">Emballage</th>
                     <th scope="col">Liquide</th>
-                    <th scope="col">Quantité</th>
+                    <th scope="col">Quantité commandée</th>
+                    <th scope="col">Quantité reçue</th>
                     <th scope="col">Ecart</th>
                     <th scope="col">Commentaire</th>
                   </tr>
@@ -247,6 +248,11 @@
                         item?.articleCommande
                           ? item?.articleCommande?.quantiteAffectee
                           : item?.quantiteRecue
+                      }}
+                    </td>
+                    <td>
+                      {{
+                       item?.quantiteRecue
                       }}
                     </td>
                     <td

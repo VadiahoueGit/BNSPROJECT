@@ -38,7 +38,10 @@
              (keydown.enter)="filterGlobal()"
              placeholder="Recherche"/>
     </span>
-      <div class="col-12 col-sm-6 col-md-3 mb-3">
+     
+
+  </div>
+   <div class="col-12 col-sm-6 col-md-3 mb-3">
         <span>Statut :</span>
         <span class="p-input-icon-left w-100 d-flex align-items-center">
       <i class="fas fa-search"></i>
@@ -49,8 +52,6 @@
              placeholder="Recherche"/>
     </span>
     </div>
-
-  </div>
   <p-table
     [styleClass]="'p-datatable-sm'"
     #dt2
@@ -65,36 +66,40 @@
     <ng-template pTemplate="header">
       <tr>
         <th style="color: var(--secondary-color)">N° commande</th>
+        <th style="color: var(--secondary-color)">Type client</th>
         <th style="color: var(--secondary-color)">Etablissement</th>
         <th style="color: var(--secondary-color)">Depôt</th>
-        <th style="color: var(--secondary-color)">Quantité</th>
-        <th style="color: var(--secondary-color)">Montant</th>
+        <th style="color: var(--secondary-color)">Statut</th>
+        <!-- <th style="color: var(--secondary-color)">Montant</th> -->
         <th style="color: var(--secondary-color)">Actions</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-ListCommandeGratuites let-i="index">
       <tr>
         <td>
-          {{ ListCommandeGratuites.NumCommande }}
+          {{ ListCommandeGratuites?.NumCommande }}
         </td>
-
-        <td>
-          {{ ListCommandeGratuites.client.nomEtablissement ? ListCommandeGratuites.client.nomEtablissement : ListCommandeGratuites.client.raisonSocial}}
+    <td>
+          {{ ListCommandeGratuites?.clientType }}
         </td>
         <td>
-          {{ ListCommandeGratuites.client.depot.nomDepot }}
+          {{ ListCommandeGratuites?.client?.nomEtablissement ? ListCommandeGratuites.client.nomEtablissement : ListCommandeGratuites.client.raisonSocial}}
+        </td>
+    
+        <td>
+          {{ ListCommandeGratuites?.client?.depot?.nomDepot }}
         </td>
 
         <td>
           <span class="ml-1 vertical-align-middle">
-<!--            {{ ListCommandeGratuites.articles[i].quantite }}-->
+           {{ ListCommandeGratuites?.statut }}
           </span>
         </td>
-        <td>
+        <!-- <td>
           <span class="ml-1 vertical-align-middle">
-<!--            {{ ListCommandeGratuites.articles[i].quantite }}-->
+           {{ ListCommandeGratuites.articles[i]?.montantLiquide }}
           </span>
-        </td>
+        </td> -->
         <td>
           <tr class="d-flex justify-content-center gap-3">
             <td>
