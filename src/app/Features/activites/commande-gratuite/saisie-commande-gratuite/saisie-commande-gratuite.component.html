@@ -38,7 +38,7 @@
              (keydown.enter)="filterGlobal()"
              placeholder="Recherche"/>
     </span>
-     
+
 
   </div>
    <div class="col-12 col-sm-6 col-md-3 mb-3">
@@ -85,7 +85,7 @@
         <td>
           {{ ListCommandeGratuites?.client?.nomEtablissement ? ListCommandeGratuites.client.nomEtablissement : ListCommandeGratuites.client.raisonSocial}}
         </td>
-    
+
         <td>
           {{ ListCommandeGratuites?.client?.depot?.nomDepot }}
         </td>
@@ -264,7 +264,7 @@
               <tbody>
                 <tr *ngFor="let item of selectedArticles">
                   <td>{{ item.liquide.libelle }}</td>
-                  <td>{{ prixLiquide[item.id] }}</td>
+                  <td> 0 </td>
                   <td>{{ prixEmballage[item.id] }}</td>
                   <td>{{ prixEmballage[item.id] + prixLiquide[item.id] }}</td>
                   <td>

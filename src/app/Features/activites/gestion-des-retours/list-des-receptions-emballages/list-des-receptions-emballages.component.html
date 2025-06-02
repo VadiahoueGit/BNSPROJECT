@@ -126,17 +126,17 @@
                   </tr>
                   <tr class="font-weight-bold">
                     <td class="fw-bold">Total théorique</td>
-                    <td class="text-center" *ngFor="let article of allArticles">
+                    <td class="text-center fw-bold" *ngFor="let article of allArticles">
                       {{ article.expectedQuantity }}
                     </td>
                   <tr class="font-weight-bold">
                     <td class="fw-bold">Total physique</td>
                     <td class="text-center" *ngFor="let article of allArticles">
                       <input
-                        [disabled]="updateData.inventaires.length > 0"
+                        [disabled]="updateData.inventaires.length > 0 || updateData.regroupementStatut !='TERMINE'"
                         type="number"
                         [ngStyle]="{ 'color': article.receivedQuantity != article.expectedQuantity ? 'red' : 'green' }"
-                        class="form-control-custom text-center"
+                        class="form-control-custom text-center fw-bold"
                         [(ngModel)]="article.receivedQuantity"
                         min="0"
                       />

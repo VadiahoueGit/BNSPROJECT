@@ -40,6 +40,10 @@ export class ReceptionsEmballagesComponent {
     this.GetRetourEmballageList(1);
   }
 
+  get filteredArticles() {
+    return this.updateData.articles?.filter((a:any) => a.prixUnitaire > 0);
+  }
+
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;

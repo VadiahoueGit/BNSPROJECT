@@ -382,7 +382,7 @@ export class SaisieCommandeGratuiteComponent {
   calculatePrix(data: any) {
     console.log('DATA:::>', data);
 
-    const prixLiquide = this.prixLiquide[data.id] || 0;
+    const prixLiquide =  0;
     const prixEmballage = this.prixEmballage[data.id] || 0;
     const quantite = data.quantite || 0;
     console.log('groupearticle:::>', data.groupearticle.id);

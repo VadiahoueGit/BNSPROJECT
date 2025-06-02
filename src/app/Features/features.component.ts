@@ -27,6 +27,7 @@ export class FeaturesComponent {
     {label: 'Partenaires', icon: 'fas fa-handshake', url: '/feature/partenaire'},
     {label: 'Finances', icon: 'fas fa-sack-dollar', url: 'feature/finances'},
     {label: 'Stocks', icon: 'fas fa-warehouse-alt', url: 'feature/stocks'},
+    {label: 'Annonces', icon: 'fa-solid fa-bullhorn', url: 'feature/annonce'},
     // { label: 'Données de références', icon: 'fas fa-warehouse-alt', url: 'feature/datareference' }
   ];
   UserInfo: any
@@ -64,6 +65,8 @@ export class FeaturesComponent {
       this.setActive(7)
     } else if (this.currentUrl.includes('/feature/stocks')) {
       this.setActive(8)
+    } else if (this.currentUrl.includes('/feature/annonce')) {
+      this.setActive(9)
     }
 
     if (this.UserInfo.isFirstLogin == true) {

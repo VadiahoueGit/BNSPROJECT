@@ -592,4 +592,24 @@ export class CoreServiceService {
         );
     });
   }
+
+  //ANNONCE
+  async CreateAnnonce(data: any) {
+    await this.initializeApiUrl();
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/annonces`, data, { headers }).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
 }

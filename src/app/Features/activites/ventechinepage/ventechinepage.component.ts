@@ -1,13 +1,13 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
-import { ArticleServiceService } from '../../../core/article-service.service';
-import { ActiviteService } from '../../../core/activite.service';
-import { UtilisateurResolveService } from '../../../core/utilisateur-resolve.service';
-import { CoreServiceService } from '../../../core/core-service.service';
-import { LogistiqueService } from '../../../core/logistique.service';
-import { ALERT_QUESTION } from '../../shared-component/utils';
+import {ChangeDetectorRef, Component} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {ToastrService} from 'ngx-toastr';
+import {ArticleServiceService} from '../../../core/article-service.service';
+import {ActiviteService} from '../../../core/activite.service';
+import {UtilisateurResolveService} from '../../../core/utilisateur-resolve.service';
+import {CoreServiceService} from '../../../core/core-service.service';
+import {LogistiqueService} from '../../../core/logistique.service';
+import {ALERT_QUESTION} from '../../shared-component/utils';
 
 @Component({
   selector: 'app-ventechinepage',
@@ -21,22 +21,30 @@ export class VentechinepageComponent {
   VenteForm: FormGroup;
   isModalOpen = false;
   isChoiceModalOpen: boolean;
+  isChoiceModalFreeOpen: boolean;
   isEditMode: boolean;
   operation: string = '';
   currentPage: number;
   rowsPerPage: any;
   searchTerm: string = '';
   filteredArticleList: any[] = [];
+  filteredArticleListFree: any = [];
   selectedArticles: any[] = [];
+  selectedArticlesFree: any[] = [];
   dataListLiquides: any = [];
+  dataListLiquidesFree: any = [];
   stocksDisponibles: any = {};
   prixLiquide: any = {};
+  prixLiquideFree: any = {};
   prixEmballage: any = {};
+  prixEmballageFree: any = {};
   prixLiquideTotal: any = {};
   totalLiquide: number = 0;
   totalEmballage: number = 0;
   totalGlobal: number = 0;
   totalQte: number = 0;
+  totalQteFree: number = 0;
+  totalGlobalFree: number = 0;
   prixEmballageTotal: any = {};
   montantTotal: any = {};
   dataListZone: any;
@@ -46,7 +54,13 @@ export class VentechinepageComponent {
   depotId: number = 0;
   updateData: any = {};
   venteId: any = 0;
+  now: any =  new Date().toISOString().substring(0, 10);
   public activeTab: string = 'detail';
+  prixEmballageTotalFree: any = {};
+  prixLiquideTotalFree: any = {};
+  montantTotalFree:any = {};
+  totalLiquideFree: number = 0;
+  totalEmballageFree :number = 0;
   constructor(
     private cdr: ChangeDetectorRef,
     private _spinner: NgxSpinnerService,
@@ -56,7 +70,8 @@ export class VentechinepageComponent {
     private utilisateurService: UtilisateurResolveService,
     private toastr: ToastrService,
     private fb: FormBuilder
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.groupeProduitForm = this.fb.group({
@@ -69,8 +84,9 @@ export class VentechinepageComponent {
       venteDate: [null, Validators.required],
       vehiculeId: [0, Validators.required],
       articles: this.fb.array([]),
+      articlesGratuit: this.fb.array([]),
     });
-
+    this.VenteForm.controls['venteDate'].setValue(this.now);
     // this.GetArticleList(1);
     this.GetCommercialList(1);
     this.GetLocaliteList(1);
@@ -81,20 +97,29 @@ export class VentechinepageComponent {
   activeElement(elt: string) {
     this.activeTab = elt;
   }
+
   OnCloseModal() {
     this.totalEmballage = 0;
-    this.totalLiquide  = 0;
+    this.totalEmballageFree = 0
+    this.totalLiquide = 0;
+    this.totalLiquideFree = 0;
     this.totalGlobal = 0;
+    this.totalGlobalFree = 0;
     this.totalQte = 0;
+    this.totalQteFree = 0;
     this.isModalOpen = false;
     this.selectedArticles = [];
+    this.VenteForm.reset();
+    this.VenteForm.controls['venteDate'].setValue(this.now);
     console.log(this.isModalOpen);
   }
+
   onCommercialChange(selectedItem: any): void {
     console.log('Élément sélectionné :', selectedItem);
     this.depotId = selectedItem.depot.id;
     this.GetArticleList(1);
   }
+
   selectArticle() {
     this.isEditMode = false;
     this.isChoiceModalOpen = true;
@@ -102,6 +127,13 @@ export class VentechinepageComponent {
     console.log(this.isModalOpen);
   }
 
+  selectArticleGratuit() {
+    this.isEditMode = false;
+    this.isChoiceModalFreeOpen = true;
+    console.log(this.filteredArticleListFree)
+    this.operation = 'create';
+    console.log(this.isModalOpen);
+  }
   OnCreate() {
     this.isModalOpen = true;
     this.operation = 'create';
@@ -116,15 +148,15 @@ export class VentechinepageComponent {
         (res: any) => {
           console.log(res, 'enregistré avec succes');
           this._spinner.hide();
-          this.VenteForm.reset();
           this.GetVenteChineList(1);
           this.OnCloseModal();
+
           this.toastr.success(res.message);
         },
         (error: any) => {
           this._spinner.hide();
           this.toastr.info(error.error.message);
-          console.error('Erreur lors de la création', error);
+          console.error('Erreur lors de la création', error.message);
         }
       );
     } else {
@@ -145,6 +177,24 @@ export class VentechinepageComponent {
       );
       if (indexToRemove !== -1) {
         this.selectedArticles.splice(indexToRemove, 1);
+        this.afficherArticlesSelectionnes();
+      }
+    }
+  }
+
+  onCheckboxFreeChange(articles: any): void {
+    this.GetPrixByArticleFree(articles);
+
+    if (articles.isChecked) {
+      this.selectedArticlesFree.push(articles)
+      this.afficherArticlesSelectionnes();
+    } else {
+      delete articles.quantite;
+      const indexToRemove = this.selectedArticlesFree.findIndex(
+        (selectedArticle: any) => selectedArticle.libelle === articles.libelle
+      );
+      if (indexToRemove !== -1) {
+        this.selectedArticlesFree.splice(indexToRemove, 1);
         this.afficherArticlesSelectionnes();
       }
     }
@@ -184,7 +234,7 @@ export class VentechinepageComponent {
     const data = {
       ...item,
       quantite: 0,
-      groupearticle: { id: item.groupearticle.id },
+      groupearticle: {id: item.groupearticle.id},
       id: item.groupearticle.id, // Assurez-vous que l'ID correspond
     };
 
@@ -201,16 +251,44 @@ export class VentechinepageComponent {
   }
 
   onSubmitSelection() {
-    this.isChoiceModalOpen = false;
+    if(this.isChoiceModalOpen)
+    {
+      this.isChoiceModalOpen = false
+    }else if(this.isChoiceModalFreeOpen)
+    {
+      this.isChoiceModalFreeOpen = false
+    }
   }
 
   afficherArticlesSelectionnes() {
     console.log(this.selectedArticles);
   }
 
+  filterArticlesFree(): void {
+    console.log(this.searchTerm);
+    if (this.searchTerm) {
+      this.filteredArticleListFree = this.dataListLiquidesFree.filter(
+        (article: any) => {
+          console.log('dataListLiquidesFree', article);
+
+          const libelle = article?.libelle || ''; // Utiliser une valeur par défaut si libelle est undefined
+          const code = article?.code || ''; // Utiliser une valeur par défaut si code est undefined
+
+          // Vérification sécurisée avant d'utiliser toLowerCase()
+          return (
+            libelle.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+            code.toLowerCase().includes(this.searchTerm.toLowerCase())
+          );
+        }
+      );
+    } else {
+      this.filteredArticleListFree = this.dataListLiquidesFree;
+    }
+  }
   filterArticles(): void {
     console.log(this.searchTerm);
     if (this.searchTerm) {
+
       this.filteredArticleList = this.dataListLiquides.filter(
         (article: any) => {
           console.log('dataListLiquides', article);
@@ -238,6 +316,12 @@ export class VentechinepageComponent {
     console.log(this.isModalOpen);
   }
 
+  OnCloseChoiceFreeModal() {
+    this.deselectAllItemsFree();
+    this.isChoiceModalFreeOpen = false;
+  }
+
+
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
@@ -254,19 +338,34 @@ export class VentechinepageComponent {
     this._spinner.show();
     this.articleService.GetArticleList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
-      this.dataListLiquides = res.data;
-      this.dataListLiquides.forEach((item: any) => {
+      this.filteredArticleList = res.data
+        .filter((a:any) => !a.isFree)
+        .map((a:any) => ({ ...a })); // copie indépendante
+
+      this.filteredArticleListFree = res.data
+        .filter((a:any) => !a.isFree)
+        .map((a:any) => ({ ...a })); // copie indépendante
+
+      this.filteredArticleList.forEach((item: any) => {
         this.GetStockDisponibleByDepot(item);
       });
-      this.filteredArticleList = this.dataListLiquides;
+      this.filteredArticleListFree.forEach((item: any) => {
+        this.GetStockDisponibleByDepot(item);
+      });
+
+
+      // this.filteredArticleList = this.dataListLiquides;
+      // this.filteredArticleListFree = this.dataListLiquidesFree;
       this._spinner.hide();
     });
   }
+
   OnEdit(data: any) {
     this.totalEmballage = 0;
     this.totalLiquide = 0;
     this.totalGlobal = 0;
     this.totalQte = 0;
+    this.totalQteFree = 0
     this.isEditMode = true;
     console.log(data, 'updateData');
     this.updateData = data;
@@ -284,12 +383,30 @@ export class VentechinepageComponent {
       this.totalQte += article.quantiteAffectee;
     });
 
+
+    this.updateData.articlesGratuit.map((article: any) => {
+      article.prixTotal =
+        parseInt(article.prixUnitaireLiquide) +
+        parseInt(article.prixUnitaireEmballage);
+    });
+    console.log(this.updateData.articlesGratuit, 'this.updateData.articlesGratuit');
+
+    data.articlesGratuit.forEach((article: any) => {
+      this.totalEmballageFree += Number(article.montantEmballage);
+      this.totalLiquideFree += Number(article.montantLiquide);
+      this.totalGlobalFree = this.totalLiquideFree + this.totalEmballageFree;
+      this.totalQteFree += article.quantiteAffectee;
+    });
+
     this.venteId = data.id;
     this.isModalOpen = true;
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  OnDelete(id: number) {}
+
+  OnDelete(id: number) {
+  }
+
   async GetVenteChineList(page: number) {
     let data = {
       paginate: true,
@@ -368,8 +485,30 @@ export class VentechinepageComponent {
       this.calculatePrix(data);
     }
   }
+
+  validateQuantiteFree(data: any): void {
+    console.log(
+      'data.quantite',
+      data.quantite,
+      'stocksDisponibles',
+      this.stocksDisponibles[data.liquide.id]
+    );
+    if (data.quantite > this.stocksDisponibles[data.liquide.id]) {
+      // Réinitialiser la quantité à la quantité disponible
+      data.quantite = '';
+      // Afficher un message de warning
+      this.toastr.warning('La quantité saisie dépasse la quantité disponible.');
+    } else {
+      this.calculatePrixFree(data);
+    }
+  }
+
   get articles(): FormArray {
     return this.VenteForm.get('articles') as FormArray;
+  }
+
+  get articlesGratuit(): FormArray {
+    return this.VenteForm.get('articlesGratuit') as FormArray;
   }
   calculatePrix(data: any) {
     console.log('DATA:::>', data);
@@ -435,6 +574,17 @@ export class VentechinepageComponent {
           quantite: quantite,
         })
       );
+
+      this.articlesGratuit.push(
+        this.fb.group({
+          groupeArticleId: data.groupearticle.id,
+          codeArticleLiquide: data.liquide.code,
+          codeArticleEmballage: data.liquide.emballage.code,
+          prixUnitaireLiquide: prixLiquide,
+          prixUnitaireEmballage: prixEmballage,
+          quantite: quantite,
+        })
+      );
     }
 
     // ✅ Recalcul des montants
@@ -470,6 +620,81 @@ export class VentechinepageComponent {
     // Forcer le rafraîchissement de l'interface
     // this.cdr.detectChanges();
   }
+
+  calculatePrixFree(data: any) {
+    console.log('DATA:::>', data);
+
+    const prixLiquide = 0;
+    const prixEmballage = this.prixEmballageFree[data.id] || 0;
+    const quantite = data.quantite || 0;
+
+    const existingArticleIndex = this.articlesGratuit.controls.findIndex(
+      (control: any) => control.value.codeArticleLiquide === data.liquide.code
+    );
+
+    if (existingArticleIndex !== -1) {
+      const existingArticle = this.articlesGratuit.at(existingArticleIndex).value;
+      const oldQuantite = existingArticle.quantite || 0;
+
+      // Suppression si la nouvelle quantité est 0
+      if (quantite === 0) {
+        this.articlesGratuit.removeAt(existingArticleIndex);
+        delete this.prixEmballageTotalFree[data.id];
+        delete this.montantTotalFree[data.id];
+        delete this.prixLiquideTotalFree[data.id]
+      } else {
+        // Mise à jour
+        this.prixEmballageTotalFree[data.id] = quantite * prixEmballage;
+        this.prixLiquideTotalFree[data.id] = quantite * prixLiquide;
+        this.articlesGratuit.at(existingArticleIndex).patchValue({
+          quantite: quantite,
+        });
+      }
+    } else {
+      // Ajout d'un nouvel article gratuit
+      this.prixEmballageTotalFree[data.id] = quantite * prixEmballage;
+      this.prixLiquideTotalFree[data.id] = quantite * prixLiquide;
+      this.articlesGratuit.push(
+        this.fb.group({
+          groupeArticleId: data.groupearticle.id,
+          codeArticleLiquide: data.liquide.code,
+          codeArticleEmballage: data.liquide.emballage.code,
+          prixUnitaireLiquide: prixLiquide,
+          prixUnitaireEmballage: prixEmballage,
+          quantite: quantite,
+        })
+      );
+    }
+
+    // Montant total par article (gratuit)
+    this.montantTotalFree[data.id] = this.prixEmballageTotalFree[data.id] || 0;
+
+    // Recalcul des totaux gratuits uniquement
+    this.totalEmballageFree = this.articlesGratuit.controls.reduce(
+      (acc, control) =>
+        acc + control.value.prixUnitaireEmballage * control.value.quantite,
+      0
+    );
+    this.totalLiquideFree = this.articlesGratuit.controls.reduce(
+      (acc, control) =>
+        acc + control.value.prixUnitaireLiquide * control.value.quantite,
+      0
+    );
+    this.totalQteFree = this.articlesGratuit.controls.reduce(
+      (acc, control) => acc + control.value.quantite,
+      0
+    );
+    this.totalGlobalFree = this.totalEmballageFree + this.totalLiquideFree;
+
+    console.log('Totaux GRATUITS:', {
+      totalLiquideFree: this.totalLiquideFree,
+      totalEmballageFree: this.totalEmballageFree,
+      montantTotalFree: this.montantTotalFree[data.id],
+      totalGlobalFree: this.totalGlobalFree,
+      totalQteFree: this.totalQteFree,
+    });
+  }
+
   async GetPrixByArticle(item: any): Promise<any> {
     let data = {
       id: item.id,
@@ -486,7 +711,7 @@ export class VentechinepageComponent {
         this.prixLiquide[item.id] = prixDetail.prix[0].PrixLiquide;
         this.prixEmballage[item.id] = prixDetail.prix[0].PrixConsigne;
         console.log('prixByArticle', this.prixLiquide[item.id]);
-      }else {
+      } else {
         this.toastr.error("Ce article n'a pas de prix détail, veuillez le renseigner avant de continuer");
       }
     } catch (error: any) {
@@ -494,6 +719,29 @@ export class VentechinepageComponent {
     }
   }
 
+  async GetPrixByArticleFree(item: any): Promise<any> {
+    let data = {
+      id: item.id,
+    };
+
+    try {
+      // Attendre la réponse de la promesse
+      const response: any = await this.articleService.GetPrixByProduit(data);
+      const prixDetail = response.data.find((item: any) => item.libelle === 'PRIX DETAIL');
+
+      console.log(prixDetail);
+      // Vérifier si le statusCode est 200
+      if (prixDetail.prix.length > 0) {
+        this.prixLiquideFree[item.id] = 0;
+        this.prixEmballageFree[item.id] = prixDetail.prix[0].PrixConsigne;
+        console.log('prixByArticle', this.prixEmballageFree[item.id]);
+      } else {
+        this.toastr.error("Ce article n'a pas de prix détail, veuillez le renseigner avant de continuer");
+      }
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
   deselectAllItems(): void {
     this.selectedArticles.forEach((item: any) => {
       delete item.quantite;
@@ -502,5 +750,14 @@ export class VentechinepageComponent {
     });
 
     this.selectedArticles = [];
+  }
+  deselectAllItemsFree(): void {
+    this.selectedArticlesFree.forEach((item: any) => {
+      delete item.quantite;
+      this.onCheckboxFreeChange(item);
+      item.isChecked = false;
+    });
+
+    this.selectedArticlesFree = [];
   }
 }

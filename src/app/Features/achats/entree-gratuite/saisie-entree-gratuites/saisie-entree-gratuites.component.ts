@@ -511,7 +511,7 @@ export class SaisieEntreeGratuitesComponent {
   }
   GetDepotList(page: number) {
     let data = {
-      paginate: true,
+      paginate: false,
       page: page,
       limit: 8,
     };

@@ -49,7 +49,7 @@
           </span>
         </td>
         <td>
-          {{ getTotalGeneral(dataList.commandes) | number:'1.0-0' }}
+          {{ getTotalGeneral(dataList.commandes) || 0 | number:'1.0-0' }}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">

@@ -1,0 +1,86 @@
+<div class="card">
+  <div class="container py-4">
+    <h2>Gestion des Annonces</h2>
+    <div class="row">
+      <div class="col">
+        <form [formGroup]="annonceForm" (ngSubmit)="onSubmit()" class="col g-3 mb-4">
+          <div class="col-md-4">
+            <div *ngIf="!changeValue" class="center border border-primary rounded p-3"
+                 style="width: 400px;height: 200px;">
+              <ngx-file-drop
+                dropZoneLabel="Déposez vos fichiers ici"
+                [dropZoneClassName]="'drop-zone'"
+                (onFileDrop)="dropped($event)"
+                (onFileOver)="fileOver($event)"
+                (onFileLeave)="fileLeave($event)"
+              >
+                <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+                  <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                    <i class="fa-solid fa-images mb-2" style="font-size: 70px; color: lightskyblue;"></i>
+                    <button type="button" class="btn btn-outline-primary btn-sm" (click)="openFileSelector()">
+                      Importer
+                    </button>
+                  </div>
+                </ng-template>
+              </ngx-file-drop>
+            </div>
+            <div class="mt-3">
+              <div class="row">
+                <div class="col-4" *ngFor="let img of previews">
+                  <img [src]="img" class="img-thumbnail" style="width: 100%; height: auto;">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Titre</label>
+            <input type="text" class="form-control" formControlName="titre">
+            <div *ngIf="annonceForm.get('titre')?.invalid && annonceForm.get('titre')?.touched" class="text-danger">
+              Titre requis
+            </div>
+          </div>
+          <div class="col-md-4 my-2">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" id="description" formControlName="texte" name="description" rows="8"
+                      placeholder="Saisissez une description ici..."></textarea>
+          </div>
+          <div class="col-12 my-2">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" (change)="onChange()" formControlName="isTexte"
+                     id="isTexte">
+              <label class="form-check-label" for="isTexte">Annonce de texte</label>
+            </div>
+          </div>
+          <div class="col-12 my-2">
+            <button class="btn btn-primary" type="submit"
+                    [disabled]="annonceForm.invalid || (!annonceForm.get('isTexte')?.value && previews.length === 0)">
+              {{ editingId ? 'Mettre à jour' : 'Ajouter' }}
+            </button>
+
+            <button class="btn btn-secondary ms-2" type="button" (click)="resetForm()">Annuler</button>
+          </div>
+        </form>
+      </div>
+      <div class="col">
+        <table class="table">
+          <thead>
+          <tr style="font-size: small">
+            <th scope="col" class="text-secondary">Image</th>
+            <th scope="col" class="text-secondary">Texte</th>
+            <th scope="col" class="text-secondary">Description</th>
+            <th scope="col" class="text-secondary text-center">
+              Action
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr><h1 class="text-danger fw-bold">EN COURS D'INTEGRATION, PAS BESOIN DE FAIRE DES TESTS.</h1></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+
+</div>

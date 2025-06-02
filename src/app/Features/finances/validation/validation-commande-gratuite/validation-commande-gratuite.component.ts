@@ -110,8 +110,12 @@ export class ValidationCommandeGratuiteComponent {
   GetListCommandeGratuite(page: number) {
     let data = {
       paginate: false,
-      page: page,
+      page:page,
       limit: 8,
+      numeroCommande: '',
+      date: '',
+      etablissement: '',
+      statut: '',
     };
     this._spinner.show();
     this.articleService.GetListCommandeGratuite(data).then((res: any) => {

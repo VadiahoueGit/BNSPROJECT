@@ -73,7 +73,7 @@ export class GestionvisiteComponent {
     this.VisiteForm = this.fb.group({
       typeVisite: [null, Validators.required],
       commercialId: [null, Validators.required],
-      pointDeVenteIds: [null, Validators.required],
+      pointsDeVenteIds: [null, Validators.required],
       vehiculeId: [null, Validators.required],
       dateVisite: [null, Validators.required],
       repetitionDays: ['', Validators.required],
@@ -130,6 +130,7 @@ export class GestionvisiteComponent {
   }
 
   OnCloseModal() {
+    this.VisiteForm.reset();
     this.deselectAllItems()
     this.isModalOpen = false;
     console.log(this.isModalOpen);
@@ -161,7 +162,7 @@ export class GestionvisiteComponent {
       // const formValues = this.ArticleForm.value;
       const formValues = {
         "commercialId": this.VisiteForm.value.commercialId,
-        "pointDeVenteIds": this.VisiteForm.value.pointDeVenteIds,
+        "pointsDeVenteIds": this.VisiteForm.value.pointsDeVenteIds,
         "dateDeVisite": this.VisiteForm.value.dateVisite,
         "repetitionDays": [this.VisiteForm.value.repetitionDays],
         "repetitionDuration": 12,
@@ -182,7 +183,7 @@ export class GestionvisiteComponent {
           },
           (error: any) => {
             this._spinner.hide()
-            this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
+            this.toastr.error('Erreur!', error.error.message);
             console.error('Erreur lors de la mise à jour', error);
           }
         );
@@ -202,7 +203,7 @@ export class GestionvisiteComponent {
             if (error.error.status == 400) {
               this.toastr.error('Erreur!', error.error.error);
             } else {
-              this.toastr.error('Erreur!', 'Erreur lors de la création.');
+              this.toastr.error(error.error.error, error.error.message);
             }
 
             console.error('Erreur lors de la création', error);
@@ -292,7 +293,7 @@ export class GestionvisiteComponent {
         this.selectedItemsIds.splice(indexToRemove, 1);
       }
     }
-    this.VisiteForm.controls['pointDeVenteIds'].setValue(this.selectedItemsIds)
+    this.VisiteForm.controls['pointsDeVenteIds'].setValue(this.selectedItemsIds)
   }
 
 

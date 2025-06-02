@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component,AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import {data} from 'jquery';
 import {NgxSpinnerService} from 'ngx-spinner';
-import {Subscription} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {CoreServiceService} from 'src/app/core/core-service.service';
 import {LogistiqueService} from 'src/app/core/logistique.service';
 import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
@@ -9,7 +9,7 @@ import {WebsocketService} from 'src/app/core/webSocket.service';
 import {ArticleServiceService} from "../../core/article-service.service";
 declare var google: any;
 import { MapInfoWindow, MapMarker } from '@angular/google-maps';
-
+import { io, Socket } from 'socket.io-client';
 @Component({
   selector: 'app-cartographie',
   templateUrl: './cartographie.component.html',
@@ -26,7 +26,8 @@ export class CartographieComponent implements AfterViewInit{
   private messageSubscription: Subscription;
   messages: string[] = [];
   clientList!: []
-  vehiculeList!: []
+  vehiculeList:any[] = [];
+  vehiculeOnDrive :any[] = [];
   revendeurList!: []
   tokenGoogle: string
   markersClient: any[] = [];
@@ -35,6 +36,33 @@ export class CartographieComponent implements AfterViewInit{
   slideDetails: any = null
   markersDepot: any[] = [];
   markersVehicule: any[] = [];
+  data  = {
+    driver:{
+      "id": 18,
+      "code": "TRANS6MK64",
+      "nom": "TIMITE",
+      "prenoms": "BORDJOBA",
+      "nomDepot": "BNS ABENGOUROU",
+      "telephone": "0789718242",
+      "email": "bordjobatimite@bestnegoce.com",
+      "login": "TRANS6MK64",
+      "role": "transporteur",
+    },
+    vehicle:{
+      "id": 13,
+      "marque": "ISUZU",
+      "energie": "GASOIL",
+      "immatriculation": "736LJ01",
+      "capacite": 450,
+      "dateDeVisite": "2026-05-22T02:00:00.000Z",
+      "dateAcqui": "2025-03-20T01:00:00.000Z",
+    },
+    position:{
+      latitude:'',
+      longitude:''
+    }
+
+  }
   latitude: number | undefined;
   longitude: number | undefined;
   currentPosition: any
@@ -46,24 +74,17 @@ export class CartographieComponent implements AfterViewInit{
       },
     ],
   };
+  message = 'Mercon';
+
   coordinates: any[] = [];
   private gpsSubscription: Subscription;
-
+  private socket: Socket;
   constructor(private _articleService:ArticleServiceService,private websocketService: WebsocketService, private cdr: ChangeDetectorRef, private _coreService: CoreServiceService, private logisiticService: LogistiqueService, private utilisateurService: UtilisateurResolveService, private _spinner: NgxSpinnerService,) {
+
+
   }
 
   ngOnInit() {
-//     this.websocketService.connect('ws://wsbnsapi.localdev.business/');
-// // Abonnez-vous pour recevoir les messages
-//     this.messageSubscription = this.websocketService.getMessages().subscribe(
-//       (message) => {
-//         this.messages.push(message);
-//         console.log(this.messages);
-//       },
-//       (error) => {
-//         console.error('Error receiving message:', error);
-//       }
-//     );
 
     this.GetClientOSRList();
     this.getPosition();
@@ -71,77 +92,56 @@ export class CartographieComponent implements AfterViewInit{
     this.GetGoogleJWT();
   }
 
+  send(): void {
+    // if (this.message.trim() !== '') {
+      this.websocketService.sendMessage(this.message);
+      // this.message = '';
+    // }
+  }
   ngAfterViewInit(): void {
     this.GetRevendeurList(1)
-
-    // setTimeout(() => {
-    //   if (this.mapElement) {
-    //     this.loadGoogleMapsScript().then(() => {
-    //       this.initMap();
-    //
-    //     }).catch((error) => {
-    //       console.error("Erreur de chargement de Google Maps :", error);
-    //     });
-    //   } else {
-    //     console.error("L'élément #mapContainer n'a pas été trouvé !");
-    //   }
-    // }, 1000);
-
+    this.GetVehiculeList(1)
 
   }
+  GetVehiculeList(page:number) {
+    let data = {
+      paginate: false,
+      page: page,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.logisiticService.GetVehiculeList(data).then((res: any) => {
+      this.vehiculeList = res.data
 
-  // Charger le script de l'API Google Maps
-  loadGoogleMapsScript(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (typeof google !== 'undefined' && google.maps) {
-        resolve();
-        return;
-      }
+      this.messageSubscription = this.websocketService.ecouterNouveauMessage()
+        .subscribe((data: any) => {
+          const vehicule = typeof data === 'string' ? JSON.parse(data) : data;
 
-      const script = document.createElement('script');
-      script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDV1ke-HxBDmSPpqyfivksnjzeD29AC18k';
-      script.async = true;
-      script.defer = true;
-      script.onload = () => resolve();
-      script.onerror = (error) => reject(error);
-      document.head.appendChild(script);
-    });
-  }
-  initMap() {
-    if (!this.mapElement) {
-      console.error("L'élément #mapContainer n'a pas été trouvé !");
-      return;
-    }
+          // Identifiant unique : id ou immatriculation
+          const incomingId = vehicule?.vehicle?.id;
 
-    this.map = new google.maps.Map(this.mapElement.nativeElement, {
-      center: { lat: this.currentPosition.lat, lng: this.currentPosition.lng }, // Paris
-      zoom: 12
-    });
-  }
+          if (!incomingId) return; // sécuriser si véhicule mal formé
 
-  // ngOnDestroy(): void {
-  //   // Se désabonner lorsque le composant est détruit
-  //   if (this.messageSubscription) {
-  //     this.messageSubscription.unsubscribe();
-  //   }
-  //
-  //   // Fermer la connexion WebSocket
-  //   this.gpsWebSocketService.closeConnection();
-  // }
+          // Chercher un véhicule déjà présent dans vehiculeOnDrive
+          const index = this.vehiculeList.findIndex(v => v.id === incomingId);
 
-  sendMessage(): void {
-    const message = 'Hello WebSocket!';
-    if (message.trim()) {
-      this.websocketService.sendMessage({message: message});
-      console.log('Message envoyé:', message);
-    }
+          if (index !== -1) {
+            // Si le véhicule est déjà en circulation, on le remplace
+            this.vehiculeOnDrive[index] = vehicule;
+          } else {
+            // On vérifie qu’il existe dans la liste officielle
+            const existeDansVehiculeList = this.vehiculeList.some(v => v.id === incomingId);
 
-  }
+            if (existeDansVehiculeList) {
+              this.vehiculeOnDrive.push(vehicule);
+            } else {
+              console.warn('Véhicule reçu non reconnu :', vehicule);
+            }
+          }
 
-  // Méthode pour envoyer des données GPS
-  sendGpsData(): void {
-    const data = {latitude: 48.8566, longitude: 2.3522}; // Exemple de données GPS
-    this.sendMessage();
+          console.log('Véhicules en circulation :', this.vehiculeOnDrive);
+        });
+    })
   }
 
   async addMarker(data: any, type: string) {
@@ -191,20 +191,20 @@ export class CartographieComponent implements AfterViewInit{
         }
       }));
     }
-    // else if (type == 'vehicule') {
-    //   this.markersVehicule = data.map((pdv:any) => ({
-    //     position: {
-    //       lat: parseFloat(pdv.latitude),
-    //       lng: parseFloat(pdv.longitude),
-    //     },
-    //     // label: pdv.nomEtablissement,
-    //     icon: {
-    //       url: 'assets/icon/delivery.png', // chemin vers ton image
-    //       scaledSize: { width: 25, height: 25} // optionnel : ajuste la taille
-    //     }
-    //   }));
-    //
-    // }
+    else if (type == 'vehicule') {
+      this.markersVehicule = data.map((pdv:any) => ({
+        position: {
+          lat: parseFloat(pdv.latitude),
+          lng: parseFloat(pdv.longitude),
+        },
+        // label: pdv.nomEtablissement,
+        icon: {
+          url: 'assets/icon/delivery.png', // chemin vers ton image
+          scaledSize: { width: 25, height: 25} // optionnel : ajuste la taille
+        }
+      }));
+
+    }
 
   }
 

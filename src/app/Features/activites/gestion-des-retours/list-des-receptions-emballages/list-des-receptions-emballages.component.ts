@@ -237,20 +237,21 @@ export class ListDesReceptionsEmballagesComponent {
     }
   }
 
-  GetRetourList(page: number) {
+  GetRetourList(page: number): Promise<void> {
     let data = {
       paginate: true,
       page: page,
       limit: 8,
     };
     this._spinner.show();
-    this._activite.GetRetourWithArtilesListAgent(data).then((res: any) => {
+    return this._activite.GetRetourWithArtilesListAgent(data).then((res: any) => {
       console.log('retour list:::>', res);
       this.dataList = res.data;
-      this.totalPages = res.total
+      this.totalPages = res.total;
       this._spinner.hide();
     });
   }
+
 
   TerminerInventaire(datas: any, items: any) {
     const iteration = items.map((article: any) => {
@@ -278,7 +279,7 @@ export class ListDesReceptionsEmballagesComponent {
           this.GetRetourList(1);
           const match = this.dataList.find((item:any) => item.id === datas.id);
           this.OnEdit(match);
-
+          this.isModalOpen = false
           this.toastr.success(res.message);
         })
       } else {
@@ -299,9 +300,13 @@ export class ListDesReceptionsEmballagesComponent {
         this._activite.TerminerRegroupement(data.regroupementId).then((res: any) => {
           console.log('validation retour:::>', res);
           this._spinner.hide();
-          this.GetRetourList(1);
-          const match= this.dataList.find((item:any) => item.id === data.id);
-          this.OnEdit(match);
+          this.GetRetourList(1).then(() => {
+            // Ici, this.dataList est prêt
+            const match = this.dataList.find((item: any) => item.regroupementId === data.regroupementId);
+            console.log('match:', match);
+            this.OnEdit(match);
+          });
+
 
           this.toastr.success(res.message);
         })

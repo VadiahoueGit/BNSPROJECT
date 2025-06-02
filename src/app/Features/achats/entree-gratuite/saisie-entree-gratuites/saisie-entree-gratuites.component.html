@@ -77,11 +77,11 @@
         <td>
           {{ ListEntreeGratuite?.NumEntreeGratuite }}
         </td>
-     
+
         <td>
           {{ ListEntreeGratuite?.fournisseur?.nom }}
         </td>
-      
+
         <td>
             <span class="ml-1 vertical-align-middle">
              {{ ListEntreeGratuite?.depot?.nomDepot }}
@@ -102,7 +102,7 @@
             class="fas fa-eye text-secondary"
           ></i>
         </td>
-       
+
       </tr>
       </td>
       </tr>
@@ -151,193 +151,193 @@
         <div>
         </div>
       </div>
-<ng-container *ngIf="operation == 'edit' ">
-  
-      <div class="modal-body" style="max-height: 500px; overflow-y: auto">
+      <ng-container *ngIf="operation == 'edit' ">
 
-        <fieldset class="row border my-2">
-          <legend style="font-size: 14px" class="text-secondary">
-            Informations
-          </legend>
-          <div class="row">
-            <div class="col-md-12">
-              <strong> Numero reception: </strong>
-              <span>{{ updateData?.NumEntreeGratuite }}</span>
+        <div class="modal-body" style="">
+
+          <fieldset class="row border my-2">
+            <legend style="font-size: 14px" class="text-secondary">
+              Informations
+            </legend>
+            <div class="row">
+              <div class="col-md-12">
+                <strong> Numero reception: </strong>
+                <span>{{ updateData?.NumEntreeGratuite }}</span>
+              </div>
             </div>
+            <div class="row">
+              <div class="col-md-6">
+                <strong>Nom fournisseur : </strong>
+                <span>{{ updateData?.fournisseur?.nom }}</span>
+              </div>
+              <div class="col-md-6">
+                <strong>Dépôt :</strong>
+                <span>{{ updateData?.depot?.nomDepot }}</span>
+              </div>
             </div>
-             <div class="row">
-            <div class="col-md-6">
-              <strong>Nom fournisseur : </strong>
-              <span>{{ updateData?.fournisseur?.nom }}</span>
-            </div>
-            <div class="col-md-6">
-              <strong>Dépôt :</strong>
-              <span>{{ updateData?.depot?.nomDepot }}</span>
-            </div>
-          </div>
-        </fieldset>
-        <fieldset class="row border my-2">
-          <legend style="font-size: 14px" class="text-secondary">
-            Articles
-          </legend>
-          <div class="p-2 mt-3">
-            <div style="max-height: 350px; overflow-y: auto">
-              <table class="table table-bordered">
-                <thead class="table-success">
+          </fieldset>
+          <fieldset class="row border my-2">
+            <legend style="font-size: 14px" class="text-secondary">
+              Articles
+            </legend>
+            <div class="p-2 mt-3">
+              <div style="max-height: 350px; overflow-y: auto">
+                <table class="table table-bordered">
+                  <thead class="table-success">
                   <tr>
                     <th scope="col">Emballage</th>
                     <th scope="col">Liquide</th>
                     <th scope="col">Quantité</th>
                   </tr>
-                </thead>
+                  </thead>
 
-                <tbody>
+                  <tbody>
                   <tr *ngFor="let item of updateData?.articles">
                     <td>{{ item?.emballage?.libelle }}</td>
                     <td>{{ item?.liquide?.libelle }}</td>
-                    <td>{{ item?.quantite}}</td>
+                    <td>{{ item?.quantite }}</td>
                   </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="modal-footer gap-3 px-4">
+          <button
+            (click)="OnCloseModal()"
+            type="button"
+            class="btn btn-secondary px-2"
+          >
+            Fermer
+          </button>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="operation == 'create'">
+        <div class="modal-body">
+          <form [formGroup]="CommandeForm">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label for="" class="form-label">Fournisseur</label>
+                <span class="text-danger">*</span>
+                <ng-select
+                  class="form-control"
+                  [items]="Listfournisseurs"
+                  bindLabel="nom"
+                  bindValue="id"
+                  formControlName="fournisseur"
+                  [searchable]="true"
+                >
+                </ng-select>
+              </div>
+
+              <div class="col-md-4">
+                <label for="datelivraison" class="form-label"
+                >Date réception<span class="text-danger">*</span></label
+                >
+                <input
+                  type="date"
+                  class="form-control"
+                  id="datelivraison"
+                  formControlName="dateReception"
+                  [min]="minDate"
+                />
+              </div>
+
+              <div class="col-md-4">
+                <label for="" class="form-label">Dépôt</label>
+                <span class="text-danger">*</span>
+                <ng-select
+                  class="form-control"
+                  [items]="depotList"
+                  bindLabel="nomDepot"
+                  bindValue="id"
+                  (change)="change($event)"
+                  formControlName="depot"
+                  [searchable]="true"
+                >
+                </ng-select>
+              </div>
+              <div class="col-md-4">
+                <label for="" class="form-label"></label>
+                <button
+                  type="button"
+                  [disabled]="CommandeForm.controls['depot'].invalid"
+                  class="btn btn-secondary"
+                  (click)="selectArticle()"
+                >
+                  Ajouter des articles
+                </button>
+              </div>
+            </div>
+
+          </form>
+
+          <div class="p-2 mt-3">
+            <div style="max-height: 350px; overflow-y: auto">
+              <table *ngIf="operation == 'create' || operation == 'createNew'" class="table table-bordered">
+                <thead class="table-success">
+
+                <tr>
+                  <th scope="col">Groupe article</th>
+                  <th scope="col">Liquide</th>
+                  <th scope="col">Emballage</th>
+                  <th scope="col">Quantité</th>
+                  <th scope="col">Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr *ngFor="let item of  selectedArticles">
+                  <td>{{ item?.groupearticle?.id }}</td>
+                  <td>{{ item?.liquide?.id }}</td>
+                  <td>{{ item?.liquide?.emballage?.id }}</td>
+                  <td>
+                    <input
+                      type="number"
+                      class="form-control-custom"
+                      [(ngModel)]="item.quantite"
+                      [min]="0"
+                    />
+
+                  </td>
+                  <td class="d-flex justify-content-center">
+                    <button
+                      type="button"
+                      class="btn btn-danger btn-sm"
+                      (click)="removeArticle(item)"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+
                 </tbody>
               </table>
             </div>
           </div>
-        </fieldset>
-      </div>
-
-      <div class="modal-footer gap-3 px-4">
-        <button
-          (click)="OnCloseModal()"
-          type="button"
-          class="btn btn-secondary px-2"
-        >
-          Fermer
-        </button>
-      </div>
-</ng-container>
-<ng-container  *ngIf="operation == 'create'">
-  <div class="modal-body" style="max-height: 500px;  overflow-y: auto">
-        <form [formGroup]="CommandeForm">
-          <div class="row g-3">
-            <div class="col-md-4">
-              <label for="" class="form-label">Fournisseur</label>
-              <span class="text-danger">*</span>
-              <ng-select
-                class="form-control"
-                [items]="Listfournisseurs"
-                bindLabel="nom"
-                bindValue="id"
-                formControlName="fournisseur"
-                [searchable]="true"
-              >
-              </ng-select>
-            </div>
-
-            <div class="col-md-4">
-              <label for="datelivraison" class="form-label"
-              >Date réception<span class="text-danger">*</span></label
-              >
-              <input
-                type="date"
-                class="form-control"
-                id="datelivraison"
-                formControlName="dateReception"
-                [min]="minDate"
-              />
-            </div>
-
-            <div class="col-md-4">
-              <label for="" class="form-label">Dépôt</label>
-              <span class="text-danger">*</span>
-              <ng-select
-                class="form-control"
-                [items]="depotList"
-                bindLabel="nomDepot"
-                bindValue="id"
-                (change)="change($event)"
-                formControlName="depot"
-                [searchable]="true"
-              >
-              </ng-select>
-            </div>
-            <div class="col-md-4">
-              <label for="" class="form-label"></label>
-              <button
-                type="button"
-                [disabled]="CommandeForm.controls['depot'].invalid"
-                class="btn btn-secondary"
-                (click)="selectArticle()"
-              >
-                Ajouter des articles
-              </button>
-            </div>
-          </div>
-     
-        </form>
-      
-        <div class="p-2 mt-3">
-          <div style="max-height: 350px; overflow-y: auto">
-            <table *ngIf="operation == 'create' || operation == 'createNew'" class="table table-bordered">
-              <thead class="table-success">
-            
-              <tr>
-                <th scope="col">Groupe article</th>
-                <th scope="col">Liquide</th>
-                <th scope="col">Emballage </th>
-                <th scope="col">Quantité</th>
-                <th scope="col">Actions</th>
-              </tr>
-              </thead>
-
-              <tbody>
-              <tr *ngFor="let item of  selectedArticles">
-                <td>{{ item?.groupearticle?.id }}</td>
-                <td>{{ item?.liquide?.id }}</td>
-                <td>{{ item?.liquide?.emballage?.id }}</td>
-                <td>
-                  <input
-                    type="number"
-                    class="form-control-custom"
-                    [(ngModel)]="item.quantite"
-                    [min]="0"
-                  />
-
-                </td>
-                <td class="d-flex justify-content-center">
-                  <button
-                    type="button"
-                    class="btn btn-danger btn-sm"
-                    (click)="removeArticle(item)"
-                  >
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </td>
-              </tr>
-        
-              </tbody>
-            </table>
-          </div>
         </div>
-      </div>
 
-      <div class="modal-footer gap-3 px-4">
-        <button
-          (click)="OnCloseModal()"
-          type="button"
-          class="btn btn-secondary px-2"
-        >
-          Fermer
-        </button>
-        <button
-          type="submit"
-          *ngIf="operation == 'create'"
-          (click)="onSubmit()"
-          class="btn btn-primary px-2"
-        >
-          Enrégistrer
-        </button>
-      </div>
-</ng-container>
-    
+        <div class="modal-footer gap-3 px-4">
+          <button
+            (click)="OnCloseModal()"
+            type="button"
+            class="btn btn-secondary px-2"
+          >
+            Fermer
+          </button>
+          <button
+            type="submit"
+            *ngIf="operation == 'create'"
+            (click)="onSubmit()"
+            class="btn btn-primary px-2"
+          >
+            Enrégistrer
+          </button>
+        </div>
+      </ng-container>
+
     </div>
   </div>
 </div>

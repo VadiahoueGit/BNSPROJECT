@@ -67,7 +67,7 @@ export class ProgrammationComponent {
     this.VisiteForm = this.fb.group({
       typeVisite: [null, Validators.required],
       commercialId: [null, Validators.required],
-      pointDeVenteIds: [null, Validators.required],
+      pointsDeVenteIds: [null, Validators.required],
       vehiculeId: [null, Validators.required],
       dateVisite: [null, Validators.required],
       repetitionDays: ['', Validators.required],
@@ -117,7 +117,7 @@ export class ProgrammationComponent {
     this.VisiteForm.patchValue({
       typeVisite: data.typeVisite.id,
       commercialId: data.commercial.id,
-      pointDeVenteIds: data.pointsDeVente.map((pdv:any) => pdv.id), // ✅ extraire uniquement les IDs
+      pointsDeVenteIds: data.pointsDeVente.map((pdv:any) => pdv.id), // ✅ extraire uniquement les IDs
       vehiculeId: data.vehicule.id,
       dateVisite: data.dateDebut,
       repetitionDays: data.repetitionDays,
@@ -261,7 +261,7 @@ export class ProgrammationComponent {
       });
     }
 
-    this.VisiteForm.controls['pointDeVenteIds'].setValue(this.selectedItemsIds);
+    this.VisiteForm.controls['pointsDeVenteIds'].setValue(this.selectedItemsIds);
   }
 
   // toggleSelection(item: any): void {
@@ -302,7 +302,7 @@ export class ProgrammationComponent {
     this._spinner.show()
     const formValues = {
       "commercialId": this.VisiteForm.value.commercialId,
-      "pointDeVenteIds": this.VisiteForm.value.pointDeVenteIds,
+      "pointsDeVenteIds": this.VisiteForm.value.pointsDeVenteIds,
       "dateDeVisite": this.VisiteForm.value.dateVisite,
       "repetitionDays": [this.VisiteForm.value.repetitionDays],
       "repetitionDuration": 12,
