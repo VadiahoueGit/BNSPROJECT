@@ -254,19 +254,19 @@
                   <td>{{ item.liquide.libelle }}</td>
                   <td>{{ item.quantiteAffectee }}</td>
                   <td>{{ item.quantite}}</td>
-                  <td>{{ item.montantLiquide }}</td>
-                  <td>{{ item.montantEmballage }}</td>
-                  <td>{{ (+item.montantLiquide || 0) + (+item.montantEmballage || 0) }}</td>
+                  <td>{{ item.montantLiquide| number }}</td>
+                  <td>{{ item.montantEmballage | number}}</td>
+                  <td>{{ (+item.montantLiquide || 0) + (+item.montantEmballage || 0)| number }}</td>
 
 
                 </tr>
                 <tr class="table-dark" *ngIf="updateData.articles.length > 0">
                   <th scope="col" colspan="1">Total :</th>
-                  <td>{{ totalQte }}</td>
+                  <td>{{ totalQte| number }}</td>
                   <td></td>
-                  <td>{{ totalLiquide }}</td>
-                  <td>{{ totalEmballage }}</td>
-                  <td>{{ totalGlobal }}</td>
+                  <td>{{ totalLiquide| number }}</td>
+                  <td>{{ totalEmballage | number}}</td>
+                  <td>{{ totalGlobal| number }}</td>
                 </tr>
                 <!-- Ajoutez d'autres lignes si nécessaire -->
                 </tbody>
@@ -307,9 +307,9 @@
                     />
                     / {{ stocksDisponibles[item.liquide.id] }}
                   </td>
-                  <td>{{ prixLiquideTotal[item.id] }}</td>
-                  <td>{{ prixEmballageTotal[item.id] }}</td>
-                  <td>{{ montantTotal[item.id] }}</td>
+                  <td>{{ prixLiquideTotal[item.id] | number}}</td>
+                  <td>{{ prixEmballageTotal[item.id] | number}}</td>
+                  <td>{{ montantTotal[item.id]| number }}</td>
                   <td class="d-flex justify-content-center">
                     <button
                       type="button"
@@ -322,10 +322,10 @@
                 </tr>
                 <tr class="table-dark">
                   <th scope="col" colspan="1">Total :</th>
-                  <td>{{ totalQte }}</td>
-                  <td>{{ totalLiquide }}</td>
-                  <td>{{ totalEmballage }}</td>
-                  <td>{{ totalGlobal }}</td>
+                  <td>{{ totalQte | number}}</td>
+                  <td>{{ totalLiquide| number }}</td>
+                  <td>{{ totalEmballage| number }}</td>
+                  <td>{{ totalGlobal| number }}</td>
                 </tr>
                 </tbody>
               </table>
@@ -362,9 +362,9 @@
                   *ngFor="let item of data.articles; let i = index"
                 >
                   <td>{{ item.liquide.libelle }}</td>
-                  <td>{{ item.quantite }}</td>
-                  <td>{{ item.prixUnitaire }}</td>
-                  <td>{{ item.montantTotal }}</td>
+                  <td>{{ item.quantite | number}}</td>
+                  <td>{{ item.prixUnitaire | number}}</td>
+                  <td>{{ item.montantTotal | number}}</td>
 
                 </tr>
 
@@ -432,7 +432,7 @@
                   <td>{{ item.productCode }}</td>
                   <td>{{ item.libelle }}</td>
                   <td>{{ item.quantity }}</td>
-                  <td>{{ item.prixUnitaire }}</td>
+                  <td>{{ item.prixUnitaire| number }}</td>
 
                 </tr>
 

@@ -40,7 +40,7 @@
 
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.montantTotal }}
+            {{ dataList.montantTotal | number}}
           </span>
         </td>
         <!-- <td>
@@ -136,7 +136,7 @@
               </div>
               <div class="col-md-4">
                 <strong>Montant: </strong>
-                <span>{{ updateData?.vente?.montantTotal }}</span>
+                <span>{{ updateData?.vente?.montantTotal| number }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Point de vente: </strong>
@@ -173,19 +173,19 @@
                       *ngFor="let item of updateData?.vente.articles; let i = index"
                     >
                       <td>{{ item.liquide.libelle }}</td>
-                      <td>{{ item.quantite }}</td>
+                      <td>{{ item.quantite | number}}</td>
   
-                      <td>{{  item.prixUnitaireLiquide}}</td>
-                      <td>{{ item.prixUnitaireEmballage}}</td>
-                      <td>{{ item.prixTotal}}</td>
+                      <td>{{  item.prixUnitaireLiquide| number}}</td>
+                      <td>{{ item.prixUnitaireEmballage| number}}</td>
+                      <td>{{ item.prixTotal| number}}</td>
   
                     </tr>
                     <tr class="table-dark" *ngIf="updateData?.vente.articles.length > 0">
                       <th scope="col" colspan="1">Total :</th>
-                      <td>{{ totalQte }}</td>
-                      <td>{{ totalLiquide }}</td>
-                      <td>{{ totalEmballage }}</td>
-                      <td>{{ totalGlobal }}</td>
+                      <td>{{ totalQte | number}}</td>
+                      <td>{{ totalLiquide | number}}</td>
+                      <td>{{ totalEmballage| number }}</td>
+                      <td>{{ totalGlobal | number}}</td>
                     </tr>
                     <!-- Ajoutez d'autres lignes si nécessaire -->
                   </tbody>
@@ -232,7 +232,7 @@
                 <strong>Montant total: </strong>
                 <span
                   >
-                  {{ updateData?.montantTotal}}</span
+                  {{ updateData?.montantTotal| number}}</span
                 >
               </div>
             </div>
@@ -261,17 +261,17 @@
                       <td>{{ item.liquide.libelle }}</td>
                       <td>{{ item.quantite }}</td>
   
-                      <td>{{  item.prixUnitaireLiquide}}</td>
-                      <td>{{ item.prixUnitaireEmballage}}</td>
-                      <td>{{ item.prixTotal}}</td>
+                      <td>{{  item.prixUnitaireLiquide| number}}</td>
+                      <td>{{ item.prixUnitaireEmballage| number}}</td>
+                      <td>{{ item.prixTotal| number}}</td>
   
                     </tr>
                     <tr class="table-dark" *ngIf="updateData?.livraison.articles.length > 0">
                       <th scope="col" colspan="1">Total :</th>
-                      <td>{{ totalQte }}</td>
-                      <td>{{ totalLiquide }}</td>
-                      <td>{{ totalEmballage }}</td>
-                      <td>{{ totalGlobal }}</td>
+                      <td>{{ totalQte | number}}</td>
+                      <td>{{ totalLiquide | number}}</td>
+                      <td>{{ totalEmballage| number }}</td>
+                      <td>{{ totalGlobal| number }}</td>
                     </tr>
                     <!-- Ajoutez d'autres lignes si nécessaire -->
                   </tbody>

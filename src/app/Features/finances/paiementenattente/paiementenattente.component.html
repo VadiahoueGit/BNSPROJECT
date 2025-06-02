@@ -125,11 +125,11 @@
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList?.montantAPercevoir }}
+            {{ dataList?.montantAPercevoir| number }}
           </span>
         </td>
         <td>
-          {{ dataList?.montantPercu }}
+          {{ dataList?.montantPercu | number}}
         </td>
         <td>
           {{ dataList?.credit?.delaiReglement || 0 }}
@@ -254,11 +254,11 @@
             </div>
             <div class="col-md-4">
               <strong>Montant à percevoir : </strong>
-              <span>{{ updateData?.montantAPercevoir }}</span>
+              <span>{{ updateData?.montantAPercevoir| number }}</span>
             </div>
             <div class="col-md-4">
               <strong>Montant perçu : </strong>
-              <span>{{ updateData?.montantPercu }}</span>
+              <span>{{ updateData?.montantPercu | number}}</span>
             </div>
             <div class="col-md-4">
               <strong>Type retour : </strong>

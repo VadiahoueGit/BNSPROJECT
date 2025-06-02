@@ -1,6 +1,7 @@
 import {
   APP_INITIALIZER,
   CUSTOM_ELEMENTS_SCHEMA,
+  LOCALE_ID,
   NgModule,
 } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -22,8 +23,10 @@ import { MessageService } from 'primeng/api';
 import { AuthGuardService } from './core/auth-guard.service';
 import { LocalStorageService } from './core/local-storage.service';
 import { AuthInterceptor } from './core/auth.interceptor';
-import {GoogleMapsModule} from "@angular/google-maps";
-
+import { GoogleMapsModule } from '@angular/google-maps';
+import { registerLocaleData } from '@angular/common';
+import localeFr from '@angular/common/locales/fr';
+registerLocaleData(localeFr);
 export function initConfig(configService: ConfigService) {
   return () => configService.loadConfig();
 }
@@ -48,15 +51,19 @@ export function initConfig(configService: ConfigService) {
     LocalStorageService,
     AuthGuardService,
     MessageService,
+
     {
       provide: APP_INITIALIZER,
       useFactory: initConfig,
       deps: [ConfigService],
 
-      multi: true
+      multi: true,
     },
-
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    {
+      provide: LOCALE_ID,
+      useValue: 'fr-FR',
+    },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
 })

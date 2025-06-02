@@ -43,16 +43,16 @@
           </span>
         </td>
         <td>
-          {{ dataList.creditEmballageDeduit }}
+          {{ dataList.creditEmballageDeduit| number }}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.creditLiquideDeduit }}
+            {{ dataList.creditLiquideDeduit | number}}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.totalCreditDeduit }}
+            {{ dataList.totalCreditDeduit | number}}
           </span>
         </td>
 
@@ -208,15 +208,15 @@
           </div>
           <div class="col-md-4">
             <strong>Solde liquide : </strong>
-            <span>{{ detail.soldeLiquide }}</span>
+            <span>{{ detail.soldeLiquide | number}}</span>
           </div>
           <div class="col-md-4">
             <strong>Solde emballage :</strong>
-            <span>{{ detail.soldeEmballage }}</span>
+            <span>{{ detail.soldeEmballage| number }}</span>
           </div>
           <div class="col-md-4">
             <strong>Solde total : </strong>
-            <span>{{ detail.totalSolde }}</span>
+            <span>{{ detail.totalSolde| number }}</span>
           </div>
           <div class="col-md-4">
             <strong>Délai règlement : </strong>
@@ -243,9 +243,9 @@
           <tr *ngFor="let item of historiqueMouvement">
             <td>{{ item.typeMouvement }}</td>
             <td>{{ item.description }}</td>
-            <td>{{ item.montantLiquide }}</td>
-            <td>{{ item.montantEmballage }}</td>
-            <td>{{ item.soldeApresMouvement }}</td>
+            <td>{{ item.montantLiquide| number }}</td>
+            <td>{{ item.montantEmballage | number}}</td>
+            <td>{{ item.soldeApresMouvement | number}}</td>
             <td>{{ item.createdAt | date:'dd/MM/yyyy' }}</td>
           </tr>
           </tbody>

@@ -297,8 +297,8 @@
                     *ngFor="let item of updateData?.emballagesRendus?.[0]?.articles"
                   >
                     <td>{{ item?.emballage?.libelle }}</td>
-                    <td>{{ item?.prixUnitaireEmballage }}</td>
-                    <td>{{ item?.quantite }}</td>
+                    <td>{{ item?.prixUnitaireEmballage | number}}</td>
+                    <td>{{ item?.quantite | number}}</td>
                   </tr>
                 </tbody>
               </table>

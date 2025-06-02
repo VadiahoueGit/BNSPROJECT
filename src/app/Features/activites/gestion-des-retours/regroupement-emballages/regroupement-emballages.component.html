@@ -148,7 +148,7 @@
               <div class="col-md-4">
                 <strong>Solde emballage : </strong>
                 <span>{{
-                    updateData.commandeClient?.soldeEmballage ??
+                    updateData.commandeClient?.soldeEmballage  ??
                     updateData.commandeGratuite?.soldeEmballage ??
                     updateData.venteChine?.soldeEmballage
                       | currency: 'XOF':'symbol':'1.0-0'
@@ -177,7 +177,7 @@
                 <td>{{ item.produit.libelle }}</td>
                 <td>{{ item.produit.condition }}</td>
                 <td>{{ item.produit.format }}</td>
-                <td>{{ item.prixUnitaire }}</td>
+                <td>{{ item.prixUnitaire | number}}</td>
                 <td>{{ item.quantity }}</td>
               </tr>
               </tbody>
