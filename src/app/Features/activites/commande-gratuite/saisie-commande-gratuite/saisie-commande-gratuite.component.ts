@@ -75,8 +75,8 @@ export class SaisieCommandeGratuiteComponent {
       articles: this.fb.array([]),
     });
     this.GetArticleList(1)
-    this.LoadPdv()
-    this.GetRevendeurList(1)
+    // this.LoadPdv()
+    // this.GetRevendeurList(1)
     this.GetListCommandeGratuite(1)
     this.fetchData()
   }
@@ -474,12 +474,24 @@ export class SaisieCommandeGratuiteComponent {
       paginate: false,
       page: 1,
       limit: 8,
+      proprietaire: '',
+      groupeClient:'',
+      raisonSociale: '',
+    };
+
+    let data_ = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+      depot: '',
+      etablissement: '',
+      statut: '',
     };
     try {
       // Effectuer les deux appels API en parallèle
       const [revendeur, pointDeVente]: [any, any] = await Promise.all([
         this.articleService.GetListRevendeur(data), // Remplacez par votre méthode API
-        this.utilisateurService.GetPointDeVenteList(data),
+        this.utilisateurService.GetPointDeVenteList(data_),
       ]);
 
       console.log('Données revendeur:', revendeur);

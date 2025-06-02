@@ -314,8 +314,11 @@ export class CartographieComponent implements AfterViewInit{
   GetRevendeurList(page: number) {
     let data = {
       paginate: false,
-      page: page,
+      page: 1,
       limit: 8,
+      proprietaire: '',
+      groupeClient:'',
+      raisonSociale: '',
     };
     this._spinner.show();
     this._articleService.GetListRevendeur(data).then((res: any) => {
@@ -331,6 +334,9 @@ export class CartographieComponent implements AfterViewInit{
       paginate: false,
       page: 1,
       limit: 8,
+      depot: '',
+      etablissement: '',
+      statut: '',
     };
     this._spinner.show();
     this.utilisateurService.GetPointDeVenteList(data).then((res: any) => {
