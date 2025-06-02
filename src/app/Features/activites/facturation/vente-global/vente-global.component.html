@@ -37,12 +37,12 @@
   
        <td>
          <span class="ml-1 vertical-align-middle">
-          {{ dataList?.facture?.montantTotal }}
+          {{ dataList?.facture?.montantTotal | number}}
          </span>
        </td>
           <td>
             <span class="ml-1 vertical-align-middle">
-             {{ dataList.montantTotal }}
+             {{ dataList.montantTotal | number}}
             </span>
           </td>
           <td>
@@ -233,9 +233,9 @@
                 <tbody>
                   <tr *ngFor="let item of selectedArticles">
                     <td>{{ item.liquide.libelle }}</td>
-                    <td>{{ prixLiquide[item.id] }}</td>
-                    <td>{{ prixEmballage[item.id] }}</td>
-                    <td>{{ prixEmballage[item.id] + prixLiquide[item.id] }}</td>
+                    <td>{{ prixLiquide[item.id] | number}}</td>
+                    <td>{{ prixEmballage[item.id] | number}}</td>
+                    <td>{{ prixEmballage[item.id] + prixLiquide[item.id] | number}}</td>
                     <td>
                       <input
                         type="number"
@@ -251,9 +251,9 @@
                       />
                       / {{stocksDisponibles[item.liquide.id]}}
                     </td>
-                    <td>{{ prixLiquideTotal[item.id] }}</td>
-                    <td>{{ prixEmballageTotal[item.id] }}</td>
-                    <td>{{ montantTotal[item.id] }}</td>
+                    <td>{{ prixLiquideTotal[item.id] | number}}</td>
+                    <td>{{ prixEmballageTotal[item.id] | number}}</td>
+                    <td>{{ montantTotal[item.id] | number}}</td>
                     <td class="d-flex justify-content-center">
                       <button
                         type="button"
@@ -266,10 +266,10 @@
                   </tr>
                   <tr class="table-dark">
                     <th scope="col" colspan="4">Total :</th>
-                    <td>{{ totalQte }}</td>
-                    <td>{{ totalLiquide }}</td>
-                    <td>{{ totalEmballage }}</td>
-                    <td>{{ totalGlobal }}</td>
+                    <td>{{ totalQte | number}}</td>
+                    <td>{{ totalLiquide | number}}</td>
+                    <td>{{ totalEmballage | number}}</td>
+                    <td>{{ totalGlobal | number}}</td>
                     <td></td>
                   </tr>
                 </tbody>
@@ -297,21 +297,21 @@
                 <tbody>
                 <tr *ngFor="let item of updateData.articles">
                   <td>{{ item.liquide.libelle }}1</td>
-                  <td>{{ item.prixUnitaireLiquide }}</td>
-                  <td>{{ item.prixUnitaireEmballage}}</td>
-                  <td>{{  Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) }}</td>
+                  <td>{{ item.prixUnitaireLiquide | number}}</td>
+                  <td>{{ item.prixUnitaireEmballage| number}}</td>
+                  <td>{{  Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) | number}}</td>
                   <td>{{ item.quantite }}</td>
-                  <td>{{ item.montantLiquide }}</td>
-                  <td>{{ item.montantEmballage }}</td>
-                  <td>{{Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) }}</td>
+                  <td>{{ item.montantLiquide | number}}</td>
+                  <td>{{ item.montantEmballage| number }}</td>
+                  <td>{{Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0)| number }}</td>
   
                 </tr>
                 <tr class="table-dark">
                   <th scope="col" colspan="4">Total :</th>
-                  <td>{{ totalQte }}</td>
-                  <td>{{ totalLiquide }}</td>
-                  <td>{{ totalEmballage }}</td>
-                  <td>{{ totalGlobal }}</td>
+                  <td>{{ totalQte | number}}</td>
+                  <td>{{ totalLiquide| number }}</td>
+                  <td>{{ totalEmballage | number}}</td>
+                  <td>{{ totalGlobal| number }}</td>
                 </tr>
                 </tbody>
               </table>

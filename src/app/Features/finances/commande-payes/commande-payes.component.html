@@ -124,11 +124,11 @@
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList?.montantAPercevoir }}
+            {{ dataList?.montantAPercevoir | number }}
           </span>
         </td>
         <td>
-          {{ dataList?.montantPercu }}
+          {{ dataList?.montantPercu | number}}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
@@ -272,15 +272,15 @@
               </div>
               <div class="col-md-4">
                 <strong>Montant à percevoir : </strong>
-                <span>{{ updateData?.montantAPercevoir }}</span>
+                <span>{{ updateData?.montantAPercevoir | number }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Montant perçu : </strong>
-                <span>{{ updateData?.montantPercu }}</span>
+                <span>{{ updateData?.montantPercu | number}}</span>
               </div>
               <div class="col-md-4">
                 <strong>Montant restant : </strong>
-                <span>{{ updateData?.montantRestant }}</span>
+                <span>{{ updateData?.montantRestant | number}}</span>
               </div>
               <div class="col-md-4">
                 <strong>Délai : </strong>
@@ -320,7 +320,7 @@
                         : "N/A"
                     }}
                   </td>
-                  <td>{{ item.montant }}</td>
+                  <td>{{ item.montant | number}}</td>
                   <td>{{ item.datePaiement | date : "dd/MM/yyyy HH:mm" }}</td>
                 </tr>
                 <!-- Ajoutez d'autres lignes si nécessaire -->
@@ -353,10 +353,10 @@
                       let i = index
                     "
                 >
-                  <td>{{ item.montantEmballage }}</td>
-                  <td>{{ item.montantLiquide }}</td>
-                  <td>{{ item.prixUnitaireEmballage }}</td>
-                  <td>{{ item.prixUnitaireLiquide }}</td>
+                  <td>{{ item.montantEmballage| number }}</td>
+                  <td>{{ item.montantLiquide | number}}</td>
+                  <td>{{ item.prixUnitaireEmballage | number}}</td>
+                  <td>{{ item.prixUnitaireLiquide | number}}</td>
                   <td>{{ item.quantite }}</td>
                 </tr>
                 <!-- Ajoutez d'autres lignes si nécessaire -->
@@ -434,15 +434,15 @@
               </div>
               <div class="col-md-4">
                 <strong>Montant à percevoir : </strong>
-                <span>{{ updateData?.montantAPercevoir }}</span>
+                <span>{{ updateData?.montantAPercevoir| number }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Montant perçu : </strong>
-                <span>{{ updateData?.montantPercu }}</span>
+                <span>{{ updateData?.montantPercu| number }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Montant restant : </strong>
-                <span>{{ updateData?.montantRestant }}</span>
+                <span>{{ updateData?.montantRestant | number}}</span>
               </div>
               <div class="col-md-4">
                 <strong>Délai : </strong>
@@ -482,7 +482,7 @@
                         : "N/A"
                     }}
                   </td>
-                  <td>{{ item.montant }}</td>
+                  <td>{{ item.montant| number }}</td>
                   <td>{{ item.datePaiement | date : "dd/MM/yyyy HH:mm" }}</td>
                 </tr>
                 <!-- Ajoutez d'autres lignes si nécessaire -->
@@ -518,7 +518,7 @@
                   <td>{{ item.liquide.libelle }}</td>
                   <td>{{ item.prixUnitaire }}</td>
                   <td>{{ item.quantite }}</td>
-                  <td>{{ item.montantTotal }}</td>
+                  <td>{{ item.montantTotal| number }}</td>
                 </tr>
                 <!-- Ajoutez d'autres lignes si nécessaire -->
                 </tbody>
@@ -610,15 +610,15 @@
               </div>
               <div class="col-md-4">
                 <strong>Montant à percevoir : </strong>
-                <span>{{ updateData?.montantAPercevoir }}</span>
+                <span>{{ updateData?.montantAPercevoir | number}}</span>
               </div>
               <div class="col-md-4">
                 <strong>Montant perçu : </strong>
-                <span>{{ updateData?.montantPercu }}</span>
+                <span>{{ updateData?.montantPercu | number}}</span>
               </div>
               <div class="col-md-4">
                 <strong>Montant restant : </strong>
-                <span>{{ updateData?.montantRestant }}</span>
+                <span>{{ updateData?.montantRestant | number}}</span>
               </div>
               <div class="col-md-4">
                 <strong>Délai : </strong>
@@ -658,7 +658,7 @@
                         : "N/A"
                     }}
                   </td>
-                  <td>{{ item.montant }}</td>
+                  <td>{{ item.montant | number}}</td>
                   <td>{{ item.datePaiement | date : "dd/MM/yyyy HH:mm" }}</td>
                 </tr>
                 <!-- Ajoutez d'autres lignes si nécessaire -->
@@ -691,10 +691,10 @@
                       let i = index
                     "
                 >
-                  <td>{{ item.montantEmballage }}</td>
-                  <td>{{ item.montantLiquide }}</td>
-                  <td>{{ item.prixUnitaireEmballage }}</td>
-                  <td>{{ item.prixUnitaireLiquide }}</td>
+                  <td>{{ item.montantEmballage | number}}</td>
+                  <td>{{ item.montantLiquide | number}}</td>
+                  <td>{{ item.prixUnitaireEmballage | number}}</td>
+                  <td>{{ item.prixUnitaireLiquide | number}}</td>
                   <td>{{ item.quantite }}</td>
                 </tr>
                 <!-- Ajoutez d'autres lignes si nécessaire -->
