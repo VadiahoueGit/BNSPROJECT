@@ -244,6 +244,7 @@
                 <tr style="font-size: small">
                   <th scope="col">Produits</th>
                   <th scope="col">Qte liquide</th>
+                  <th scope="col">Qte vendue</th>
                   <th scope="col">Qte restante</th>
                   <th scope="col">Prix liquide</th>
                   <th scope="col">Prix emballage</th>
@@ -257,16 +258,17 @@
                 >
                   <td>{{ item.liquide.libelle }}</td>
                   <td>{{ item.quantiteAffectee }}</td>
+                  <td>{{ Number(item.quantiteAffectee - item.quantite) }}</td>
                   <td>{{ item.quantite}}</td>
                   <td>{{ item.montantLiquide| number }}</td>
                   <td>{{ item.montantEmballage | number}}</td>
                   <td>{{ (+item.montantLiquide || 0) + (+item.montantEmballage || 0)| number }}</td>
 
-
                 </tr>
                 <tr class="table-dark" *ngIf="updateData.articles.length > 0">
                   <th scope="col" colspan="1">Total :</th>
                   <td>{{ totalQte| number }}</td>
+                  <td></td>
                   <td></td>
                   <td>{{ totalLiquide| number }}</td>
                   <td>{{ totalEmballage | number}}</td>
@@ -360,6 +362,7 @@
                 <tr style="font-size: small">
                   <th scope="col">Produits</th>
                   <th scope="col">Qte liquide</th>
+                  <th scope="col">Qte offerte</th>
                   <th scope="col">Qte restante</th>
                   <th scope="col">Prix liquide</th>
                   <th scope="col">Prix emballage</th>
@@ -373,6 +376,7 @@
                 >
                   <td>{{ item.liquide.libelle }}</td>
                   <td>{{ item.quantiteAffectee }}</td>
+                  <td>{{ Number(item.quantiteAffectee - item.quantite) }}</td>
                   <td>{{ item.quantite}}</td>
                   <td>{{ item.montantLiquide }}</td>
                   <td>{{ item.montantEmballage }}</td>
@@ -383,6 +387,7 @@
                 <tr class="table-dark" *ngIf="updateData.articles.length > 0">
                   <th scope="col" colspan="1">Total :</th>
                   <td>{{ totalQteFree }}</td>
+                  <td></td>
                   <td></td>
                   <td>{{ totalLiquideFree }}</td>
                   <td>{{ totalEmballageFree }}</td>

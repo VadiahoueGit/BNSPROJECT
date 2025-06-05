@@ -124,16 +124,14 @@ export class ListeCommandesMarchandisesComponent {
       page: page,
       limit: 8,
       numero: numero || '',
-      statut: statut || '',
+      statut: StatutCommande.VALIDEE,
       typeCommande: typeCommande || '',
     };
     this._spinner.show();
     this.articleService.GetListCommandeFournisseurs(data).then((res: any) => {
       console.log('GetListCommandeFournisseurs:::>', res);
       this.totalPages = res.total;
-      this.ListCommandeFournisseurs = res.data.filter(
-        (item: any) => item.statut === StatutCommande.VALIDEE
-      );
+      this.ListCommandeFournisseurs = res.data
       console.log('GetListCommandeFournisseurs:::>', this.ListCommandeFournisseurs);
 
       this._spinner.hide();

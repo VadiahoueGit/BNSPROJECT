@@ -132,14 +132,17 @@ export class InventaireStoksComponent {
 
     this.afficherArticlesSelectionnes();
   }
- 
+
 
   GetArticleListByDepot() {
     this._spinner.show();
     let depotId = this.InventaireForm.controls['depotId'].value;
     this.articleService.GetArticleListByDepot(depotId).then((res: any) => {
       this.articleList = res.articles;
-      this.filteredArticleList = this.articleList;
+      this.filteredArticleList = this.articleList.sort((a, b) =>
+        a.articleName.toLowerCase().localeCompare(b.articleName.toLowerCase())
+      );
+
       console.log('DATATYPEPRIX:::>', res);
       this._spinner.hide();
     });
@@ -177,7 +180,7 @@ export class InventaireStoksComponent {
     } else {
       delete article.quantite;
       const indexToRemove = this.selectedArticles.findIndex(
-        (selectedArticle) => selectedArticle.libelle === article.libelle
+        (selectedArticle) => selectedArticle.articleName === article.articleName
       );
       if (indexToRemove !== -1) {
         this.selectedArticles.splice(indexToRemove, 1);
@@ -193,14 +196,11 @@ export class InventaireStoksComponent {
 
   removeArticle(item: any): void {
     item.isChecked = false;
-    this.onCheckboxChange(item);
-    const index = this.selectedArticles.findIndex((i: any) => i.id === item.id);
-    if (index !== -1) {
-      this.selectedArticles.splice(index, 1);
-    }
+    this.onCheckboxChange(item); // cette méthode gère déjà la suppression
     delete item.quantite;
     this.afficherArticlesSelectionnes();
   }
+
   removeInventaireArticle(item: any): void {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer ce article?').then(
       (res) => {
@@ -238,6 +238,7 @@ export class InventaireStoksComponent {
 
   OnCloseModal() {
     this.deselectAllItems();
+    this.InventaireForm.reset()
     this.selectedArticles =[]
     this.isModalOpen = false;
     console.log(this.isModalOpen);

@@ -64,6 +64,7 @@ export class ListDesReceptionsEmballagesComponent {
     this.GetRetourList(1);
   }
 
+
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;

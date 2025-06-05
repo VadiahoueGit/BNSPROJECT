@@ -63,17 +63,8 @@ export class ArticleComponent {
     this.articleService.ListPlastiquesNu.subscribe((res: any) => {
       this.dataListPlastiqueNu = res;
     });
-    this.articleService.ListLiquides.subscribe((res: any) => {
-      console.log('dataListLiquides:::>', this.dataListLiquides);
-
-      this.dataListLiquides = res;
-    });
     this.articleService.ListBouteilleVide.subscribe((res: any) => {
       this.dataListBouteilleVide = res;
-    });
-    this.articleService.ListArticles.subscribe((res: any) => {
-      this.dataList = res;
-      console.log('dataList:::>', this.dataList);
     });
     this.articleService.GetFormatList().then((res: any) => {
       this.dataListFormats = res;
@@ -96,6 +87,7 @@ export class ArticleComponent {
     });
     this.docUrl = this._config.docUrl;
     this.GetArticleList(1);
+    this.GetLiquideList()
   }
 
   onFileSelected(event: Event) {
@@ -106,7 +98,21 @@ export class ArticleComponent {
     }
   }
 
-
+  GetLiquideList()
+  {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.articleService.GetArticleList(data).then((res: any) => {
+      console.log('DATATYPEPRIX:::>', res);
+      this.totalPages = res.total;
+      this.dataListLiquides = res;
+      this._spinner.hide();
+    });
+  }
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;

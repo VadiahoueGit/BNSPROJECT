@@ -144,10 +144,11 @@ export class CreateCommandeFournisseursComponent {
       this.selectedOption = event.groupeClient.nomGroupe
       console.log(this.selectedOption);
     }
-
+    this.GetArticleList(1)
   }
 
   OnCloseModal() {
+    this.CommandeForm.reset();
     this.totalEmballage = 0;
     this.totalLiquide = 0;
     this.totalGlobal = 0;
@@ -505,6 +506,9 @@ export class CreateCommandeFournisseursComponent {
       paginate: false,
       page: 1,
       limit: 8,
+      raisonSociale:'',
+      proprietaire:'',
+      groupeClient:''
     };
     try {
       // Effectuer les deux appels API en parallèle
@@ -518,7 +522,7 @@ export class CreateCommandeFournisseursComponent {
       // Vérifier si plastiques et liquides sont bien des tableaux
       if (Array.isArray(revendeur.data)) {
         this.dataRevendeur = revendeur.data.filter((rev: any) => rev.groupeClient.nomGroupe === 'Sous Distributeur' && rev.credit != null);
-        console.log('Données revendeur:', this.dataRevendeur);
+        console.log('Données revendeur:', revendeur);
         // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
         this.listRevendeurs.push(...this.dataRevendeur);
       } else {

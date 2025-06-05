@@ -49,6 +49,10 @@ export class SuiviDesRDVComponent {
     table.clear();
   }
 
+  get filteredArticles() {
+    return this.updateData.articlesRdv?.filter((a:any) => a.prixUnitaire > 0);
+  }
+
   OnCloseModal() {
     this.isModalOpen = false;
     console.log(this.isModalOpen);

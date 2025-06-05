@@ -229,7 +229,7 @@
         </div>
         <div class="p-2 mt-3">
           <div style="max-height: 350px; overflow-y: auto">
-         
+
             <table class="table table-bordered">
               <thead class="table-light">
                 <tr>
@@ -240,7 +240,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let data of updateData?.emballagesRendus[0].articles; let i = index">
+                <tr *ngFor="let data of updateData?.emballagesRendus[0]?.articles; let i = index">
                   <td class="">
                     <p>
                       {{

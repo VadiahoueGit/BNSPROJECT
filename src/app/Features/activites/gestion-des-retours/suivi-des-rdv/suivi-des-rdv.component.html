@@ -71,7 +71,7 @@
   >
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Détails RDV</h5>
+        <h5 class="modal-title">RDV des emballages restant à recupérer</h5>
         <button type="button" class="btn-close" aria-label="Close"></button>
       </div>
 
@@ -193,7 +193,7 @@
               </tr>
               </thead>
               <tbody>
-              <tr *ngFor="let item of updateData.articlesRdv">
+              <tr *ngFor="let item of filteredArticles">
                 <td>{{ item.productCode }}</td>
                 <td>{{ item.typeArticle }}</td>
                 <td>{{ item.libelle }}</td>

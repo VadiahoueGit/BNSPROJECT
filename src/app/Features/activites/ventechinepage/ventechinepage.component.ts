@@ -575,16 +575,6 @@ export class VentechinepageComponent {
         })
       );
 
-      this.articlesGratuit.push(
-        this.fb.group({
-          groupeArticleId: data.groupearticle.id,
-          codeArticleLiquide: data.liquide.code,
-          codeArticleEmballage: data.liquide.emballage.code,
-          prixUnitaireLiquide: prixLiquide,
-          prixUnitaireEmballage: prixEmballage,
-          quantite: quantite,
-        })
-      );
     }
 
     // ✅ Recalcul des montants
@@ -760,4 +750,6 @@ export class VentechinepageComponent {
 
     this.selectedArticlesFree = [];
   }
+
+  protected readonly Number = Number;
 }
