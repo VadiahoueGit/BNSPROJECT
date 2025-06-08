@@ -1,0 +1,23 @@
+
+<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
+  <i style="font-size: 18px; " class="fas fw-bold fa-chevron-left me-2 "></i>
+  <h4 class="fw-bold mb-0">Caisse</h4>
+</div>
+<nav class="nav nav-pills flex-column flex-sm-row gap-1 border-bottom">
+
+  <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'brouillard'"
+     (click)="activeElement('brouillard')">Brouillard</a>
+  <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'comptes'"
+     (click)="activeElement('comptes')">Comptes</a>
+
+</nav>
+
+<div class="tab-content mt-3">
+  <div *ngIf="activeTab === 'brouillard'" class="tab-pane fade show active">
+    <app-brouillard></app-brouillard>
+  </div>
+  <div *ngIf="activeTab === 'comptes'" class="tab-pane fade show active">
+    <app-comptes></app-comptes>
+  </div>
+
+</div>

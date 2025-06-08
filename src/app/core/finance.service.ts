@@ -232,6 +232,25 @@ export class FinanceService {
     });
    }
 
+  GetBrouillard(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http
+        .get(
+          `${this.apiUrl}/v1/comptabilite/mouvements-par-depot?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&nomDepot=${data.nomDepot}`
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
    // GESTION DES PAIEMENT
 
   GetHistoriquePayment(id: any) {

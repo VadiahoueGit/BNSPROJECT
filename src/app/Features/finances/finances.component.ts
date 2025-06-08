@@ -18,11 +18,11 @@ export class FinancesComponent {
       title: 'Validations',
       url: 'feature/finances/validation',
     },
-    // {
-    //   image: 'assets/icon/approved.png',
-    //   title: 'Validation paiement',
-    //   url: 'feature/finances/validation-paiement',
-    // },
+    {
+      image: 'assets/icon/caisse.png',
+      title: 'Caisse',
+      url: 'feature/finances/caisse',
+    },
     // {
     //   image: 'assets/icon/store.png',
     //   title: 'Revendeurs',

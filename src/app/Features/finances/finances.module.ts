@@ -112,6 +112,9 @@ import { ValidationCommandeClientComponent } from './validation/validation-comma
 import { ValidationCommandeGratuiteComponent } from './validation/validation-commande-gratuite/validation-commande-gratuite.component';
 import { ValidationComponent } from './validation/validation/validation.component';
 import {PaiementenattenteComponent} from "./paiementenattente/paiementenattente.component";
+import {CaisseComponent} from "./caisse/caisse.component";
+import {BrouillardComponent} from "./brouillard/brouillard.component";
+import {ComptesComponent} from "./comptes/comptes.component";
 
 
 @NgModule({
@@ -126,7 +129,10 @@ import {PaiementenattenteComponent} from "./paiementenattente/paiementenattente.
     ValidationCommandeClientComponent,
     ValidationCommandeGratuiteComponent,
     ValidationComponent,
-    PaiementenattenteComponent
+    PaiementenattenteComponent,
+    BrouillardComponent,
+    ComptesComponent,
+    CaisseComponent
   ],
   imports: [
     CommonModule,
