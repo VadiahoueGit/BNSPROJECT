@@ -66,15 +66,26 @@
           <thead>
           <tr style="font-size: small">
             <th scope="col" class="text-secondary">Image</th>
-            <th scope="col" class="text-secondary">Texte</th>
+            <th scope="col" class="text-secondary">Titre</th>
             <th scope="col" class="text-secondary">Description</th>
+            <th scope="col" class="text-secondary">Date création</th>
             <th scope="col" class="text-secondary text-center">
               Action
             </th>
           </tr>
           </thead>
           <tbody>
-          <tr><h1 class="text-danger fw-bold">EN COURS D'INTEGRATION, PAS BESOIN DE FAIRE DES TESTS.</h1></tr>
+          <tr *ngFor="let item of annonces">
+            <td><img style="width: 20px" [src]="item.image ? docUrl + item.image : 'N/A'" alt=""></td>
+            <td><span>{{item.titre || 'N/A'}}</span></td>
+            <td><span>{{item.texte || 'N/A'}}</span></td>
+            <td><span>{{item.createdAt | date}}</span></td>
+          <td><tr class="d-flex justify-content-center gap-3">
+            <td><i (click)="OnView(item)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>
+            <td><i (click)="DeleteAnnonce(item.id)" style="cursor: pointer;"
+                   class="fas fa-trash-alt text-danger"></i></td>
+          </tr></td>
+          </tr>
           </tbody>
         </table>
       </div>
@@ -83,4 +94,48 @@
   </div>
 
 
+</div>
+
+
+
+<div *ngIf="isModalDetailOpen" class="custom-modal">
+  <div class="modal-dialog  modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex align-items-center">
+        <div class="d-flex justify-content-center align-items-center"
+             style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
+          <i class="fas fa-box-check text-primary fs-3"></i>
+        </div>
+        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">Détails
+          de l'article</h1>
+      </div>
+      <div class="modal-body">
+        <div class="row" >
+          <div class="col-md-6" *ngIf="updateData.image">
+            <div class="mb-3">
+              <img style="width: 300px;max-height:400px;" [src]="docUrl + updateData.image" alt="Photo"
+                   class="img-thumbnail vertical-align-middle"/>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="reference" class="form-label">Titre <span
+                class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="reference" [value]="updateData.titre" [disabled]="true">
+            </div>
+            <div class="mb-3">
+              <label for="groupeId" class="form-label">Description <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="groupeId" [value]="updateData.texte" [disabled]="true">
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+      <div class="modal-footer gap-3 px-4">
+        <button (click)="OnCloseDetailModal()" type="button" class="btn btn-secondary px-2">Fermer</button>
+      </div>
+    </div>
+  </div>
 </div>
