@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {DndDropEvent} from "ngx-drag-drop";
 import {NgxFileDropEntry} from "ngx-file-drop";
 import {CoreServiceService} from "../../core/core-service.service";
 import {NgxSpinnerService} from "ngx-spinner";
 import {ToastrService} from "ngx-toastr";
+import {ConfigService} from "../../core/config-service.service";
 
 @Component({
   selector: 'app-annonce',
@@ -13,21 +14,50 @@ import {ToastrService} from "ngx-toastr";
 })
 export class AnnonceComponent {
   annonceForm: FormGroup;
-  changeValue:any
+  changeValue: any
+  isModalDetailOpen: boolean = false;
   annonces: any[] = [];
   editingId: number | null = null;
   public files: NgxFileDropEntry[] = [];
   previews: string[] = []; // base64 des images
   filesToUpload: File[] = [];
-  constructor(private fb: FormBuilder,private coreServices:CoreServiceService,private _spinner: NgxSpinnerService,private toastr: ToastrService,) {
+  docUrl
+  updateData: any= [];
+  constructor(private _config: ConfigService, private fb: FormBuilder, private coreServices: CoreServiceService, private _spinner: NgxSpinnerService, private toastr: ToastrService,) {
     this.annonceForm = this.fb.group({
       titre: [''],
       texte: [''],
       isTexte: [true]
     });
+    this.docUrl = this._config.docUrl;
     this.onChange();
+    this.GetAnnnonce()
   }
 
+  GetAnnnonce() {
+    this._spinner.show()
+    this.coreServices.GetAnnnonce().then((res: any) => {
+      this._spinner.hide();
+      this.annonces = res.data;
+      console.log(this.annonces);
+    }, (error: any) => {
+      this._spinner.hide();
+      this.toastr.info(error.error.message);
+    })
+  }
+
+  DeleteAnnonce(id: number) {
+    this._spinner.show()
+    this.coreServices.DeleteAnnonce(id).then((res: any) => {
+      this.GetAnnnonce()
+      this._spinner.hide();
+      this.annonces = res.data;
+      console.log(this.annonces);
+    }, (error: any) => {
+      this._spinner.hide();
+      this.toastr.info(error.error.message);
+    })
+  }
   onSubmit() {
     this._spinner.show()
     const formData = new FormData();
@@ -38,20 +68,35 @@ export class AnnonceComponent {
     console.log(formData);
 
     this.coreServices.CreateAnnonce(formData).then((res: any) => {
-      // if ()
       this._spinner.hide();
+      this.GetAnnnonce()
+      this.toastr.success(res.message);
+    }, (error: any) => {
+      this._spinner.hide();
+      this.toastr.info(error.error.message);
     })
   }
 
+  OnView(data: any) {
+    this.updateData = data
+    this.isModalDetailOpen = true;
+  }
+
+  OnCloseDetailModal()
+  {
+    this.isModalDetailOpen = false;
+  }
+
+
   onChange() {
-     this.changeValue = this.annonceForm.get('isTexte')?.value
-    if(this.changeValue == true) {
+    this.changeValue = this.annonceForm.get('isTexte')?.value
+    if (this.changeValue == true) {
       this.previews = [];
       this.annonceForm.controls['titre'].setValidators([Validators.required]);
       this.annonceForm.controls['texte'].setValidators([Validators.required]);
       this.annonceForm.controls['titre'].enable();
       this.annonceForm.controls['texte'].enable();
-    }else{
+    } else {
       this.annonceForm.controls['titre'].clearValidators();
       this.annonceForm.controls['texte'].clearValidators();
       this.annonceForm.controls['titre'].disable();
@@ -60,20 +105,15 @@ export class AnnonceComponent {
     this.annonceForm.controls['titre'].updateValueAndValidity();
     this.annonceForm.controls['texte'].updateValueAndValidity();
   }
+
   editAnnonce(annonce: any) {
     this.editingId = annonce.id;
     this.annonceForm.patchValue(annonce);
   }
 
-  deleteAnnonce(id: number) {
-    this.annonces = this.annonces.filter(a => a.id !== id);
-    if (this.editingId === id) {
-      this.resetForm();
-    }
-  }
 
   resetForm() {
-    this.annonceForm.reset({ isTexte: true });
+    this.annonceForm.reset({isTexte: true});
     this.editingId = null;
   }
 
@@ -98,11 +138,11 @@ export class AnnonceComponent {
     }
   }
 
-  public fileOver(event:any){
+  public fileOver(event: any) {
     console.log(event);
   }
 
-  public fileLeave(event:any){
+  public fileLeave(event: any) {
     console.log(event);
   }
 }

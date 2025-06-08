@@ -5,34 +5,34 @@
 <div class="container-fluid mt-4">
   <div class="row">
     <div class="col-md-3">
-      <div class="card text-white bg-primary mb-3">
+      <div class="card text-white bg-secondary mb-3 p-2">
         <div class="card-header">Clients - Revendeur</div>
         <div class="card-body">
-          <h5 class="card-title">150</h5>
+          <h5 class="card-title">{{ clients.revendeurs }}</h5>
         </div>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="card text-white bg-success mb-3">
+      <div class="card text-white bg-secondary mb-3 p-2">
         <div class="card-header">Clients - Point de vente</div>
         <div class="card-body">
-          <h5 class="card-title">$4,500</h5>
+          <h5 class="card-title">{{ clients.pointsDeVente }}</h5>
         </div>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="card text-white bg-warning mb-3">
+      <div class="card text-white bg-secondary mb-3 p-2">
         <div class="card-header">Commandes en attente</div>
         <div class="card-body">
-          <h5 class="card-title">75</h5>
+          <h5 class="card-title">{{ commandesClient.attente }} / {{commandesClient.total}}</h5>
         </div>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="card text-white bg-danger mb-3">
+      <div class="card text-white bg-secondary mb-3 p-2">
         <div class="card-header">Ventes journalière</div>
         <div class="card-body">
-          <h5 class="card-title">5</h5>
+          <h5 class="card-title">{{ vente.ventesEnCours }} / {{ vente.ventesEffectuees }}</h5>
         </div>
       </div>
     </div>
@@ -43,7 +43,7 @@
         class="w-100"
         [view]="view"
         [scheme]="colorScheme"
-        [results]="single"
+        [results]="articlesTop"
         [gradient]="gradient"
         [legend]="showLegend"
         [legendPosition]="legendPosition"
@@ -58,26 +58,21 @@
     </div>
 
     <div class="col-md-6 d-flex">
-      <ngx-charts-bar-horizontal-2d
-        class="w-100"
+      <ngx-charts-bar-vertical
         [view]="view"
         [scheme]="colorScheme"
-        [schemeType]="schemeType"
-        [results]="multi"
-        [gradient]="false"
+        [results]="articles"
+        [gradient]="gradient"
         [xAxis]="showXAxis"
         [yAxis]="showYAxis"
-        [legend]="showLegend"
         [legendPosition]="legendPosition"
+        [legend]="showLegend"
         [showXAxisLabel]="showXAxisLabel"
         [showYAxisLabel]="showYAxisLabel"
         [xAxisLabel]="xAxisLabel"
         [yAxisLabel]="yAxisLabel"
-        (select)="onSelect($event)"
-        (activate)="onActivate($event)"
-        (deactivate)="onDeactivate($event)"
-      >
-      </ngx-charts-bar-horizontal-2d>
+        (select)="onSelect($event)">
+      </ngx-charts-bar-vertical>
     </div>
   </div>
 
