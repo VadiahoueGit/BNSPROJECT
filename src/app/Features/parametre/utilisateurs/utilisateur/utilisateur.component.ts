@@ -173,7 +173,7 @@ export class UtilisateurComponent implements AfterViewInit {
       matricule: this.updateData.matricule,
       nom: this.updateData.nom,
       password: this.updateData.password,
-      prenom: this.updateData.prenom,
+      prenoms: this.updateData.prenoms,
       telephone_one: this.updateData.telephone_one,
       telephone_two: this.updateData.telephone_two,
       roleId: this.updateData.role.id,

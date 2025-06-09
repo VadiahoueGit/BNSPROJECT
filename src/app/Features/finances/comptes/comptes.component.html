@@ -21,40 +21,40 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList>
-            <tr>
-              <td>
-                <div class="d-flex align-items-center justify-content-center bg-simple">
-                  <i style="font-size: 14px;" class="fad fa-cash-register"></i>
-                </div>
-              </td>
-              <td>
+      <tr>
+        <td>
+          <div class="d-flex align-items-center justify-content-center bg-simple">
+            <i style="font-size: 14px;" class="fad fa-cash-register"></i>
+          </div>
+        </td>
+        <td>
                 <span class="ml-1 vertical-align-middle fw-bold">
                   {{ dataList.nomDepot }}
                 </span>
-              </td>
-              <td>
+        </td>
+        <td>
                 <span class="ml-1 vertical-align-middle bg-simple fw-bold">
-                 {{ +dataList.montantPercuTotal + +dataList.montantAPercevoirTotal | currency:'XOF'}}
+                 {{ +dataList.montantPercuTotal + +dataList.montantAPercevoirTotal | currency:'XOF' }}
                 </span>
-              </td>
-              <td>
+        </td>
+        <td>
                 <span class="ml-1 vertical-align-middle bg-entry">
-                  {{ dataList.montantPercuTotal | currency:'XOF'}}
+                  {{ dataList.montantPercuTotal | currency:'XOF' }}
                 </span>
-              </td>
-              <td>
+        </td>
+        <td>
                 <span class="ml-1 vertical-align-middle bg-out">
                   {{ dataList.montantAPercevoirTotal | currency:'XOF' }}
                 </span>
-              </td>
-              <td class=" text-center">
-                <i
-                  style="cursor: pointer"
-                  (click)="OnViewDetail(dataList)"
-                  class="fas fa-eye text-secondary"
-                ></i>
-              </td>
-            </tr>
+        </td>
+        <td class=" text-center">
+          <i
+            style="cursor: pointer"
+            (click)="OnViewDetail(dataList)"
+            class="fas fa-eye text-secondary"
+          ></i>
+        </td>
+      </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
@@ -74,7 +74,7 @@
         </div>
         <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">Historique de transactions</h1>
       </div>
-      <div class="modal-body"  style="max-height: 500px;overflow-y: auto">
+      <div class="modal-body" style="max-height: 500px;overflow-y: auto">
         <p-table
           [styleClass]="'p-datatable-sm'"
           #dt2
@@ -84,11 +84,12 @@
         >
           <ng-template pTemplate="header">
             <tr>
-              <th style="color: var(--secondary-color)"> </th>
-              <th style="color: var(--secondary-color)">Paiement de </th>
+              <th style="color: var(--secondary-color)"></th>
+              <th style="color: var(--secondary-color)">Paiement de</th>
               <th style="color: var(--secondary-color)">Type opérations</th>
               <th style="color: var(--secondary-color)">Mode de paiement</th>
               <th style="color: var(--secondary-color)">Date paiement</th>
+              <th style="color: var(--secondary-color)">Origine</th>
               <th style="color: var(--secondary-color)">Statut</th>
               <th class="ml-1 text-center" style="color: var(--secondary-color)">Montant</th>
             </tr>
@@ -96,39 +97,60 @@
           <ng-template pTemplate="body" let-dataList>
             <tr>
               <td>
-                <div class="d-flex align-items-center justify-content-center" *ngIf="dataList.transaction.sens == 'ENTREE'" style="background-color: #bdffd3; padding: 5px; border-radius: 6px;">
+                <div class="d-flex align-items-center justify-content-center"
+                     *ngIf="dataList.transaction.sens == 'ENTREE'"
+                     style="background-color: #bdffd3; padding: 5px; border-radius: 6px;">
                   <i class="fad fa-chevron-double-down text-success"></i>
                 </div>
-                <div class="d-flex align-items-center justify-content-center"  *ngIf="dataList.transaction.sens == 'SORTIE'" style="background-color: #ffbdbd; padding: 5px; border-radius: 6px;">
-                  <i  class="fad fa-chevron-double-up text-danger"></i>
+                <div class="d-flex align-items-center justify-content-center"
+                     *ngIf="dataList.transaction.sens == 'SORTIE'"
+                     style="background-color: #ffbdbd; padding: 5px; border-radius: 6px;">
+                  <i class="fad fa-chevron-double-up text-danger"></i>
                 </div>
               </td>
               <td>
-              </td>
-              <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-            {{dataList.transaction.motif}}
-          </span>
-              </td>
-              <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-             {{dataList.moyenPaiement}}
-          </span>
-              </td>
-              <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px" [ngClass]="dataList.transaction.sens == 'ENTREE' ? 'text-success' : 'text-danger'">
-             {{dataList.transaction.sens}}
-          </span>
-              </td>
-              <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px" >
+              <span class="ml-1 vertical-align-middle fw-bold" style="font-size: 11px">
+  {{
+                  dataList.nomEtablissement
+                    ? dataList.nomEtablissement
+                    : dataList.client?.nom
+                      ? dataList.client?.nom + ' ' + dataList.client.prenoms
+                      : dataList.raisonSocial
+                }}
+</span>
 
+              </td>
+              <td>
+          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
+            {{ dataList.transaction.motif }}
+          </span>
+              </td>
+              <td>
+          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
+             {{ dataList.moyenPaiement }}
+          </span>
+              </td>
+              <td>
+          <span class="ml-1 vertical-align-middle" style="font-size: 11px"
+                [ngClass]="dataList.transaction.sens == 'ENTREE' ? 'text-success' : 'text-danger'">
+             {{ dataList.transaction.sens }}
+          </span>
+              </td>
+              <td>
+          <span class="ml-1 vertical-align-middle" style="font-size: 11px"
+                [ngClass]="dataList.transaction.sens == 'ENTREE' ? 'text-success' : 'text-danger'">
+             {{ dataList.statut || 'N/A' }}
+          </span>
+              </td>
+              <td>
+          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
+            {{ dataList.datePaiement | date }}
           </span>
               </td>
               <td>
                 <div class="text-center" [ngClass]="dataList.transaction.sens == 'ENTREE' ? 'bg-entry' : 'bg-out'">
              <span class="ml-1 vertical-align-middle w-100 fw-bold " style="font-size: 12px">
-             {{dataList.transaction.sens == 'ENTREE' ? '+' : ''}}{{dataList.montant | currency:'XOF'}}
+             {{ dataList.transaction.sens == 'ENTREE' ? '+' : '' }}{{ dataList.montant | currency:'XOF' }}
           </span>
                 </div>
               </td>

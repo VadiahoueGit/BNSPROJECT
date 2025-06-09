@@ -268,6 +268,20 @@ export class FinanceService {
     });
   }
 
+  SaveDepense(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http.post(`${this.apiUrl}/v1/depenses`, data).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
    // GESTION DES PAIEMENT
 
   GetHistoriquePayment(id: any) {
