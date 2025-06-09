@@ -4,6 +4,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
 import { ActiviteService } from 'src/app/core/activite.service';
+import { FinanceService } from 'src/app/core/finance.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
 import { Status } from 'src/app/utils/utils';
 
@@ -52,8 +53,16 @@ export class EcartEmballageComponent {
   filters: any = {
     nom: '',
   };
+selectedInventaires: any[] = [];
+listeEcarts: any[] = [];
+dataListMoyenPaiement: any;
+formData = {
+  montant: null,
+  moyenPaiementId: null,
+};
   constructor(
     private _activite: ActiviteService,
+    private _financeService: FinanceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
@@ -62,6 +71,7 @@ export class EcartEmballageComponent {
 
   ngOnInit() {
     this.GetEcartEmbalageList(1);
+    this.GetListMoyensPaiement();
   }
 
 
@@ -78,14 +88,44 @@ export class EcartEmballageComponent {
   OnCloseModal() {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
+    this.formData = {
+      montant: null,
+      moyenPaiementId: null,
+    };
+    this.selectedInventaires = [];
   }
 
   OnEdit(data: any) {
     console.log(data);
     this.updateData = data;
+    this.listeEcarts = data.ecarts.filter((item: any) => item.ecart > 0); 
     this.isModalOpen = true;
   }
-
+  onToggleSelection(item: any, $event: any): void {
+    item.selected = $event.target.checked;
+  }
+  onSubmitSelected() {
+    const selectedEcarts = this.updateData.ecarts.filter((item: any) => item.selected);
+    const inventaireIds = selectedEcarts.map((item: any) => item.inventoryId);
+    
+    const requestData = {
+      inventaireIds: inventaireIds,
+      montant: this.formData.montant || 0,
+      moyenPaiementId: this.formData.moyenPaiementId,
+    };
+    console.log(requestData);
+    this._spinner.show();
+    this._activite.CreateEcartEmballage(requestData).then((res: any) => {
+      this._spinner.hide();
+      this.toastr.success(res.message);
+      this.GetEcartEmbalageList(1);
+      this.OnCloseModal();
+    })
+    .catch((err: any) => {
+      this._spinner.hide();
+      this.toastr.error(err.message);
+    });
+  }
   calculate(commande: any): void {
     console.log('Commande:', commande);
 
@@ -257,6 +297,20 @@ export class EcartEmballageComponent {
     return this._activite.GetEcartEmballageList(data).then((res: any) => {
       console.log('retour ecart emballage list:::>', res);
       this.dataList = res.data;
+      this.totalPages = res.total;
+      this._spinner.hide();
+    });
+  }
+  GetListMoyensPaiement(): Promise<void> {
+    let data = {
+      paginate: true,
+      page: 1,
+      limit: 8,
+    };
+    this._spinner.show();
+    return this._financeService.GetMoyenPaiementList(data).then((res: any) => {
+      console.log('retour ecart emballage list:::>', res);
+      this.dataListMoyenPaiement = res.data;
       this.totalPages = res.total;
       this._spinner.hide();
     });
