@@ -240,25 +240,25 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let data of updateData?.emballagesRendus[0]?.articles; let i = index">
+                <tr *ngFor="let data of updateData?.articlesRecus; let i = index">
                   <td class="">
                     <p>
                       {{
-                        data.emballage.code
+                        data.articleCommande.emballage.code
                       }}
                     </p>
                   </td>
                   <td class="">
                     <p>
                       {{
-                        data?.emballage?.libelle
+                        data?.articleCommande.emballage?.libelle
                       }}
                     </p>
                   </td>
                   <td>
                     <p>
                       {{
-                        data?.quantite
+                        data?.quantiteRecue
                       }}
                     </p>
                   </td>

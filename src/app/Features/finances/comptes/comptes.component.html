@@ -1,1 +1,106 @@
-<p>comptes works!</p>
+<div class="card">
+  <p-table
+    [styleClass]="'p-datatable-sm'"
+    #dt2
+    [value]="dataList"
+    dataKey="id"
+    [rows]="8"
+    [totalRecords]="totalPages" [lazy]="true"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [paginator]="true"
+    (onPage)="onPage($event)"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="color: var(--secondary-color)">Commandes</th>
+        <th style="color: var(--secondary-color)">Agent</th>
+        <th style="color: var(--secondary-color)">Motif</th>
+        <th style="color: var(--secondary-color)">Numéro SAP</th>
+        <th style="color: var(--secondary-color)">Client</th>
+        <th style="color: var(--secondary-color)">Montant à verser</th>
+        <th style="color: var(--secondary-color)">Montant versé</th>
+        <th style="color: var(--secondary-color)">Date</th>
+        <th style="color: var(--secondary-color)">Statut</th>
+        <th style="color: var(--secondary-color)">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-dataList>
+      <!--      <tr>-->
+      <!--        <td>-->
+      <!--          <span class="ml-1 vertical-align-middle" style="font-size: 11px">-->
+      <!--            {{-->
+      <!--              dataList?.paiementsCommandeClient?.length-->
+      <!--                ? dataList.paiementsCommandeClient[0]?.NumCommande-->
+      <!--                : dataList?.paiementsCommandeGratuit?.length-->
+      <!--                  ? dataList.paiementsCommandeGratuit[0]?.NumCommande-->
+      <!--                  : dataList?.paiementsVente?.length-->
+      <!--                    ? dataList.paiementsVente[0]?.venteChine.numVenteChine-->
+      <!--                    : dataList?.returnStock?.venteChine-->
+      <!--                      ? dataList?.returnStock?.venteChine?.numVenteChine-->
+      <!--                      : dataList?.returnStock?.commandeClient-->
+      <!--                        ? dataList?.returnStock?.commandeClient?.NumCommande-->
+      <!--                        : dataList?.returnStock?.commandeGratuite-->
+      <!--                          ? dataList?.returnStock?.commandeGratuite?.NumCommande-->
+      <!--                          : "NA"-->
+      <!--            }}-->
+      <!--          </span>-->
+      <!--        </td>-->
+      <!--        <td>-->
+      <!--          {{-->
+      <!--            dataList?.paiementsCommandeClient?.length-->
+      <!--              ? (dataList?.transporteur?.nom || "NA") +-->
+      <!--              " " +-->
+      <!--              (dataList?.transporteur?.prenoms || "NA")-->
+      <!--              : dataList?.paiementsCommandeGratuit?.length-->
+      <!--                ? (dataList?.transporteur?.nom || "NA") +-->
+      <!--                " " +-->
+      <!--                (dataList?.transporteur?.prenoms || "NA")-->
+      <!--                : dataList?.paiementsVente?.length-->
+      <!--                  ? (dataList?.paiementsVente[0]?.commercial?.nom || "NA") +-->
+      <!--                  "NA " +-->
+      <!--                  (dataList?.paiementsVente[0]?.commercial?.prenoms || "NA")-->
+      <!--                  : dataList?.returnStock?.venteChine-->
+      <!--                    ? dataList?.returnStock?.venteChine?.commercial?.nom +-->
+      <!--                    dataList?.returnStock?.venteChine?.commercial?.prenoms : "NA"-->
+      <!--          }}-->
+      <!--        </td>-->
+      <!--        <td>-->
+      <!--          {{ dataList?.motif }}-->
+      <!--        </td>-->
+      <!--        <td>-->
+      <!--          {{ dataList?.client?.numeroSAP?.numeroSAP }}-->
+      <!--        </td>-->
+      <!--        <td>-->
+      <!--          {{-->
+      <!--            dataList?.client?.raisonSocial || dataList?.client?.nomEtablissement ||-->
+      <!--            dataList?.paiementsVente[0]?.pointdevente.nomEtablissement || "NA"-->
+      <!--          }}-->
+      <!--        </td>-->
+      <!--        <td>-->
+      <!--          <span class="ml-1 vertical-align-middle">-->
+      <!--            {{ dataList?.montantAPercevoir | number }}-->
+      <!--          </span>-->
+      <!--        </td>-->
+      <!--        <td>-->
+      <!--          {{ dataList?.montantPercu | number}}-->
+      <!--        </td>-->
+      <!--        <td>-->
+      <!--          <span class="ml-1 vertical-align-middle">-->
+      <!--            {{ dataList?.createdAt | date : "dd/MM/yyyy" }}-->
+      <!--          </span>-->
+      <!--        </td>-->
+      <!--        <td>-->
+      <!--          <span class="ml-1 vertical-align-middle">-->
+      <!--            {{ dataList?.statut }}-->
+      <!--          </span>-->
+      <!--        </td>-->
+      <!--      -->
+      <!--      </tr>-->
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">Aucun élément trouvé.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

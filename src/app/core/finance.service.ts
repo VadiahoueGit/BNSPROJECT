@@ -231,7 +231,24 @@ export class FinanceService {
       );
     });
    }
-
+  GetComptes(data:any){
+    return new Promise((resolve: any, reject: any) => {
+      this._http
+        .get(
+          `${this.apiUrl}/v1/comptabilite/grouped-by-depot-user?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
   GetBrouillard(data: any) {
     return new Promise((resolve: any, reject: any) => {
       this._http
