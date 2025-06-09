@@ -670,6 +670,27 @@ export class ActiviteService {
         );
     });
   }
+  GetEcartEmballageList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/ecart-emballage/ecarts-a-payer?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&nom=${data.nom}`,{headers}
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
 
   GetRetourPleinList() {
     return new Promise((resolve: any, reject: any) => {

@@ -20,6 +20,9 @@
   <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'listReceptionEmallage'"
      (click)="activeElement('listReceptionEmallage')">Regroupement/agents</a>
 
+  <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'ecartEmballage'"
+     (click)="activeElement('ecartEmballage')">Ecart emballage</a>
+
 </nav>
 
 <div class="tab-content mt-3">
@@ -38,6 +41,9 @@
     </div>
     <div *ngIf="activeTab === 'regroupementEmballages'" class="tab-pane fade show active">
         <app-regroupement-emballages></app-regroupement-emballages>
+    </div>
+    <div *ngIf="activeTab === 'ecartEmballage'" class="tab-pane fade show active">
+        <app-ecart-emballage></app-ecart-emballage>
     </div>
 
 </div>
