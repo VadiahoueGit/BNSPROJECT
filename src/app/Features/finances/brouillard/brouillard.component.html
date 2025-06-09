@@ -1,4 +1,12 @@
-<div class="card">
+<div class="card" [@fadeOutUp]="isCreating ? 'out' : 'in'" *ngIf="!isCreating">
+  <div class="d-flex justify-content-end py-3">
+    <button type="button" class="btn btn-secondary px-4 d-flex justify-content-around align-items-center"
+            (click)="OnCreate()">
+      <i class="fad fa-chevron-double-up me-2"></i>
+      <span>Faire une dépense</span>
+    </button>
+
+  </div>
   <p-table
     [styleClass]="'p-datatable-sm'"
     #dt2
@@ -12,90 +20,75 @@
   >
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color)">Commandes</th>
-        <th style="color: var(--secondary-color)">Agent</th>
-        <th style="color: var(--secondary-color)">Motif</th>
-        <th style="color: var(--secondary-color)">Numéro SAP</th>
-        <th style="color: var(--secondary-color)">Client</th>
-        <th style="color: var(--secondary-color)">Montant à verser</th>
-        <th style="color: var(--secondary-color)">Montant versé</th>
-        <th style="color: var(--secondary-color)">Date</th>
+        <th style="color: var(--secondary-color)"></th>
+        <th style="color: var(--secondary-color)">Paiement de</th>
+        <th style="color: var(--secondary-color)">Type opérations</th>
+        <th style="color: var(--secondary-color)">Mode de paiement</th>
+        <th style="color: var(--secondary-color)">Origine</th>
         <th style="color: var(--secondary-color)">Statut</th>
-        <th style="color: var(--secondary-color)">Actions</th>
+        <th style="color: var(--secondary-color)">Date paiement</th>
+        <th class="ml-1 text-center" style="color: var(--secondary-color)">Montant</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList>
-<!--      <tr>-->
-<!--        <td>-->
-<!--          <span class="ml-1 vertical-align-middle" style="font-size: 11px">-->
-<!--            {{-->
-<!--              dataList?.paiementsCommandeClient?.length-->
-<!--                ? dataList.paiementsCommandeClient[0]?.NumCommande-->
-<!--                : dataList?.paiementsCommandeGratuit?.length-->
-<!--                  ? dataList.paiementsCommandeGratuit[0]?.NumCommande-->
-<!--                  : dataList?.paiementsVente?.length-->
-<!--                    ? dataList.paiementsVente[0]?.venteChine.numVenteChine-->
-<!--                    : dataList?.returnStock?.venteChine-->
-<!--                      ? dataList?.returnStock?.venteChine?.numVenteChine-->
-<!--                      : dataList?.returnStock?.commandeClient-->
-<!--                        ? dataList?.returnStock?.commandeClient?.NumCommande-->
-<!--                        : dataList?.returnStock?.commandeGratuite-->
-<!--                          ? dataList?.returnStock?.commandeGratuite?.NumCommande-->
-<!--                          : "NA"-->
-<!--            }}-->
-<!--          </span>-->
-<!--        </td>-->
-<!--        <td>-->
-<!--          {{-->
-<!--            dataList?.paiementsCommandeClient?.length-->
-<!--              ? (dataList?.transporteur?.nom || "NA") +-->
-<!--              " " +-->
-<!--              (dataList?.transporteur?.prenoms || "NA")-->
-<!--              : dataList?.paiementsCommandeGratuit?.length-->
-<!--                ? (dataList?.transporteur?.nom || "NA") +-->
-<!--                " " +-->
-<!--                (dataList?.transporteur?.prenoms || "NA")-->
-<!--                : dataList?.paiementsVente?.length-->
-<!--                  ? (dataList?.paiementsVente[0]?.commercial?.nom || "NA") +-->
-<!--                  "NA " +-->
-<!--                  (dataList?.paiementsVente[0]?.commercial?.prenoms || "NA")-->
-<!--                  : dataList?.returnStock?.venteChine-->
-<!--                    ? dataList?.returnStock?.venteChine?.commercial?.nom +-->
-<!--                    dataList?.returnStock?.venteChine?.commercial?.prenoms : "NA"-->
-<!--          }}-->
-<!--        </td>-->
-<!--        <td>-->
-<!--          {{ dataList?.motif }}-->
-<!--        </td>-->
-<!--        <td>-->
-<!--          {{ dataList?.client?.numeroSAP?.numeroSAP }}-->
-<!--        </td>-->
-<!--        <td>-->
-<!--          {{-->
-<!--            dataList?.client?.raisonSocial || dataList?.client?.nomEtablissement ||-->
-<!--            dataList?.paiementsVente[0]?.pointdevente.nomEtablissement || "NA"-->
-<!--          }}-->
-<!--        </td>-->
-<!--        <td>-->
-<!--          <span class="ml-1 vertical-align-middle">-->
-<!--            {{ dataList?.montantAPercevoir | number }}-->
-<!--          </span>-->
-<!--        </td>-->
-<!--        <td>-->
-<!--          {{ dataList?.montantPercu | number}}-->
-<!--        </td>-->
-<!--        <td>-->
-<!--          <span class="ml-1 vertical-align-middle">-->
-<!--            {{ dataList?.createdAt | date : "dd/MM/yyyy" }}-->
-<!--          </span>-->
-<!--        </td>-->
-<!--        <td>-->
-<!--          <span class="ml-1 vertical-align-middle">-->
-<!--            {{ dataList?.statut }}-->
-<!--          </span>-->
-<!--        </td>-->
-<!--      -->
-<!--      </tr>-->
+      <tr>
+        <td>
+          <div class="d-flex align-items-center justify-content-center" *ngIf="dataList.transaction.sens == 'ENTREE'"
+               style="background-color: #bdffd3; padding: 5px; border-radius: 6px;">
+            <i class="fad fa-chevron-double-down text-success"></i>
+          </div>
+          <div class="d-flex align-items-center justify-content-center" *ngIf="dataList.transaction.sens == 'SORTIE'"
+               style="background-color: #ffbdbd; padding: 5px; border-radius: 6px;">
+            <i class="fad fa-chevron-double-up text-danger"></i>
+          </div>
+        </td>
+        <td>
+           <span class="ml-1 vertical-align-middle fw-bold" style="font-size: 11px">
+  {{
+               dataList.nomEtablissement
+                 ? dataList.nomEtablissement
+                 : dataList.client?.nom
+                   ? dataList.client?.nom + ' ' + dataList.client?.prenoms
+                   : dataList.raisonSocial
+             }}
+</span>
+
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
+            {{ dataList.transaction.motif }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
+             {{ dataList.moyenPaiement }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle" style="font-size: 11px"
+                [ngClass]="dataList.transaction.sens == 'ENTREE' ? 'text-success' : 'text-danger'">
+             {{ dataList.transaction.sens }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
+             {{ dataList.statut || 'N/A' }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
+            {{ dataList.datePaiement | date }}
+          </span>
+        </td>
+        <td>
+          <div class="text-center" [ngClass]="dataList.transaction.sens == 'ENTREE' ? 'bg-entry' : 'bg-out'">
+             <span class="ml-1 vertical-align-middle w-100 fw-bold " style="font-size: 12px">
+             {{ dataList.transaction.sens == 'ENTREE' ? '+' : '' }}{{ dataList.montant | currency:'XOF' }}
+          </span>
+          </div>
+        </td>
+      </tr>
+
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
@@ -103,4 +96,35 @@
       </tr>
     </ng-template>
   </p-table>
+</div>
+
+<div [@fadeInDown]="isCreating ? 'in' : 'out'" *ngIf="isCreating" class="card p-4 mt-3">
+  <h5>Nouvelle dépense</h5>
+  <form [formGroup]="depenseForm">
+    <div class="mb-3">
+      <label for="libelle" class="form-label">Motif</label><label class="text-danger">*</label>
+      <input id="libelle" class="form-control" formControlName="libelle">
+      <div *ngIf="depenseForm.get('libelle')?.invalid && depenseForm.get('libelle')?.touched" class="text-danger">
+        Motif requis
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="montant" class="form-label">Montant</label><label class="text-danger">*</label>
+      <input id="montant" type="number" class="form-control" formControlName="montant">
+      <div *ngIf="depenseForm.get('montant')?.invalid && depenseForm.get('montant')?.touched" class="text-danger">
+        Montant valide requis
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <textarea id="description" class="form-control" formControlName="description"></textarea>
+    </div>
+
+    <div class="d-flex gap-4">
+      <button class="btn btn-secondary" type="button" (click)="onCancel()">Annuler</button>
+      <button class="btn btn-success" [disabled]="depenseForm.invalid" (click)="saveDepense()">Enregistrer</button>
+    </div>
+  </form>
 </div>

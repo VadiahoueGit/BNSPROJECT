@@ -12,10 +12,12 @@ export class ComptesComponent {
   filters = {
     depot: ''
   };
+  isModalOpen:boolean = false;
   rowsPerPage: number = 0;
   currentPage: number = 0;
   totalPages:any =0;
   dataList:any = []
+  updateData:any = []
   constructor(
     private financeService: FinanceService,
     private _spinner: NgxSpinnerService,
@@ -26,12 +28,20 @@ export class ComptesComponent {
     this.GetComptes(1);
   }
 
+  OnCloseModal(){
+    this.isModalOpen = false;
+  }
+  OnViewDetail(data: any) {
+    this.isModalOpen = true;
+    this.updateData = data.paiements
+  }
   GetComptes(page: number,depot?: string)
   {
     let data = {
       paginate: true,
       page: page,
       limit: 8,
+      nomDepot: depot || '',
     };
     this._spinner.show();
     this.financeService.GetComptes(data).then((res: any) => {

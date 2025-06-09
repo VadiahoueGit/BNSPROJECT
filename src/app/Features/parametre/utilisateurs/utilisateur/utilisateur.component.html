@@ -29,7 +29,7 @@
                 </td>
                 <td>
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.prenom }}
+                        {{ dataList.prenoms }}
                     </span>
                 </td>
                 <td>
@@ -156,7 +156,7 @@
 
             <div class="modal-footer gap-3 px-4">
                 <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-                <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
+                <button type="submit" [disabled]="UserForm.invalid" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
             </div>
         </div>
     </div>

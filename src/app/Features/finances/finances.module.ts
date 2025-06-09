@@ -115,6 +115,7 @@ import {PaiementenattenteComponent} from "./paiementenattente/paiementenattente.
 import {CaisseComponent} from "./caisse/caisse.component";
 import {BrouillardComponent} from "./brouillard/brouillard.component";
 import {ComptesComponent} from "./comptes/comptes.component";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 
 @NgModule({
@@ -236,7 +237,7 @@ import {ComptesComponent} from "./comptes/comptes.component";
     RippleModule,
     StyleClassModule,
     AutoFocusModule,
-
+    // BrowserAnimationsModule
   ],
   exports: [
     AvatarModule,
