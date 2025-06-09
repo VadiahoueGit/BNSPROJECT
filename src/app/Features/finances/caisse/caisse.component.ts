@@ -10,7 +10,8 @@ import {NgIf} from "@angular/common";
 })
 
 export class CaisseComponent {
-  public activeTab: string = 'brouillard';
+  // public activeTab: string = 'brouillard';
+  public activeTab: string = 'comptes';
   constructor(private location: Location,private cd: ChangeDetectorRef) {}
   goBack() {
     this.location.back()

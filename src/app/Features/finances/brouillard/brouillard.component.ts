@@ -11,7 +11,7 @@ import {Observable} from "rxjs";
 })
 export class BrouillardComponent {
   filters = {
-    depot: ''
+    nomDepot: ''
   };
   rowsPerPage: number = 0;
   currentPage: number = 0;
@@ -27,13 +27,12 @@ export class BrouillardComponent {
     this.GetBrouillard(1);
   }
 
-  GetBrouillard(page: number,depot?: string)
+  GetBrouillard(page: number,nomDepot?: string)
   {
     let data = {
       paginate: true,
       page: page,
-      limit: 8,
-      depot: depot || '',
+      limit: 10,
     };
     this._spinner.show();
     this.financeService.GetBrouillard(data).then((res: any) => {
@@ -41,7 +40,7 @@ export class BrouillardComponent {
       this.totalPages = res.total; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages);// nombre total d’enregistrements
 
-      this.dataList = res.data
+      this.dataList = res.data[0].paiements
       console.log('Commande payees :::>', this.dataList );
 
       this._spinner.hide();

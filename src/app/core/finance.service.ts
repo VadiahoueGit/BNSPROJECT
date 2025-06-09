@@ -235,7 +235,7 @@ export class FinanceService {
     return new Promise((resolve: any, reject: any) => {
       this._http
         .get(
-          `${this.apiUrl}/v1/comptabilite/grouped-by-depot-user?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
+          `${this.apiUrl}/v1/comptabilite/mouvements-par-depot?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&nomDepot=${data.nomDepot}`
         )
         .subscribe(
           (res: any) => {
@@ -253,7 +253,7 @@ export class FinanceService {
     return new Promise((resolve: any, reject: any) => {
       this._http
         .get(
-          `${this.apiUrl}/v1/comptabilite/mouvements-par-depot?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&nomDepot=${data.nomDepot}`
+          `${this.apiUrl}/v1/comptabilite/grouped-by-depot-user?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`
         )
         .subscribe(
           (res: any) => {
