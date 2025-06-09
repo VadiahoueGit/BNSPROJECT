@@ -26,7 +26,6 @@ export class FeaturesComponent {
     {label: 'Achats', icon: 'fa-solid fa-cart-shopping', url: 'feature/achats'},
     {label: 'Partenaires', icon: 'fas fa-handshake', url: '/feature/partenaire'},
     {label: 'Finances', icon: 'fas fa-sack-dollar', url: 'feature/finances'},
-    {label: 'Caisse', icon: 'fas fa-sack-dollar', url: 'feature/finances'},
     {label: 'Stocks', icon: 'fas fa-warehouse-alt', url: 'feature/stocks'},
     {label: 'Annonces', icon: 'fa-solid fa-bullhorn', url: 'feature/annonce'},
     // { label: 'Données de références', icon: 'fas fa-warehouse-alt', url: 'feature/datareference' }
