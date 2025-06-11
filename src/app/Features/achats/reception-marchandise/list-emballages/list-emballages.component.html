@@ -239,19 +239,19 @@
                   <!-- <th scope="col">Actions</th> -->
                 </tr>
               </thead>
-              <tbody>
+              <tbody *ngIf="updateData?.emballagesRendus.length == 0">
                 <tr *ngFor="let data of updateData?.articlesRecus; let i = index">
                   <td class="">
                     <p>
                       {{
-                        data.articleCommande.emballage.code
+                        data.articleCommande ? data.articleCommande.emballage.code : data.emballage.code
                       }}
                     </p>
                   </td>
                   <td class="">
                     <p>
                       {{
-                        data?.articleCommande.emballage?.libelle
+                        data?.articleCommande ? data.articleCommande.emballage?.libelle : data.emballage?.libelle
                       }}
                     </p>
                   </td>
@@ -262,15 +262,31 @@
                       }}
                     </p>
                   </td>
-                  <!-- <td class="d-flex justify-content-center">
-                    <button
-                      type="button"
-                      class="btn btn-danger btn-sm"
-                      (click)="removeArticle(data)"
-                    >
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </td> -->
+                </tr>
+              </tbody> 
+              <tbody *ngIf="updateData?.emballagesRendus.length > 0">
+                <tr *ngFor="let data of updateData?.emballagesRendus[0].articles; let i = index">
+                  <td class="">
+                    <p>
+                      {{
+                        data.emballage.code
+                      }}
+                    </p>
+                  </td>
+                  <td class="">
+                    <p>
+                      {{
+                        data.emballage.libelle
+                      }}
+                    </p>
+                  </td>
+                  <td>
+                    <p>
+                      {{
+                        data?.quantite
+                      }}
+                    </p>
+                  </td>
                 </tr>
               </tbody>
             </table>

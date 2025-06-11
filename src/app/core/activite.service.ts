@@ -691,6 +691,27 @@ export class ActiviteService {
         );
     });
   }
+  CreateEcartEmballage(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .post(
+          `${this.apiUrl}/v1/ecart-emballage/paiements-ecart`,data,{headers}
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
 
   GetRetourPleinList() {
     return new Promise((resolve: any, reject: any) => {

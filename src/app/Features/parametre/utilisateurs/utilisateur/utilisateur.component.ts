@@ -4,6 +4,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
+import { CoreServiceService } from 'src/app/core/core-service.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
 
@@ -37,8 +38,10 @@ export class UtilisateurComponent implements AfterViewInit {
   currentPage: number;
   rowsPerPage: any;
   totalPages: number;
+  dataListDepot: any[] = [];
   constructor(
     private _userService: UtilisateurResolveService,
+    private _coreService: CoreServiceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
@@ -59,11 +62,17 @@ export class UtilisateurComponent implements AfterViewInit {
       matricule: [null, Validators.required],
       fonction: [null, Validators.required],
       roleId: [0, Validators.required],
+      depotId: [0, Validators.required],
     });
-    this._userService.ListProfils.subscribe((res: any) => {
-      this.dataListProfil = res;
-    });
+    this._userService.GetListProfil(1).then((res: any) => {
+      this.dataListProfil = res.data;
+      console.log(this.dataListProfil ,'dataListProfil')
 
+    });
+    this._coreService.GetDepotList(1).then((res: any) => {
+      this.dataListDepot = res.data;
+      console.log(this.dataListDepot ,'dataListDepot')
+    });
     this.GetUserList(1);
   }
 
@@ -127,6 +136,7 @@ export class UtilisateurComponent implements AfterViewInit {
       const formValues = {
         ...this.UserForm.value,
         roleId: +this.UserForm.value.roleId,
+        depotId: +this.UserForm.value.depotId,
       };
       console.log('formValues', formValues);
 
@@ -177,6 +187,7 @@ export class UtilisateurComponent implements AfterViewInit {
       telephone_one: this.updateData.telephone_one,
       telephone_two: this.updateData.telephone_two,
       roleId: this.updateData.role.id,
+      depotId: this.updateData.depot.id,
     });
   }
   OnDelete(Id: any) {
