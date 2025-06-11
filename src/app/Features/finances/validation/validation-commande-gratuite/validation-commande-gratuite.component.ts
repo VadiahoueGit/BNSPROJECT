@@ -109,13 +109,13 @@ export class ValidationCommandeGratuiteComponent {
   }
   GetListCommandeGratuite(page: number) {
     let data = {
-      paginate: false,
+      paginate: true,
       page:page,
       limit: 8,
       numeroCommande: '',
       date: '',
       etablissement: '',
-      statut: '',
+      statut: StatutCommande.ATTENTE_VALIDATION,
     };
     this._spinner.show();
     this.articleService.GetListCommandeGratuite(data).then((res: any) => {
@@ -123,9 +123,7 @@ export class ValidationCommandeGratuiteComponent {
       console.log('totalPages:::>', this.totalPages);
 
       console.log('ListCommandeGratuites:::>', res);
-        this.ListCommandeGratuites = res?.data.filter(
-          (x: any) => x.statut === StatutCommande.ATTENTE_VALIDATION
-        );
+        this.ListCommandeGratuites = res?.data
       this._spinner.hide();
     });
   }
@@ -301,6 +299,7 @@ export class ValidationCommandeGratuiteComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
+    this.GetListCommandeGratuite(this.currentPage)
   }
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(

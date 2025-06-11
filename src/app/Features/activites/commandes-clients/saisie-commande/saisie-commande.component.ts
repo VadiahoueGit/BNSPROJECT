@@ -260,51 +260,35 @@ export class SaisieCommandeComponent {
   }
 
   removeArticle(item: any): void {
+    const codeArticle = item.liquide?.code; // correction ici
+    const articlesControl = this.commandClientForm.get('articles') as FormArray;
+
+    for (let i = 0; i < articlesControl.length; i++) {
+      const articleGroup = articlesControl.at(i) as FormGroup;
+      const codeArticleLiquide = articleGroup.get('codeArticleLiquide')?.value;
+
+      if (codeArticleLiquide === codeArticle) {
+        const quantite = articleGroup.get('quantite')?.value || 0;
+        const codeArticleEmballage = articleGroup.get('codeArticleEmballage')?.value;
+
+        const prixLiquide = this.prixLiquide[codeArticleLiquide] || 0;
+        const prixEmballage = this.prixEmballage[codeArticleEmballage] || 0;
+        const montantTotal = (prixLiquide + prixEmballage) * quantite;
+
+        this.totalEmballage -= prixEmballage * quantite;
+        this.totalLiquide -= prixLiquide * quantite;
+        this.totalGlobalBeforeRemise -= montantTotal;
+        this.totalQte -= quantite;
+
+        articlesControl.removeAt(i);
+        articlesControl.updateValueAndValidity();
+        this.applyRemise();
+        break;
+      }
+    }
+
     item.isChecked = false;
     this.onCheckboxChange(item);
-
-    const articlesControl = this.commandClientForm.controls['articles'] as FormArray;
-    const articlesValue = articlesControl.value || [];
-
-    // Trouver l'article à retirer
-    const articleToRemove = articlesValue.find((i: any) => i.codeArticleLiquide === item.reference);
-
-    if (articleToRemove) {
-      // Calcul des totaux à retirer
-      const quantite = articleToRemove.quantite;
-      const prixLiquide = this.prixLiquide[articleToRemove.codeArticleLiquide];
-      const prixEmballage = this.prixEmballage[articleToRemove.codeArticleEmballage];
-      const montantTotal = (prixLiquide + prixEmballage) * quantite;
-
-      // Soustraire les valeurs des totaux
-      this.totalEmballage -= prixEmballage * quantite || 0;
-      this.totalLiquide -= prixLiquide * quantite || 0;
-      this.totalGlobalBeforeRemise -= montantTotal || 0;
-      this.totalQte -= quantite;
-
-      // Retirer l'article de la liste
-      const updatedArticles = articlesValue.filter(
-        (i: any) => i.codeArticleLiquide !== item.reference
-      );
-
-      // Vider le FormArray actuel
-      while (articlesControl.length !== 0) {
-        articlesControl.removeAt(0);
-      }
-
-      // Ajouter les éléments mis à jour dans le FormArray
-      updatedArticles.forEach((article: any) => {
-        articlesControl.push(this.fb.group(article)); // Assuming fb is FormBuilder
-      });
-
-      // Forcer la mise à jour de la validité
-      articlesControl.updateValueAndValidity();
-
-      console.log("Articles après suppression :", updatedArticles);
-
-      // Appliquer la remise sans recalculer les prix
-      this.applyRemise();
-    }
   }
 
   calculatePrix(data: any) {
