@@ -20,7 +20,7 @@
         <tr>
           <th style="color: var(--secondary-color);">Type</th>
           <th style="color: var(--secondary-color);">Nom</th>
-          <th style="color: var(--secondary-color);">Actions</th>
+          <th style="color: var(--secondary-color);" class="text-center">Actions</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-dataList>
@@ -45,109 +45,109 @@
       </ng-template>
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="5">Aucun élément trouvé.</td>
+          <td colspan="3">Aucun élément trouvé.</td>
         </tr>
       </ng-template>
     </p-table>
   </div>
 
-<div *ngIf="isModalOpen" class="custom-modal">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Détails ecart emballage</h5>
-        <button type="button" class="btn-close" aria-label="Close" (click)="OnCloseModal()"></button>
-      </div>
+  <div *ngIf="isModalOpen" class="custom-modal">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Détails ecart emballage</h5>
+          <button type="button" class="btn-close" aria-label="Close" (click)="OnCloseModal()"></button>
+        </div>
 
-      <div class="modal-body" style="padding: 20px; max-height: 70vh; overflow-y: auto">
-        <div class="row">
-          <fieldset class="row border my-1">
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Type : </strong>
-                <span>{{ updateData?.type || 'NEANT' }}</span>
+        <div class="modal-body" style="padding: 20px; max-height: 70vh; overflow-y: auto">
+          <div class="row">
+            <fieldset class="row border my-1">
+              <div class="row">
+                <div class="col-md-4">
+                  <strong>Type : </strong>
+                  <span>{{ updateData?.type || 'NEANT' }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Nom : </strong>
+                  <span>{{ updateData.nom || 'NEANT' }}</span>
+                </div>
               </div>
-              <div class="col-md-4">
-                <strong>Nom : </strong>
-                <span>{{ updateData.nom || 'NEANT' }}</span>
-              </div>
-            </div>
-          </fieldset>
-          
-          <div class="col-md-12">
-            <div class="row">
-              <div class="container">
-                <form #ecartForm="ngForm">
-                  <div class="row my-2">
-                    <div class="col-md-6 mb-2">
-                      <label for="montant" class="form-label">Montant <span class="text-danger">*</span></label>
-                      <input type="number" id="montant" class="form-control" name="montant"
-                        [(ngModel)]="formData.montant" required />
+            </fieldset>
+
+            <div class="col-md-12">
+              <div class="row">
+                <div class="container">
+                  <form #ecartForm="ngForm">
+                    <div class="row my-2">
+                      <div class="col-md-6 mb-2">
+                        <label for="montant" class="form-label">Montant <span class="text-danger">*</span></label>
+                        <input type="number" id="montant" class="form-control" name="montant"
+                          [(ngModel)]="formData.montant" [value]="calculTotalEcarts()" required />
+                      </div>
+                      <div class="col-md-6 mb-2">
+                        <label for="moyenPaiement" class="form-label">Moyen de paiement <span
+                            class="text-danger">*</span></label>
+                        <ng-select class="form-control" [items]="dataListMoyenPaiement" bindLabel="libelle"
+                          bindValue="id" id="moyenPaiement" name="moyenPaiementId"
+                          [(ngModel)]="formData.moyenPaiementId" [searchable]="true" required>
+                        </ng-select>
+                      </div>
                     </div>
-                    <div class="col-md-6 mb-2">
-                      <label for="moyenPaiement" class="form-label">Moyen de paiement <span class="text-danger">*</span></label>
-                      <ng-select class="form-control" [items]="dataListMoyenPaiement" bindLabel="libelle" bindValue="id"
-                        id="moyenPaiement" name="moyenPaiementId" [(ngModel)]="formData.moyenPaiementId" [searchable]="true" required>
-                      </ng-select>
+
+                    <div class="table-responsive">
+                      <table class="table table-bordered table-striped">
+                        <thead class="table-light">
+                          <tr>
+                            <th>Code</th>
+                            <th>Ecart</th>
+                            <th>Libellé</th>
+                            <th>Prix unitaire</th>
+                            <th>Statut</th>
+                            <th>Total attendu</th>
+                            <th>Total reçu</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let ecart of listeEcarts; let i = index">
+                            <td>{{ ecart.codeEmballage }}</td>
+                            <td>{{ ecart.ecart }}</td>
+                            <td>{{ ecart.libelleEmballage }}</td>
+                            <td>{{ ecart.prixUnitaire | number }}</td>
+                            <td>
+                              <span class="badge" [ngClass]="{ 
+  'bg-success': ecart.status == 'Payé', 
+  'bg-danger': ecart.status == 'En attente'
+}">
+                                {{ ecart.status }}
+                              </span>
+                            </td>
+                            <td>{{ ecart.totalAttendu | number }}</td>
+                            <td>{{ ecart.totalRecu | number }}</td>
+                          </tr>
+                          <tr *ngIf="!listeEcarts || listeEcarts.length === 0">
+                            <td colspan="8" class="text-center">Aucun écart disponible</td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
-                  </div>
-                  
-                  <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
-                      <thead class="table-light">
-                        <tr>
-                          <th class="text-center">Sélectionner</th>
-                          <th>Code</th>
-                          <th>Ecart</th>
-                          <th>Libellé</th>
-                          <th>Prix unitaire</th>
-                          <th>Statut</th>
-                          <th>Total attendu</th>
-                          <th>Total reçu</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let ecart of listeEcarts; let i = index">
-                          <td class="text-center">
-                            <input type="checkbox" class="form-check-input" [value]="ecart.inventaireId" 
-                              [(ngModel)]="selectedInventaires[i]" name="selectedInventaire{{i}}" 
-                              (change)="onToggleSelection(ecart, $event)" />
-                          </td>
-                          <td>{{ ecart.codeEmballage }}</td>
-                          <td>{{ ecart.ecart }}</td>
-                          <td>{{ ecart.libelleEmballage }}</td>
-                          <td>{{ ecart.prixUnitaire | number }}</td>
-                          <td>
-                            <span [ngClass]="{'badge bg-success': ecart.status == 'Payé', 'badge bg-danger': ecart.status == 'En attente'}">
-                              {{ ecart.status }}
-                            </span>
-                          </td>
-                          <td>{{ ecart.totalAttendu | number }}</td>
-                          <td>{{ ecart.totalRecu | number }}</td>
-                        </tr>
-                        <tr *ngIf="!listeEcarts || listeEcarts.length === 0">
-                          <td colspan="8" class="text-center">Aucun écart disponible</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </form>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      
-      <div class="modal-footer gap-3 px-4 d-flex justify-content-end">
-        <button type="button" class="btn btn-primary" [disabled]="!formData.montant || !formData.moyenPaiementId || !selectedInventaires.length"
-          (click)="onSubmitSelected()">
-          <i class="fas fa-save me-1"></i> Enregistrer l'écart emballage
-        </button>
-        <button type="button" class="btn btn-secondary" (click)="OnCloseModal()">
-          <i class="fas fa-times me-1"></i> Fermer
-        </button>
+
+        <div class="modal-footer gap-3 px-4 d-flex justify-content-end">
+          <button type="button" class="btn btn-primary"
+            [disabled]="!formData.moyenPaiementId"
+            (click)="onSubmitSelected()">
+            <i class="fas fa-save me-1"></i> Solder l'écart
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="OnCloseModal()">
+            <i class="fas fa-times me-1"></i> Fermer
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </div>

@@ -31,7 +31,11 @@ export class UtilisateurResolveService {
       this.ListPermissions.next([]);
       this.ListProfils.next([]);
 
-      let data = {};
+      let data = {
+        paginate: true,
+        page: 1,
+        limit: 8,
+      };;
       Promise.all([
         this.ListProfils.getValue().length === 0
           ? this.GetListProfil(data)

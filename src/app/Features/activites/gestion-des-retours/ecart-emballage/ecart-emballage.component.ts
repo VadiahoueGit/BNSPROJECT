@@ -98,19 +98,18 @@ formData = {
   OnEdit(data: any) {
     console.log(data);
     this.updateData = data;
-    this.listeEcarts = data.ecarts.filter((item: any) => item.ecart > 0); 
+    this.listeEcarts = data.ecarts.filter((item: any) => item.ecart > 0 && item.prixUnitaire > 0); 
+    this.formData.montant = this.calculTotalEcarts();
     this.isModalOpen = true;
   }
-  onToggleSelection(item: any, $event: any): void {
-    item.selected = $event.target.checked;
+  calculTotalEcarts(){
+    return this.listeEcarts.reduce((total, item) => total + (item.ecart * item.prixUnitaire), 0);
   }
   onSubmitSelected() {
-    const selectedEcarts = this.updateData.ecarts.filter((item: any) => item.selected);
-    const inventaireIds = selectedEcarts.map((item: any) => item.inventoryId);
-    
+    const inventaireIds = this.listeEcarts.map((item: any) => item.inventoryId);
     const requestData = {
       inventaireIds: inventaireIds,
-      montant: this.formData.montant || 0,
+      montant: this.formData.montant,
       moyenPaiementId: this.formData.moyenPaiementId,
     };
     console.log(requestData);
