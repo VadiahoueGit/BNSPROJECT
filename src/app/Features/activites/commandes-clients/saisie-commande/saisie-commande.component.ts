@@ -70,7 +70,7 @@ export class SaisieCommandeComponent {
     etablissement: '',
     statut: '',
   };
-
+  newCommande: any[] = [];
   constructor(
     private articleService: ArticleServiceService,
     private utilisateurService: UtilisateurResolveService,
@@ -193,7 +193,7 @@ export class SaisieCommandeComponent {
     console.log(this.isModalOpen);
   }
 
-  OnEdit(data: any) {
+  OnView(data: any) {
     this.totalEmballage = 0;
     this.totalLiquide = 0;
     this.totalGlobal = 0;
@@ -213,7 +213,125 @@ export class SaisieCommandeComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
+  OnAddGoods(data: any, newCommande: any) {
+    let item = []
+    this.totalEmballage = 0;
+    this.totalLiquide = 0;
+    this.totalGlobal = 0;
+    this.totalQte = 0;
+    if (data == 'edit') {
+      this.operation = 'createNew';
+    } else {
+      this.operation = 'edit';
+    }
 
+  }
+  selectArticleNew() {
+    this.isEditMode = false;
+    this.isChoiceModalOpen = true;
+    this.operation = 'createNew';
+    console.log(this.isModalOpen);
+  }
+  updateGoods(data: any) {
+    this.operation = 'update';
+    this.newCommande = this.updateData.articles
+    this.newCommande.forEach((item: any) => {
+      this.getLocalPrice(item)
+    })
+
+    console.log(this.operation);
+  }
+
+  saveGoods(data: any) {
+    if(data == 'createNew') {
+      console.log(data)
+      this.onSubmit()
+    }else if(data == 'update') {
+      console.log(data)
+      this.UpdateCommande()
+    }
+
+    console.log(this.operation);
+  }
+  DeleteArticleCommande(data:any){
+    this._spinner.show();
+    this.articleService.DeleteArticleCommande(data.id).then(
+      (response: any) => {
+        this._spinner.hide();
+        this.toastr.success('Succès!', response.message);
+        this.GetListCommandeClient(1)
+      },
+      (error: any) => {
+        this._spinner.hide();
+        this.toastr.error('Erreur!', error.message);
+      }
+    );
+  }
+  UpdateCommande(){
+    const data = this.newCommande.map((item: any) => ({
+      id: item.id,
+      groupeArticleId: item.groupearticle.id,
+      codeArticleLiquide: item.liquide.code,
+      codeArticleEmballage: item.emballage.code,
+      prixUnitaireLiquide: Number(this.prixLiquide[item.id]),
+      prixUnitaireEmballage: Number(this.prixEmballage[item.id]),
+      quantite: Number(item.quantite) || 0,
+    })).filter((item: any) => item.quantite != 0);
+
+    const payload = {
+      revendeurId:this.updateData.revendeur.id,
+      articles: data
+    };
+    this.articleService.UpdateCommandeFournisseurs(this.updateData.id, payload).then(
+      (response: any) => {
+        this._spinner.hide();
+        this.toastr.success(response.message);
+        this.GetListCommandeClient(1)
+        this.operation = 'edit';
+      },
+      (error: any) => {
+        this._spinner.hide();
+        this.toastr.error('Erreur!', 'Erreur lors de la modification.');
+      }
+    );
+
+  }
+  AjouterCommande() {
+    const data = this.newCommande.map((item: any) => ({
+      id: item.id,
+      groupeArticleId: item.groupearticle.id,
+      codeArticleLiquide: item.liquide.code,
+      codeArticleEmballage: item.liquide.emballage.code,
+      prixUnitaireLiquide: this.prixLiquide[item.id],
+      prixUnitaireEmballage: this.prixEmballage[item.id],
+      quantite: item.quantite,
+    }));
+
+    const payload = {
+      articles: data
+    };
+
+    this._spinner.show();
+    this.articleService.AjouterCommandeFournisseurs(this.updateData.id, payload).then(
+      (response: any) => {
+        this._spinner.hide();
+        this.toastr.success(response.message);
+        this.GetListCommandeClient(1)
+        this.operation = 'edit';
+      },
+      (error: any) => {
+        this._spinner.hide();
+        this.toastr.error('Erreur!', 'Erreur lors de la modification.');
+      }
+    );
+  }
+
+  async getLocalPrice(item:any) {
+    this.prixLiquide[item.id] = item.prixUnitaireLiquide;
+    this.prixEmballage[item.id] = item.prixUnitaireEmballage;
+    this.calculatePrix(item);
+
+  }
   GetArticleList(page: number) {
     let data = {
       paginate: false,
