@@ -5,7 +5,7 @@
       #dt2
       [value]="dataList"
       dataKey="id"
-    [totalRecords]="totalPages" [lazy]="true"
+    [totalRecords]="totalPages"
     [rows]="8"
       [rowsPerPageOptions]="[10, 25, 50]"
       [paginator]="true"
@@ -217,7 +217,7 @@
               </div>
             </fieldset>
             <fieldset class="row border my-2">
-              <legend class="fs-6 text-primary">Cargaison</legend>
+              <legend class="fs-6 text-primary">Articles payants</legend>
               <div
                 *ngIf="operation == 'edit'"
                 class="table-responsive"
@@ -315,6 +315,56 @@
                   </tbody>
                 </table>
 
+              </div>
+            </fieldset>
+            <fieldset class="row border my-2">
+              <div class="row">
+                <legend class="fs-6 text-primary">Articles gratuits</legend>
+              </div>
+              <div
+                *ngIf="operation == 'edit'"
+                class="table-responsive"
+                style="max-height: 300px; overflow-y: auto"
+              >
+                <table class="table">
+                  <thead>
+                  <tr style="font-size: small">
+                    <th scope="col">Produits</th>
+                    <th scope="col">Qte liquide</th>
+                    <th scope="col">Qte offerte</th>
+                    <th scope="col">Qte restante</th>
+                    <th scope="col">Prix liquide</th>
+                    <th scope="col">Prix emballage</th>
+                    <th scope="col">Prix total</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr
+                    style="font-size: small"
+                    *ngFor="let item of updateData.articlesGratuit; let i = index"
+                  >
+                    <td>{{ item.liquide.libelle }}</td>
+                    <td>{{ item.quantiteAffectee }}</td>
+                    <td>{{ Number(item.quantiteAffectee - item.quantite) }}</td>
+                    <td>{{ item.quantite}}</td>
+                    <td>{{ item.montantLiquide }}</td>
+                    <td>{{ item.montantEmballage }}</td>
+                    <td>{{ (+item.montantLiquide || 0) + (+item.montantEmballage || 0) }}</td>
+
+
+                  </tr>
+                  <tr class="table-dark" *ngIf="updateData.articles.length > 0">
+                    <th scope="col" colspan="1">Total :</th>
+                    <td>{{ totalQteFree }}</td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ totalLiquideFree }}</td>
+                    <td>{{ totalEmballageFree }}</td>
+                    <td>{{ totalGlobalFree }}</td>
+                  </tr>
+                  <!-- Ajoutez d'autres lignes si nécessaire -->
+                  </tbody>
+                </table>
               </div>
             </fieldset>
           </div>

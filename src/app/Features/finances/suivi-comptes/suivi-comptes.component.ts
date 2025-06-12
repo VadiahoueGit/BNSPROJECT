@@ -225,6 +225,9 @@ export class SuiviComptesComponent {
       paginate: false,
       page: 1,
       limit: 8,
+      raisonSociale:'',
+      proprietaire:'',
+      groupeClient:''
     };
     try {
       // Effectuer les deux appels API en parallèle
