@@ -257,9 +257,13 @@
                   </td>
                   <td>
                     <p>
-                      {{
-                        data?.quantiteRecue
-                      }}
+                        <input
+                        type="number"
+                        class="form-control-custom"
+                        [(ngModel)]="data.quantiteRecue"
+                        [min]="0"
+                        value="0"
+                      />
                     </p>
                   </td>
                 </tr>
@@ -282,9 +286,13 @@
                   </td>
                   <td>
                     <p>
-                      {{
-                        data?.quantite
-                      }}
+                          <input
+                          type="number"
+                          class="form-control-custom"
+                          [(ngModel)]="data.quantite"
+                          [min]="0"
+                          value="0"
+                        />
                     </p>
                   </td>
                 </tr>
