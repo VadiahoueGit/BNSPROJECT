@@ -130,6 +130,12 @@
              {{ dataList.moyenPaiement }}
           </span>
               </td>
+
+              <td>
+          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
+            {{ dataList.datePaiement | date }}
+          </span>
+              </td>
               <td>
           <span class="ml-1 vertical-align-middle" style="font-size: 11px"
                 [ngClass]="dataList.transaction.sens == 'ENTREE' ? 'text-success' : 'text-danger'">
@@ -140,11 +146,6 @@
           <span class="ml-1 vertical-align-middle" style="font-size: 11px"
                 [ngClass]="dataList.transaction.sens == 'ENTREE' ? 'text-success' : 'text-danger'">
              {{ dataList.statut || 'N/A' }}
-          </span>
-              </td>
-              <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-            {{ dataList.datePaiement | date }}
           </span>
               </td>
               <td>
