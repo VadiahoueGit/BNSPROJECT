@@ -87,7 +87,7 @@ export class BrouillardComponent {
       console.log('ALL:::>', res);
       this.totalPages = res.total; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages);// nombre total d’enregistrements
-      this.dataList = res.data[0].paiements
+      this.dataList = res.data[0]?.paiements
       console.log('Commande payees :::>', this.dataList );
 
       this._spinner.hide();
@@ -109,7 +109,7 @@ export class BrouillardComponent {
     this.financeService.GetBrouillard(data).then((res: any) => {
       this.totalPages = res.total; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages);// nombre total d’enregistrements
-      this.dataList = res.data[0].paiements
+      this.dataList = res.data[0]?.paiements
     });
   }
 }

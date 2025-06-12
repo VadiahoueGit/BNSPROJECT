@@ -47,6 +47,13 @@ export class ValidationVenteChineComponent {
   updateData: any = {};
   venteId: any = 0;
   totalPages: number;
+  totalQteFree: number = 0;
+  totalGlobalFree: number = 0;
+  prixEmballageTotalFree: any = {};
+  prixLiquideTotalFree: any = {};
+  montantTotalFree:any = {};
+  totalLiquideFree: number = 0;
+  totalEmballageFree :number = 0;
   constructor(
     private cdr: ChangeDetectorRef,
     private _spinner: NgxSpinnerService,
@@ -80,6 +87,14 @@ export class ValidationVenteChineComponent {
   }
 
   OnCloseModal() {
+    this.totalEmballage = 0;
+    this.totalEmballageFree = 0
+    this.totalLiquide = 0;
+    this.totalLiquideFree = 0;
+    this.totalGlobal = 0;
+    this.totalGlobalFree = 0;
+    this.totalQte = 0;
+    this.totalQteFree = 0;
     this.isModalOpen = false;
     this.selectedArticles = [];
     console.log(this.isModalOpen);
@@ -305,6 +320,7 @@ export class ValidationVenteChineComponent {
     this.totalLiquide = 0;
     this.totalGlobal = 0;
     this.totalQte = 0;
+    this.totalQteFree = 0
     this.isEditMode = true;
     console.log(data, 'updateData');
     this.updateData = data;
@@ -324,6 +340,20 @@ export class ValidationVenteChineComponent {
       this.totalLiquide += Number(article.montantLiquide);
       this.totalGlobal = this.totalLiquide + this.totalEmballage;
       this.totalQte += article.quantite;
+    });
+
+    this.updateData.articlesGratuit.map((article: any) => {
+      article.prixTotal =
+        parseInt(article.prixUnitaireLiquide) +
+        parseInt(article.prixUnitaireEmballage);
+    });
+    console.log(this.updateData.articlesGratuit, 'this.updateData.articlesGratuit');
+
+    data.articlesGratuit.forEach((article: any) => {
+      this.totalEmballageFree += Number(article.montantEmballage);
+      this.totalLiquideFree += Number(article.montantLiquide);
+      this.totalGlobalFree = this.totalLiquideFree + this.totalEmballageFree;
+      this.totalQteFree += article.quantiteAffectee;
     });
 
     this.venteId = data.id;
@@ -543,4 +573,6 @@ export class ValidationVenteChineComponent {
 
     this.selectedArticles = [];
   }
+
+  protected readonly Number = Number;
 }
