@@ -151,26 +151,26 @@
             Détails de la commande
           </h1>
         </div>
-        <div>
-          <button
-            *ngIf="operation == 'edit' && updateData?.statut != 'Reçue'"
-            type="submit"
-            class="btn btn-secondary px-2 mx-2"
-            (click)="OnAddGoods(operation,updateData?.articles)"
-          >
-            <i class="fas fa-plus"></i>
-            <span class="ms-2">Ajouter</span>
-          </button>
-          <button
-            *ngIf="operation == 'edit' && updateData?.statut != 'Reçue'"
-            type="submit"
-            class="btn btn-secondary px-2"
-            (click)="updateGoods(operation)"
-          >
-            <i class="fas fa-edit"></i>
-            <span class="ms-2">{{ operation === 'edit' ? 'Modifier' : 'Valider les changements' }}</span>
-          </button>
-        </div>
+<!--        <div>-->
+<!--          <button-->
+<!--            *ngIf="operation == 'edit' && updateData?.statut != 'Reçue'"-->
+<!--            type="submit"-->
+<!--            class="btn btn-secondary px-2 mx-2"-->
+<!--            (click)="OnAddGoods(operation,updateData?.articles)"-->
+<!--          >-->
+<!--            <i class="fas fa-plus"></i>-->
+<!--            <span class="ms-2">Ajouter</span>-->
+<!--          </button>-->
+<!--          <button-->
+<!--            *ngIf="operation == 'edit' && updateData?.statut != 'Reçue'"-->
+<!--            type="submit"-->
+<!--            class="btn btn-secondary px-2"-->
+<!--            (click)="updateGoods(operation)"-->
+<!--          >-->
+<!--            <i class="fas fa-edit"></i>-->
+<!--            <span class="ms-2">{{ operation === 'edit' ? 'Modifier' : 'Valider les changements' }}</span>-->
+<!--          </button>-->
+<!--        </div>-->
       </div>
 
       <div class="modal-body" style="max-height: 500px;  overflow-y: auto">
