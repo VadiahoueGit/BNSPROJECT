@@ -18,8 +18,9 @@
 
       <ng-template pTemplate="header">
         <tr>
-          <th style="color: var(--secondary-color);">Type</th>
+          <th style="color: var(--secondary-color);">Poste</th>
           <th style="color: var(--secondary-color);">Nom</th>
+          <th style="color: var(--secondary-color);">Dépot</th>
           <th style="color: var(--secondary-color);" class="text-center">Actions</th>
         </tr>
       </ng-template>
@@ -32,6 +33,13 @@
             <span class="ml-1 vertical-align-middle">
               {{
               dataList.nom|| 'N/A'
+              }}
+            </span>
+          </td>
+          <td>
+            <span class="ml-1 vertical-align-middle">
+              {{
+                dataList.depot
               }}
             </span>
           </td>
@@ -114,8 +122,8 @@
                             <td>{{ ecart.libelleEmballage }}</td>
                             <td>{{ ecart.prixUnitaire | number }}</td>
                             <td>
-                              <span class="badge" [ngClass]="{ 
-  'bg-success': ecart.status == 'Payé', 
+                              <span class="badge" [ngClass]="{
+  'bg-success': ecart.status == 'Payé',
   'bg-danger': ecart.status == 'En attente'
 }">
                                 {{ ecart.status }}
