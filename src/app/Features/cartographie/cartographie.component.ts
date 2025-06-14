@@ -21,6 +21,7 @@ export class CartographieComponent implements AfterViewInit{
   map!: google.maps.Map;
   panelOpenOsr: boolean = false;
   panelOpenDepot: boolean = false;
+  panelOpenVehicle: boolean = false;
   panelOpenRevendeur: boolean = false;
   depotList!: []
   private messageSubscription: Subscription;
@@ -115,6 +116,7 @@ export class CartographieComponent implements AfterViewInit{
 
       this.messageSubscription = this.websocketService.ecouterNouveauMessage()
         .subscribe((data: any) => {
+          console.log(data);
           const vehicule = typeof data === 'string' ? JSON.parse(data) : data;
 
           // Identifiant unique : id ou immatriculation
@@ -138,7 +140,7 @@ export class CartographieComponent implements AfterViewInit{
               console.warn('Véhicule reçu non reconnu :', vehicule);
             }
           }
-
+          this.addMarker(this.vehiculeOnDrive, 'vehicule')
           console.log('Véhicules en circulation :', this.vehiculeOnDrive);
         });
     })
@@ -192,17 +194,22 @@ export class CartographieComponent implements AfterViewInit{
       }));
     }
     else if (type == 'vehicule') {
-      this.markersVehicule = data.map((pdv:any) => ({
+      console.log('vehicule',data);
+      this.markersVehicule = data.map((pdv: any) => ({
         position: {
-          lat: parseFloat(pdv.latitude),
-          lng: parseFloat(pdv.longitude),
+          lat: parseFloat(pdv.position.latitude),
+          lng: parseFloat(pdv.position.longitude),
         },
-        // label: pdv.nomEtablissement,
+        label: pdv.vehicle.marque+' '+pdv.vehicle.immatriculation,
         icon: {
-          url: 'assets/icon/delivery.png', // chemin vers ton image
-          scaledSize: { width: 25, height: 25} // optionnel : ajuste la taille
+          url: 'assets/icon/delivery.png',
+          scaledSize: { width: 25, height: 25 }
+        },
+        options: {
+          zIndex: 999
         }
       }));
+
 
     }
 
@@ -254,6 +261,19 @@ export class CartographieComponent implements AfterViewInit{
     }
   }
 
+  togglePanelCar(data: any) {
+    console.log(data);
+    if (data !== null) {
+      this.togglePanelOsr(null);
+      this.togglePanelRevendeur(null);
+      this.togglePanelDepot(null);
+      this.panelOpenVehicle = !this.panelOpenVehicle;
+      this.slideDetails = this.vehiculeList.find((car: any) => car.marque + ' ' + car.immatriculation === data.label);
+      console.log(this.slideDetails);
+    } else {
+      this.panelOpenVehicle = false;
+    }
+  }
   togglePanelRevendeur(data: any) {
     if (data !== null) {
       this.togglePanelOsr(null);
@@ -280,6 +300,9 @@ export class CartographieComponent implements AfterViewInit{
     this.togglePanelDepot(marker)
   }
 
+  openInfoWindowCar(marker: any) {
+    this.togglePanelCar(marker)
+  }
   closeInfoWindowDepot() {
     this.togglePanelDepot(null)
   }

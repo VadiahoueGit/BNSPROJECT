@@ -318,15 +318,6 @@
               </div>
               <div class="col-md-6">
                 <label for="depot" class="form-label">Dépôt</label>
-                <!-- <select
-                  class="form-select"
-                  id="depot"
-                  formControlName="depotId"
-                >
-                  <option *ngFor="let depot of depots" [value]="depot.id">
-                    {{ depot.nomDepot }}
-                  </option>
-                </select> -->
                 <ng-select
                   class="form-control"
                   [items]="depots"
@@ -338,23 +329,8 @@
                 >
                 </ng-select>
               </div>
-              <!-- <div class="col-md-6 mt-3">
-                  <label for="localite" class="form-label">Localité</label>
-                  <select class="form-select" id="localite" formControlName="localiteId">
-                    <option *ngFor="let loc of localites" [value]="loc">{{ loc }}</option>
-                  </select>
-                </div> -->
               <div class="col-md-6">
                 <label for="zone" class="form-label">Zone de livraison</label>
-                <!-- <select
-                  class="form-select"
-                  id="zone"
-                  formControlName="zoneDeLivraisonId "
-                >
-                  <option *ngFor="let zone of zoneLivraison" [value]="zone.id">
-                    {{ zone.nomZone }}
-                  </option>
-                </select> -->
                 <ng-select
                   class="form-control"
                   [items]="zoneLivraison"
@@ -396,16 +372,6 @@
                   placeholder="Entrez le téléphone"
                 />
               </div>
-              <!--              <div class="col-md-6 mt-3">-->
-              <!--                <label for="contact" class="form-label">Tel du propriétaire</label>-->
-              <!--                <input-->
-              <!--                  type="text"-->
-              <!--                  class="form-control"-->
-              <!--                  id="contact"-->
-              <!--                  formControlName="contact"-->
-              <!--                  placeholder="Entrez le contact"-->
-              <!--                />-->
-              <!--              </div>-->
               <div class="col-md-6 mt-3">
                 <label for="nomGerant" class="form-label">Nom du gérant</label>
                 <input
@@ -485,8 +451,8 @@
             </button>
             <button
               type="submit"
-              [disabled]="revendeurForm.invalid"
               class="btn btn-primary"
+              [disabled]="revendeurForm.invalid"
             >
               Enregistrer
             </button>

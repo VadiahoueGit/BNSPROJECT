@@ -1481,6 +1481,24 @@ export class ArticleServiceService {
     });
   }
 
+  GetListCommandeClientById(id: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.get(`${this.apiUrl}/v1/commandes-client/commande-client/${id}`,{headers}).subscribe(
+        (res: any) => {
+          resolve(res);
+          console.log(res);
+          (res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
   GetListCommandeFournisseursById(id: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -1491,6 +1509,43 @@ export class ArticleServiceService {
           resolve(res);
           console.log(res);
        (res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  AjouterArticleCommandeClient(id:any,data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/commandes-client/${id}/articles`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  DeleteArticleCommandeClient(id: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/commandes-client/delete/articles/${id}`,{headers}).subscribe(
+        (res: any) => {
+          resolve(res);
+          console.log(res);
+          (res);
         },
         (err) => {
           console.log(err);
@@ -1538,6 +1593,24 @@ export class ArticleServiceService {
             reject(err);
           }
         );
+    });
+  }
+
+  UpdateCommandeClient(id:any,data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/commandes-client/${id}`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
     });
   }
 

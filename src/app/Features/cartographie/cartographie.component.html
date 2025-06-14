@@ -10,7 +10,7 @@
 <div class="card p-2">
     <div class="d-flex align-items-center gap-4 p-3">
         <div class="d-flex align-items-center">
-            <p class="mb-0 me-2" style="font-size: smaller;"(click)="send()">Dépôt</p>
+            <p class="mb-0 me-2" style="font-size: smaller;">Dépôt</p>
             <img width="21px" src="assets/icon/depot.png" alt="Dépôt">
         </div>
         <div class="d-flex align-items-center">
@@ -29,6 +29,7 @@
 
   <div class="map-wrapper" *ngIf="currentPosition">
     <google-map (mapClick)="closeInfoWindowOsr()" [height]="'600px'" [width]="'100%'" [center]="currentPosition" [zoom]="12">
+      <map-marker (mapClick)="openInfoWindowCar(marker)" *ngFor="let marker of markersVehicule" [icon]="marker.icon" [position]="marker.position" [label]="marker.title" [options]="{ zIndex: 999 }" ></map-marker>
       <map-marker (mapClick)="openInfoWindowOsr(marker)" *ngFor="let marker of markersClient" [icon]="marker.icon" [position]="marker.position" [label]="marker.title"></map-marker>
       <map-marker (mapClick)="openInfoWindowRevendeur(marker)" *ngFor="let marker of markersRevendeur" [icon]="marker.icon" [position]="marker.position" [label]="marker.title"></map-marker>
       <map-marker (mapClick)="openInfoWindowDepot(marker)" *ngFor="let marker of markersDepot" [icon]="marker.icon" [position]="marker.position" [label]="marker.title"></map-marker>
@@ -55,7 +56,54 @@
 <!--        </gmp-map>-->
     </div>
 
-    <!-- SLIDE OSR -->
+  <!-- SLIDE VEHICULE -->
+  <div class="sliding-panel" [ngClass]="{'open': panelOpenVehicle}">
+    <div class="row mb-3">
+      <label class="fw-bold text-primary fs-3 text-center">Informations</label>
+    </div>
+    <div class="row mb-3 d-flex align-items-center justify-content-center">
+      <img src="assets/icon/delivery.png" style="width: 10em;" alt="">
+    </div>
+
+    <div *ngIf="slideDetails && panelOpenVehicle">
+      <div class="row mb-5">
+        <h6 class="fw-bold text-center">{{slideDetails.marque + ' ' + slideDetails.immatriculation}}</h6>
+        <label class="info text-center text-secondary fs-7">{{slideDetails.energie}}</label>
+      </div>
+      <div class="row">
+
+      </div>
+      <div class="row my-2">
+        <div class="col-6">
+          <label class="fw-bold info">Capacité:</label>
+        </div>
+        <div class="col-6">
+          <label class="info info">{{slideDetails.capacite}} casiers</label>
+        </div>
+      </div>
+      <div class="row my-2">
+        <div class="col-6">
+          <label class="fw-bold info">Dépot:</label>
+        </div>
+        <div class="col-6">
+          <label class="info info">{{slideDetails.depot.nomDepot}}</label>
+        </div>
+      </div>
+      <div class="row my-2">
+        <div class="col-6">
+          <label class="fw-bold info">Gérant:</label>
+        </div>
+        <div class="col-6">
+          <label class="info">{{slideDetails.depot.gerant}}</label>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+
+  <!-- SLIDE OSR -->
     <div class="sliding-panel" [ngClass]="{'open': panelOpenOsr}">
         <div class="row mb-3">
             <label class="fw-bold text-primary fs-3 text-center">Informations</label>

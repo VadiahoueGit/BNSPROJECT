@@ -8,13 +8,13 @@ import {io, Socket} from "socket.io-client";
 })
 export class WebsocketService {
   private socket: Socket;
-  private readonly SERVER_URL = 'wss://c2c2-160-155-133-247.ngrok-free.app';
+  private readonly SERVER_URL = 'https://bnsapi.localdev.business';
 
   constructor() {
 
     this.socket = io(this.SERVER_URL,{
       transports: ['websocket'],
-      path: '/socket.io'
+      path: '/api/v1/ws',
     });
   }
 
@@ -33,6 +33,7 @@ export class WebsocketService {
   ecouterNouveauMessage(): Observable<string> {
     return new Observable((observer) => {
       this.socket.on('message', (data: string) => {
+        console.log('Tentative de WebSocket...',data);
         observer.next(data);
       });
     });

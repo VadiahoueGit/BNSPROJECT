@@ -136,13 +136,13 @@
             class="fas fa-eye text-secondary"
           ></i>
         </td>
-        <td>
-          <i
-            (click)="OnDelete(dataList.id)"
-            style="cursor: pointer"
-            class="fas fa-trash-alt text-danger"
-          ></i>
-        </td>
+<!--        <td>-->
+<!--          <i-->
+<!--            (click)="OnDelete(dataList.id)"-->
+<!--            style="cursor: pointer"-->
+<!--            class="fas fa-trash-alt text-danger"-->
+<!--          ></i>-->
+<!--        </td>-->
       </tr>
       </td>
       </tr>
@@ -190,18 +190,18 @@
             Détails de la commande
           </h1>
         </div>
-        <div>
+        <div  *ngIf="updateData?.statut == StatutCommande.ATTENTE_VALIDATION">
           <button
-            *ngIf="operation == 'edit' && updateData?.statut != 'Reçue'"
+            *ngIf="operation == 'edit' && updateData?.statut == StatutCommande.ATTENTE_VALIDATION"
             type="submit"
             class="btn btn-secondary px-2 mx-2"
-            (click)="OnAddGoods(operation,updateData?.articles)"
+            (click)="OnAddGoods(operation,updateData,updateData?.articles)"
           >
             <i class="fas fa-plus"></i>
             <span class="ms-2">Ajouter</span>
           </button>
           <button
-            *ngIf="operation == 'edit' && updateData?.statut != 'Reçue'"
+            *ngIf="operation == 'edit' && updateData?.statut == StatutCommande.ATTENTE_VALIDATION"
             type="submit"
             class="btn btn-secondary px-2"
             (click)="updateGoods(operation)"

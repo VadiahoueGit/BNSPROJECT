@@ -7,6 +7,7 @@ import {ArticleServiceService} from 'src/app/core/article-service.service';
 import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
 import {ALERT_QUESTION} from 'src/app/Features/shared-component/utils';
 import {ConfigService} from "../../../../core/config-service.service";
+import {StatutCommande} from "../../../../utils/utils";
 
 @Component({
   selector: 'app-saisie-commande',
@@ -36,6 +37,7 @@ export class SaisieCommandeComponent {
   dataListBouteilleVide: any = [];
   dataListPlastiqueNu: any = [];
   selectedArticles: any = [];
+  newCommande: any = [];
   dataRevendeur: any = [];
   dataClient: any = [];
   dataPointDeVente: any = [];
@@ -70,7 +72,6 @@ export class SaisieCommandeComponent {
     etablissement: '',
     statut: '',
   };
-  newCommande: any[] = [];
   constructor(
     private articleService: ArticleServiceService,
     private utilisateurService: UtilisateurResolveService,
@@ -175,6 +176,7 @@ export class SaisieCommandeComponent {
   }
 
   OnCloseModal() {
+    this.commandClientForm.reset();
     this.totalEmballage = 0;
     this.totalLiquide = 0;
     this.totalGlobal = 0;
@@ -182,6 +184,7 @@ export class SaisieCommandeComponent {
     this.filteredArticleList = [];
     this.isModalOpen = false;
     this.selectedArticles = [];
+    this.newCommande = [];
     (this.commandClientForm.get('articles') as FormArray).clear();
   }
 
@@ -213,13 +216,18 @@ export class SaisieCommandeComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  OnAddGoods(data: any, newCommande: any) {
+  OnAddGoods(data: any,selectedItem:any, newCommande: any) {
     let item = []
     this.totalEmballage = 0;
     this.totalLiquide = 0;
     this.totalGlobal = 0;
     this.totalQte = 0;
+    console.log(this.newCommande);
+    console.log(this.selectedArticles);
     if (data == 'edit') {
+      this.detailPointDevente = selectedItem.client
+      this.depotId = selectedItem.client.depot.id;
+      this.GetArticleList(1);
       this.operation = 'createNew';
     } else {
       this.operation = 'edit';
@@ -245,7 +253,7 @@ export class SaisieCommandeComponent {
   saveGoods(data: any) {
     if(data == 'createNew') {
       console.log(data)
-      this.onSubmit()
+      this.AjouterArticleCommandeClient()
     }else if(data == 'update') {
       console.log(data)
       this.UpdateCommande()
@@ -255,11 +263,13 @@ export class SaisieCommandeComponent {
   }
   DeleteArticleCommande(data:any){
     this._spinner.show();
-    this.articleService.DeleteArticleCommande(data.id).then(
+    this.articleService.DeleteArticleCommandeClient(data.id).then(
       (response: any) => {
         this._spinner.hide();
         this.toastr.success('Succès!', response.message);
-        this.GetListCommandeClient(1)
+        this.GetListCommandeClientById()
+        this.newCommande = [];
+        this.operation = 'edit';
       },
       (error: any) => {
         this._spinner.hide();
@@ -267,26 +277,54 @@ export class SaisieCommandeComponent {
       }
     );
   }
+  GetListCommandeClientById(){
+    this.articleService.GetListCommandeClientById(this.updateData.id).then(
+      (response: any) => {
+        console.log('xxx')
+        this.GetListCommandeClient(1)
+        this.updateData = response.data;
+        // this.newCommande = this.updateData.articles;
+      },
+      (error: any) => {
+        this.toastr.error('Erreur!', error.message);
+      }
+    );
+  }
   UpdateCommande(){
     const data = this.newCommande.map((item: any) => ({
       id: item.id,
-      groupeArticleId: item.groupearticle.id,
+      groupeArticleId: item.groupearticle?.id ? item.groupearticle?.id : item.groupeArticle?.id,
       codeArticleLiquide: item.liquide.code,
-      codeArticleEmballage: item.emballage.code,
+      codeArticleEmballage: item.liquide.emballage ? item.liquide.emballage.code : item.emballage.code,
       prixUnitaireLiquide: Number(this.prixLiquide[item.id]),
       prixUnitaireEmballage: Number(this.prixEmballage[item.id]),
       quantite: Number(item.quantite) || 0,
     })).filter((item: any) => item.quantite != 0);
 
     const payload = {
-      revendeurId:this.updateData.revendeur.id,
+      revendeurId:this.updateData.client.id,
+
+      clientType: this.updateData.clientType,
+      clientId: this.updateData.client.id,
+      numeroCompte: this.updateData.client.numeroCompteContribuable,
+      raisonSociale: this.updateData.client.id,
+      contact: this.updateData.client.raisonSocial,
+      montantCredit: this.updateData.montantCredit,
+      enCours: this.updateData.enCours,
+      soldeLiquide: this.updateData.soldeLiquide,
+      soldeEmballage: this.updateData.soldeEmballage,
+      statutCompte: this.updateData.statutCompte,
+      numeroSAP: this.updateData.numeroSAP,
+      fraisTransport: this.updateData.fraisTransport,
+      remise: this.updateData.remise,
       articles: data
     };
-    this.articleService.UpdateCommandeFournisseurs(this.updateData.id, payload).then(
+    console.log(payload);
+    this.articleService.UpdateCommandeClient(this.updateData.id, payload).then(
       (response: any) => {
         this._spinner.hide();
         this.toastr.success(response.message);
-        this.GetListCommandeClient(1)
+        this.GetListCommandeClientById()
         this.operation = 'edit';
       },
       (error: any) => {
@@ -296,7 +334,7 @@ export class SaisieCommandeComponent {
     );
 
   }
-  AjouterCommande() {
+  AjouterArticleCommandeClient() {
     const data = this.newCommande.map((item: any) => ({
       id: item.id,
       groupeArticleId: item.groupearticle.id,
@@ -312,11 +350,13 @@ export class SaisieCommandeComponent {
     };
 
     this._spinner.show();
-    this.articleService.AjouterCommandeFournisseurs(this.updateData.id, payload).then(
+    this.articleService.AjouterArticleCommandeClient(this.updateData.id, payload).then(
       (response: any) => {
         this._spinner.hide();
+        this.newCommande = [];
+        this.selectedArticles = [];
         this.toastr.success(response.message);
-        this.GetListCommandeClient(1)
+        this.GetListCommandeClientById()
         this.operation = 'edit';
       },
       (error: any) => {
@@ -451,9 +491,9 @@ export class SaisieCommandeComponent {
       // Sinon, on ajoute un nouvel article
       articlesControl.push(
         this.fb.group({
-          groupeArticleId: data.groupearticle.id,
+          groupeArticleId: data.groupearticle?.id ? data.groupearticle?.id : data.groupeArticle?.id,
           codeArticleLiquide: data.liquide.code,
-          codeArticleEmballage: data.liquide.emballage.code,
+          codeArticleEmballage: data.liquide.emballage ? data.liquide.emballage.code : data.emballage.code,
           prixUnitaireLiquide: this.prixLiquide[data.id],
           prixUnitaireEmballage: this.prixEmballage[data.id],
           quantite: data.quantite,
@@ -603,6 +643,7 @@ export class SaisieCommandeComponent {
     // this.GetStockDisponibleByDepot(article)
     if (article.isChecked) {
       this.selectedArticles.push(article);
+      this.newCommande = this.selectedArticles
       this.afficherArticlesSelectionnes();
     } else {
       delete article.quantite;
@@ -775,4 +816,5 @@ export class SaisieCommandeComponent {
   }
 
   protected readonly Number = Number;
+  protected readonly StatutCommande = StatutCommande;
 }

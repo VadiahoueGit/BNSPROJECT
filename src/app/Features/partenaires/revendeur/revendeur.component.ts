@@ -66,7 +66,7 @@ export class RevendeurComponent {
     this.revendeurForm = this.fb.group({
       isAssocie: [null],
       parentRevendeurId: [null],
-      typePrixId: [null, Validators.required],
+      typePrixId: [null],
       groupeClientId: [null, Validators.required],
       numeroRegistre: [null],
       raisonSocial: [null, Validators.required],
