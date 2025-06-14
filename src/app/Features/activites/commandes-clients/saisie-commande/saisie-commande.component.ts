@@ -302,13 +302,11 @@ export class SaisieCommandeComponent {
     })).filter((item: any) => item.quantite != 0);
 
     const payload = {
-      revendeurId:this.updateData.client.id,
-
       clientType: this.updateData.clientType,
       clientId: this.updateData.client.id,
       numeroCompte: this.updateData.client.numeroCompteContribuable,
-      raisonSociale: this.updateData.client.id,
-      contact: this.updateData.client.raisonSocial,
+      raisonSociale: this.updateData.client.raisonSocial,
+      contact: this.updateData.client.telephoneProprietaire,
       montantCredit: this.updateData.montantCredit,
       enCours: this.updateData.enCours,
       soldeLiquide: this.updateData.soldeLiquide,

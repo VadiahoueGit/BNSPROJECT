@@ -479,14 +479,6 @@
               >
                 Ajouter des articles
               </button>
-              <button
-                *ngIf="operation == 'createNew' || operation == 'update' "
-                (click)="saveGoods(operation)"
-                type="button"
-                class="btn btn-primary"
-              >
-                Enregistrer
-              </button>
             </div>
             <table *ngIf="operation == 'create' || operation == 'createNew'" class="table table-bordered">
               <thead class="table-success">
@@ -660,6 +652,14 @@
 
       <!-- Modal Footer -->
       <div class="modal-footer gap-3 px-4">
+        <button
+          *ngIf="operation == 'createNew' || operation == 'update' "
+          (click)="saveGoods(operation)"
+          type="button"
+          class="btn btn-primary"
+        >
+          Enregistrer
+        </button>
         <button
           type="button"
           class="btn btn-secondary"
