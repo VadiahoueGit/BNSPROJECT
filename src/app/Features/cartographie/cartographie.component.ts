@@ -116,7 +116,6 @@ export class CartographieComponent implements AfterViewInit{
 
       this.messageSubscription = this.websocketService.ecouterNouveauMessage()
         .subscribe((data: any) => {
-          console.log(data);
           const vehicule = typeof data === 'string' ? JSON.parse(data) : data;
 
           // Identifiant unique : id ou immatriculation
@@ -154,7 +153,7 @@ export class CartographieComponent implements AfterViewInit{
       PinElement
     } = (await google.maps.importLibrary('marker')) as google.maps.MarkerLibrary;
 
-    // console.log('data', data)
+    console.log('type', type)
     if (type == 'osr') {
       this.markersClient = data.map((pdv:any) => ({
         position: {
@@ -194,8 +193,18 @@ export class CartographieComponent implements AfterViewInit{
       }));
     }
     else if (type == 'vehicule') {
+      this.markersVehicule = []
       console.log('vehicule',data);
-      this.markersVehicule = data.map((pdv: any) => ({
+      this.markersVehicule = data .filter((pdv: any) => {
+        const lat = parseFloat(pdv?.position?.latitude);
+        const lng = parseFloat(pdv?.position?.longitude);
+        return (
+          !isNaN(lat) &&
+          !isNaN(lng) &&
+          pdv?.vehicle?.marque &&
+          pdv?.vehicle?.immatriculation
+        );
+      }).map((pdv: any) => ({
         position: {
           lat: parseFloat(pdv.position.latitude),
           lng: parseFloat(pdv.position.longitude),
@@ -209,7 +218,7 @@ export class CartographieComponent implements AfterViewInit{
           zIndex: 999
         }
       }));
-
+console.log('markersVehicule',this.markersVehicule);
 
     }
 

@@ -520,7 +520,7 @@
                         }"
                     (blur)="validateQuantite(item)"
                   />
-
+                  / {{stocksDisponibles[item.liquide.id]}}
                 </td>
                 <td>{{ prixLiquideTotal[item.id] | number}}</td>
                 <td>{{ prixEmballageTotal[item.id] | number}}</td>
@@ -581,6 +581,21 @@
                     (ngModelChange)="getLocalPrice(item)"
                   />
 
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="form-control-custom"
+                    [(ngModel)]="item.quantite"
+                    [min]="0"
+                    [max]="stocksDisponibles[item.liquide.id]"
+                    [disabled]="stocksDisponibles[item.liquide.id] === 0"
+                    [ngClass]="{
+                        invalid: item.quantite > stocksDisponibles[item.liquide.id]
+                      }"
+                    (blur)="validateQuantite(item)"
+                  />
+                  / {{stocksDisponibles[item.liquide.id]}}
                 </td>
                 <td>{{ prixLiquideTotal[item.id] | number}}</td>
                 <td>{{ prixEmballageTotal[item.id] | number}}</td>
