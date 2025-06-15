@@ -193,9 +193,9 @@ export class CartographieComponent implements AfterViewInit{
       }));
     }
     else if (type == 'vehicule') {
-      this.markersVehicule = []
+      // this.markersVehicule = []
       console.log('vehicule',data);
-      this.markersVehicule = data .filter((pdv: any) => {
+      this.markersVehicule = data.filter((pdv: any) => {
         const lat = parseFloat(pdv?.position?.latitude);
         const lng = parseFloat(pdv?.position?.longitude);
         return (

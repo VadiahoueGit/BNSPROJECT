@@ -48,6 +48,7 @@ export class VentechinepageComponent {
   prixEmballageTotal: any = {};
   montantTotal: any = {};
   dataListZone: any;
+  isModalOpenSign: boolean = false;
   dataListLocalite: any;
   dataListCommercial: any;
   dataListCamion: any;
@@ -61,6 +62,7 @@ export class VentechinepageComponent {
   montantTotalFree:any = {};
   totalLiquideFree: number = 0;
   totalEmballageFree :number = 0;
+  signature: null;
   constructor(
     private cdr: ChangeDetectorRef,
     private _spinner: NgxSpinnerService,
@@ -118,6 +120,14 @@ export class VentechinepageComponent {
     console.log('Élément sélectionné :', selectedItem);
     this.depotId = selectedItem.depot.id;
     this.GetArticleList(1);
+  }
+
+  OnViewSign(data: any) {
+    this.isModalOpenSign = true
+    this.signature = data
+  }
+  closeDetailSign(){
+    this.isModalOpenSign = false;
   }
 
   selectArticle() {

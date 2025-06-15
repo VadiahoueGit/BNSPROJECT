@@ -195,6 +195,138 @@
         </h1>
       </div>
       <div class="modal-body" *ngIf="operation == 'edit'"  style="max-height: 70vh;overflow-y: auto;">
+        <ng-container *ngIf="updateData.motif == 'COMMANDE_REVENDEUR_FOURNISSEUR'"  >
+          <fieldset class="row border my-1">
+            <legend style="font-size: 14px" class="text-secondary">
+              Information de la Commande :
+              {{ updateData.paiementsCommandeClient[0]?.NumCommande }} du
+              {{ updateData.createdAt | date : "dd/MM/yyyy " }}
+            </legend>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Client: </strong>
+                <span>{{ updateData?.client?.raisonSocial }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Dépot: </strong>
+                <span>{{ updateData?.depot?.nomDepot }}</span>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset class="row border my-1">
+            <legend style="font-size: 14px" class="text-secondary">
+              Autres informations
+            </legend>
+            <div class="row">
+              <div class="col-md-4">
+                <strong>Statut: </strong>
+                <span>{{ updateData?.statut }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Motif : </strong>
+                <span>{{ updateData?.motif }}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Montant à percevoir : </strong>
+                <span>{{ updateData?.montantAPercevoir | number}}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Montant perçu : </strong>
+                <span>{{ updateData?.montantPercu | number}}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Montant restant : </strong>
+                <span>{{ updateData?.montantRestant | number}}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Délai : </strong>
+                <span>{{ updateData?.credit?.delaiReglement || "NA" }}Jours</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Date échéance : </strong>
+                <span>{{ updateData?.dateEchanceCalculer| date : "dd/MM/yyyy HH:mm" }}</span>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset class="row border my-2">
+            <legend class="fs-6 text-primary">Historique de paiement</legend>
+            <div
+              class="table-responsive"
+              style="max-height: 300px; overflow-y: auto"
+            >
+              <table class="table">
+                <thead>
+                <tr style="font-size: small">
+                  <th scope="col">Opérations</th>
+                  <th scope="col">Mode de paiement</th>
+                  <th scope="col">Montant versé</th>
+                  <th scope="col">Date de paiement</th>
+                  <th scope="col"><th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr
+                  style="font-size: small"
+                  *ngFor="let item of hstoriquePayment; let i = index "
+                >
+                  <td>{{ item.transaction.motif }}</td>
+                  <td>{{ item.moyenPaiement.libelle ? item.moyenPaiement.libelle : 'N/A' }}</td>
+                  <td>{{ item.montant | number}}</td>
+                  <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td>
+                    <p class="text-success" *ngIf="item?.statut == Status.PAYE">Payé</p>
+                    <button
+                      *ngIf="item?.statut !== Status.PAYE"
+                      type="submit"
+                      class="btn btn-primary px-2"
+                      (click)="ValidatePaiement(item)"
+                    >
+                      Payer
+                    </button>
+                  </td>
+                </tr>
+                <!-- Ajoutez d'autres lignes si nécessaire -->
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+          <fieldset class="row border my-2">
+            <legend class="fs-6 text-primary">Articles</legend>
+            <div
+              class="table-responsive"
+              style="max-height: 300px; overflow-y: auto"
+            >
+              <table class="table">
+                <thead>
+                <tr style="font-size: small">
+                  <th scope="col">Emballage</th>
+                  <th scope="col">Liquide</th>
+                  <th scope="col">Prix unitaire</th>
+                  <th scope="col">Quantité</th>
+<!--                  <th scope="col">Montant total</th>-->
+                </tr>
+                </thead>
+                <tbody>
+                <tr
+                  style="font-size: small"
+                  *ngFor="
+                      let item of updateData?.paiementsCommandeFournisseur[0]
+                        ?.articles;
+                      let i = index
+                    "
+                >
+                  <td>{{ item.emballage.libelle }}</td>
+                  <td>{{ item.liquide.libelle }}</td>
+                  <td>{{ item.prixUnitaireLiquide }}</td>
+                  <td>{{ item.quantite }}</td>
+<!--                  <td>{{ item.montantTotal| number }}</td>-->
+                </tr>
+                <!-- Ajoutez d'autres lignes si nécessaire -->
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+        </ng-container>
         <ng-container *ngIf="updateData.motif == 'COMMANDE CLIENT'"  >
           <fieldset class="row border my-1">
             <legend style="font-size: 14px" class="text-secondary">
@@ -350,11 +482,11 @@
               <table class="table">
                 <thead>
                   <tr style="font-size: small">
-                    <th scope="col">Montant emballage</th>
-                    <th scope="col">Montant liquide</th>
-                    <th scope="col">Prix unitaire emballage</th>
-                    <th scope="col">Prix unitaire liquide</th>
+                    <th scope="col">Emballage</th>
+                    <th scope="col">Liquide</th>
+                    <th scope="col">Prix unitaire</th>
                     <th scope="col">Quantité</th>
+<!--                    <th scope="col">Montant total</th>-->
                   </tr>
                 </thead>
                 <tbody>
@@ -366,11 +498,11 @@
                       let i = index
                     "
                   >
-                    <td>{{ item.montantEmballage | number}}</td>
-                    <td>{{ item.montantLiquide | number}}</td>
-                    <td>{{ item.prixUnitaireEmballage | number}}</td>
-                    <td>{{ item.prixUnitaireLiquide | number}}</td>
-                    <td>{{ item.quantite| number }}</td>
+                    <td>{{ item.emballage.libelle }}</td>
+                    <td>{{ item.liquide.libelle }}</td>
+                    <td>{{ item.prixUnitaireLiquide }}</td>
+                    <td>{{ item.quantite }}</td>
+<!--                    <td>{{ item.montantTotal| number }}</td>-->
                   </tr>
                   <!-- Ajoutez d'autres lignes si nécessaire -->
                 </tbody>
@@ -378,7 +510,6 @@
             </div>
           </fieldset>
         </ng-container>
-
         <ng-container *ngIf="updateData.motif == 'VENTE CHINE'">
           <fieldset class="row border my-1">
             <legend style="font-size: 14px" class="text-secondary">
@@ -392,13 +523,6 @@
                   updateData?.paiementsVente[0].pointdevente?.nomEtablissement
                 }}</span>
               </div>
-<!--              <div class="col-md-4">-->
-<!--                <strong>Localité: </strong>-->
-<!--                <span>{{-->
-<!--                  updateData?.paiementsVente[0]?.venteChine?.localite-->
-<!--                    ?.nomLocalite-->
-<!--                }}</span>-->
-<!--              </div>-->
               <div class="col-md-4">
                 <strong>Dépot: </strong>
                 <span>{{ updateData?.depot?.nomDepot }}</span>
@@ -697,10 +821,11 @@
               <table class="table">
                 <thead>
                   <tr style="font-size: small">
-                    <th scope="col">Montant emballage</th>
-                    <th scope="col">Montant liquide</th>
-                    <th scope="col">Prix unitaire liquide</th>
+                    <th scope="col">Emballage</th>
+                    <th scope="col">Liquide</th>
+                    <th scope="col">Prix unitaire</th>
                     <th scope="col">Quantité</th>
+                    <th scope="col">Montant total</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -712,10 +837,11 @@
                       let i = index
                     "
                   >
-                    <td>{{ item.montantEmballage| number }}</td>
-                    <td>{{ item.montantLiquide | number}}</td>
-                    <td>{{ item.prixUnitaireLiquide }}</td>
+                    <td>{{ item.emballage.libelle }}</td>
+                    <td>{{ item.liquide.libelle }}</td>
+                    <td>{{ item.prixUnitaire }}</td>
                     <td>{{ item.quantite }}</td>
+                    <td>{{ item.montantTotal| number }}</td>
                   </tr>
                   <!-- Ajoutez d'autres lignes si nécessaire -->
                 </tbody>
