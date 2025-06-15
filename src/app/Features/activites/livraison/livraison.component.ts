@@ -26,7 +26,7 @@ interface RegroupementItem {
 export class LivraisonComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
-  results:any
+  results: any
   dataList: any[] = [
     {
       refclient: 'test',
@@ -79,14 +79,17 @@ export class LivraisonComponent {
   listRegroupements: any[] = [];
   truckCapacity: number = 0;
   isModalOpenDetail: boolean = false;
+  isModalOpenSign: boolean = false;
   totalCasiers: number = 0;
   canContinue: boolean = false;
   cargaison: number = 0;
   format: number = 33;
-
+  signature: null;
   regroupementList: any[] = [];
   regroupementTable: any[] = [];
-  regroupementFinal: { [key: string]: Array<{ type: string; palettes: number; casier: number; totalQuantite:number }> } = {};
+  regroupementFinal: {
+    [key: string]: Array<{ type: string; palettes: number; casier: number; totalQuantite: number }>
+  } = {};
   result: { palettes: number; casier: number } | null = null;
   casiersPerPalette: Record<number, { casiers: number; type: string }[]> = {
     30: [{casiers: 60, type: 'SUCRERIE'}],
@@ -154,6 +157,11 @@ export class LivraisonComponent {
     );
   }
 
+  OnViewSign(data: any) {
+    this.isModalOpenSign = true
+    this.signature = data
+  }
+
   removeCommande(commande: any): void {
     console.log('Retrait de la commande:', commande);
 
@@ -163,7 +171,7 @@ export class LivraisonComponent {
 
       // Vérifie si le format existe dans regroupementFinal
       if (this.regroupementFinal[format]) {
-        console.log('AAA:',this.regroupementFinal)
+        console.log('AAA:', this.regroupementFinal)
         // Recherche le type dans le format
         const typeEntry = this.regroupementFinal[format].find((entry: any) => entry.type === type);
         if (typeEntry) {
@@ -210,7 +218,7 @@ export class LivraisonComponent {
       this.regroupementFinal = {};
     }
     console.log('fois:');
-    this.result = { palettes: 0, casier: 0 };
+    this.result = {palettes: 0, casier: 0};
 
     const articlesParFormatEtType = commande.articles.reduce((acc: any, article: any) => {
       const format = Number(article?.liquide?.format);
@@ -268,7 +276,7 @@ export class LivraisonComponent {
               existingEntry.casier += casier;
             } else {
               // ➕ Ajoute un nouvel article s'il n'existe pas encore
-              this.regroupementFinal[format].push({ type, palettes, casier, totalQuantite: 0 });
+              this.regroupementFinal[format].push({type, palettes, casier, totalQuantite: 0});
             }
           }
         });
@@ -331,7 +339,7 @@ export class LivraisonComponent {
   async GetListCommande(page: number) {
     let data = {
       paginate: false,
-      page:page,
+      page: page,
       limit: 8,
       numeroCommande: '',
       date: '',
@@ -395,7 +403,7 @@ export class LivraisonComponent {
     console.log(data, 'regroupement');
     this.updateData = data;
     this.isModalOpenDetail = true;
-    this.updateData.commandes.forEach((commande:any)=>{
+    this.updateData.commandes.forEach((commande: any) => {
       this.calculate(commande);
     })
 
@@ -405,7 +413,9 @@ export class LivraisonComponent {
   closeDetailModal() {
     this.isModalOpenDetail = false;
   }
-
+  closeDetailSign(){
+    this.isModalOpenSign = false;
+  }
   OnEdit(data: any) {
     this.isEditMode = true;
     console.log(data);
@@ -427,7 +437,7 @@ export class LivraisonComponent {
 
     this._spinner.show();
     if (this.regroupementFinal) {
-       this.results = Object.entries(this.regroupementFinal).flatMap(([key, value]) => {
+      this.results = Object.entries(this.regroupementFinal).flatMap(([key, value]) => {
         // Vérifie que value est bien un tableau
         if (!Array.isArray(value)) return [];
 
@@ -435,9 +445,9 @@ export class LivraisonComponent {
         const regroupementParType = value.reduce((acc, item) => {
           const type = item.type ?? "Inconnu"; // Sécurité si le type est absent
           if (!acc[type]) {
-            acc[type] = { casier: 0, palette: 0 };
+            acc[type] = {casier: 0, palette: 0};
           }
-          console.log(item.casier )
+          console.log(item.casier)
           acc[type].casier += item.casier ?? 0;
           acc[type].palette += item.palettes ?? 0;
           return acc;
@@ -744,7 +754,7 @@ export class LivraisonComponent {
     }
     this.cargaison = 0;
     this.regroupementTable = [];
-    this.regroupementFinal= {};
+    this.regroupementFinal = {};
     this.onCheckboxClear();
   }
 
