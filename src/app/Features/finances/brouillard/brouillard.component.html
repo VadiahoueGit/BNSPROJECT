@@ -64,11 +64,6 @@
           </span>
         </td>
         <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-            {{ dataList.datePaiement | date }}
-          </span>
-        </td>
-        <td>
           <span class="ml-1 vertical-align-middle" style="font-size: 11px"
                 [ngClass]="dataList.transaction.sens == 'ENTREE' ? 'text-success' : 'text-danger'">
              {{ dataList.transaction.sens }}
@@ -80,12 +75,18 @@
           </span>
         </td>
         <td>
+          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
+            {{ dataList.datePaiement | date: 'dd/MM/yyyy à HH:mm' }}
+          </span>
+        </td>
+        <td>
           <div class="text-center" [ngClass]="dataList.transaction.sens == 'ENTREE' ? 'bg-entry' : 'bg-out'">
              <span class="ml-1 vertical-align-middle w-100 fw-bold " style="font-size: 12px">
              {{ dataList.transaction.sens == 'ENTREE' ? '+' : '' }}{{ dataList.montant | currency:'XOF' }}
           </span>
           </div>
         </td>
+
       </tr>
 
     </ng-template>

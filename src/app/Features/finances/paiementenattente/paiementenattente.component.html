@@ -79,16 +79,18 @@
               dataList?.paiementsCommandeClient?.length
                 ? dataList.paiementsCommandeClient[0]?.NumCommande
                 : dataList?.paiementsCommandeGratuit?.length
-                ? dataList.paiementsCommandeGratuit[0]?.NumCommande
-                : dataList?.paiementsVente?.length
-                ? dataList.paiementsVente[0]?.venteChine.numVenteChine
-                : dataList?.returnStock?.venteChine
-                ? dataList?.returnStock?.venteChine?.numVenteChine
-                : dataList?.returnStock?.commandeClient
-                ? dataList?.returnStock?.commandeClient?.NumCommande
-                : dataList?.returnStock?.commandeGratuite
-                ? dataList?.returnStock?.commandeGratuite?.NumCommande
-                : "N/A"
+                  ? dataList.paiementsCommandeGratuit[0]?.NumCommande
+                  : dataList?.paiementsVente?.length
+                    ? dataList.paiementsVente[0]?.venteChine.numVenteChine
+                    : dataList?.returnStock?.venteChine
+                      ? dataList?.returnStock?.venteChine?.numVenteChine
+                      : dataList?.returnStock?.commandeClient
+                        ? dataList?.returnStock?.commandeClient?.NumCommande
+                        : dataList?.returnStock?.commandeGratuite
+                          ? dataList?.returnStock?.commandeGratuite?.NumCommande
+                          : dataList?.paiementsCommandeFournisseur?.length
+                            ? dataList.paiementsCommandeFournisseur[0]?.NumCommande
+                            : "N/A"
             }}
           </span>
         </td>
@@ -96,19 +98,19 @@
           {{
             dataList?.paiementsCommandeClient?.length
               ? (dataList?.transporteur?.nom || "N/A") +
-                " " +
-                (dataList?.transporteur?.prenoms || "N/A")
+              " " +
+              (dataList?.transporteur?.prenoms || "N/A")
               : dataList?.paiementsCommandeGratuit?.length
-              ? (dataList?.transporteur?.nom || "N/A") +
+                ? (dataList?.transporteur?.nom || "N/A") +
                 " " +
                 (dataList?.transporteur?.prenoms || "N/A")
-              : dataList?.paiementsVente?.length
-              ? (dataList?.paiementsVente[0]?.commercial?.nom || "N/A") +
-                " " +
-                (dataList?.paiementsVente[0]?.commercial?.prenoms || "N/A")
-              : dataList?.returnStock?.venteChine
-              ? dataList?.returnStock?.venteChine?.commercial?.nom +
-              dataList?.returnStock?.venteChine?.commercial?.prenoms :"N/A"
+                : dataList?.paiementsVente?.length
+                  ? (dataList?.paiementsVente[0]?.commercial?.nom || "N/A") +
+                  " " +
+                  (dataList?.paiementsVente[0]?.commercial?.prenoms || "N/A")
+                  : dataList?.returnStock?.venteChine
+                    ? dataList?.returnStock?.venteChine?.commercial?.nom +
+                    dataList?.returnStock?.venteChine?.commercial?.prenoms : "N/A"
           }}
         </td>
         <td>
@@ -119,8 +121,8 @@
         </td>
         <td>
           {{
-            dataList?.client?.raisonSocial || dataList?.client?.nomEtablissement||
-              dataList?.paiementsVente[0]?.pointdevente.nomEtablissement || "N/A"
+            dataList?.client?.raisonSocial || dataList?.client?.nomEtablissement ||
+            dataList?.paiementsVente[0]?.pointdevente.nomEtablissement || "N/A"
           }}
         </td>
         <td>
@@ -129,13 +131,13 @@
           </span>
         </td>
         <td>
-          {{ dataList?.montantPercu | number}}
+          {{ dataList?.montantPercu | number }}
         </td>
         <td>
           {{ dataList?.credit?.delaiReglement || 0 }}
         </td>
         <td>
-          {{ dataList?.dateEchanceCalculer | date :"dd/MM/yyyy"  }}
+          {{ dataList?.dateEchanceCalculer | date :"dd/MM/yyyy" }}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
@@ -148,11 +150,11 @@
           </span>
         </td>
         <td>
-          <tr class="d-flex justify-content-center gap-3">
-            <!-- <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
-                    class="fas fa-trash-alt text-danger"></i></td> -->
-          </tr>
-        </td>
+      <tr class="d-flex justify-content-center gap-3">
+        <!-- <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
+                class="fas fa-trash-alt text-danger"></i></td> -->
+      </tr>
+      </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
@@ -195,11 +197,11 @@
             <div class="col-md-4">
               <strong>Client: </strong>
               <span>{{
-                updateData?.client?.raisonSocial
-                  ? updateData?.client?.raisonSocial
-                  : updateData?.returnStock?.venteChineRetourStock.pointdevente
+                  updateData?.client?.raisonSocial
+                    ? updateData?.client?.raisonSocial
+                    : updateData?.returnStock?.venteChineRetourStock.pointdevente
                       .nomEtablissement
-              }}</span>
+                }}</span>
             </div>
             <div class="col-md-4">
               <strong>Localité: </strong>
@@ -218,12 +220,12 @@
             <div class="col-md-4">
               <strong>Agent: </strong>
               <span
-                >{{
+              >{{
                   updateData?.returnStock?.venteChineRetourStock.commercial
                     .nom +
-                    " " +
-                    updateData?.returnStock?.venteChineRetourStock.commercial
-                      .prenoms
+                  " " +
+                  updateData?.returnStock?.venteChineRetourStock.commercial
+                    .prenoms
                 }}
               </span>
             </div>
@@ -258,7 +260,7 @@
             </div>
             <div class="col-md-4">
               <strong>Montant perçu : </strong>
-              <span>{{ updateData?.montantPercu | number}}</span>
+              <span>{{ updateData?.montantPercu | number }}</span>
             </div>
             <div class="col-md-4">
               <strong>Type retour : </strong>
@@ -274,25 +276,25 @@
           >
             <table class="table">
               <thead>
-                <tr style="font-size: small">
-                  <th scope="col">Code</th>
-                  <th scope="col">Type article</th>
-                  <th scope="col">Quantité</th>
-                </tr>
+              <tr style="font-size: small">
+                <th scope="col">Code</th>
+                <th scope="col">Type article</th>
+                <th scope="col">Quantité</th>
+              </tr>
               </thead>
               <tbody>
-                <tr
-                  style="font-size: small"
-                  *ngFor="
+              <tr
+                style="font-size: small"
+                *ngFor="
                     let item of updateData.returnStock?.articles;
                     let i = index
                   "
-                >
-                  <td>{{ item.productCode }}</td>
-                  <td>{{ item.typeArticle }}</td>
-                  <td>{{ item.quantity }}</td>
-                </tr>
-                <!-- Ajoutez d'autres lignes si nécessaire -->
+              >
+                <td>{{ item.productCode }}</td>
+                <td>{{ item.typeArticle }}</td>
+                <td>{{ item.quantity }}</td>
+              </tr>
+              <!-- Ajoutez d'autres lignes si nécessaire -->
               </tbody>
             </table>
           </div>

@@ -75,7 +75,8 @@
     <ng-template pTemplate="body" let-dataList>
       <tr>
         <td>
-          <img *ngIf="dataList.hasStatutEnAttente" src="assets/icon/partial.png" style="width: 20px; height : 20px;" alt="">
+          <img *ngIf="dataList.hasStatutEnAttente" src="assets/icon/partial.png" style="width: 20px; height : 20px;"
+               alt="">
         </td>
         <td>
           <span class="ml-1 vertical-align-middle" style="font-size: 11px">
@@ -83,16 +84,18 @@
               dataList?.paiementsCommandeClient?.length
                 ? dataList.paiementsCommandeClient[0]?.NumCommande
                 : dataList?.paiementsCommandeGratuit?.length
-                ? dataList.paiementsCommandeGratuit[0]?.NumCommande
-                : dataList?.paiementsVente?.length
-                ? dataList.paiementsVente[0]?.venteChine.numVenteChine
-                : dataList?.returnStock?.venteChine
-                ? dataList?.returnStock?.venteChine?.numVenteChine
-                : dataList?.returnStock?.commandeClient
-                ? dataList?.returnStock?.commandeClient?.NumCommande
-                : dataList?.returnStock?.commandeGratuite
-                ? dataList?.returnStock?.commandeGratuite?.NumCommande
-                : "NA"
+                  ? dataList.paiementsCommandeGratuit[0]?.NumCommande
+                  : dataList?.paiementsVente?.length
+                    ? dataList.paiementsVente[0]?.venteChine.numVenteChine
+                    : dataList?.returnStock?.venteChine
+                      ? dataList?.returnStock?.venteChine?.numVenteChine
+                      : dataList?.returnStock?.commandeClient
+                        ? dataList?.returnStock?.commandeClient?.NumCommande
+                        : dataList?.returnStock?.commandeGratuite
+                          ? dataList?.returnStock?.commandeGratuite?.NumCommande
+                          : dataList?.paiementsCommandeFournisseur?.length
+                            ? dataList.paiementsCommandeFournisseur[0]?.NumCommande
+                            : "NA"
             }}
           </span>
         </td>
@@ -105,38 +108,38 @@
           {{
             dataList?.paiementsCommandeClient?.length
               ? (dataList?.transporteur?.nom || "N/A") +
-                " " +
-                (dataList?.transporteur?.prenoms || "N/A")
+              " " +
+              (dataList?.transporteur?.prenoms || "N/A")
               : dataList?.paiementsCommandeGratuit?.length
-              ? (dataList?.transporteur?.nom || "N/A") +
+                ? (dataList?.transporteur?.nom || "N/A") +
                 " " +
                 (dataList?.transporteur?.prenoms || "N/A")
-              : dataList?.paiementsVente?.length
-              ? (dataList?.paiementsVente[0]?.commercial?.nom ) +' '+
-                (dataList?.paiementsVente[0]?.commercial?.prenoms )
-              : dataList?.returnStock?.venteChine
-              ? dataList?.returnStock?.venteChine?.commercial?.nom +' '+
-              dataList?.returnStock?.venteChine?.commercial?.prenoms :""
+                : dataList?.paiementsVente?.length
+                  ? (dataList?.paiementsVente[0]?.commercial?.nom) + ' ' +
+                  (dataList?.paiementsVente[0]?.commercial?.prenoms)
+                  : dataList?.returnStock?.venteChine
+                    ? dataList?.returnStock?.venteChine?.commercial?.nom + ' ' +
+                    dataList?.returnStock?.venteChine?.commercial?.prenoms : ""
           }}
         </td>
         <td>
           {{
-            dataList?.client? dataList?.client.numeroSAP?.numeroSAP :'N/A'
+            dataList?.client ? dataList?.client.numeroSAP?.numeroSAP : 'N/A'
           }}
         </td>
         <td>
           {{
-            dataList?.client?.raisonSocial || dataList?.client?.nomEtablissement||
-              dataList?.paiementsVente[0]?.pointdevente.nomEtablissement || "N/A"
+            dataList?.client?.raisonSocial || dataList?.client?.nomEtablissement ||
+            dataList?.paiementsVente[0]?.pointdevente.nomEtablissement || "N/A"
           }}
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList?.montantAPercevoir | number}}
+            {{ dataList?.montantAPercevoir | number }}
           </span>
         </td>
         <td>
-          {{ dataList?.montantPercu | number}}
+          {{ dataList?.montantPercu | number }}
         </td>
 
         <td>
@@ -150,18 +153,18 @@
           </span>
         </td>
         <td>
-          <tr class="d-flex justify-content-center gap-3">
-            <td>
-              <i
-                (click)="OnEdit(dataList)"
-                style="cursor: pointer"
-                class="fas fa-eye text-secondary"
-              ></i>
-            </td>
-            <!-- <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
-                        class="fas fa-trash-alt text-danger"></i></td> -->
-          </tr>
+      <tr class="d-flex justify-content-center gap-3">
+        <td>
+          <i
+            (click)="OnEdit(dataList)"
+            style="cursor: pointer"
+            class="fas fa-eye text-secondary"
+          ></i>
         </td>
+        <!-- <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
+                    class="fas fa-trash-alt text-danger"></i></td> -->
+      </tr>
+      </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
@@ -194,8 +197,8 @@
           Validation du paiement
         </h1>
       </div>
-      <div class="modal-body" *ngIf="operation == 'edit'"  style="max-height: 70vh;overflow-y: auto;">
-        <ng-container *ngIf="updateData.motif == 'COMMANDE_REVENDEUR_FOURNISSEUR'"  >
+      <div class="modal-body" *ngIf="operation == 'edit'" style="max-height: 70vh;overflow-y: auto;">
+        <ng-container *ngIf="updateData.motif == 'COMMANDE_REVENDEUR_FOURNISSEUR'">
           <fieldset class="row border my-1">
             <legend style="font-size: 14px" class="text-secondary">
               Information de la Commande :
@@ -228,15 +231,15 @@
               </div>
               <div class="col-md-4">
                 <strong>Montant à percevoir : </strong>
-                <span>{{ updateData?.montantAPercevoir | number}}</span>
+                <span>{{ updateData?.montantAPercevoir | number }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Montant perçu : </strong>
-                <span>{{ updateData?.montantPercu | number}}</span>
+                <span>{{ updateData?.montantPercu | number }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Montant restant : </strong>
-                <span>{{ updateData?.montantRestant | number}}</span>
+                <span>{{ updateData?.montantRestant | number }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Délai : </strong>
@@ -261,7 +264,8 @@
                   <th scope="col">Mode de paiement</th>
                   <th scope="col">Montant versé</th>
                   <th scope="col">Date de paiement</th>
-                  <th scope="col"><th>
+                  <th scope="col">
+                  <th>
                 </tr>
                 </thead>
                 <tbody>
@@ -271,7 +275,7 @@
                 >
                   <td>{{ item.transaction.motif }}</td>
                   <td>{{ item.moyenPaiement.libelle ? item.moyenPaiement.libelle : 'N/A' }}</td>
-                  <td>{{ item.montant | number}}</td>
+                  <td>{{ item.montant | number }}</td>
                   <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
                   <td>
                     <p class="text-success" *ngIf="item?.statut == Status.PAYE">Payé</p>
@@ -303,7 +307,7 @@
                   <th scope="col">Liquide</th>
                   <th scope="col">Prix unitaire</th>
                   <th scope="col">Quantité</th>
-<!--                  <th scope="col">Montant total</th>-->
+                  <!--                  <th scope="col">Montant total</th>-->
                 </tr>
                 </thead>
                 <tbody>
@@ -319,7 +323,7 @@
                   <td>{{ item.liquide.libelle }}</td>
                   <td>{{ item.prixUnitaireLiquide }}</td>
                   <td>{{ item.quantite }}</td>
-<!--                  <td>{{ item.montantTotal| number }}</td>-->
+                  <!--                  <td>{{ item.montantTotal| number }}</td>-->
                 </tr>
                 <!-- Ajoutez d'autres lignes si nécessaire -->
                 </tbody>
@@ -327,7 +331,7 @@
             </div>
           </fieldset>
         </ng-container>
-        <ng-container *ngIf="updateData.motif == 'COMMANDE CLIENT'"  >
+        <ng-container *ngIf="updateData.motif == 'COMMANDE CLIENT'">
           <fieldset class="row border my-1">
             <legend style="font-size: 14px" class="text-secondary">
               Information de la Commande :
@@ -339,10 +343,10 @@
                 <strong>Client: </strong>
                 <span>{{ updateData?.client?.raisonSocial }}</span>
               </div>
-<!--              <div class="col-md-4">-->
-<!--                <strong>Localité: </strong>-->
-<!--                <span>{{ updateData?.client?.localite.nomLocalite }}</span>-->
-<!--              </div>-->
+              <!--              <div class="col-md-4">-->
+              <!--                <strong>Localité: </strong>-->
+              <!--                <span>{{ updateData?.client?.localite.nomLocalite }}</span>-->
+              <!--              </div>-->
               <div class="col-md-4">
                 <strong>Dépot: </strong>
                 <span>{{ updateData?.depot?.nomDepot }}</span>
@@ -361,7 +365,7 @@
               <div class="col-md-4">
                 <strong>Transporteur : </strong>
                 <span
-                  >{{ updateData?.transporteur?.nom }}
+                >{{ updateData?.transporteur?.nom }}
                   {{ updateData?.transporteur?.prenoms }}</span
                 >
               </div>
@@ -391,8 +395,8 @@
               <div class="col-md-4">
                 <strong>Disponible : </strong>
                 <span>{{
-                  updateData?.vehicule?.disponible == true ? "OUI" : "NON"
-                }}</span>
+                    updateData?.vehicule?.disponible == true ? "OUI" : "NON"
+                  }}</span>
               </div>
             </div>
           </fieldset>
@@ -411,15 +415,15 @@
               </div>
               <div class="col-md-4">
                 <strong>Montant à percevoir : </strong>
-                <span>{{ updateData?.montantAPercevoir | number}}</span>
+                <span>{{ updateData?.montantAPercevoir | number }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Montant perçu : </strong>
-                <span>{{ updateData?.montantPercu | number}}</span>
+                <span>{{ updateData?.montantPercu | number }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Montant restant : </strong>
-                <span>{{ updateData?.montantRestant | number}}</span>
+                <span>{{ updateData?.montantRestant | number }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Délai : </strong>
@@ -444,7 +448,8 @@
                   <th scope="col">Mode de paiement</th>
                   <th scope="col">Montant versé</th>
                   <th scope="col">Date de paiement</th>
-                  <th scope="col"><th>
+                  <th scope="col">
+                  <th>
                 </tr>
                 </thead>
                 <tbody>
@@ -454,7 +459,7 @@
                 >
                   <td>{{ item.transaction.motif }}</td>
                   <td>{{ item.moyenPaiement.libelle ? item.moyenPaiement.libelle : 'N/A' }}</td>
-                  <td>{{ item.montant | number}}</td>
+                  <td>{{ item.montant | number }}</td>
                   <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
                   <td>
                     <p class="text-success" *ngIf="item?.statut == Status.PAYE">Payé</p>
@@ -481,30 +486,30 @@
             >
               <table class="table">
                 <thead>
-                  <tr style="font-size: small">
-                    <th scope="col">Emballage</th>
-                    <th scope="col">Liquide</th>
-                    <th scope="col">Prix unitaire</th>
-                    <th scope="col">Quantité</th>
-<!--                    <th scope="col">Montant total</th>-->
-                  </tr>
+                <tr style="font-size: small">
+                  <th scope="col">Emballage</th>
+                  <th scope="col">Liquide</th>
+                  <th scope="col">Prix unitaire</th>
+                  <th scope="col">Quantité</th>
+                  <!--                    <th scope="col">Montant total</th>-->
+                </tr>
                 </thead>
                 <tbody>
-                  <tr
-                    style="font-size: small"
-                    *ngFor="
+                <tr
+                  style="font-size: small"
+                  *ngFor="
                       let item of updateData?.paiementsCommandeClient[0]
                         ?.articles;
                       let i = index
                     "
-                  >
-                    <td>{{ item.emballage.libelle }}</td>
-                    <td>{{ item.liquide.libelle }}</td>
-                    <td>{{ item.prixUnitaireLiquide }}</td>
-                    <td>{{ item.quantite }}</td>
-<!--                    <td>{{ item.montantTotal| number }}</td>-->
-                  </tr>
-                  <!-- Ajoutez d'autres lignes si nécessaire -->
+                >
+                  <td>{{ item.emballage.libelle }}</td>
+                  <td>{{ item.liquide.libelle }}</td>
+                  <td>{{ item.prixUnitaireLiquide }}</td>
+                  <td>{{ item.quantite }}</td>
+                  <!--                    <td>{{ item.montantTotal| number }}</td>-->
+                </tr>
+                <!-- Ajoutez d'autres lignes si nécessaire -->
                 </tbody>
               </table>
             </div>
@@ -520,8 +525,8 @@
               <div class="col-md-4">
                 <strong>Client: </strong>
                 <span>{{
-                  updateData?.paiementsVente[0].pointdevente?.nomEtablissement
-                }}</span>
+                    updateData?.paiementsVente[0].pointdevente?.nomEtablissement
+                  }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Dépot: </strong>
@@ -537,21 +542,21 @@
               <div class="col-md-4">
                 <strong>Commercial: </strong>
                 <span
-                  >{{ updateData?.paiementsVente[0]?.commercial?.nom }}
+                >{{ updateData?.paiementsVente[0]?.commercial?.nom }}
                   {{ updateData?.paiementsVente[0]?.commercial?.prenoms }}</span
                 >
               </div>
               <div class="col-md-4">
                 <strong>Rôle : </strong>
                 <span>{{
-                  updateData?.paiementsVente[0]?.commercial?.role
-                }}</span>
+                    updateData?.paiementsVente[0]?.commercial?.role
+                  }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Téléphone : </strong>
                 <span>{{
-                  updateData?.paiementsVente[0]?.commercial?.telephone
-                }}</span>
+                    updateData?.paiementsVente[0]?.commercial?.telephone
+                  }}</span>
               </div>
             </div>
           </fieldset>
@@ -570,11 +575,11 @@
               </div>
               <div class="col-md-4">
                 <strong>Montant à percevoir : </strong>
-                <span>{{ updateData?.montantAPercevoir | number}}</span>
+                <span>{{ updateData?.montantAPercevoir | number }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Montant perçu : </strong>
-                <span>{{ updateData?.montantPercu | number}}</span>
+                <span>{{ updateData?.montantPercu | number }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Montant restant : </strong>
@@ -612,7 +617,7 @@
                 >
                   <td>{{ item.transaction.motif }}</td>
                   <td>{{ item.moyenPaiement.libelle ? item.moyenPaiement.libelle : 'N/A' }}</td>
-                  <td>{{ item.montant | number}}</td>
+                  <td>{{ item.montant | number }}</td>
                   <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
                   <td>
                     <p class="text-success" *ngIf="item?.statut == Status.PAYE">Payé</p>
@@ -639,29 +644,29 @@
             >
               <table class="table">
                 <thead>
-                  <tr style="font-size: small">
-                    <th scope="col">Emballage</th>
-                    <th scope="col">Liquide</th>
-                    <th scope="col">Prix unitaire</th>
-                    <th scope="col">Quantité</th>
-                    <th scope="col">Montant total</th>
-                  </tr>
+                <tr style="font-size: small">
+                  <th scope="col">Emballage</th>
+                  <th scope="col">Liquide</th>
+                  <th scope="col">Prix unitaire</th>
+                  <th scope="col">Quantité</th>
+                  <th scope="col">Montant total</th>
+                </tr>
                 </thead>
                 <tbody>
-                  <tr
-                    style="font-size: small"
-                    *ngFor="
+                <tr
+                  style="font-size: small"
+                  *ngFor="
                       let item of updateData?.paiementsVente[0]?.articles;
                       let i = index
                     "
-                  >
-                    <td>{{ item.emballage.libelle }}</td>
-                    <td>{{ item.liquide.libelle }}</td>
-                    <td>{{ item.prixUnitaire }}</td>
-                    <td>{{ item.quantite }}</td>
-                    <td>{{ item.montantTotal| number }}</td>
-                  </tr>
-                  <!-- Ajoutez d'autres lignes si nécessaire -->
+                >
+                  <td>{{ item.emballage.libelle }}</td>
+                  <td>{{ item.liquide.libelle }}</td>
+                  <td>{{ item.prixUnitaire }}</td>
+                  <td>{{ item.quantite }}</td>
+                  <td>{{ item.montantTotal| number }}</td>
+                </tr>
+                <!-- Ajoutez d'autres lignes si nécessaire -->
                 </tbody>
               </table>
             </div>
@@ -679,10 +684,10 @@
                 <strong>Client: </strong>
                 <span>{{ updateData?.client?.raisonSocial }}</span>
               </div>
-<!--              <div class="col-md-4">-->
-<!--                <strong>Localité: </strong>-->
-<!--                <span>{{ updateData?.client?.localite.nomLocalite }}</span>-->
-<!--              </div>-->
+              <!--              <div class="col-md-4">-->
+              <!--                <strong>Localité: </strong>-->
+              <!--                <span>{{ updateData?.client?.localite.nomLocalite }}</span>-->
+              <!--              </div>-->
               <div class="col-md-4">
                 <strong>Dépot: </strong>
                 <span>{{ updateData?.depot.nomDepot }}</span>
@@ -701,7 +706,7 @@
               <div class="col-md-4">
                 <strong>Transporteur : </strong>
                 <span
-                  >{{ updateData?.transporteur?.nom }}
+                >{{ updateData?.transporteur?.nom }}
                   {{ updateData?.transporteur?.prenoms }}</span
                 >
               </div>
@@ -731,8 +736,8 @@
               <div class="col-md-4">
                 <strong>Disponible : </strong>
                 <span>{{
-                  updateData?.vehicule?.disponible == true ? "OUI" : "NON"
-                }}</span>
+                    updateData?.vehicule?.disponible == true ? "OUI" : "NON"
+                  }}</span>
               </div>
             </div>
           </fieldset>
@@ -759,7 +764,7 @@
               </div>
               <div class="col-md-4">
                 <strong>Montant restant : </strong>
-                <span>{{ updateData?.montantRestant | number}}</span>
+                <span>{{ updateData?.montantRestant | number }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Délai : </strong>
@@ -793,7 +798,7 @@
                 >
                   <td>{{ item.transaction.motif }}</td>
                   <td>{{ item.moyenPaiement.libelle ? item.moyenPaiement.libelle : 'N/A' }}</td>
-                  <td>{{ item.montant | number}}</td>
+                  <td>{{ item.montant | number }}</td>
                   <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
                   <td>
                     <p class="text-success" *ngIf="item?.statut == Status.PAYE">Payé</p>
@@ -820,30 +825,30 @@
             >
               <table class="table">
                 <thead>
-                  <tr style="font-size: small">
-                    <th scope="col">Emballage</th>
-                    <th scope="col">Liquide</th>
-                    <th scope="col">Prix unitaire</th>
-                    <th scope="col">Quantité</th>
-                    <th scope="col">Montant total</th>
-                  </tr>
+                <tr style="font-size: small">
+                  <th scope="col">Emballage</th>
+                  <th scope="col">Liquide</th>
+                  <th scope="col">Prix unitaire</th>
+                  <th scope="col">Quantité</th>
+                  <th scope="col">Montant total</th>
+                </tr>
                 </thead>
                 <tbody>
-                  <tr
-                    style="font-size: small"
-                    *ngFor="
+                <tr
+                  style="font-size: small"
+                  *ngFor="
                       let item of updateData?.paiementsCommandeGratuit[0]
                         ?.articles;
                       let i = index
                     "
-                  >
-                    <td>{{ item.emballage.libelle }}</td>
-                    <td>{{ item.liquide.libelle }}</td>
-                    <td>{{ item.prixUnitaire }}</td>
-                    <td>{{ item.quantite }}</td>
-                    <td>{{ item.montantTotal| number }}</td>
-                  </tr>
-                  <!-- Ajoutez d'autres lignes si nécessaire -->
+                >
+                  <td>{{ item.emballage.libelle }}</td>
+                  <td>{{ item.liquide.libelle }}</td>
+                  <td>{{ item.prixUnitaire }}</td>
+                  <td>{{ item.quantite }}</td>
+                  <td>{{ item.montantTotal| number }}</td>
+                </tr>
+                <!-- Ajoutez d'autres lignes si nécessaire -->
                 </tbody>
               </table>
             </div>
@@ -859,14 +864,14 @@
         >
           Annuler
         </button>
-<!--        <button-->
-<!--          *ngIf="updateData?.statut !== 'Validé'"-->
-<!--          type="submit"-->
-<!--          class="btn btn-primary px-2"-->
-<!--          (click)="ValidatePaiement(updateData.id)"-->
-<!--        >-->
-<!--          Valider-->
-<!--        </button>-->
+        <!--        <button-->
+        <!--          *ngIf="updateData?.statut !== 'Validé'"-->
+        <!--          type="submit"-->
+        <!--          class="btn btn-primary px-2"-->
+        <!--          (click)="ValidatePaiement(updateData.id)"-->
+        <!--        >-->
+        <!--          Valider-->
+        <!--        </button>-->
       </div>
     </div>
   </div>

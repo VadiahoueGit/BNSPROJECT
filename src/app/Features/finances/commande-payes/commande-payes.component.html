@@ -87,6 +87,8 @@
                         ? dataList?.returnStock?.commandeClient?.NumCommande
                         : dataList?.returnStock?.commandeGratuite
                           ? dataList?.returnStock?.commandeGratuite?.NumCommande
+                          : dataList?.paiementsCommandeFournisseur?.length
+                            ? dataList.paiementsCommandeFournisseur[0]?.NumCommande
                           : "NA"
             }}
           </span>

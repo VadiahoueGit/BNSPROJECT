@@ -110,12 +110,12 @@
               </td>
               <td>
               <span class="ml-1 vertical-align-middle fw-bold" style="font-size: 11px">
-  {{
-                  dataList.nomEtablissement
-                    ? dataList.nomEtablissement
+   {{
+                  dataList.client?.nomEtablissement
+                    ? dataList.client?.nomEtablissement
                     : dataList.client?.nom
-                      ? dataList.client?.nom + ' ' + dataList.client.prenoms
-                      : dataList.raisonSocial
+                      ? dataList.client?.nom + ' ' + dataList.client?.prenoms
+                      : dataList.client?.raisonSocial
                 }}
 </span>
 
@@ -133,7 +133,7 @@
 
               <td>
           <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-            {{ dataList.datePaiement | date }}
+           {{ dataList.datePaiement | date: 'dd/MM/yyyy à HH:mm' }}
           </span>
               </td>
               <td>
