@@ -413,7 +413,12 @@ export class VentechinepageComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-
+  get filteredArticles() {
+    return this.updateData.articles?.filter((a:any) => a.prixUnitaire > 0);
+  }
+  get filteredArticlesFree() {
+    return this.updateData.articlesGratuit?.filter((a:any) => a.prixUnitaire > 0);
+  }
   OnDelete(id: number) {
   }
 

@@ -73,11 +73,14 @@ export class RetourPleinComponent {
     this._spinner.show();
     this.activiteService.GetRetourPleinList().then((res: any) => {
       this.dataList = res.data;
+      
       console.log('ALL:::>', this.dataList);
       this._spinner.hide();
     });
   }
-
+  get filteredArticles() {
+    return this.updateData.articles?.filter((a:any) => a.prixUnitaire > 0);
+  }
   ValidateReturn(id:any){
     ALERT_QUESTION(
       'warning',

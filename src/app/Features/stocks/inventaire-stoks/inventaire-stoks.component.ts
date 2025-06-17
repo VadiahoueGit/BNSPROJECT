@@ -114,7 +114,9 @@ export class InventaireStoksComponent {
     this.isArticleModalOpen = false;
     console.log(this.isModalOpen);
   }
-
+  get filteredArticles() {
+    return this.updateData.articles?.filter((a:any) => a.prixUnitaire > 0);
+  }
   onSubmitSelection() {
     this.isArticleModalOpen = false;
   }
