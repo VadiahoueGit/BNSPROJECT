@@ -120,7 +120,7 @@
                   <tbody>
                   <tr *ngFor="let retour of updateData.retours; let i = index">
                     <td>{{ retour.clientALivrer.raisonSocial || retour.clientALivrer.nomEtablissement }}</td>
-                    <td class="text-center" *ngFor="let article of allArticles">
+                    <td class="text-center" *ngFor="let article of filteredArticles">
                       {{ getQuantity(retour, article.libelle) }}
                     </td>
                   </tr>

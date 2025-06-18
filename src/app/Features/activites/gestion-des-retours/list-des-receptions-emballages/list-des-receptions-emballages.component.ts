@@ -91,6 +91,9 @@ export class ListDesReceptionsEmballagesComponent {
     this.isModalOpen = true;
   }
 
+  get filteredArticles() {
+    return this.allArticles?.filter((a:any) => a.prixUnitaire > 0);
+  }
   calculate(commande: any): void {
     console.log('Commande:', commande);
 
