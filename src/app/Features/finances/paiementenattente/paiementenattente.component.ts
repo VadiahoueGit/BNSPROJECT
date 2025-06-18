@@ -119,6 +119,17 @@ export class PaiementenattenteComponent {
     });
   }
 
+  isDateEchue(date: string | Date | null): boolean {
+    if (!date) return false;
+
+    const today = new Date();
+    const targetDate = new Date(date);
+
+    // On ignore l'heure : comparer uniquement les jours
+    return targetDate < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  }
+
+
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;

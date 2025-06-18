@@ -163,13 +163,6 @@
                 <input type="text" class="form-control" id="contactGerant" formControlName="contactGerant"
                        placeholder="Entrez le contact du gérant">
               </div>
-               <div class="mb-3">
-                  <label for="zoneLivraisonId" class="form-label">Zone de Livraison <span
-                          class="text-danger">*</span></label>
-                  <ng-select class="form-control" [items]="zoneLivraison" bindLabel="nomZone"
-                      bindValue="id" formControlName="zoneLivraisonId" [searchable]="true">
-                  </ng-select>
-              </div>
               <div class="mb-3">
                 <label for="groupeClientId" class="form-label">Groupe client <span class="text-danger">*</span></label>
                 <ng-select class="form-control" [items]="grpClient" bindLabel="nomGroupe" bindValue="id"

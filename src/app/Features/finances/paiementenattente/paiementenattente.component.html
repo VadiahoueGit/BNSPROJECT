@@ -69,6 +69,7 @@
         <th style="color: var(--secondary-color)">Date d'écheance</th>
         <th style="color: var(--secondary-color)">Date création</th>
         <th style="color: var(--secondary-color)">Statut</th>
+<!--        <th style="color: var(&#45;&#45;secondary-color)">Actions</th>-->
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList>
@@ -95,35 +96,44 @@
           </span>
         </td>
         <td>
-          {{
-            dataList?.paiementsCommandeClient?.length
-              ? (dataList?.transporteur?.nom || "N/A") +
-              " " +
-              (dataList?.transporteur?.prenoms || "N/A")
-              : dataList?.paiementsCommandeGratuit?.length
+          <span class="ml-1 vertical-align-middle">
+            {{
+              dataList?.paiementsCommandeClient?.length
                 ? (dataList?.transporteur?.nom || "N/A") +
                 " " +
                 (dataList?.transporteur?.prenoms || "N/A")
-                : dataList?.paiementsVente?.length
-                  ? (dataList?.paiementsVente[0]?.commercial?.nom || "N/A") +
+                : dataList?.paiementsCommandeGratuit?.length
+                  ? (dataList?.transporteur?.nom || "N/A") +
                   " " +
-                  (dataList?.paiementsVente[0]?.commercial?.prenoms || "N/A")
-                  : dataList?.returnStock?.venteChine
-                    ? dataList?.returnStock?.venteChine?.commercial?.nom +
-                    dataList?.returnStock?.venteChine?.commercial?.prenoms : "N/A"
-          }}
+                  (dataList?.transporteur?.prenoms || "N/A")
+                  : dataList?.paiementsVente?.length
+                    ? (dataList?.paiementsVente[0]?.commercial?.nom || "N/A") +
+                    " " +
+                    (dataList?.paiementsVente[0]?.commercial?.prenoms || "N/A")
+                    : dataList?.returnStock?.venteChine
+                      ? dataList?.returnStock?.venteChine?.commercial?.nom +
+                      dataList?.returnStock?.venteChine?.commercial?.prenoms : "N/A"
+            }}
+          </span>
+
         </td>
         <td>
-          {{ dataList?.motif }}
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList?.motif }}
+          </span>
         </td>
         <td>
-          {{ dataList?.client?.numeroSAP?.numeroSAP }}
+          <span class="ml-1 vertical-align-middle">
+             {{ dataList?.client?.numeroSAP?.numeroSAP }}
+          </span>
         </td>
         <td>
-          {{
-            dataList?.client?.raisonSocial || dataList?.client?.nomEtablissement ||
-            dataList?.paiementsVente[0]?.pointdevente.nomEtablissement || "N/A"
-          }}
+          <span class="ml-1 vertical-align-middle">
+             {{
+              dataList?.client?.raisonSocial || dataList?.client?.nomEtablissement ||
+              dataList?.paiementsVente[0]?.pointdevente.nomEtablissement || "N/A"
+            }}
+          </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
@@ -131,13 +141,19 @@
           </span>
         </td>
         <td>
-          {{ dataList?.montantPercu | number }}
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList?.montantPercu | number }}
+          </span>
         </td>
         <td>
-          {{ dataList?.credit?.delaiReglement || 0 }}
+          <span class="ml-1 vertical-align-middle">
+             {{ dataList?.credit?.delaiReglement || 0 }}
+          </span>
         </td>
-        <td>
-          {{ dataList?.dateEchanceCalculer | date :"dd/MM/yyyy" }}
+        <td [ngClass]="{'text-bg-danger': isDateEchue(dataList?.dateEchanceCalculer)}">
+          <span class="ml-1 vertical-align-middle">
+             {{ dataList?.dateEchanceCalculer | date: 'dd/MM/yyyy' }}
+          </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
@@ -151,8 +167,13 @@
         </td>
         <td>
       <tr class="d-flex justify-content-center gap-3">
-        <!-- <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
-                class="fas fa-trash-alt text-danger"></i></td> -->
+<!--      <td>-->
+<!--        <i-->
+<!--          (click)="OnEdit(dataList)"-->
+<!--          style="cursor: pointer"-->
+<!--          class="fas fa-eye text-secondary"-->
+<!--        ></i>-->
+<!--      </td>-->
       </tr>
       </td>
       </tr>

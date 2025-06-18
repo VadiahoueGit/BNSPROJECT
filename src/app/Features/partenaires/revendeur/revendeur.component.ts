@@ -330,6 +330,7 @@ export class RevendeurComponent {
   }
   onDepotChange(event: any): void {
     const depotId = event?.id;
+    this.revendeurForm.controls['zoneDeLivraisonId'].setValue(event.zone.id);
     console.log(event, 'depotId');
     if (depotId) {
       this.getDepotDetails(depotId);

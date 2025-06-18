@@ -99,6 +99,7 @@ export class ClientosrComponent {
 
   onDepotChange(event: any): void {
     const depotId = event?.id;
+    this.clientosrForm.controls['zoneLivraisonId'].setValue(event.zone.id);
     console.log(event, 'depotId');
     if (depotId) {
       this.getDepotDetails(depotId);
