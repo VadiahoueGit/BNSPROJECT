@@ -713,14 +713,14 @@ export class ActiviteService {
     });
   }
 
-  GetRetourPleinList() {
+  GetRetourPleinList(data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/retours-pleins`,{headers}
+          `${this.apiUrl}/v1/retours-pleins?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {

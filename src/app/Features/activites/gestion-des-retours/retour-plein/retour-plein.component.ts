@@ -35,7 +35,7 @@ export class RetourPleinComponent {
   ) {}
 
   ngOnInit() {
-    this.GetRetourPleinList();
+    this.GetRetourPleinList(1);
   }
 
   onFilterGlobal(event: Event) {
@@ -68,12 +68,16 @@ export class RetourPleinComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  GetRetourPleinList() {
-
+  GetRetourPleinList(page:any) {
+    let data = {
+      paginate: true,
+      page: page,
+      limit: 8,
+    };
     this._spinner.show();
-    this.activiteService.GetRetourPleinList().then((res: any) => {
+    this.activiteService.GetRetourPleinList(data).then((res: any) => {
       this.dataList = res.data;
-      
+
       console.log('ALL:::>', this.dataList);
       this._spinner.hide();
     });
@@ -91,7 +95,7 @@ export class RetourPleinComponent {
         this._spinner.show();
         this.activiteService.ValidateRetourPlein(id).then((res: any) => {
           this.dataList = res.data;
-          this.GetRetourPleinList()
+          this.GetRetourPleinList(1)
           this.OnCloseModal();
           console.log('validation:::>', this.dataList);
           this._spinner.hide();
@@ -108,6 +112,7 @@ export class RetourPleinComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
+    this.GetRetourPleinList(this.currentPage)
   }
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
@@ -117,7 +122,7 @@ export class RetourPleinComponent {
           this.articleService.DeletedArticle(Id).then((res: any) => {
             console.log('DATA:::>', res);
             this.toastr.success(res.message);
-            this.GetRetourPleinList();
+            this.GetRetourPleinList(1);
             this._spinner.hide();
           });
         } else {
