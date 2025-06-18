@@ -107,20 +107,24 @@
                         <thead class="table-light">
                           <tr>
                             <th>Code</th>
-                            <th>Ecart</th>
                             <th>Libellé</th>
                             <th>Prix unitaire</th>
-                            <th>Statut</th>
                             <th>Total attendu</th>
                             <th>Total reçu</th>
+                            <th>Ecart</th>
+                            <th>Date</th>
+                            <th>Statut</th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr *ngFor="let ecart of listeEcarts; let i = index">
                             <td>{{ ecart.codeEmballage }}</td>
-                            <td>{{ ecart.ecart }}</td>
                             <td>{{ ecart.libelleEmballage }}</td>
                             <td>{{ ecart.prixUnitaire | number }}</td>
+                            <td>{{ ecart.totalAttendu | number }}</td>
+                            <td>{{ ecart.totalRecu | number }}</td>
+                            <td>{{ ecart.ecart }}</td>
+                            <td>{{ ecart.dateCreation | date: 'dd/MM/yyyy à HH:mm' }}</td>
                             <td>
                               <span class="badge" [ngClass]="{
   'bg-success': ecart.status == 'Payé',
@@ -129,8 +133,6 @@
                                 {{ ecart.status }}
                               </span>
                             </td>
-                            <td>{{ ecart.totalAttendu | number }}</td>
-                            <td>{{ ecart.totalRecu | number }}</td>
                           </tr>
                           <tr *ngIf="!listeEcarts || listeEcarts.length === 0">
                             <td colspan="8" class="text-center">Aucun écart disponible</td>
