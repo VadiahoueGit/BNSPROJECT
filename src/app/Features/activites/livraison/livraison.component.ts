@@ -560,6 +560,7 @@ export class LivraisonComponent {
       if (res.statusCode == 201) {
         this.toastr.success(res.message);
         this.isModalOpen = false;
+        this.GetListCommande(1)
         this.GetRegroupementList();
       } else {
         this.toastr.error(res.message);

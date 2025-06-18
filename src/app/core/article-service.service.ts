@@ -1330,7 +1330,7 @@ export class ArticleServiceService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/commandes-gratuites?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&numeroCommande=${data.numeroCommande}&date=${data.date}&etablissement=${data.etablissement}`,
+          `${this.apiUrl}/v1/commandes-gratuites?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&numeroCommande=${data.numeroCommande}&date=${data.date}&etablissement=${data.etablissement}&statut=${data.statut || ''}`,
           { headers }
         )
         .subscribe(
