@@ -92,7 +92,7 @@ export class ListDesReceptionsEmballagesComponent {
   }
 
   get filteredArticles() {
-    return this.allArticles?.filter((a:any) => a.prixUnitaire > 0);
+    return this.updateData?.retours?.articles?.filter((a:any) => a.prixUnitaire > 0);
   }
   calculate(commande: any): void {
     console.log('Commande:', commande);
@@ -192,7 +192,7 @@ export class ListDesReceptionsEmballagesComponent {
     console.log(item);
     this.regroupementTable = [];
     const idretour = item.id;
-    let allArticles = item.retours.flatMap((retour: any) => retour.articles);
+    let allArticles = item.retours.flatMap((retour: any) => retour.articles.filter((article: any) => article.prixUnitaire > 0));
     console.log('allArticles', allArticles);
     let regroup = this.regrouperArticles(allArticles)
     this.calculate(regroup);
@@ -354,7 +354,11 @@ export class ListDesReceptionsEmballagesComponent {
   extractAllArticles(data: any) {
     const articleMap = new Map<string, any>();
 
+
     data.forEach((retour: any) => {
+      if (retour.articles && Array.isArray(retour.articles)) {
+        retour.articles = retour.articles.filter((article: any) => article.prixUnitaire !== 0);
+      }
       retour.articles.forEach((article: any) => {
         const libelle = article.produit.libelle;
         const existing = articleMap.get(libelle);
