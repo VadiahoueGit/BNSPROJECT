@@ -403,18 +403,6 @@
                 <label for="familleProduit" class="form-label"
                 >Famille de produit (Produit favoris)</label
                 >
-                <!-- <select
-                  class="form-select"
-                  id="familleProduit"
-                  formControlName="familleProduitId"
-                >
-                  <option
-                    *ngFor="let produit of ListGroupesArticles"
-                    [value]="produit.id"
-                  >
-                    {{ produit.libelle }}
-                  </option>
-                </select> -->
                 <ng-select
                   class="form-control"
                   [items]="ListGroupesArticles"
@@ -424,6 +412,23 @@
                   [searchable]="true"
                 >
                 </ng-select>
+              </div>
+            </div>
+            <div class="row"  *ngIf="operation == 'edit'">
+              <div class="col-md-6 mt-3">
+                <label for="compteContribuable" class="form-label"
+                >Type de prix</label
+                >
+                <ng-select
+                  class="form-control"
+                  [items]="typePrixList"
+                  bindLabel="libelle"
+                  bindValue="id"
+                  formControlName="typePrixId"
+                  [searchable]="true"
+                >
+                </ng-select>
+
               </div>
             </div>
           </fieldset>
