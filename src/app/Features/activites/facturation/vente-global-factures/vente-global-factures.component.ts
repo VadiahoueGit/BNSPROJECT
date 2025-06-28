@@ -179,6 +179,8 @@ export class VenteGlobalFacturesComponent {
     this.totalGlobal = 0;
     this.totalQte = 0;
     this.isEditMode = true;
+    const item = data.vente ? data.vente?.articles : data.livraison?.articles
+    this.calculerTotaux(item)
     // console.log(data);
     // this.updateData = data;
     this.articleId = data.id;
@@ -512,6 +514,22 @@ export class VenteGlobalFacturesComponent {
       console.error('Erreur lors de la récupération des données:', error);
     }
   }
+
+  calculerTotaux(articles:any) {
+if (articles && articles.length > 0) {
+  this.totalQte = 0;
+  this.totalLiquide = 0;
+  this.totalGlobal = 0;
+
+  for (let item of articles) {
+    this.totalQte += item.quantite || 0;
+    this.totalLiquide += Number(item.prixUnitaire) || 0;
+    this.totalGlobal += Number(item.montantTotal) || 0;
+  }
+}
+
+  }
+
   async GetPrixByArticle(item: any): Promise<any> {
     let data = {
       id: item.id,

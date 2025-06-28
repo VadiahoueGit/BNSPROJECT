@@ -18,6 +18,7 @@ export class ArticleComponent {
   dataList!: any[];
   ArticleForm!: FormGroup;
   docUrl: any
+  listEmballage: any[];
   loading: boolean = true;
   isModalOpen = false;
   isModalDetailOpen = false;
@@ -56,9 +57,8 @@ export class ArticleComponent {
       Conditionnement: [null, Validators.required],
       categorieId: [0, Validators.required],
       groupeId: [0, Validators.required],
-      plastiquenuId: [0, Validators.required],
-      bouteillevideId: [0, Validators.required],
       liquideId: [0, Validators.required],
+      emballageId: [0, Validators.required],
     });
     this.articleService.ListPlastiquesNu.subscribe((res: any) => {
       this.dataListPlastiqueNu = res;
@@ -70,7 +70,7 @@ export class ArticleComponent {
       this.dataListFormats = res;
       console.log('dataListFormats:::>', this.dataListFormats);
     });
-
+    this.GetEmballageList(1)
     this.articleService.GetConditionnementList().then((res: any) => {
       this.dataListConditionnements = res;
       console.log(
@@ -93,26 +93,43 @@ export class ArticleComponent {
   onFileSelected(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
-      this.ArticleForm.patchValue({ photo: file });
+      this.ArticleForm.patchValue({photo: file});
       this.ArticleForm.get('photo')?.updateValueAndValidity();
     }
   }
 
-  GetLiquideList()
-  {
+  GetEmballageList(page: number) {
+    let data = {
+      paginate: false,
+      page: page,
+      limit: 8,
+    };
+    this._spinner.show();
+    this.articleService.GetEmballageList(data).then((res: any) => {
+      console.log('DATATYPEPRIX:::>', res);
+      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      console.log('totalPages:::>', this.totalPages);
+
+      this.listEmballage = res.data;
+      this._spinner.hide();
+    });
+  }
+
+  GetLiquideList() {
     let data = {
       paginate: false,
       page: 1,
       limit: 8,
     };
     this._spinner.show();
-    this.articleService.GetArticleList(data).then((res: any) => {
+    this.articleService.GetLiquideList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.totalPages = res.total;
-      this.dataListLiquides = res;
+      this.dataListLiquides = res.data;
       this._spinner.hide();
     });
   }
+
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -127,6 +144,7 @@ export class ArticleComponent {
     this.isModalOpen = false;
     console.log(this.isModalOpen);
   }
+
   OnCloseDetailModal() {
     this.isModalDetailOpen = false;
   }
@@ -137,12 +155,14 @@ export class ArticleComponent {
     this.operation = 'create';
     console.log(this.isModalOpen);
   }
+
   OnView(data: any) {
     this.updateData = data
     this.loadArticleDetails();
     this.isModalDetailOpen = true;
     console.log(this.isModalOpen);
   }
+
   OnEdit(data: any) {
     this.isEditMode = true;
     console.log(data);
@@ -235,9 +255,8 @@ export class ArticleComponent {
       Conditionnement: this.updateData.Conditionnement,
       categorieId: this.updateData.categorieproduit.id,
       groupeId: this.updateData.groupearticle.id,
-      plastiquenuId: this.updateData.plastiquenu.id,
-      bouteillevideId: this.updateData.bouteillevide.id,
-      liquideId: this.updateData.liquide.id
+      liquideId: this.updateData.liquide?.id,
+      emballageId: this.updateData.emballage?.id,
     });
   }
 

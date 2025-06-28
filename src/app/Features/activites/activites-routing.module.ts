@@ -9,6 +9,7 @@ import { GestionDesRetoursComponent } from './gestion-des-retours/gestion-des-re
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { LivraisonComponent } from './livraison/livraison.component';
 import { FacturationComponent } from './facturation/facturation.component';
+import {ProformatComponent} from "./proformat/proformat.component";
 
 const routes: Routes = [
     { path: '', component:ActivitesComponent },
@@ -19,6 +20,7 @@ const routes: Routes = [
     { path: 'commandes-gratuites', component: CommandeGratuiteComponent },
     { path: 'gestion-retour', component: GestionDesRetoursComponent },
     { path: 'facturation', component: FacturationComponent },
+  { path: 'proformat', component: ProformatComponent },
 
 ];
 

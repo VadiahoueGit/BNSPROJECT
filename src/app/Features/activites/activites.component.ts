@@ -12,7 +12,7 @@ export class ActivitesComponent implements OnInit{
     {
       image: 'assets/icon/proforma.png',
       title: 'Proforma',
-      // url: 'feature/activites/articles',
+      url: 'feature/activites/proformat',
     },
     {
       image: 'assets/icon/facture.png',

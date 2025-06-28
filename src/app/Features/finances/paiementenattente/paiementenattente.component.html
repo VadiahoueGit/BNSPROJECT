@@ -66,6 +66,7 @@
         <th style="color: var(--secondary-color)">Montant à verser</th>
         <th style="color: var(--secondary-color)">Montant versé</th>
         <th style="color: var(--secondary-color)">Délai</th>
+        <th style="color: var(--secondary-color)">Retard</th>
         <th style="color: var(--secondary-color)">Date d'écheance</th>
         <th style="color: var(--secondary-color)">Date création</th>
         <th style="color: var(--secondary-color)">Statut</th>
@@ -148,6 +149,11 @@
         <td>
           <span class="ml-1 vertical-align-middle">
              {{ dataList?.credit?.delaiReglement || 0 }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+             {{ getRetardEnJours(dataList?.dateEchanceCalculer, dataList?.credit?.delaiReglement) }}
           </span>
         </td>
         <td [ngClass]="{'text-bg-danger': isDateEchue(dataList?.dateEchanceCalculer)}">

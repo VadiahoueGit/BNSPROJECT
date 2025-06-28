@@ -21,8 +21,6 @@
         <th style="color: var(--secondary-color)">Date facture</th>
         <!-- <th style="color: var(--secondary-color)">Facture</th> -->
         <th style="color: var(--secondary-color)">Montant total</th>
-        <!-- <th style="color: var(--secondary-color)">statut</th> -->
-        <th style="color: var(--secondary-color)">Est validé?</th>
         <th style="color: var(--secondary-color)">Actions</th>
       </tr>
     </ng-template>
@@ -41,16 +39,6 @@
         <td>
           <span class="ml-1 vertical-align-middle">
             {{ dataList.montantTotal | number}}
-          </span>
-        </td>
-        <!-- <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.livraison.statut }}
-          </span>
-        </td> -->
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.estValidee ? "Oui" : "Non" }}
           </span>
         </td>
         <td>
@@ -136,7 +124,7 @@
               </div>
               <div class="col-md-4">
                 <strong>Montant: </strong>
-                <span>{{ updateData?.vente?.montantTotal| number }}</span>
+                <span>{{ updateData?.montantTotal| number }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Point de vente: </strong>
@@ -162,8 +150,7 @@
                     <tr style="font-size: small">
                       <th scope="col">Produits</th>
                       <th scope="col">Qte liquide</th>
-                      <th scope="col">Prix liquide</th>
-                      <th scope="col">Prix emballage</th>
+                      <th scope="col">Prix unitaire</th>
                       <th scope="col">Prix total</th>
                     </tr>
                   </thead>
@@ -174,17 +161,15 @@
                     >
                       <td>{{ item.liquide.libelle }}</td>
                       <td>{{ item.quantite | number}}</td>
-  
-                      <td>{{  item.prixUnitaireLiquide| number}}</td>
-                      <td>{{ item.prixUnitaireEmballage| number}}</td>
-                      <td>{{ item.prixTotal| number}}</td>
-  
+
+                      <td>{{  item.prixUnitaire| number}}</td>
+                      <td>{{ item.montantTotal| number}}</td>
+
                     </tr>
                     <tr class="table-dark" *ngIf="updateData?.vente.articles.length > 0">
                       <th scope="col" colspan="1">Total :</th>
                       <td>{{ totalQte | number}}</td>
                       <td>{{ totalLiquide | number}}</td>
-                      <td>{{ totalEmballage| number }}</td>
                       <td>{{ totalGlobal | number}}</td>
                     </tr>
                     <!-- Ajoutez d'autres lignes si nécessaire -->
@@ -220,7 +205,7 @@
                   {{ updateData?.livraison?.dateLivraisonFin| date }}</span
                 >
               </div>
-             
+
               <div class="col-md-6">
                 <strong>Statut: </strong>
                 <span
@@ -248,8 +233,7 @@
                     <tr style="font-size: small">
                       <th scope="col">Produits</th>
                       <th scope="col">Qte liquide</th>
-                      <th scope="col">Prix liquide</th>
-                      <th scope="col">Prix emballage</th>
+                      <th scope="col">Prix unitaire</th>
                       <th scope="col">Prix total</th>
                     </tr>
                   </thead>
@@ -260,17 +244,14 @@
                     >
                       <td>{{ item.liquide.libelle }}</td>
                       <td>{{ item.quantite }}</td>
-  
-                      <td>{{  item.prixUnitaireLiquide| number}}</td>
-                      <td>{{ item.prixUnitaireEmballage| number}}</td>
-                      <td>{{ item.prixTotal| number}}</td>
-  
+                      <td>{{  item.prixUnitaire| number}}</td>
+                      <td>{{ item.montantTotal| number}}</td>
+
                     </tr>
                     <tr class="table-dark" *ngIf="updateData?.livraison.articles.length > 0">
                       <th scope="col" colspan="1">Total :</th>
                       <td>{{ totalQte | number}}</td>
                       <td>{{ totalLiquide | number}}</td>
-                      <td>{{ totalEmballage| number }}</td>
                       <td>{{ totalGlobal| number }}</td>
                     </tr>
                     <!-- Ajoutez d'autres lignes si nécessaire -->
@@ -278,7 +259,7 @@
                 </table>
               </div>
             </div>
-         
+
           </fieldset>
         </div>
       </div>

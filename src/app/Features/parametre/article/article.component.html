@@ -14,8 +14,7 @@
         <th style="color: var(--secondary-color);">Categorie</th>
         <th style="color: var(--secondary-color);">Groupe article</th>
         <th style="color: var(--secondary-color);">Conditionnement</th>
-        <th style="color: var(--secondary-color);">Plastique nu</th>
-        <th style="color: var(--secondary-color);">Bouteille vide</th>
+        <th style="color: var(--secondary-color);">Emballage</th>
         <th style="color: var(--secondary-color);">Liquide</th>
         <th style="color: var(--secondary-color);">Actions</th>
       </tr>
@@ -51,12 +50,7 @@
         </td>
         <td>
                     <span class="ml-1 vertical-align-middle">
-                        {{ dataList.plastiquenu.libelle }}
-                    </span>
-        </td>
-        <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.bouteillevide.libelle }}
+                        {{ dataList.emballage?.libelle }}
                     </span>
         </td>
         <td>
@@ -135,11 +129,15 @@
 
               <div class="mb-3">
                 <label for="liquideId" class="form-label">Liquide <span class="text-danger">*</span></label>
-                <select class="form-control form-select form-select-sm" formControlName="liquideId"
-                        aria-label=".form-select-sm example">
-                  <option value="" disabled selected>Choisir le liquide</option>
-                  <option [value]="item.id" *ngFor="let item of dataListLiquides">{{ item.libelle }}</option>
-                </select>
+                <ng-select
+                  class="form-control"
+                  [items]="dataListLiquides"
+                  bindLabel="libelle"
+                  bindValue="id"
+                  formControlName="liquideId"
+                  [searchable]="true"
+                >
+                </ng-select>
               </div>
             </div>
 
@@ -170,25 +168,19 @@
               </div>
 
               <div class="mb-3">
-                <label for="plastiquenuId" class="form-label">Plastique nu <span class="text-danger">*</span></label>
-                <select class="form-control form-select form-select-sm" formControlName="plastiquenuId"
-                        aria-label=".form-select-sm example">
-                  <option value="" disabled selected>Choisir le plastique nu</option>
-                  <option [value]="item.id" *ngFor="let item of dataListPlastiqueNu">{{ item.libelle }}</option>
-                </select>
+                  <label for="numeroCompte" class="form-label"
+                  >Emballage<span class="text-danger">*</span></label
+                  >
+                  <ng-select
+                    class="form-control"
+                    [items]="listEmballage"
+                    bindLabel="libelle"
+                    bindValue="id"
+                    formControlName="emballageId"
+                    [searchable]="true"
+                  >
+                  </ng-select>
               </div>
-
-              <div class="mb-3">
-                <label for="bouteillevideId" class="form-label">Bouteille vide <span
-                  class="text-danger">*</span></label>
-                <select class="form-control form-select form-select-sm" formControlName="bouteillevideId"
-                        aria-label=".form-select-sm example">
-                  <option value="" disabled selected>Choisir la bouteille</option>
-                  <option [value]="item.id" *ngFor="let item of dataListBouteilleVide">{{ item.libelle }}</option>
-                </select>
-              </div>
-
-
             </div>
           </div>
         </form>

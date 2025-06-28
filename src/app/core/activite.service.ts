@@ -402,7 +402,7 @@ export class ActiviteService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/ventes_global/factures?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+          `${this.apiUrl}/v1/facture/factures?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -423,7 +423,7 @@ export class ActiviteService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/ventes_global/factures/${id}`,{headers}
+          `${this.apiUrl}/v1/facture/factures/${id}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -443,7 +443,42 @@ export class ActiviteService {
         Authorization: `Bearer ${this.token}`
       });
 
-      this._http.get(`${this.apiUrl}/v1/ventes_global/factures/${id}/telecharger`, {
+      this._http.get(`${this.apiUrl}/v1/facture/factures/${id}/telecharger`, {
+        headers,
+        responseType: 'blob'
+      }).subscribe(response => {
+        try {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = window.URL.createObjectURL(blob);
+
+          // Ouvrir le PDF dans une nouvelle fenêtre
+          const newTab = window.open(url);
+          if (!newTab) {
+            throw new Error('Le popup a été bloqué par le navigateur.');
+          }
+
+          // Nettoyer l’URL après un certain temps pour éviter les fuites mémoire
+          setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+
+          resolve();
+        } catch (err) {
+          console.error('Erreur lors de l’ouverture du PDF :', err);
+          reject(err);
+        }
+      }, error => {
+        console.error('Erreur lors du téléchargement du PDF :', error);
+        reject(error);
+      });
+    });
+  }
+
+  DownloadGlobalProformaById(id: any): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+
+      this._http.get(`${this.apiUrl}/v1/facture/factures-proforma/${id}/telecharger`, {
         headers,
         responseType: 'blob'
       }).subscribe(response => {

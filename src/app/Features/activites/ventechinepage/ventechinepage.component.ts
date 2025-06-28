@@ -27,6 +27,7 @@ export class VentechinepageComponent {
   currentPage: number;
   rowsPerPage: any;
   searchTerm: string = '';
+  searchTermFree: string = '';
   filteredArticleList: any[] = [];
   filteredArticleListFree: any = [];
   selectedArticles: any[] = [];
@@ -275,19 +276,19 @@ export class VentechinepageComponent {
   }
 
   filterArticlesFree(): void {
-    console.log(this.searchTerm);
-    if (this.searchTerm) {
+    console.log(this.searchTermFree);
+    if (this.searchTermFree) {
       this.filteredArticleListFree = this.dataListLiquidesFree.filter(
         (article: any) => {
           console.log('dataListLiquidesFree', article);
 
           const libelle = article?.libelle || ''; // Utiliser une valeur par défaut si libelle est undefined
-          const code = article?.code || ''; // Utiliser une valeur par défaut si code est undefined
+          const code = article?.reference || ''; // Utiliser une valeur par défaut si code est undefined
 
           // Vérification sécurisée avant d'utiliser toLowerCase()
           return (
-            libelle.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-            code.toLowerCase().includes(this.searchTerm.toLowerCase())
+            libelle.toLowerCase().includes(this.searchTermFree.toLowerCase()) ||
+            code.toLowerCase().includes(this.searchTermFree.toLowerCase())
           );
         }
       );
@@ -298,13 +299,12 @@ export class VentechinepageComponent {
   filterArticles(): void {
     console.log(this.searchTerm);
     if (this.searchTerm) {
-
       this.filteredArticleList = this.dataListLiquides.filter(
         (article: any) => {
           console.log('dataListLiquides', article);
 
           const libelle = article?.libelle || ''; // Utiliser une valeur par défaut si libelle est undefined
-          const code = article?.code || ''; // Utiliser une valeur par défaut si code est undefined
+          const code = article?.reference || ''; // Utiliser une valeur par défaut si code est undefined
 
           // Vérification sécurisée avant d'utiliser toLowerCase()
           return (
@@ -321,12 +321,14 @@ export class VentechinepageComponent {
   }
 
   OnCloseChoiceModal() {
+    this.searchTerm = ''
     this.deselectAllItems();
     this.isChoiceModalOpen = false;
     console.log(this.isModalOpen);
   }
 
   OnCloseChoiceFreeModal() {
+    this.searchTermFree = ''
     this.deselectAllItemsFree();
     this.isChoiceModalFreeOpen = false;
   }
@@ -363,7 +365,8 @@ export class VentechinepageComponent {
         this.GetStockDisponibleByDepot(item);
       });
 
-
+      this.dataListLiquides = [...this.filteredArticleList];
+      this.dataListLiquidesFree = [...this.filteredArticleListFree];
       // this.filteredArticleList = this.dataListLiquides;
       // this.filteredArticleListFree = this.dataListLiquidesFree;
       this._spinner.hide();

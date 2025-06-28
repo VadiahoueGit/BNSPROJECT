@@ -6,38 +6,26 @@
   max-width: 90%; /* S'assurer qu'elle ne dépasse pas trop l'écran */
   padding: 1rem;
 }
-
-.form-control-custom {
-  width: 100px !important;
-}
-
-strong, span {
+strong,span{
   font-size: 13px;
 }
-
-.modal-content {
-  background-color: white;
-
+.modal-content{
+  background-color:white ;
 }
-
 .profile-pic {
   width: 30px;
   height: 30px;
   object-fit: cover;
 }
-
-.img-thumbnail {
-  border: none;
+.img-thumbnail{
+  border:none;
 }
-
 .form-control {
   margin-bottom: -0.5rem; /* Espacer les champs */
 }
-
-.form-control-custom {
+.form-control-custom{
   width: 50px;
 }
-
 .custom-modal {
   position: fixed;
   top: 0;
@@ -52,6 +40,7 @@ strong, span {
 }
 
 
+
 .modal-header, .modal-body, .modal-footer {
   padding: 1rem;
 }
@@ -61,7 +50,6 @@ strong, span {
   border: none;
   font-size: 1.5rem;
 }
-
 .p-fluid .p-inputtext {
   width: 8em !important;
   height: 2.5rem;
@@ -75,7 +63,6 @@ strong, span {
 .p-column-filter {
   padding-right: 0; /* Supprime l'espace réservé à l'icône */
 }
-
 .label-fixed-width {
   min-width: 10px;
 }

@@ -98,7 +98,7 @@ formData = {
   OnEdit(data: any) {
     console.log(data);
     this.updateData = data;
-    this.listeEcarts = data.ecarts.filter((item: any) => item.ecart > 0 && item.prixUnitaire > 0); 
+    this.listeEcarts = data.ecarts.filter((item: any) => item.ecart > 0 && item.prixUnitaire > 0);
     this.formData.montant = this.calculTotalEcarts();
     this.isModalOpen = true;
   }
@@ -106,24 +106,33 @@ formData = {
     return this.listeEcarts.reduce((total, item) => total + (item.ecart * item.prixUnitaire), 0);
   }
   onSubmitSelected() {
-    const inventaireIds = this.listeEcarts.map((item: any) => item.inventoryId);
     const requestData = {
-      inventaireIds: inventaireIds,
-      montant: this.formData.montant,
-      moyenPaiementId: this.formData.moyenPaiementId,
+      paiements: this.listeEcarts
+        .filter(item => item.paiement > 0 && item.moyenPaiementId) // ignore montant 0 ou moyenPaiementId nul
+        .map(item => ({
+          inventaireId: item.inventoryId,
+          montant: item.paiement,
+          moyenPaiementId: item.moyenPaiementId
+        }))
     };
+
     console.log(requestData);
-    this._spinner.show();
-    this._activite.CreateEcartEmballage(requestData).then((res: any) => {
-      this._spinner.hide();
-      this.toastr.success(res.message);
-      this.GetEcartEmbalageList(1);
-      this.OnCloseModal();
-    })
-    .catch((err: any) => {
-      this._spinner.hide();
-      this.toastr.error(err.message);
-    });
+    if(requestData.paiements.length > 0){
+      this._spinner.show();
+      this._activite.CreateEcartEmballage(requestData).then((res: any) => {
+        this._spinner.hide();
+        this.toastr.success(res.message);
+        this.GetEcartEmbalageList(1);
+        this.OnCloseModal();
+      })
+        .catch((err: any) => {
+          this._spinner.hide();
+          this.toastr.error(err.message);
+        });
+    }else{
+      this.toastr.error('Aucun montant saisi!', 'Erreur lors de la validation');
+    }
+
   }
   calculate(commande: any): void {
     console.log('Commande:', commande);
@@ -213,7 +222,7 @@ formData = {
   // onPage(event: PageEvent) {
   //   this.currentPage = event.page;
   //   this.rowsPerPage = event.rows;
-  //   
+  //
   //   });
   // }
   regrouperArticles(articles: any[]): any {

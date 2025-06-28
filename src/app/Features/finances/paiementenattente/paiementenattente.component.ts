@@ -136,6 +136,23 @@ export class PaiementenattenteComponent {
     this.GetPaiementList(this.currentPage)
   }
 
+  getRetardEnJours(dateEcheance: string | Date, delai: number): number | null {
+    if (!dateEcheance || delai == null) return null;
+
+    const dateEch = new Date(dateEcheance);
+    const today = new Date();
+
+    // Date limite autorisée = date échéance + délai
+    const dateLimite = new Date(dateEch);
+    dateLimite.setDate(dateEch.getDate() + delai);
+
+    const diffMs = today.getTime() - dateLimite.getTime();
+    const diffJours = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    return diffJours > 0 ? diffJours : 0;
+  }
+
+
   loadArticleDetails(): void {
     this.validatedPaiementForm.patchValue({
       photo: this.updateData.photo ?? '',

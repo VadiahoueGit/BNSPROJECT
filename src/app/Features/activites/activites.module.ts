@@ -127,9 +127,11 @@ import { VenteGlobalComponent } from './facturation/vente-global/vente-global.co
 import { VenteGlobalFacturesComponent } from './facturation/vente-global-factures/vente-global-factures.component';
 import { ProgrammationComponent } from './programmation/programmation.component';
 import { EcartEmballageComponent } from './gestion-des-retours/ecart-emballage/ecart-emballage.component';
+import {ProformatComponent} from "./proformat/proformat.component";
 registerLocaleData(localeFr, 'fr');
 @NgModule({
   declarations: [
+    ProformatComponent,
     ProgrammationComponent,
     ActivitesComponent,
     VisitecomComponent,

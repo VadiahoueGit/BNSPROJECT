@@ -254,7 +254,7 @@
                 <tbody>
                 <tr
                   style="font-size: small"
-                  *ngFor="let item of filteredArticles; let i = index"
+                  *ngFor="let item of updateData.articles; let i = index"
                 >
                   <td>{{ item.liquide.libelle }}</td>
                   <td>{{ item.quantiteAffectee }}</td>
@@ -265,7 +265,7 @@
                   <td>{{ (+item.montantLiquide || 0) + (+item.montantEmballage || 0)| number }}</td>
 
                 </tr>
-                <tr class="table-dark" *ngIf="filteredArticles.length > 0">
+                <tr class="table-dark" *ngIf="updateData.articles.length > 0">
                   <th scope="col" colspan="1">Total :</th>
                   <td>{{ totalQte| number }}</td>
                   <td></td>
@@ -372,7 +372,7 @@
                 <tbody>
                 <tr
                   style="font-size: small"
-                  *ngFor="let item of filteredArticlesFree; let i = index"
+                  *ngFor="let item of updateData.articlesGratuit; let i = index"
                 >
                   <td>{{ item.liquide.libelle }}</td>
                   <td>{{ item.quantiteAffectee }}</td>
@@ -384,7 +384,7 @@
 
 
                 </tr>
-                <tr class="table-dark" *ngIf="filteredArticles.length > 0">
+                <tr class="table-dark" *ngIf="updateData.articlesGratuit.length > 0">
                   <th scope="col" colspan="1">Total :</th>
                   <td>{{ totalQteFree }}</td>
                   <td></td>
@@ -610,7 +610,7 @@
           <button
             type="submit"
             *ngIf="operation == 'create'"
-            [disabled]="totalQte === 0"
+            [disabled]="totalQte === 0 && totalQteFree === 0"
             (click)="onSubmit()"
             class="btn btn-primary px-2"
           >
@@ -752,7 +752,7 @@
                     type="text"
                     name="search"
                     (input)="filterArticlesFree()"
-                    [(ngModel)]="searchTerm"
+                    [(ngModel)]="searchTermFree"
                     placeholder="Rechercher un produit"
                     class="form-control mb-3"
                   />

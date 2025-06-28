@@ -46,7 +46,7 @@ export class EntreenStockComponent {
 
     this.generateNumero()
     this.GetDepotList(1)
-    // this.GetArticleList(1)
+    this.GetArticleList(1)
     this.fetchData()
   }
 
@@ -137,7 +137,8 @@ export class EntreenStockComponent {
     if (this.searchTerm) {
       this.filteredArticleList = this.dataList.filter((article: any) =>
         article.libelle.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        article.code.toLowerCase().includes(this.searchTerm.toLowerCase())
+        article.code.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      article.reference.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
       console.log(this.filteredArticleList)
     } else {
@@ -217,7 +218,7 @@ export class EntreenStockComponent {
 
   async GetStockDisponibleByDepot(item: any): Promise<any> {
     let data = {
-      productId: item.code,
+      productId: item.code || item.reference,
       depotId: this.stockForm.controls['depotId'].value,
     };
 
@@ -250,7 +251,7 @@ export class EntreenStockComponent {
     // Ajouter chaque article au FormArray
     articlesData.forEach((item: any) => {
       const articleGroup = this.fb.group({
-        productCode: [item.code, Validators.required],
+        productCode: [item.code || item.reference, Validators.required],
         quantite: [item.quantite, [Validators.required, Validators.min(1)]]
       })
       this.articles.push(articleGroup);
@@ -289,14 +290,14 @@ export class EntreenStockComponent {
     };
     try {
       // Effectuer les deux appels API en parallèle
-      const [plastiques, liquides, emballage]: [any, any, any] = await Promise.all([
+      const [plastiques, articles, emballage]: [any, any, any] = await Promise.all([
         this.articleService.GetPlastiqueNuList(data),  // Remplacez par votre méthode API
         this.articleService.GetLiquideList(data),
         this.articleService.GetEmballageList(data) // Remplacez par votre méthode API
       ]);
 
       console.log("Données plastiques:", plastiques);
-      console.log("Données liquides:", liquides);
+      console.log("Données liquides:", articles);
       // Vérifier si plastiques et liquides sont bien des tableaux
       if (Array.isArray(plastiques.data)) {
         this.dataListPlastiqueNu = plastiques.data;
@@ -306,10 +307,10 @@ export class EntreenStockComponent {
         console.error("Les données de plastiques ne sont pas un tableau");
       }
 
-      if (Array.isArray(liquides.data)) {
-        this.dataListLiquides = liquides.data;
+      if (Array.isArray(articles.data)) {
+        this.dataListLiquides = articles.data;
         // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
-        this.dataList.push(...liquides.data);
+        this.dataList.push(...articles.data);
       } else {
         console.error("Les données de liquides ne sont pas un tableau");
       }
