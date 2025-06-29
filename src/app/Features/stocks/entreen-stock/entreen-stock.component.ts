@@ -46,7 +46,7 @@ export class EntreenStockComponent {
 
     this.generateNumero()
     this.GetDepotList(1)
-    this.GetArticleList(1)
+    // this.GetArticleList(1)
     this.fetchData()
   }
 
@@ -65,7 +65,7 @@ export class EntreenStockComponent {
     this.articleService.GetArticleList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.articleList = res.data;
-      this.filteredArticleList = this.dataList;
+      // this.filteredArticleList = this.dataList;
       this._spinner.hide();
     });
   }
@@ -136,10 +136,11 @@ export class EntreenStockComponent {
     console.log(this.searchTerm)
     if (this.searchTerm) {
       this.filteredArticleList = this.dataList.filter((article: any) =>
-        article.libelle.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        article.code.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      article.reference.toLowerCase().includes(this.searchTerm.toLowerCase())
+        (article.libelle?.toLowerCase()?.includes(this.searchTerm.toLowerCase()) || '') ||
+        (article.code?.toLowerCase()?.includes(this.searchTerm.toLowerCase()) || '') ||
+        (article.reference?.toLowerCase()?.includes(this.searchTerm.toLowerCase()) || '')
       );
+
       console.log(this.filteredArticleList)
     } else {
       this.filteredArticleList = [...this.dataList];
@@ -292,12 +293,13 @@ export class EntreenStockComponent {
       // Effectuer les deux appels API en parallèle
       const [plastiques, articles, emballage]: [any, any, any] = await Promise.all([
         this.articleService.GetPlastiqueNuList(data),  // Remplacez par votre méthode API
-        this.articleService.GetLiquideList(data),
+        this.articleService.GetArticleList(data),
         this.articleService.GetEmballageList(data) // Remplacez par votre méthode API
       ]);
 
       console.log("Données plastiques:", plastiques);
       console.log("Données liquides:", articles);
+      console.log("emballage:", emballage);
       // Vérifier si plastiques et liquides sont bien des tableaux
       if (Array.isArray(plastiques.data)) {
         this.dataListPlastiqueNu = plastiques.data;
@@ -308,7 +310,7 @@ export class EntreenStockComponent {
       }
 
       if (Array.isArray(articles.data)) {
-        this.dataListLiquides = articles.data;
+        // this.dataListLiquides = articles.data;
         // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
         this.dataList.push(...articles.data);
       } else {

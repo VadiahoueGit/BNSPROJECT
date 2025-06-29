@@ -89,7 +89,7 @@
           <tr>
             <th scope="col">Code Article</th>
             <th scope="col">Description</th>
-            <th scope="col">Quantité</th>
+            <th scope="col">Qte</th>
             <th scope="col">Actions</th>
           </tr>
           </thead>
@@ -243,14 +243,14 @@
               <tr style="font-size: small;">
                 <th scope="col" class="text-secondary">Produits</th>
                 <th scope="col" class="text-secondary">Description</th>
-                <th scope="col" class="text-secondary">Quantité</th>
-                <th scope="col" class="text-secondary">Quantité disponible</th>
+                <th scope="col" class="text-secondary">Qte</th>
+                <th scope="col" class="text-secondary">Qte dispo</th>
                 <th scope="col" class="text-secondary text-center">Choix</th>
               </tr>
               </thead>
               <tbody>
               <tr *ngFor="let article of filteredArticleList; let i = index">
-                <td>{{ article.articleCode }}</td>
+                <td>{{ article.articleName }}</td>
                 <td>
                   <input
                     type="text"

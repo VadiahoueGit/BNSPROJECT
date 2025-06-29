@@ -14,6 +14,7 @@ import { CoreServiceService } from 'src/app/core/core-service.service';
 export class TransfertDeStockComponent implements OnInit {
   transfertForm!: FormGroup;
   articleList: any[] = [];
+  dataList: any[] = [];
   dataListLiquides: any[] = [];
   dataListPlastiqueNu: any[] = [];
   filteredArticleList: any[] = [];
@@ -80,7 +81,7 @@ export class TransfertDeStockComponent implements OnInit {
     }
     this.updateTotal();
   }
- 
+
 
   GetDepotList(page: number) {
     let data = {
@@ -107,9 +108,9 @@ export class TransfertDeStockComponent implements OnInit {
           description: matchedArticle.description,
           quantite: matchedArticle.quantite,
         };
-        article.isChecked = true; 
+        article.isChecked = true;
       } else {
-    
+
         this.initializeTempArticleData();
         article.isChecked = false;
       }
@@ -123,25 +124,33 @@ export class TransfertDeStockComponent implements OnInit {
 
   isAnyArticleSelected(): boolean {
     return this.articleList.some(
-      (article) => this.tempArticleData[article.articleId]?.quantite > 0  && 
+      (article) => this.tempArticleData[article.articleId]?.quantite > 0  &&
       this.tempArticleData[article.articleId]?.quantite <= article.quantiteDisponible
     );
   }
   isArticleSelected(articleId: number): boolean {
     return !!this.selectedArticles.find((a) => a.articleId === articleId);
   }
-  
+
   // Méthode pour filtrer les articles en fonction du terme de recherche
   filterArticles(): void {
     console.log(this.searchTerm)
     if (this.searchTerm) {
-      this.filteredArticleList = this.articleList.filter((article: any) =>
-        article.articleCode.toLowerCase().includes(this.searchTerm.toLowerCase())
-      //  || article.code.toLowerCase().includes(this.searchTerm.toLowerCase())
+      this.dataList.forEach((element: any) => {
+        if (element.code)
+        {
+          console.log(element.code);
+        }
+      })
+      this.filteredArticleList = this.dataList.filter((article: any) =>
+        (article.libelle?.toLowerCase()?.includes(this.searchTerm.toLowerCase()) || '') ||
+        (article.code?.toLowerCase()?.includes(this.searchTerm.toLowerCase()) || '') ||
+        (article.reference?.toLowerCase()?.includes(this.searchTerm.toLowerCase()) || '')
       );
+
       console.log(this.filteredArticleList)
     } else {
-      this.filteredArticleList = [...this.articleList];
+      this.filteredArticleList = [...this.dataList];
     }
   }
   add(): void {
@@ -171,10 +180,10 @@ export class TransfertDeStockComponent implements OnInit {
       }
     });
     this.updateTotal();
-    this.isModalOpen = false; 
+    this.isModalOpen = false;
   }
 
-  
+
 
   updateTotal() {
     this.totalProduits = this.selectedArticles.reduce((total, article) => {
@@ -231,11 +240,11 @@ export class TransfertDeStockComponent implements OnInit {
     let id = this.sourceDepotId;
     this.articleService.GetStockByDepot(id).then((res: any) => {
       console.log(res, 'produit par depot');
-      this.articleList = res.articles; 
-      this.filteredArticleList = this.articleList; 
+      this.articleList = res.articles;
+      this.filteredArticleList = this.articleList;
     });
   }
-  
+
   async fetchData() {
     let data = {
       paginate: false,
@@ -244,32 +253,40 @@ export class TransfertDeStockComponent implements OnInit {
     };
     try {
       // Effectuer les deux appels API en parallèle
-      const [plastiques, liquides]: [any, any] = await Promise.all([
+      const [plastiques, articles, emballage]: [any, any, any] = await Promise.all([
         this.articleService.GetPlastiqueNuList(data),  // Remplacez par votre méthode API
-        this.articleService.GetLiquideList(data)      // Remplacez par votre méthode API
+        this.articleService.GetArticleList(data),
+        this.articleService.GetEmballageList(data) // Remplacez par votre méthode API
       ]);
 
       console.log("Données plastiques:", plastiques);
-      console.log("Données liquides:", liquides);
+      console.log("Données liquides:", articles);
+      console.log("emballage:", emballage);
       // Vérifier si plastiques et liquides sont bien des tableaux
       if (Array.isArray(plastiques.data)) {
         this.dataListPlastiqueNu = plastiques.data;
         // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
-        this.articleList.push(...plastiques.data);
+        this.dataList.push(...plastiques.data);
       } else {
         console.error("Les données de plastiques ne sont pas un tableau");
       }
 
-      if (Array.isArray(liquides.data)) {
-        this.dataListLiquides = liquides.data;
+      if (Array.isArray(articles.data)) {
+        // this.dataListLiquides = articles.data;
         // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
-        this.articleList.push(...liquides.data);
+        this.dataList.push(...articles.data);
       } else {
         console.error("Les données de liquides ne sont pas un tableau");
       }
-
-
-      console.log('Données combinées dans dataList:', this.articleList);
+      if (Array.isArray(emballage.data)) {
+        // this.dataListLiquides = emballage.data;
+        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
+        this.dataList.push(...emballage.data);
+      } else {
+        console.error("Les données de liquides ne sont pas un tableau");
+      }
+      this.filteredArticleList = this.dataList;
+      console.log('Données combinées dans dataList:', this.dataList);
     } catch (error) {
       // Gestion des erreurs
       console.error('Erreur lors de la récupération des données:', error);
