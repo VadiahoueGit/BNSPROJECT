@@ -23,8 +23,12 @@
     <!-- Page Content -->
     <div class="flex-grow-1">
         <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-            <div class="container-fluid d-flex justify-content-end px-4">
-                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button"
+            <div class="container-fluid d-flex justify-content-end px-4 gap-4">
+              <div class="position-relative" (click)="toggleNotifications()">
+                <i class="fa-solid fa-bell text-secondary fs-3"></i>
+                <span *ngIf="hasNotif" class="notif-badge"></span>
+              </div>
+              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button"
                     data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="assets/icon/avatar.png" style="width: 2.5rem;" class="rounded-circle me-2" alt="Avatar" />
                     <div class="col">
@@ -87,4 +91,27 @@
             </div>
         </div>
     </div>
+</div>
+<div *ngIf="showNotifications" class="notif-popup shadow">
+  <h6 class="fw-bold px-3 pt-3">Notifications</h6>
+  <div class="d-flex px-3 gap-2 pb-2">
+    <span class="tab" [class.active]="activeTab === 'all'" (click)="setTab('all')">Toutes <b>{{ totalNotifications }}</b></span>
+    <span class="tab" [class.active]="activeTab === 'FINANCIERE'" (click)="setTab('FINANCIERE')">Finance <b>{{ countByType.finance }}</b></span>
+    <span class="tab" [class.active]="activeTab === 'stock'" (click)="setTab('stock')">Stock <b>{{ countByType.stock }}</b></span>
+    <span class="tab" [class.active]="activeTab === 'livraison'" (click)="setTab('livraison')">Livraison <b>{{ countByType.livraison }}</b></span>
+    <span class="tab" [class.active]="activeTab === 'commercial'" (click)="setTab('commercial')">Commercial <b>{{ countByType.commercial }}</b></span>
+  </div>
+
+  <div class="notif-list px-3">
+    <div *ngFor="let notif of filteredNotifications" class="notif-item mb-3">
+      <div class="d-flex align-items-center py-2 gap-2 border-bottom">
+        <i [ngClass]="getIconClass(notif.type) + ' ' + getColorClass(notif.type)"></i>
+        <div>
+          <div style="font-size:13px" class="fw-semibold">{{ notif.titre }}</div>
+          <div style="font-size:11px" class="text-muted">{{ notif.message }}</div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="filteredNotifications.length <= 0" class="text-muted small text-center">Aucune notification.</div>
+  </div>
 </div>

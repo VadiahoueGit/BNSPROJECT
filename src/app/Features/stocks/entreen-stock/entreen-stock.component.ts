@@ -219,7 +219,7 @@ export class EntreenStockComponent {
 
   async GetStockDisponibleByDepot(item: any): Promise<any> {
     let data = {
-      productId: item.code || item.reference,
+      productCode: item.code || item.reference,
       depotId: this.stockForm.controls['depotId'].value,
     };
 

@@ -359,35 +359,6 @@ export class SaisieEntreeGratuitesComponent {
     );
   }
 
-  async GetStockDisponibleByDepot(item: any): Promise<any> {
-    let data = {
-      productId: item.liquide.code,
-      depotId: this.depotId,
-    };
-
-    try {
-      // Attendre la réponse de la promesse
-      const response: any = await this.articleService.GetStockDisponibleByDepot(
-        data
-      );
-      console.log(response);
-      // Vérifier si le statusCode est 200
-      if (response) {
-        this.stocksDisponibles[item.liquide.id] = response.quantiteDisponible;
-      } else if (response.statusCode === 404) {
-        this.stocksDisponibles[item.liquide.id] = 0; // Si le code est 404, retourner 0
-      } else {
-        return null; // Si un autre code, retourner null ou une valeur par défaut
-      }
-    } catch (error: any) {
-      console.log(error);
-      if (error.status === 404) {
-        this.stocksDisponibles[item.liquide.id] = 0; // Si le code est 404, retourner 0
-      }
-    }
-
-    console.log('totalite', this.stocksDisponibles);
-  }
 
   validateQuantite(data: any): void {
     // Vérifier si la quantité saisie dépasse la quantité disponible

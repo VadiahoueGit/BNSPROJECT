@@ -303,7 +303,7 @@ export class VenteGlobalComponent {
   }
   async GetStockDisponibleByDepot(item: any): Promise<any> {
     let data = {
-      productId: item.liquide.code,
+      productCode: item.liquide.code,
       depotId:this.depotId
     };
 

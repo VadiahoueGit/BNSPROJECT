@@ -17,6 +17,34 @@ export class FeaturesComponent {
   currentUrl: string;
   submitError: Boolean = false;
   passwordForm: FormGroup
+  hasNotif = true; // ou false selon s'il y a une notif
+  showNotifications = false;
+  activeTab: string = 'all';
+
+  notifications = [
+    {
+      id: 2,
+      type: "FINANCIERE",
+      categorie: "Dépassement d’encours client",
+      titre: "Client REVDG3H03JT a dépassé son encours !",
+      message: "Votre encours est négatif  : 1459000).",
+      metadata: {
+        Encours: 1459000,
+        clientId: 6,
+        clientType: "revendeur"
+      },
+      estTraitee: false,
+      dateTraitement: null,
+      commentaireTraitement: null,
+      actionRecommandee: "Bloquer la commande ou prévenir le commercial.",
+      notifiee: false,
+      dateNotification: null,
+      estArchivee: false,
+      createdAt: "2025-07-03T07:45:57.690Z",
+      updatedAt: "2025-07-03T07:45:57.690Z"
+    }
+  ];
+
   items = [
     {label: 'Dashboard', icon: 'fas fa-chart-line', url: 'feature/dashboard'},
     {label: 'Activités', icon: 'fas fa-truck-container', url: 'feature/activites'},
@@ -73,7 +101,25 @@ export class FeaturesComponent {
       this.isModalOpen = true;
     }
   }
+  getIconClass(type: string): string {
+    switch (type) {
+      case 'FINANCIERE': return 'fa-solid fa-arrow-down text-danger';
+      case 'stock': return 'fa-solid fa-triangle-exclamation text-warning';
+      case 'livraison': return 'fa-solid fa-truck text-primary';
+      case 'commercial': return 'fa-solid fa-user-slash text-success';
+      default: return 'fa-solid fa-circle-info text-secondary';
+    }
+  }
 
+  getColorClass(type: string): string {
+    switch (type) {
+      case 'FINANCIERE': return 'text-danger';    // rouge
+      case 'stock': return 'text-warning';     // orange
+      case 'livraison': return 'text-primary'; // bleu
+      case 'commercial': return 'text-success';// vert
+      default: return 'text-secondary';        // gris
+    }
+  }
   setActive(index: number) {
     this.selectedItem = index;
   }
@@ -134,5 +180,33 @@ export class FeaturesComponent {
   logout() {
     this.localstorage.clear()
     this.router.navigate(['/login'])
+  }
+
+
+
+
+  get totalNotifications() {
+    return this.notifications.length;
+  }
+
+  get countByType() {
+    return {
+      finance: this.notifications.filter(n => n.type === 'FINANCIERE').length,
+      stock: this.notifications.filter(n => n.type === 'stock').length,
+      livraison: this.notifications.filter(n => n.type === 'livraison').length,
+      commercial: this.notifications.filter(n => n.type === 'commercial').length
+    };
+  }
+
+  get filteredNotifications() {
+    return this.activeTab === 'all' ? this.notifications : this.notifications.filter(n => n.type === this.activeTab);
+  }
+
+  toggleNotifications() {
+    this.showNotifications = !this.showNotifications;
+  }
+
+  setTab(tab: string) {
+    this.activeTab = tab;
   }
 }

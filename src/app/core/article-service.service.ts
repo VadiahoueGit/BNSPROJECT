@@ -1073,6 +1073,29 @@ export class ArticleServiceService {
     });
   }
 
+  GetStockDisponibleByDepotInventaire(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/movements/${data.productCode}/available-quantity-inventaire/${data.depotId}`,
+          { headers }
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
   GetStockDisponibleByDepot(data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({

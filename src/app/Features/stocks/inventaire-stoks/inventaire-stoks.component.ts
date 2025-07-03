@@ -50,6 +50,12 @@ export class InventaireStoksComponent {
   isAllSelected: boolean = false;
   now = new Date().toISOString().split('T')[0];
   UserInfo: any;
+  formatCode(code: string): string {
+    if (!code) return code;
+    if (code.startsWith('EMB_')) return code.replace('EMB_', 'VEMB_');
+    if (code.startsWith('CAS_')) return code.replace('CAS_', 'CCAS_');
+    return code;
+  }
   constructor(
     private localstorage: LocalStorageService,
     private articleService: ArticleServiceService,
@@ -138,14 +144,21 @@ export class InventaireStoksComponent {
 
   GetArticleListByDepot() {
     this._spinner.show();
-    let depotId = this.InventaireForm.controls['depotId'].value;
+    const depotId = this.InventaireForm.controls['depotId'].value;
+
     this.articleService.GetArticleListByDepot(depotId).then((res: any) => {
-      this.articleList = res.articles;
+      // Reformater les codes article
+      this.articleList = res.articles.map((article: any) => ({
+        ...article,
+        articleCode: this.formatCode(article.articleCode)
+      }));
+
+      // Trier la liste filtrée par nom d'article
       this.filteredArticleList = this.articleList.sort((a, b) =>
         a.articleName.toLowerCase().localeCompare(b.articleName.toLowerCase())
       );
 
-      console.log('DATATYPEPRIX:::>', res);
+      console.log('DATATYPEPRIX:::>', this.articleList);
       this._spinner.hide();
     });
   }
@@ -159,9 +172,33 @@ export class InventaireStoksComponent {
     this._spinner.show();
     this.articleService.GetInventaire(data).then((res: any) => {
       console.log('inventaire:::>', res);
-      this.dataList = res.data;
+
+      this.dataList = res.data.map((item: any) => {
+        // reformater les codes des articles de cette ligne
+        const formattedArticles = item.articles.map((article: any) => {
+          let newCode = article.codeArticle;
+
+          if (newCode?.startsWith('EMB_')) {
+            newCode = newCode.replace('EMB_', 'VEMB_');
+          } else if (newCode?.startsWith('CAS_')) {
+            newCode = newCode.replace('CAS_', 'CCAS_');
+          }
+
+          return {
+            ...article,
+            codeArticle: newCode
+          };
+        });
+
+        return {
+          ...item,
+          articles: formattedArticles
+        };
+      });
+
       this._spinner.hide();
     });
+
   }
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
@@ -328,31 +365,31 @@ export class InventaireStoksComponent {
 
   async GetStockDisponibleByDepot(item: any): Promise<any> {
     let data = {
-      productId: item.articleId,
+      productCode: item.articleCode,
       depotId: this.InventaireForm.controls['depotId'].value,
     };
     console.log(data, 'les donnees');
     console.log( item, 'les items');
     try {
       // Attendre la réponse de la promesse
-      const response: any = await this.articleService.GetStockDisponibleByDepot(
+      const response: any = await this.articleService.GetStockDisponibleByDepotInventaire(
         data
       );
       console.log(response);
       console.log(response.quantiteDisponible,'response.quantiteDisponible;');
       // Vérifier si le statusCode est 200
       if (response) {
-        this.stocksDisponibles[item.id] = response.quantiteDisponible;
+        this.stocksDisponibles[item.articleCode] = response.quantiteDisponible;
         console.log(this.stocksDisponibles);
       } else if (response.statusCode === 404) {
-        this.stocksDisponibles[item.id] = 0; // Si le code est 404, retourner 0
+        this.stocksDisponibles[item.articleCode] = 0; // Si le code est 404, retourner 0
       } else {
         return null; // Si un autre code, retourner null ou une valeur par défaut
       }
     } catch (error: any) {
       console.log(error);
       if (error.status === 404) {
-        this.stocksDisponibles[item.id] = 0; // Si le code est 404, retourner 0
+        this.stocksDisponibles[item.articleCode] = 0; // Si le code est 404, retourner 0
       }
     }
   }
