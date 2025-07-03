@@ -129,15 +129,16 @@ export class SortieDeStockComponent {
     console.log(this.searchTerm)
     if (this.searchTerm) {
       this.filteredArticleList = this.dataList.filter((article: any) =>
-        article.libelle.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        article.code.toLowerCase().includes(this.searchTerm.toLowerCase())
+        (article.libelle?.toLowerCase()?.includes(this.searchTerm.toLowerCase()) || '') ||
+        (article.code?.toLowerCase()?.includes(this.searchTerm.toLowerCase()) || '') ||
+        (article.reference?.toLowerCase()?.includes(this.searchTerm.toLowerCase()) || '')
       );
+
       console.log(this.filteredArticleList)
     } else {
       this.filteredArticleList = [...this.dataList];
     }
   }
-
   OnCloseModal()
   {
     this.selectedArticles = []
@@ -199,8 +200,9 @@ export class SortieDeStockComponent {
   }
 
   async GetStockDisponibleByDepot(item: any): Promise<any> {
+    console.log(item);
     let data = {
-      productId: item.code,
+      productCode: item.code ? item.code : item.reference,
       depotId: this.stockForm.controls['depotId'].value,
     };
 
@@ -233,7 +235,7 @@ export class SortieDeStockComponent {
     // Ajouter chaque article au FormArray
     articlesData.forEach((item: any) => {
       const articleGroup = this.fb.group({
-        productCode: [item.code, Validators.required],
+        productCode: [item.code || item.reference, Validators.required],
         quantite: [item.quantite, [Validators.required, Validators.min(1)]]
       })
       this.articles.push(articleGroup);
@@ -285,14 +287,15 @@ export class SortieDeStockComponent {
     };
     try {
       // Effectuer les deux appels API en parallèle
-      const [plastiques, liquides, emballage]: [any, any, any]  = await Promise.all([
+      const [plastiques, articles, emballage]: [any, any, any] = await Promise.all([
         this.articleService.GetPlastiqueNuList(data),  // Remplacez par votre méthode API
-        this.articleService.GetLiquideList(data) ,
-        this.articleService.GetEmballageList(data)     // Remplacez par votre méthode API
+        this.articleService.GetArticleList(data),
+        this.articleService.GetEmballageList(data) // Remplacez par votre méthode API
       ]);
 
       console.log("Données plastiques:", plastiques);
-      console.log("Données liquides:", liquides);
+      console.log("Données liquides:", articles);
+      console.log("emballage:", emballage);
       // Vérifier si plastiques et liquides sont bien des tableaux
       if (Array.isArray(plastiques.data)) {
         this.dataListPlastiqueNu = plastiques.data;
@@ -302,10 +305,10 @@ export class SortieDeStockComponent {
         console.error("Les données de plastiques ne sont pas un tableau");
       }
 
-      if (Array.isArray(liquides.data)) {
-        this.dataListLiquides = liquides.data;
+      if (Array.isArray(articles.data)) {
+        // this.dataListLiquides = articles.data;
         // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
-        this.dataList.push(...liquides.data);
+        this.dataList.push(...articles.data);
       } else {
         console.error("Les données de liquides ne sont pas un tableau");
       }
@@ -317,7 +320,7 @@ export class SortieDeStockComponent {
         console.error("Les données de liquides ne sont pas un tableau");
       }
       this.filteredArticleList = this.dataList;
-      console.log('Données combinées dans dataList:', this.filteredArticleList);
+      console.log('Données combinées dans dataList:', this.dataList);
     } catch (error) {
       // Gestion des erreurs
       console.error('Erreur lors de la récupération des données:', error);

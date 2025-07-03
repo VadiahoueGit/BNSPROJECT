@@ -1080,7 +1080,7 @@ export class ArticleServiceService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/movements/${data.productId}/available-quantity/${data.depotId}`,
+          `${this.apiUrl}/v1/movements/${data.productCode}/available-quantity/${data.depotId}`,
           { headers }
         )
         .subscribe(

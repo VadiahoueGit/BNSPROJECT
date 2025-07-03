@@ -133,24 +133,17 @@ export class TransfertDeStockComponent implements OnInit {
   }
 
   // Méthode pour filtrer les articles en fonction du terme de recherche
+
   filterArticles(): void {
     console.log(this.searchTerm)
     if (this.searchTerm) {
-      this.dataList.forEach((element: any) => {
-        if (element.code)
-        {
-          console.log(element.code);
-        }
-      })
-      this.filteredArticleList = this.dataList.filter((article: any) =>
-        (article.libelle?.toLowerCase()?.includes(this.searchTerm.toLowerCase()) || '') ||
-        (article.code?.toLowerCase()?.includes(this.searchTerm.toLowerCase()) || '') ||
-        (article.reference?.toLowerCase()?.includes(this.searchTerm.toLowerCase()) || '')
+      this.filteredArticleList = this.articleList.filter((article: any) =>
+        article.articleCode.toLowerCase().includes(this.searchTerm.toLowerCase())
+      //  || article.code.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
-
       console.log(this.filteredArticleList)
     } else {
-      this.filteredArticleList = [...this.dataList];
+      this.filteredArticleList = [...this.articleList];
     }
   }
   add(): void {

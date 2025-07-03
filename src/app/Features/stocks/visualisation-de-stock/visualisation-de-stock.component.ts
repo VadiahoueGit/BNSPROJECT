@@ -25,7 +25,7 @@ export class VisualisationDeStockComponent {
   isEditMode: boolean = false;
   currentPage: number;
   rowsPerPage: any;
-  
+
   dataList : any[] = [];
   constructor(private articleService: ArticleServiceService, private _spinner:NgxSpinnerService,
     private toastr: ToastrService,
@@ -73,10 +73,17 @@ export class VisualisationDeStockComponent {
       limit:8
     }
     this._spinner.show()
-    this.articleService.GetStocksDetails().then((res:any)=>{
-      console.log('DATA:::>',res)
-      this.dataList = res.data
-      this._spinner.hide()
-    })
+    this.articleService.GetStocksDetails().then((res: any) => {
+      this.dataList = res.data.map((item: any) => {
+        let code = item.code;
+        if (code.startsWith('CAS')) {
+          code = 'CCAS_' + code.slice(3);
+        } else if (code.startsWith('EMB')) {
+          code = 'VEMB_' + code.slice(3);
+        }
+        return { ...item, code };
+      });
+      this._spinner.hide();
+    });
   }
 }
