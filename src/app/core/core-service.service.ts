@@ -78,6 +78,25 @@ export class CoreServiceService {
     })
   }
 
+  async GetNotifiaction(data: any) {
+    await this.initializeApiUrl();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.token}`
+    });
+    return new Promise((resolve: any, reject: any) => {
+
+      this._http.get(`${this.apiUrl}/v1/alertes?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`, { headers })
+        .subscribe((res: any) => {
+            console.log(res)
+            resolve(res);
+          }
+          , err => {
+            console.log(err);
+            reject(err);
+          });
+    })
+  }
+
   async UpdatePasswordFirstConnexion(data: any) {
     await this.initializeApiUrl();
     const headers = new HttpHeaders({

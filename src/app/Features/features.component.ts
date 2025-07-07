@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component,ElementRef,ViewChild,HostListener} from '@angular/core';
 import {Router} from '@angular/router';
 import {LocalStorageService} from '../core/local-storage.service';
 import {storage_keys} from './shared-component/utils';
@@ -12,38 +12,20 @@ import {ToastrService} from "ngx-toastr";
   templateUrl: './features.component.html',
   styleUrls: ['./features.component.scss']
 })
+
 export class FeaturesComponent {
+  @ViewChild('popupNotif') popupNotif!: ElementRef;
+  @ViewChild('bellIcon') bellIcon!: ElementRef;
+  @HostListener('document:click', ['$event'])
   isModalOpen: boolean = false;
   currentUrl: string;
   submitError: Boolean = false;
   passwordForm: FormGroup
-  hasNotif = true; // ou false selon s'il y a une notif
+  hasNotif = false; // ou false selon s'il y a une notif
   showNotifications = false;
   activeTab: string = 'all';
-
-  notifications = [
-    {
-      id: 2,
-      type: "FINANCIERE",
-      categorie: "Dépassement d’encours client",
-      titre: "Client REVDG3H03JT a dépassé son encours !",
-      message: "Votre encours est négatif  : 1459000).",
-      metadata: {
-        Encours: 1459000,
-        clientId: 6,
-        clientType: "revendeur"
-      },
-      estTraitee: false,
-      dateTraitement: null,
-      commentaireTraitement: null,
-      actionRecommandee: "Bloquer la commande ou prévenir le commercial.",
-      notifiee: false,
-      dateNotification: null,
-      estArchivee: false,
-      createdAt: "2025-07-03T07:45:57.690Z",
-      updatedAt: "2025-07-03T07:45:57.690Z"
-    }
-  ];
+  lastNotificationId:any = []
+  notifications:any = [];
 
   items = [
     {label: 'Dashboard', icon: 'fas fa-chart-line', url: 'feature/dashboard'},
@@ -74,6 +56,11 @@ export class FeaturesComponent {
   ngOnInit(): void {
     this.UserInfo = this.localstorage.getItem(storage_keys.STOREUser);
     console.log(this.UserInfo)
+    this.getNotifications(1);
+    setInterval(() => {
+      this.getNotifications(1);
+    }, 10000);
+
     // if (this.currentUrl.includes('parametre')) {
     if (this.currentUrl.includes('/feature/dashboard')) {
       this.setActive(0)
@@ -100,7 +87,24 @@ export class FeaturesComponent {
     if (this.UserInfo.isFirstLogin == true) {
       this.isModalOpen = true;
     }
+
+    const storedNotif:any = this.localstorage.getItem(storage_keys.STORENotification);
+    if (storedNotif) {
+      this.lastNotificationId = storedNotif.id;
+    }
   }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent) {
+    const clickedInsidePopup = this.popupNotif?.nativeElement.contains(event.target);
+    const clickedOnIcon = this.bellIcon?.nativeElement.contains(event.target);
+
+    if (!clickedInsidePopup && !clickedOnIcon) {
+      this.showNotifications = false;
+    }
+  }
+
+
   getIconClass(type: string): string {
     switch (type) {
       case 'FINANCIERE': return 'fa-solid fa-arrow-down text-danger';
@@ -114,9 +118,10 @@ export class FeaturesComponent {
   getColorClass(type: string): string {
     switch (type) {
       case 'FINANCIERE': return 'text-danger';    // rouge
-      case 'stock': return 'text-warning';     // orange
-      case 'livraison': return 'text-primary'; // bleu
-      case 'commercial': return 'text-success';// vert
+      case 'LOGISTIQUE': return 'text-warning';     // orange
+      case 'STOCK': return 'text-warning';     // orange
+      case 'SYSTEME': return 'text-primary'; // bleu
+      case 'COMMERCIALE': return 'text-success';// vert
       default: return 'text-secondary';        // gris
     }
   }
@@ -124,8 +129,47 @@ export class FeaturesComponent {
     this.selectedItem = index;
   }
 
+  getNotifications(page: number) {
+    let data = {
+      paginate: false,
+      page: page,
+      limit: 10,
+    };
+
+    this.coreServices.GetNotifiaction(data).then(
+      (response: any) => {
+        if (response.statusCode === 200) {
+          const newNotifications = response.data;
+
+          if (newNotifications.length > 0) {
+            const latestNotif = newNotifications[0]; // Supposé trié par date DESC
+
+            // Récupère l'ancienne notif stockée localement
+            const storedNotif:any = this.localstorage.getItem(storage_keys.STORENotification);
+
+            // Vérifie s'il y a une nouvelle notif (comparaison ID ou date)
+            if (!storedNotif || storedNotif.id !== latestNotif.id) {
+              this.hasNotif = true;
+
+              // Sauvegarde la nouvelle notification dans le localStorage
+              this.localstorage.setItem(storage_keys.STORENotification, latestNotif);
+            }
+          }
+
+          this.notifications = newNotifications;
+        } else {
+          this.toastr.error(response.message);
+        }
+      },
+      (error: any) => {
+        this._spinner.hide();
+        this.toastr.error('Erreur!', 'Erreur lors de la récupération.');
+      }
+    );
+
+
+  }
   onSubmit() {
-    this._spinner.show()
     let data = {
       "email": this.UserInfo.email,
       "oldPassword": this.passwordForm.controls['password'].value,
@@ -160,8 +204,7 @@ export class FeaturesComponent {
 
       },
       (error: any) => {
-        this._spinner.hide()
-        this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
+        this.toastr.error('Erreur!', 'Erreur lors de la récuperation.');
         console.error('Erreur lors de la mise à jour', error);
       }
     );
@@ -191,19 +234,23 @@ export class FeaturesComponent {
 
   get countByType() {
     return {
-      finance: this.notifications.filter(n => n.type === 'FINANCIERE').length,
-      stock: this.notifications.filter(n => n.type === 'stock').length,
-      livraison: this.notifications.filter(n => n.type === 'livraison').length,
-      commercial: this.notifications.filter(n => n.type === 'commercial').length
+      finance: this.notifications.filter((n:any) => n.type === 'FINANCIERE').length,
+      stock: this.notifications.filter((n:any) => n.type === 'stock').length,
+      livraison: this.notifications.filter((n:any) => n.type === 'livraison').length,
+      commercial: this.notifications.filter((n:any) => n.type === 'commercial').length
     };
   }
 
   get filteredNotifications() {
-    return this.activeTab === 'all' ? this.notifications : this.notifications.filter(n => n.type === this.activeTab);
+    return this.activeTab === 'all' ? this.notifications : this.notifications.filter((n:any) => n.type === this.activeTab);
   }
 
   toggleNotifications() {
     this.showNotifications = !this.showNotifications;
+
+    if (this.showNotifications) {
+      this.hasNotif = false;
+    }
   }
 
   setTab(tab: string) {

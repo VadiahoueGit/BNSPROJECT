@@ -113,7 +113,7 @@
                           <td><span>{{ ecart.ecart }}</span></td>
                           <td><span>{{ ecart.dateCreation | date: 'dd/MM/yyyy à HH:mm' }}</span></td>
                           <td>
-                              <span class="badge" [ngClass]="{
+                              <span class="badge text-black" [ngClass]="{
   'bg-success': ecart.status == 'Payé',
   'bg-danger': ecart.status == 'En attente'
 }">

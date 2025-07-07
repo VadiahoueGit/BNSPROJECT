@@ -84,6 +84,7 @@ export class InventaireStoksComponent {
 
   onDepotChange() {
     if (this.InventaireForm.controls['depotId'].valid) {
+      this.selectedArticles = []
       this.GetArticleListByDepot();
     }
   }

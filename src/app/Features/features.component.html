@@ -24,7 +24,7 @@
     <div class="flex-grow-1">
         <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
             <div class="container-fluid d-flex justify-content-end px-4 gap-4">
-              <div class="position-relative" (click)="toggleNotifications()">
+              <div #bellIcon class="position-relative" (click)="toggleNotifications()">
                 <i class="fa-solid fa-bell text-secondary fs-3"></i>
                 <span *ngIf="hasNotif" class="notif-badge"></span>
               </div>
@@ -92,7 +92,7 @@
         </div>
     </div>
 </div>
-<div *ngIf="showNotifications" class="notif-popup shadow">
+<div *ngIf="showNotifications" #popupNotif class="notif-popup shadow">
   <h6 class="fw-bold px-3 pt-3">Notifications</h6>
   <div class="d-flex px-3 gap-2 pb-2">
     <span class="tab" [class.active]="activeTab === 'all'" (click)="setTab('all')">Toutes <b>{{ totalNotifications }}</b></span>
@@ -112,6 +112,6 @@
         </div>
       </div>
     </div>
-    <div *ngIf="filteredNotifications.length <= 0" class="text-muted small text-center">Aucune notification.</div>
+    <div *ngIf="filteredNotifications.length <= 0" class="text-muted small text-center my-4">Aucune notification.</div>
   </div>
 </div>

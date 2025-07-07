@@ -12,10 +12,10 @@ export async function ALERT(_icon: "success" | "error" | "warning" | "info" | "q
         heightAuto:false,
         didDestroy: () => {
             return new Promise((resolve) => {
-               
+
                 resolve(null);
             });
-        } 
+        }
       })
 }
 export async function ALERT_QUESTION(_icon:'warning',_title:string,_text:string){
@@ -32,7 +32,7 @@ export async function ALERT_QUESTION(_icon:'warning',_title:string,_text:string)
          heightAuto:false,
          didDestroy: () => {
              return new Promise((resolve) => {
-                
+
                  resolve(null);
              });
          }
@@ -52,7 +52,7 @@ export async function ALERT_INFO(_icon:'info',_title:string,_text:string){
          heightAuto:false,
          didDestroy: () => {
              return new Promise((resolve) => {
-                
+
                  resolve(null);
              });
          }
@@ -63,6 +63,7 @@ export async function ALERT_INFO(_icon:'info',_title:string,_text:string){
     production:true,
     STOREToken:"BNS-Token",
     STOREUser:"BNS-User",
+    STORENotification:"BNS-Notification",
     STORERefreshToken:"BNS-RefreshToken",
     STORETimer:"BNS-Timer"
   }

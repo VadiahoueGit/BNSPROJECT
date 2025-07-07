@@ -239,6 +239,26 @@ export class VentechinepageComponent {
     }
     console.log('totalite', this.stocksDisponibles);
   }
+  removeArticleFree(item: any): void {
+    console.log(item);
+    const data = {
+      ...item,
+      quantite: 0,
+      groupearticle: {id: item.groupearticle.id},
+      id: item.groupearticle.id, // Assurez-vous que l'ID correspond
+    };
+
+    item.isChecked = false;
+    this.calculatePrix(data);
+    this.onCheckboxChange(item);
+    const index = this.selectedArticlesFree.findIndex((i: any) => i.id === item.id);
+
+    if (index !== -1) {
+      this.selectedArticlesFree = this.selectedArticlesFree
+        .slice(0, index)
+        .concat(this.selectedArticlesFree.slice(index + 1));
+    }
+  }
 
   removeArticle(item: any): void {
     console.log(item);
