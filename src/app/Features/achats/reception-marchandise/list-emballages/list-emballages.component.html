@@ -176,37 +176,6 @@
             </legend>
           </fieldset>
 
-          <!-- <fieldset class="row border my-2">
-            <legend style="font-size: 14px" class="text-secondary">
-              Informations du fournisseur
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Fournisseur : </strong>
-                <span>{{ updateData?.fournisseur?.nom }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Groupe :</strong>
-                <span>{{ updateData?.fournisseur?.codeGroupe }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Pays : </strong>
-                <span>{{ updateData?.fournisseur?.pays }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Adresse : </strong>
-                <span>{{ updateData?.fournisseur?.adresse }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Site Web : </strong>
-                <span>{{ updateData?.fournisseur?.siteWeb }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Devise : </strong>
-                <span>{{ updateData?.fournisseur?.devise?.nom }}</span>
-              </div>
-            </div>
-          </fieldset> -->
           <fieldset class="row border my-2">
             <legend style="font-size: 14px" class="text-secondary">
               Information commande
@@ -267,7 +236,7 @@
                     </p>
                   </td>
                 </tr>
-              </tbody> 
+              </tbody>
               <tbody *ngIf="updateData?.emballagesRendus.length > 0">
                 <tr *ngFor="let data of updateData?.emballagesRendus[0].articles; let i = index">
                   <td class="">
