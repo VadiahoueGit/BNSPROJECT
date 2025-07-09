@@ -290,9 +290,9 @@
 
                 <tbody>
                 <tr *ngFor="let item of  selectedArticles">
-                  <td>{{ item?.groupearticle?.id }}</td>
-                  <td>{{ item?.liquide?.id }}</td>
-                  <td>{{ item?.liquide?.emballage?.id }}</td>
+                  <td>{{ item?.groupearticle?.libelle }}</td>
+                  <td>{{ item?.liquide?.libelle }}</td>
+                  <td>{{ item?.liquide?.emballage?.libelle }}</td>
                   <td>
                     <input
                       type="number"

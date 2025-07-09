@@ -153,7 +153,8 @@ export class ListeCommandesMarchandisesComponent {
     this.totalLiquide = 0;
     this.totalGlobal = 0;
     this.totalQte = 0;
-    this.filteredArticleList = [];
+    this.searchTerm = ''
+    this.GetArticleList(1);
     this.isModalOpen = false;
     this.selectedArticles = [];
   }
