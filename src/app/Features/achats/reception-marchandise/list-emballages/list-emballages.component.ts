@@ -167,9 +167,6 @@ export class ListEmballagesComponent {
     this.articleService.GetEmballageList(data).then((res: any) => {
       console.log('filteredArticleList:::>', res);
       this.dataListLiquides = res.data;
-      // this.dataListLiquides.forEach((item: any) => {
-      //   this.GetStockDisponibleByDepot(item);
-      // });
       this.filteredArticleList = this.dataListLiquides;
       this._spinner.hide();
     });
@@ -314,6 +311,12 @@ export class ListEmballagesComponent {
         this._spinner.hide();
       });
   }
+  // selectArticle() {
+  //   this.isEditMode = false;
+  //   this.isChoiceModalOpen = true;
+  //   this.operation = 'create';
+  //   console.log(this.isModalOpen);
+  // }
   onSubmit(): void {
     const payload = {
       receptionId: this.updateData.id,
