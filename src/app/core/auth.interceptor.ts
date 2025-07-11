@@ -23,7 +23,7 @@ export class AuthInterceptor implements HttpInterceptor {
             catchError((error: HttpErrorResponse) => {
                 // Vérifiez si l'erreur est 401 (Unauthorized)
                 if (error.status === 401) {
-                    localStorage.removeItem(storage_keys.STOREToken);
+                    this.authService.logout();
                     this.router.navigate(['/login']);  // Redirige vers la page de login
                 }
                 return throwError(error);

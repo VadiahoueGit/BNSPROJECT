@@ -4,7 +4,7 @@ import { ConfigService } from './config-service.service';
 import { LocalStorageService } from './local-storage.service';
 import { storage_keys } from '../Features/shared-component/utils';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class CoreServiceService {
   listLocalite: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
   ListZoneLivraison: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
 
-  constructor(private localstorage: LocalStorageService, private _http: HttpClient, private configService: ConfigService) {
+  constructor(private localstorage: LocalStorageService, private _http: HttpClient, private configService: ConfigService,private router: Router) {
     this.token = this.localstorage.getItem(storage_keys.STOREToken) || '';
   }
 
@@ -58,7 +58,18 @@ export class CoreServiceService {
     }
   }
 
-
+  async logout() {
+    await this.initializeApiUrl();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.token}`
+    });
+    return new Promise((resolve: any, reject: any) => {
+      // this._http.post(`${this.apiUrl}/v1/auth/logout`, { headers })
+      //   .subscribe((res: any) => {
+          this.localstorage.removeItem(storage_keys.STOREToken);
+          this.router.navigate(['/login']);
+    })
+  } 
   async ToConnect(data: any) {
     await this.initializeApiUrl();
     const headers = new HttpHeaders({
