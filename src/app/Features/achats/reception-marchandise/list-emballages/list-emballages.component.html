@@ -218,30 +218,37 @@
                 </tr>
               </thead>
               <tbody *ngIf="updateData?.emballagesRendus.length == 0">
-                <tr *ngFor="let data of updateData?.articlesRecus; let i = index">
+                <tr *ngFor="let data of emballagesrecues; let i = index">
                   <td class="">
                     <p>
                       {{
-                        data.articleCommande ? data.articleCommande.emballage.code : data.emballage.code
+                        data.articleCommande ? data.articleCommande?.emballage?.code : data.emballage?.code ?? data?.code
                       }}
                     </p>
                   </td>
                   <td class="">
                     <p>
                       {{
-                        data?.articleCommande ? data.articleCommande.emballage?.libelle : data.emballage?.libelle
+                        data?.articleCommande ? data.articleCommande?.emballage?.libelle : data.emballage?.libelle ?? data?.libelle
                       }}
                     </p>
                   </td>
-                  <td>
-                    <p>
-                        <input
+                  <td >
+                    <p class="d-flex justify-content-between">
+                      <input
                         type="number"
                         class="form-control-custom"
                         [(ngModel)]="data.quantiteRecue"
                         [min]="0"
                         value="0"
                       />
+                      <button *ngIf="data.isNewAdd"
+                        type="button"
+                        class="btn btn-danger btn-sm ms-2"
+                        (click)="removeArticleEmballage(data)"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
                     </p>
                   </td>
                 </tr>
@@ -251,20 +258,20 @@
                   <td class="">
                     <p>
                       {{
-                        data.emballage.code
+                        data?.emballage?.code
                       }}
                     </p>
                   </td>
                   <td class="">
                     <p>
                       {{
-                        data.emballage.libelle
+                        data?.emballage?.libelle
                       }}
                     </p>
                   </td>
                   <td>
                     <p>
-                          {{data.quantite}}
+                          {{data?.quantite}}
                     </p>
                   </td>
                 </tr>
@@ -358,6 +365,7 @@
                           type="checkbox"
                           class="form-control-custom"
                           [name]="'checkbox_' + i"
+                          [disabled]="article.stocksDisponibles === 0"
                           [(ngModel)]="article.isChecked"
                           (change)="onCheckboxChange(article)"
                         />
@@ -376,15 +384,15 @@
           type="button"
           class="btn btn-secondary px-2"
         >
-          Annuler
+          Fermer
         </button>
-        <button
+        <!-- <button
           type="submit"
           (click)="onSubmitSelection()"
           class="btn btn-primary px-2"
         >
           Valider
-        </button>
+        </button> -->
       </div>
     </div>
   </div>
