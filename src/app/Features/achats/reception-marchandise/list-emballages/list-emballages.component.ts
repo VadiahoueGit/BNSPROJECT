@@ -140,7 +140,7 @@ export class ListEmballagesComponent {
   OnEdit(data: any) {
     console.log(data, 'data emballage');
     console.log(data?.emballagesRendus.length, 'taille');
-
+    this.depotId = data.commande.depot.id;
     this.isEditMode = true;
     this.updateData = data;
     data.articlesRecus.map((item: any) => {
@@ -156,29 +156,29 @@ export class ListEmballagesComponent {
   async GetStockDisponibleByDepot(item: any): Promise<any> {
     let data = {
       productCode: item.code,
-      depotId:this.depotId
+      depotId: this.depotId
     };
 
     try {
       // Attendre la réponse de la promesse
-      const response:any = await this.articleService.GetStockDisponibleByDepot(data);
+      const response: any = await this.articleService.GetStockDisponibleByDepot(data);
       console.log(response)
       // Vérifier si le statusCode est 200
       if (response) {
         return response.quantiteDisponible;
       } else if (response.statusCode === 404) {
-        return  0; // Si le code est 404, retourner 0
+        return 0; // Si le code est 404, retourner 0
       } else {
         return null; // Si un autre code, retourner null ou une valeur par défaut
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.log(error);
       if (error.status === 404) {
         return 0; // Si le code est 404, retourner 0
       }
     }
 
-    console.log('totalite',this.stocksDisponibles);
+    console.log('totalite', this.stocksDisponibles);
     return 0;
   }
   async GetArticleList(page: number) {
@@ -187,28 +187,28 @@ export class ListEmballagesComponent {
       page: page,
       limit: 8,
     };
-  
+
     this._spinner.show();
-  
+
     try {
       const res: any = await this.articleService.GetArticleList(data);
-  
+
       const emballagesAvecPrix = await Promise.all(
         res.data.map(async (article: any) => {
           const prixSousDepot = article.prix.find(
             (p: any) => p.typePrix.libelle === 'PRIX SOUS DEPOT'
           );
-  
-          const quantite = await this.GetStockDisponibleByDepot(article.emballage); // ✅ await ici
-  
+
+          const quantite = await this.GetStockDisponibleByDepot(article.emballage); 
+
           return {
             ...article.emballage,
             PrixSousDepot: prixSousDepot?.PrixConsigne ?? 0,
-            stocksDisponibles: quantite
+            stocksDisponibles: quantite ?? 0
           };
         })
       );
-  
+
       console.log('emballagesAvecPrix:::>', emballagesAvecPrix);
       this.dataListLiquides = emballagesAvecPrix;
       this.filteredArticleList = this.dataListLiquides;
@@ -218,7 +218,7 @@ export class ListEmballagesComponent {
       this._spinner.hide();
     }
   }
-  
+
 
   removeArticle(item: any): void {
     item.isNewAdd = false;
