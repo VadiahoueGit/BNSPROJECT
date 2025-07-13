@@ -107,7 +107,7 @@ export class FeaturesComponent {
 
   getIconClass(type: string): string {
     switch (type) {
-      case 'FINANCIERE': return 'fa-solid fa-arrow-down text-danger';
+      case 'FINANCIERE': return 'fa-solid fa-money-check-dollar text-danger';
       case 'stock': return 'fa-solid fa-triangle-exclamation text-warning';
       case 'livraison': return 'fa-solid fa-truck text-primary';
       case 'commercial': return 'fa-solid fa-user-slash text-success';

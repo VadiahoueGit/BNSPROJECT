@@ -199,6 +199,13 @@ export class SortieDeStockComponent {
     return allValid ? null : {'articlesInvalid': true};
   }
 
+  formatCode(code: string): string {
+    if (!code) return code;
+    if (code.startsWith('EMB_')) return code.replace('EMB_', 'VEMB_');
+    if (code.startsWith('CAS_')) return code.replace('CAS_', 'CCAS_');
+    return code;
+  }
+
   async GetStockDisponibleByDepot(item: any): Promise<any> {
     console.log(item);
     let data = {
@@ -292,7 +299,6 @@ export class SortieDeStockComponent {
         this.articleService.GetArticleList(data),
         this.articleService.GetEmballageList(data) // Remplacez par votre méthode API
       ]);
-
       console.log("Données plastiques:", plastiques);
       console.log("Données liquides:", articles);
       console.log("emballage:", emballage);
@@ -313,10 +319,13 @@ export class SortieDeStockComponent {
         console.error("Les données de liquides ne sont pas un tableau");
       }
       if (Array.isArray(emballage.data)) {
-        // this.dataListLiquides = emballage.data;
-        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
-        this.dataList.push(...emballage.data);
-      } else {
+        // Appliquer formatCode uniquement sur les emballages
+        const emballagesFormates = emballage.data.map((article: any) => ({
+          ...article,
+          code: this.formatCode(article.code)
+        }));
+        this.dataList.push(...emballagesFormates);
+      }  else {
         console.error("Les données de liquides ne sont pas un tableau");
       }
       this.filteredArticleList = this.dataList;

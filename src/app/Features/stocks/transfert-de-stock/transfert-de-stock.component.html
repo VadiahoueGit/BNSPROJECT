@@ -241,6 +241,7 @@
             <table class="table">
               <thead>
               <tr style="font-size: small;">
+                <th scope="col" class="text-secondary">Code</th>
                 <th scope="col" class="text-secondary">Produits</th>
                 <th scope="col" class="text-secondary">Description</th>
                 <th scope="col" class="text-secondary">Qte</th>
@@ -250,6 +251,7 @@
               </thead>
               <tbody>
               <tr *ngFor="let article of filteredArticleList; let i = index">
+                <td>{{ article.reference || article.code || article.articleCode}}</td>
                 <td>{{ article.articleName }}</td>
                 <td>
                   <input

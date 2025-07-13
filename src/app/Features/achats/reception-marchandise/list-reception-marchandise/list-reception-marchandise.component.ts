@@ -311,39 +311,6 @@ export class ListReceptionMarchandiseComponent {
         this._spinner.hide();
       });
   }
-  onSubmit(): void {
-    const payload = {
-      // receptionId: this.dataList.,
-      articlesRecus: this.selectedArticles.map((article: any) => {
-        return {
-          quantite: article?.quantiteAffectee,
-          prixUnitaireEmballage: article?.prixUnitaireEmballage,
-          emballageId: article?.emballage?.id,
-        };
-      }),
-    };
-
-    // if (this.emballageRenduForm.valid) {
-    this._spinner.show();
-    this.articleService.CreateCommandClient(payload).then(
-      (res: any) => {
-        console.log(res, 'enregistré avec succes');
-        this._spinner.hide();
-        this.emballageRenduForm.reset();
-        // this.GetListRetourEmballageFournisseurs(1);
-        this.OnCloseModal();
-        this.toastr.success(res.message);
-      },
-      (error: any) => {
-        this._spinner.hide();
-        this.toastr.info(error.error.message);
-        console.error('Erreur lors de la création', error);
-      }
-    );
-    // } else {
-    //   this.toastr.warning('Formulaire invalide');
-    // }
-  }
 
   filterGlobal() {
     this.GetListReceptionCommandeFournisseurs(
@@ -353,50 +320,6 @@ export class ListReceptionMarchandiseComponent {
       this.filters.dateDebut,
       this.filters.dateFin,
     );
-  }
-  // GetListRetourEmballageFournisseurs(
-  //   page: number,
-  //   numeroRetour?: string,
-  //   dateDebut?: string,
-  //   dateFin?: string
-  // ) {
-  //   let data = {
-  //     paginate: true,
-  //     page: page,
-  //     limit: 8,
-  //     numeroRetour: numeroRetour || '',
-  //     dateDebut: dateDebut || '',
-  //     dateFin: dateFin || '',
-  //   };
-  //   this._spinner.show();
-  //   this.articleService
-  //     .GetListRetourEmballageFournisseurs(data)
-  //     .then((res: any) => {
-  //       console.log('dataList:::>', res);
-  //       this.dataList = res.data;
-  //       this._spinner.hide();
-  //     });
-  // }
-  selectArticle() {
-    this.isEditMode = false;
-    this.isChoiceModalOpen = true;
-    this.operation = 'create';
-    this.cdr.detectChanges();
-    console.log(this.isChoiceModalOpen);
-  }
-  validateQuantite(data: any): void {
-    console.log(data, 'validateQuantiteData');
-
-    // Vérifier si la quantité saisie dépasse la quantité disponible
-    if (data.quantite > this.stocksDisponibles[data.liquide.id]) {
-      // Réinitialiser la quantité à la quantité disponible
-      data.quantite = '';
-
-      // Afficher un message de warning
-      this.toastr.warning('La quantité saisie dépasse la quantité disponible.');
-    } else {
-      this.calculatePrix(data);
-    }
   }
 
   onCheckboxChange(article: any): void {

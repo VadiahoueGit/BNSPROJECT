@@ -31,7 +31,12 @@ export class TransfertDeStockComponent implements OnInit {
   sourceDepotId = null;
   destinationDepotId = null;
   searchTerm: string = '';
-
+  formatCode(code: string): string {
+    if (!code) return code;
+    if (code.startsWith('EMB_')) return code.replace('EMB_', 'VEMB_');
+    if (code.startsWith('CAS_')) return code.replace('CAS_', 'CCAS_');
+    return code;
+  }
   constructor(
     private _coreService: CoreServiceService,
     private fb: FormBuilder,
@@ -139,7 +144,8 @@ export class TransfertDeStockComponent implements OnInit {
     if (this.searchTerm) {
       this.filteredArticleList = this.articleList.filter((article: any) =>
         article.articleCode.toLowerCase().includes(this.searchTerm.toLowerCase())
-      //  || article.code.toLowerCase().includes(this.searchTerm.toLowerCase())
+       || article.code.toLowerCase().includes(this.searchTerm.toLowerCase())
+        || article.reference.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
       console.log(this.filteredArticleList)
     } else {
@@ -230,13 +236,20 @@ export class TransfertDeStockComponent implements OnInit {
     }
   }
   selectDepot() {
-    let id = this.sourceDepotId;
+    const id = this.sourceDepotId;
     this.articleService.GetStockByDepot(id).then((res: any) => {
       console.log(res, 'produit par depot');
-      this.articleList = res.articles;
+
+      // ✅ Appliquer formatCode sur chaque article
+      this.articleList = res.articles.map((article: any) => ({
+        ...article,
+        articleCode: this.formatCode(article.articleCode)
+      }));
+
       this.filteredArticleList = this.articleList;
     });
   }
+
 
   async fetchData() {
     let data = {
@@ -272,14 +285,17 @@ export class TransfertDeStockComponent implements OnInit {
         console.error("Les données de liquides ne sont pas un tableau");
       }
       if (Array.isArray(emballage.data)) {
-        // this.dataListLiquides = emballage.data;
-        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
-        this.dataList.push(...emballage.data);
+        const emballagesFormates = emballage.data.map((article: any) => ({
+          ...article,
+          articleCode: this.formatCode(article.code) // <-- c'est bien ici que tu formates
+        }));
+        this.dataList.push(...emballagesFormates);
       } else {
         console.error("Les données de liquides ne sont pas un tableau");
       }
-      this.filteredArticleList = this.dataList;
+
       console.log('Données combinées dans dataList:', this.dataList);
+      this.filteredArticleList = this.dataList;
     } catch (error) {
       // Gestion des erreurs
       console.error('Erreur lors de la récupération des données:', error);

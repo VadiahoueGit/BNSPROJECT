@@ -556,7 +556,7 @@
                 <tbody>
                 <tr
                   style="font-size: small"
-                  *ngFor="let item of data.articles; let i = index"
+                  *ngFor="let item of getFilteredArticles(data); let i = index"
                 >
                   <td>{{ item.typeArticle }}</td>
                   <td>{{ item.productCode }}</td>
@@ -571,31 +571,6 @@
               </table>
             </div>
 
-            <!--            <div-->
-            <!--              class="table-responsive"-->
-            <!--              style="max-height: 300px; overflow-y: auto"-->
-            <!--            >-->
-            <!--              <table class="table">-->
-            <!--                <thead>-->
-            <!--                <tr style="font-size: small">-->
-            <!--                  <th scope="col">Produits</th>-->
-            <!--                  <th scope="col" class="text-center">Qte Emballage retourné</th>-->
-            <!--                </tr>-->
-            <!--                </thead>-->
-            <!--                <tbody>-->
-            <!--                <tr-->
-            <!--                  style="font-size: small"-->
-            <!--                  *ngFor="let item of data.articles; let i = index"-->
-            <!--                >-->
-            <!--                  <td>{{ item.emballage.libelle }}</td>-->
-            <!--                  <td class="text-center">{{ item.quantite }}</td>-->
-
-            <!--                </tr>-->
-
-            <!--                &lt;!&ndash; Ajoutez d'autres lignes si nécessaire &ndash;&gt;-->
-            <!--                </tbody>-->
-            <!--              </table>-->
-            <!--            </div>-->
           </fieldset>
           <label *ngIf="updateData.retours.length == 0" class="text-gray text-center my-4">Aucune recupération effectuée</label>
         </div>

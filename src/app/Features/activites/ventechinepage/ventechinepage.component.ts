@@ -97,6 +97,12 @@ export class VentechinepageComponent {
     this.GetVenteChineList(1);
   }
 
+
+  getFilteredArticles(data: any): any[] {
+    return data.articles?.filter((a: any) => a.prixUnitaire > 0) || [];
+  }
+
+
   activeElement(elt: string) {
     this.activeTab = elt;
   }
@@ -367,7 +373,6 @@ export class VentechinepageComponent {
       page: page,
       limit: 8,
     };
-    this._spinner.show();
     this.articleService.GetArticleList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.filteredArticleList = res.data
@@ -389,7 +394,6 @@ export class VentechinepageComponent {
       this.dataListLiquidesFree = [...this.filteredArticleListFree];
       // this.filteredArticleList = this.dataListLiquides;
       // this.filteredArticleListFree = this.dataListLiquidesFree;
-      this._spinner.hide();
     });
   }
 
@@ -436,9 +440,7 @@ export class VentechinepageComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  get filteredArticles() {
-    return this.updateData.articles?.filter((a:any) => a.prixUnitaire > 0);
-  }
+
   get filteredArticlesFree() {
     return this.updateData.articlesGratuit?.filter((a:any) => a.prixUnitaire > 0);
   }
@@ -467,7 +469,6 @@ export class VentechinepageComponent {
       page: page,
       limit: 8,
     };
-    this._spinner.show();
     this.utilisateurService.GetCommercialList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.dataListCommercial = res.data;
@@ -475,7 +476,6 @@ export class VentechinepageComponent {
         ...item,
         fullLabel: `${item.nom} ${item.prenoms}`,
       }));
-      this._spinner.hide();
     });
   }
 
@@ -485,11 +485,9 @@ export class VentechinepageComponent {
       page: page,
       limit: 8,
     };
-    this._spinner.show();
     this.coreService.GetLocaliteList(data).then((res: any) => {
       console.log('dataListLocalite:::>', res);
       this.dataListLocalite = res.data;
-      this._spinner.hide();
     });
   }
 
@@ -499,11 +497,9 @@ export class VentechinepageComponent {
       page: page,
       limit: 8,
     };
-    this._spinner.show();
     this.logistiqueService.GetVehiculeList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.dataListCamion = res.data;
-      this._spinner.hide();
     });
   }
 
