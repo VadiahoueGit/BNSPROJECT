@@ -80,6 +80,7 @@
   >
     <ng-template pTemplate="header">
       <tr>
+        <th style="color: var(--secondary-color)">Dépots</th>
         <th style="color: var(--secondary-color)">N° réception</th>
         <th style="color: var(--secondary-color)">N° bon livraison</th>
         <th style="color: var(--secondary-color)">N° commande</th>
@@ -92,17 +93,30 @@
     <ng-template pTemplate="body" let-dataList let-i="index">
       <tr>
         <td>
+           <span class="ml-1 vertical-align-middle">
+          {{ dataList?.commande.depot.nomDepot }}
+           </span>
+        </td>
+        <td>
+           <span class="ml-1 vertical-align-middle">
           {{ dataList?.numeroReceptionCommande }}
+           </span>
         </td>
         <td>
+           <span class="ml-1 vertical-align-middle">
           {{ dataList?.numeroBonLivraison }}
+           </span>
         </td>
         <td>
+           <span class="ml-1 vertical-align-middle">
           {{ dataList?.commande?.NumCommande }}
+           </span>
         </td>
 
         <td>
+           <span class="ml-1 vertical-align-middle">
           {{ dataList?.commande?.dateCommande }}
+           </span>
         </td>
 
         <td>
@@ -124,13 +138,6 @@
                 class="fas fa-eye text-secondary"
               ></i>
             </td>
-            <!-- <td>
-                <i
-                  (click)="OnDelete(dataList?.id)"
-                  style="cursor: pointer"
-                  class="fas fa-trash-alt text-danger"
-                ></i>
-              </td> -->
           </tr>
         </td>
       </tr>
@@ -258,7 +265,7 @@
                   <td class="">
                     <p>
                       {{
-                        data?.emballage?.code
+                        formatCode(data?.emballage?.code)
                       }}
                     </p>
                   </td>
@@ -326,7 +333,6 @@
       <div class="modal-body">
         <form>
           <div class="row">
-            <fieldset class="row border my-2">
               <div class="p-3">
                 <!-- Champ de recherche -->
                 <input
@@ -374,7 +380,6 @@
                   </tbody>
                 </table>
               </div>
-            </fieldset>
           </div>
         </form>
       </div>

@@ -126,7 +126,10 @@ export class ListEmballagesComponent {
     this.totalQte = 0;
     this.filteredArticleList = [];
     this.isModalOpen = false;
+    this.emballagesrecues = []
     this.selectedArticles = [];
+    this.updateData = [];
+    this.GetListReceptionCommandeFournisseurs(1);
     (this.emballageRenduForm.get('articles') as FormArray).clear();
   }
   OnCreate() {
@@ -140,19 +143,34 @@ export class ListEmballagesComponent {
   OnEdit(data: any) {
     console.log(data, 'data emballage');
     console.log(data?.emballagesRendus.length, 'taille');
+
     this.depotId = data.commande.depot.id;
     this.isEditMode = true;
     this.updateData = data;
+
+    // ✅ Formattage des codes des emballages rendus
+    const articlesRendus = data.articlesRecus ?? data.articlesRecus;
+
+    articlesRendus.forEach((article: any) => {
+      if (article?.articleCommande.emballage?.code) {
+        article.articleCommande.emballage.code = this.formatCode(article.articleCommande.emballage.code);
+      }
+    });
+console.log(articlesRendus);
+    // Articles reçus
     data.articlesRecus.map((item: any) => {
       item.isNewAdd = false;
-    })
+    });
+
     this.emballagesrecues = data.articlesRecus;
     this.articleId = data.id;
     this.isModalOpen = true;
     this.operation = 'edit';
+
     console.log(this.isModalOpen);
     console.log(this.emballagesrecues);
   }
+
   async GetStockDisponibleByDepot(item: any): Promise<any> {
     let data = {
       productCode: item.code,
@@ -199,15 +217,20 @@ export class ListEmballagesComponent {
             (p: any) => p.typePrix.libelle === 'PRIX SOUS DEPOT'
           );
 
-          const quantite = await this.GetStockDisponibleByDepot(article.emballage); 
+          const quantite = await this.GetStockDisponibleByDepot(article.emballage);
+
+          // Format du code
+          const codeFormate = this.formatCode(article.emballage.code);
 
           return {
             ...article.emballage,
+            code: codeFormate, // ici on remplace le code original par le code formaté
             PrixSousDepot: prixSousDepot?.PrixConsigne ?? 0,
             stocksDisponibles: quantite ?? 0
           };
         })
       );
+
 
       console.log('emballagesAvecPrix:::>', emballagesAvecPrix);
       this.dataListLiquides = emballagesAvecPrix;
@@ -218,6 +241,15 @@ export class ListEmballagesComponent {
       this._spinner.hide();
     }
   }
+
+  public formatCode(code: string): string {
+    console.log('formatCode appelé avec', code);
+    if (!code) return code;
+    if (code.startsWith('EMB_')) return code.replace('EMB_', 'VEMB_');
+    if (code.startsWith('CAS_')) return code.replace('CAS_', 'CCAS_');
+    return code;
+  }
+
 
 
   removeArticle(item: any): void {

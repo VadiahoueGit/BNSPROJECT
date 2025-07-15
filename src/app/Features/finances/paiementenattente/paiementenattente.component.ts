@@ -136,20 +136,20 @@ export class PaiementenattenteComponent {
     this.GetPaiementList(this.currentPage)
   }
 
-  getRetardEnJours(dateEcheance: string | Date, delai: number): number | null {
-    if (!dateEcheance || delai == null) return null;
+  getEcartEnJours(dateEcheance: string | Date): number | null {
+    if (!dateEcheance) return null;
 
     const dateEch = new Date(dateEcheance);
     const today = new Date();
 
-    // Date limite autorisée = date échéance + délai
-    const dateLimite = new Date(dateEch);
-    dateLimite.setDate(dateEch.getDate() + delai);
+    // On ignore les heures pour un écart "en jours entiers"
+    dateEch.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
 
-    const diffMs = today.getTime() - dateLimite.getTime();
+    const diffMs = today.getTime() - dateEch.getTime();
     const diffJours = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    return diffJours > 0 ? diffJours : 0;
+    return diffJours;
   }
 
 

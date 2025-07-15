@@ -82,6 +82,7 @@
   >
     <ng-template pTemplate="header">
       <tr>
+        <th style="color: var(--secondary-color)">Dépots</th>
         <th style="color: var(--secondary-color)">N° réception</th>
         <th style="color: var(--secondary-color)">N° bon livraison</th>
         <th style="color: var(--secondary-color)">N° commande</th>
@@ -94,17 +95,30 @@
     <ng-template pTemplate="body" let-dataList let-i="index">
       <tr>
         <td>
+           <span class="ml-1 vertical-align-middle">
+          {{ dataList?.commande.depot.nomDepot }}
+           </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
           {{ dataList?.numeroReceptionCommande }}
+          </span>
         </td>
 
         <td>
+          <span class="ml-1 vertical-align-middle">
           {{ dataList?.numeroBonLivraison }}
+          </span>
         </td>
         <td>
+          <span class="ml-1 vertical-align-middle">
           {{ dataList?.commande?.NumCommande }}
+          </span>
         </td>
         <td>
+          <span class="ml-1 vertical-align-middle">
           {{ dataList?.commande?.dateCommande }}
+          </span>
         </td>
 
         <td>
@@ -231,16 +245,16 @@
                     <td>
                       {{
                         item?.articleCommande ? item?.articleCommande?.emballage?.libelle :
-                        item?.emballage?.libelle 
-                          
+                        item?.emballage?.libelle
+
                       }}
                     </td>
                     <td>
                       {{
-                        item?.articleCommande ? 
+                        item?.articleCommande ?
                         item?.articleCommande?.liquide?.libelle :
                         item?.liquide?.libelle
-                          
+
                       }}
                     </td>
                     <td>
