@@ -37,33 +37,6 @@ export class CartographieComponent implements AfterViewInit{
   slideDetails: any = null
   markersDepot: any[] = [];
   markersVehicule: any[] = [];
-  data  = {
-    driver:{
-      "id": 18,
-      "code": "TRANS6MK64",
-      "nom": "TIMITE",
-      "prenoms": "BORDJOBA",
-      "nomDepot": "BNS ABENGOUROU",
-      "telephone": "0789718242",
-      "email": "bordjobatimite@bestnegoce.com",
-      "login": "TRANS6MK64",
-      "role": "transporteur",
-    },
-    vehicle:{
-      "id": 13,
-      "marque": "ISUZU",
-      "energie": "GASOIL",
-      "immatriculation": "736LJ01",
-      "capacite": 450,
-      "dateDeVisite": "2026-05-22T02:00:00.000Z",
-      "dateAcqui": "2025-03-20T01:00:00.000Z",
-    },
-    position:{
-      latitude:'',
-      longitude:''
-    }
-
-  }
   latitude: number | undefined;
   longitude: number | undefined;
   currentPosition: any

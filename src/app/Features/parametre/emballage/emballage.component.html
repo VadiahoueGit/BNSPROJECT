@@ -1,8 +1,7 @@
 <div class="card">
 
     <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataListEmballage" dataKey="id" [rows]="8" [totalRecords]="totalPages" [lazy]="true"
-        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" [globalFilterFields]="['plastiquenu.libelle', 'libelle']"
-        [globalFilterFields]="['plastiquenu.libelle', 'libelle']" (onPage)="onPage($event)">
+        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
         <ng-template pTemplate="caption">
             <div class=" d-flex justify-content-between py-3">
                 <span class="p-input-icon-left ml-auto d-flex align-items-center">

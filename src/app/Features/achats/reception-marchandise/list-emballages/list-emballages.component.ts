@@ -200,7 +200,7 @@ console.log(articlesRendus);
     return 0;
   }
   async GetArticleList(page: number) {
-    let data = {
+    const data = {
       paginate: false,
       page: page,
       limit: 8,
@@ -219,28 +219,47 @@ console.log(articlesRendus);
 
           const quantite = await this.GetStockDisponibleByDepot(article.emballage);
 
-          // Format du code
           const codeFormate = this.formatCode(article.emballage.code);
 
           return {
             ...article.emballage,
-            code: codeFormate, // ici on remplace le code original par le code formaté
+            code: codeFormate,
             PrixSousDepot: prixSousDepot?.PrixConsigne ?? 0,
             stocksDisponibles: quantite ?? 0
           };
         })
       );
 
+      // ❌ Exclusion des emballages avec PrixSousDepot = 0
+      const articlesValides = emballagesAvecPrix.filter(e => e.PrixSousDepot > 0);
 
-      console.log('emballagesAvecPrix:::>', emballagesAvecPrix);
-      this.dataListLiquides = emballagesAvecPrix;
+      // 🔁 Détection des doublons
+      const codes = articlesValides.map((e) => e.code);
+      const doublons = codes.filter((code, index, self) => self.indexOf(code) !== index);
+      if (doublons.length > 0) {
+        console.warn('🚨 Codes en double détectés :', [...new Set(doublons)]);
+      }
+
+      // ✅ Suppression des doublons par code
+      const uniques = new Map();
+      articlesValides.forEach(item => {
+        if (!uniques.has(item.code)) {
+          uniques.set(item.code, item);
+        }
+      });
+
+      this.dataListLiquides = Array.from(uniques.values());
       this.filteredArticleList = this.dataListLiquides;
+
+      console.log('✅ Liste finale (sans doublons et sans PrixSousDepot = 0) :', this.dataListLiquides);
+
     } catch (err) {
-      console.error('Erreur GetArticleList', err);
+      console.error('❌ Erreur GetArticleList', err);
     } finally {
       this._spinner.hide();
     }
   }
+
 
   public formatCode(code: string): string {
     console.log('formatCode appelé avec', code);

@@ -8,7 +8,7 @@ import {io, Socket} from "socket.io-client";
 })
 export class WebsocketService {
   private socket: Socket;
-  private readonly SERVER_URL = 'https://bnsapi.localdev.business';
+  private readonly SERVER_URL = 'https://armonysapi.bnsgroupe.net';
 
   constructor() {
 

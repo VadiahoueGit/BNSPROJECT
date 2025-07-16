@@ -88,7 +88,7 @@ export class EmballageComponent {
     this._spinner.show();
     this.articleService.GetEmballageList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages);
 
       this.dataListEmballage = res.data;
