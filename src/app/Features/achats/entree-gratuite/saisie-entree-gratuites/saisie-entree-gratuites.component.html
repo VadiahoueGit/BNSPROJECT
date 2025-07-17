@@ -1,118 +1,122 @@
 <div class="card">
-  <div class="d-flex justify-content-end py-3">
+  <ng-container *ngIf="!ListenMode">
+    <div class="d-flex justify-content-end py-3">
 
-    <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
-      Saisir une entrée
-    </button>
-  </div>
-  <div class="row">
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Numéro entrée :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.numeroEntree"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
+      <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
+        Saisir une entrée
+      </button>
     </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Date début :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.dateDebut"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
+  </ng-container>
+    <div class="row">
+      <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <span>Numéro entrée :</span>
+        <span class="p-input-icon-left w-100 d-flex align-items-center">
+          <i class="fas fa-search"></i>
+          <input
+            class="w-100"
+            style="border-radius: 7px"
+            pInputText
+            type="text"
+            [(ngModel)]="filters.numeroEntree"
+            (keydown.enter)="filterGlobal()"
+            placeholder="Recherche"
+          />
+        </span>
+      </div>
+      <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <span>Date début :</span>
+        <span class="p-input-icon-left w-100 d-flex align-items-center">
+          <i class="fas fa-search"></i>
+          <input
+            class="w-100"
+            style="border-radius: 7px"
+            pInputText
+            type="text"
+            [(ngModel)]="filters.dateDebut"
+            (keydown.enter)="filterGlobal()"
+            placeholder="Recherche"
+          />
+        </span>
+      </div>
+      <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <span>Date fin :</span>
+        <span class="p-input-icon-left w-100 d-flex align-items-center">
+          <i class="fas fa-search"></i>
+          <input
+            class="w-100"
+            style="border-radius: 7px"
+            pInputText
+            type="text"
+            [(ngModel)]="filters.dateFin"
+            (keydown.enter)="filterGlobal()"
+            placeholder="Recherche"
+          />
+        </span>
+      </div>
     </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Date fin :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.dateFin"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
-    </div>
-  </div>
-  <p-table
-    [styleClass]="'p-datatable-sm'"
-    #dt2
-    [value]="ListEntreeGratuite"
-    dataKey="id"
-    [rows]="8"
-    [totalRecords]="totalPages" [lazy]="true"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [paginator]="true"
-    (onPage)="onPage($event)"
-  >
-    <ng-template pTemplate="header">
-      <tr>
-        <th style="color: var(--secondary-color)">N° entrée</th>
-        <th style="color: var(--secondary-color)">Fournisseur</th>
-        <th style="color: var(--secondary-color)">Dépôt</th>
-        <th style="color: var(--secondary-color)">Date réception</th>
-        <!-- <th style="color: var(--secondary-color)">Actions</th> -->
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-ListEntreeGratuite let-i="index">
-      <tr>
-        <td>
-          {{ ListEntreeGratuite?.NumEntreeGratuite }}
+    <p-table
+      [styleClass]="'p-datatable-sm'"
+      #dt2
+      [value]="ListEntreeGratuite"
+      dataKey="id"
+      [rows]="8"
+      [totalRecords]="totalPages" [lazy]="true"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [paginator]="true"
+      (onPage)="onPage($event)"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="color: var(--secondary-color)">N° entrée</th>
+          <th style="color: var(--secondary-color)">Fournisseur</th>
+          <th style="color: var(--secondary-color)">Dépôt</th>
+          <th style="color: var(--secondary-color)">Date réception</th>
+          <!-- <th style="color: var(--secondary-color)">Actions</th> -->
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-ListEntreeGratuite let-i="index">
+        <tr>
+          <td>
+            {{ ListEntreeGratuite?.NumEntreeGratuite }}
+          </td>
+  
+          <td>
+            {{ ListEntreeGratuite?.fournisseur?.nom }}
+          </td>
+  
+          <td>
+              <span class="ml-1 vertical-align-middle">
+               {{ ListEntreeGratuite?.depot?.nomDepot }}
+              </span>
+          </td>
+  
+          <td>
+              <span class="ml-1 vertical-align-middle">
+               {{ ListEntreeGratuite?.dateReception }}
+              </span>
+          </td>
+          <td>
+        <tr class="d-flex justify-content-center gap-3">
+          <td>
+            <i
+              (click)="OnEdit(ListEntreeGratuite)"
+              style="cursor: pointer"
+              class="fas fa-eye text-secondary"
+            ></i>
+          </td>
+  
+        </tr>
         </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5">Aucune commande trouvé.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+ 
 
-        <td>
-          {{ ListEntreeGratuite?.fournisseur?.nom }}
-        </td>
-
-        <td>
-            <span class="ml-1 vertical-align-middle">
-             {{ ListEntreeGratuite?.depot?.nomDepot }}
-            </span>
-        </td>
-
-        <td>
-            <span class="ml-1 vertical-align-middle">
-             {{ ListEntreeGratuite?.dateReception }}
-            </span>
-        </td>
-        <td>
-      <tr class="d-flex justify-content-center gap-3">
-        <td>
-          <i
-            (click)="OnEdit(ListEntreeGratuite)"
-            style="cursor: pointer"
-            class="fas fa-eye text-secondary"
-          ></i>
-        </td>
-
-      </tr>
-      </td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="5">Aucune commande trouvé.</td>
-      </tr>
-    </ng-template>
-  </p-table>
 </div>
 
 <!-- Modal creation -->
@@ -182,6 +186,30 @@
             </legend>
             <div class="p-2 mt-3">
               <div style="max-height: 350px; overflow-y: auto">
+                <div class="d-flex justify-content-between" *ngIf="ListenMode">
+                  <div class="mb-3">
+                   <input type="text" class="form-control" id="numeroBonLivraison" [(ngModel)]="dataSendedToReceptionMarchandiseRequest.numeroBonLivraison"
+                          placeholder="Entrez le numéro bon">
+                 </div>
+                 <div>
+                   <button
+                     (click)="imprimer(updateData.bonLivraison)"
+                     type="button"
+                     class="btn btn-warning mb-2 px-2 mx-2"
+                     [disabled]="updateData.bonLivraison == null"
+                   >
+                     <i class="fa-solid fa-print"></i>
+                     Imprimer le BON
+                   </button>
+                   <button
+                     (click)="selectArticle()"
+                     type="button"
+                     class="btn btn-secondary mb-2 px-2"
+                   >
+                     Ajouter
+                   </button>
+                 </div>
+               </div>
                 <table class="table table-bordered">
                   <thead class="table-success">
                   <tr>
@@ -195,7 +223,24 @@
                   <tr *ngFor="let item of updateData?.articles">
                     <td>{{ item?.emballage?.libelle }}</td>
                     <td>{{ item?.liquide?.libelle }}</td>
-                    <td>{{ item?.quantite }}</td>
+                    <td >
+                      <p class="d-flex justify-content-between">
+                        <input
+                          type="number"
+                          class="form-control-custom"
+                          [(ngModel)]="item.quantite"
+                          [min]="0"
+                          value="0"
+                        />
+                        <button *ngIf="item.isNewAdd"
+                          type="button"
+                          class="btn btn-danger btn-sm ms-2"
+                          (click)="removeArticleEmballage(item)"
+                        >
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </p>
+                    </td>
                   </tr>
                   </tbody>
                 </table>
@@ -212,6 +257,16 @@
           >
             Fermer
           </button>
+          <button
+          type="submit"
+          (click)="onValidate()"
+          class="btn btn-primary px-2"
+          *ngIf="ListenMode"
+          [disabled]="!dataSendedToReceptionMarchandiseRequest.numeroBonLivraison "
+        >
+
+          Valider
+        </button>
         </div>
       </ng-container>
       <ng-container *ngIf="operation == 'create'">
