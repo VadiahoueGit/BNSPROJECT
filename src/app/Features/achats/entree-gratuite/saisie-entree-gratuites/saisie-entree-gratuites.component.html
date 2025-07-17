@@ -79,17 +79,17 @@
           <td>
             {{ ListEntreeGratuite?.NumEntreeGratuite }}
           </td>
-  
+
           <td>
             {{ ListEntreeGratuite?.fournisseur?.nom }}
           </td>
-  
+
           <td>
               <span class="ml-1 vertical-align-middle">
                {{ ListEntreeGratuite?.depot?.nomDepot }}
               </span>
           </td>
-  
+
           <td>
               <span class="ml-1 vertical-align-middle">
                {{ ListEntreeGratuite?.dateReception }}
@@ -104,7 +104,7 @@
               class="fas fa-eye text-secondary"
             ></i>
           </td>
-  
+
         </tr>
         </td>
         </tr>
@@ -115,7 +115,7 @@
         </tr>
       </ng-template>
     </p-table>
- 
+
 
 </div>
 
@@ -192,15 +192,15 @@
                           placeholder="Entrez le numéro bon">
                  </div>
                  <div>
-                   <button
-                     (click)="imprimer(updateData.bonLivraison)"
-                     type="button"
-                     class="btn btn-warning mb-2 px-2 mx-2"
-                     [disabled]="updateData.bonLivraison == null"
-                   >
-                     <i class="fa-solid fa-print"></i>
-                     Imprimer le BON
-                   </button>
+<!--                   <button-->
+<!--                     (click)="imprimer(updateData.bonLivraison)"-->
+<!--                     type="button"-->
+<!--                     class="btn btn-warning mb-2 px-2 mx-2"-->
+<!--                     [disabled]="updateData.bonLivraison == null"-->
+<!--                   >-->
+<!--                     <i class="fa-solid fa-print"></i>-->
+<!--                     Imprimer le BON-->
+<!--                   </button>-->
                    <button
                      (click)="selectArticle()"
                      type="button"
