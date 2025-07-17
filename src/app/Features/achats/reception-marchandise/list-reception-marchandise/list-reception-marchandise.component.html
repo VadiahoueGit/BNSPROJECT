@@ -303,6 +303,7 @@
                     <th scope="col">Emballage</th>
                     <th scope="col">Prix unitaire</th>
                     <th scope="col">Quantité</th>
+                    <th scope="col">Ecart</th>
                   </tr>
                 </thead>
 
@@ -313,6 +314,7 @@
                     <td>{{ item?.emballage?.libelle }}</td>
                     <td>{{ item?.prixUnitaireEmballage | number}}</td>
                     <td>{{ item?.quantite | number}}</td>
+                    <td>{{ item?.ecart}}</td>
                   </tr>
                 </tbody>
               </table>

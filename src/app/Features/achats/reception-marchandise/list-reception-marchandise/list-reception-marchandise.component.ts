@@ -307,9 +307,77 @@ export class ListReceptionMarchandiseComponent {
       .then((res: any) => {
         console.log('GetListCommandeFournisseurs:::>', res);
         this.totalPages = res.total;
-        this.dataList = res.data
+
+        // On suppose que res.data contient bien les deux tableaux : attendus et reçus
+        const data = res.data;
+        // Appliquer les écarts dans chaque élément du tableau reçu
+        const dataAvecEcarts = data.map((ligne: any) => {
+          const articlesRecus = ligne.articlesRecus || [];
+          const tousLesArticlesRendus: any[] = [];
+
+          // 🔁 1. Rassembler tous les articles de tous les emballagesRendus
+          ligne.emballagesRendus?.forEach((rendu: any) => {
+            if (rendu?.articles?.length) {
+              tousLesArticlesRendus.push(...rendu.articles);
+            }
+          });
+
+          // 🧮 2. Grouper par code d’emballage
+          const mapParCode: { [code: string]: any } = {};
+
+          tousLesArticlesRendus.forEach((article: any) => {
+            const code = article.emballage?.code;
+            if (!code) return;
+
+            if (!mapParCode[code]) {
+              mapParCode[code] = {
+                ...article,
+                quantite: 0
+              };
+            }
+
+            mapParCode[code].quantite += article.quantite || 0;
+          });
+
+          // 📏 3. Calcul des écarts et enrichissement
+          const articlesAvecEcart = Object.values(mapParCode).map((recu: any) => {
+            const codeRecu = recu.emballage?.code;
+
+            const attendu = articlesRecus.find(
+              (item: any) => item.articleCommande?.emballage?.code === codeRecu
+            );
+
+            const quantiteAttendue = attendu?.articleCommande?.quantite || 0;
+            const quantiteReçue = recu.quantite || 0;
+            const ecart = quantiteReçue - quantiteAttendue;
+
+            return {
+              ...recu,
+              quantiteAttendue,
+              quantiteReçue,
+              ecart,
+              ecartPositif: ecart > 0,
+              ecartNegatif: ecart < 0
+            };
+          });
+
+          // 🔁 4. Écraser `emballagesRendus` avec une seule entrée contenant les articles groupés
+          return {
+            ...ligne,
+            emballagesRendus: [
+              {
+                ...ligne.emballagesRendus?.[0], // pour conserver date, id, etc.
+                articles: articlesAvecEcart
+              }
+            ]
+          };
+        });
+
+        // Affecter le tableau modifié
+        this.dataList = dataAvecEcarts;
         this._spinner.hide();
       });
+
   }
 
   filterGlobal() {
@@ -476,6 +544,9 @@ export class ListReceptionMarchandiseComponent {
       console.error('Erreur lors de la récupération des données:', error);
     }
   }
+
+
+
   protected readonly Number = Number;
 }
 
