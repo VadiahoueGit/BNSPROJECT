@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
@@ -8,6 +8,7 @@ import { CoreServiceService } from 'src/app/core/core-service.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
 import { StatutCommande, TypeCommandeFournisseur } from 'src/app/utils/utils';
+import { ConfigService } from "../../../../core/config-service.service";
 
 @Component({
   selector: 'app-saisie-entree-gratuites',
@@ -16,6 +17,7 @@ import { StatutCommande, TypeCommandeFournisseur } from 'src/app/utils/utils';
 })
 export class SaisieEntreeGratuitesComponent {
   @ViewChild('dt2') dt2!: Table;
+  @Input() ListenMode : boolean = false
   statuses!: any[];
   dataList: any[] = [];
   selectedArticles: any[] = [];
@@ -64,6 +66,14 @@ export class SaisieEntreeGratuitesComponent {
     dateDebut: '',
     dateFin: '',
   };
+  docUrl = ''
+  public dataSendedToReceptionMarchandiseRequest = {
+    commandeId: 0,
+    numeroBonLivraison: '',
+    articlesRecus: [],
+    emballagesRendus: [],
+  };
+  articlesRecues: any;
   constructor(
     private cdr: ChangeDetectorRef,
     private _coreService: CoreServiceService,
@@ -71,7 +81,8 @@ export class SaisieEntreeGratuitesComponent {
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService,
-    private utilisateurService: UtilisateurResolveService
+    private utilisateurService: UtilisateurResolveService,
+    private _config: ConfigService
   ) {}
 
   ngOnInit() {
@@ -88,6 +99,7 @@ export class SaisieEntreeGratuitesComponent {
     this.GetListEntreeGratuite(1);
     // this.fetchData()
     this.GetDepotList(1);
+    this.docUrl = this._config.docUrl;
   }
 
   GetArticleList(page: number) {
@@ -172,10 +184,18 @@ export class SaisieEntreeGratuitesComponent {
   selectArticle() {
     this.isEditMode = false;
     this.isChoiceModalOpen = true;
-    this.operation = 'create';
+    this.operation = this.ListenMode ? 'edit' : 'create';
     console.log(this.isModalOpen);
   }
-
+  removeArticleEmballage(item: any): void {
+    const indexToRemove = this.articlesRecues.findIndex(
+      (selectedArticle: any) => selectedArticle.libelle === item.libelle
+    );
+    if (indexToRemove !== -1) {
+      this.articlesRecues.splice(indexToRemove, 1);
+      this.afficherArticlesSelectionnes();
+    }
+  }
   selectArticleNew() {
     this.isEditMode = false;
     this.isChoiceModalOpen = true;
@@ -186,6 +206,10 @@ export class SaisieEntreeGratuitesComponent {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
+    data.articles.map((item: any) => {
+      item.isNewAdd = false;
+    });
+    this.articlesRecues = data.articles;
     this.articleId = data.id;
     this.isModalOpen = true;
     this.operation = 'edit';
@@ -228,7 +252,55 @@ export class SaisieEntreeGratuitesComponent {
       this.toastr.warning('Formulaire invalide');
     }
   }
+  onValidate(){
+    const payload = {
+      commandeId: this.updateData.id,
+      numeroBonLivraison:
+      this.dataSendedToReceptionMarchandiseRequest.numeroBonLivraison,
+      // numeroBonLivraison: 'BL-2024-001',
+      scanBonLivraison: 'https://monserveur.com/uploads/bon_livraison_001.pdf',
+      articlesRecus: this.articlesRecues.map((article: any) => {
+        const prixSousDistributeur = article.prix?.find(
+          (p: any) => p.typePrix?.libelle === 'PRIX S/DISTRIBUTEUR'
+        );
+        return {
+          articleCommandeId: article?.isNewAdd ? article?.id : null,
+          quantiteRecue: article?.quantite,
+          liquideId: article?.liquide?.id,
+          emballageId:
+            article?.liquide?.emballage?.id ?? article?.emballage?.id,
+          prixUnitaireLiquide: parseInt(
+            prixSousDistributeur?.PrixLiquide ?? article?.prixUnitaireLiquide
+          ),
+          prixUnitaireEmballage: parseInt(
+            prixSousDistributeur?.PrixConsigne ?? article?.prixUnitaireEmballage
+          ),
+          commentaireEcart: article.commentaireEcart || '',
+        };
+      }),
+    };
+    console.log(payload, 'payload');
 
+    if (payload) {
+      this._spinner.show();
+      this.articleService.CreateReceptionCommandeFournisseurs(payload).then(
+        (res: any) => {
+          console.log(res, 'enregistré avec succes');
+          this._spinner.hide();
+          this.GetListEntreeGratuite(1);
+          this.OnCloseModal();
+          this.toastr.success(res.message);
+        },
+        (error: any) => {
+          this._spinner.hide();
+          this.toastr.info(error.error.message);
+          console.error('Erreur lors de la création', error);
+        }
+      );
+    } else {
+      this.toastr.warning('Formulaire invalide');
+    }
+  }
   GetFournisseursList() {
     let data = {
       paginate: false,
@@ -249,22 +321,25 @@ export class SaisieEntreeGratuitesComponent {
   onCheckboxChange(article: any): void {
     // this.GetPrixByArticle(article)
     if (article.isChecked) {
-      this.selectedArticles.push(article);
-      // this.newCommande = this.selectedArticles
+      article.isNewAdd = true;
+      this.articlesRecues.push(article);
+      // this.newCommande = this.articlesRecues
       this.afficherArticlesSelectionnes();
     } else {
+      article.isNewAdd = false;
       delete article.quantite;
-      const indexToRemove = this.selectedArticles.findIndex(
+      const indexToRemove = this.articlesRecues.findIndex(
         (selectedArticle: any) => selectedArticle.libelle === article.libelle
       );
       if (indexToRemove !== -1) {
-        this.selectedArticles.splice(indexToRemove, 1);
+        this.articlesRecues.splice(indexToRemove, 1);
         this.afficherArticlesSelectionnes();
       }
     }
   }
 
   removeArticle(item: any): void {
+    item.isNewAdd = false;
     // Créer une copie de l'article avec la quantité définie à 0
     const data = {
       ...item,
@@ -479,6 +554,9 @@ export class SaisieEntreeGratuitesComponent {
 
     // Forcer le rafraîchissement de l'interface
     this.cdr.detectChanges();
+  }
+  imprimer(path:any) {
+    window.open(this.docUrl+path, '_blank');
   }
   GetDepotList(page: number) {
     let data = {

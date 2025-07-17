@@ -15,6 +15,9 @@
     <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'receptionmarchandise'"
         (click)="activeElement('receptionmarchandise')">Reception marchandises</a>
 
+    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'entreegratuite'"
+        (click)="activeElement('entreegratuite')">Entrée gratuite</a>
+
 </nav>
 
 <div class="tab-content mt-3">
@@ -27,6 +30,9 @@
     </div>
     <div *ngIf="activeTab === 'receptionmarchandise'" class="tab-pane fade show active">
         <app-list-reception-marchandise></app-list-reception-marchandise>
+    </div>
+    <div *ngIf="activeTab === 'entreegratuite'" class="tab-pane fade show active">
+        <app-saisie-entree-gratuites [ListenMode]="true"></app-saisie-entree-gratuites>
     </div>
 
 </div>
