@@ -257,24 +257,20 @@ export class SaisieEntreeGratuitesComponent {
       commandeId: this.updateData.id,
       numeroBonLivraison:
       this.dataSendedToReceptionMarchandiseRequest.numeroBonLivraison,
-      // numeroBonLivraison: 'BL-2024-001',
+  
       scanBonLivraison: 'https://monserveur.com/uploads/bon_livraison_001.pdf',
       articlesRecus: this.articlesRecues.map((article: any) => {
         const prixSousDistributeur = article.prix?.find(
           (p: any) => p.typePrix?.libelle === 'PRIX S/DISTRIBUTEUR'
         );
         return {
-          articleCommandeId: article?.isNewAdd ? article?.id : null,
+          articleCommandeId: article?.id,
           quantiteRecue: article?.quantite,
           liquideId: article?.liquide?.id,
           emballageId:
             article?.liquide?.emballage?.id ?? article?.emballage?.id,
-          prixUnitaireLiquide: parseInt(
-            prixSousDistributeur?.PrixLiquide ?? article?.prixUnitaireLiquide
-          ),
-          prixUnitaireEmballage: parseInt(
-            prixSousDistributeur?.PrixConsigne ?? article?.prixUnitaireEmballage
-          ),
+          prixUnitaireLiquide: prixSousDistributeur?.PrixConsigne ?? article?.prixUnitaireLiquide,
+          prixUnitaireEmballage: prixSousDistributeur?.PrixConsigne ?? article?.prixUnitaireEmballage,
           commentaireEcart: article.commentaireEcart || '',
         };
       }),
