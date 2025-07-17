@@ -347,7 +347,7 @@ export class ListReceptionMarchandiseComponent {
               (item: any) => item.articleCommande?.emballage?.code === codeRecu
             );
 
-            const quantiteAttendue = attendu?.articleCommande?.quantite || 0;
+            const quantiteAttendue = attendu?.articleCommande?.quantiteAffectee || 0;
             const quantiteReçue = recu.quantite || 0;
             const ecart = quantiteReçue - quantiteAttendue;
 
