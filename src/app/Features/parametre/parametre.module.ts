@@ -122,10 +122,11 @@ import { QuestionnaireVisiteComponent } from './questionnaire-visite/questionnai
 import { CommercialComponent } from './commercial/commercial.component';
 import { MoyenDePaiementComponent } from './moyen-de-paiement/moyen-de-paiement.component';
 import { DevisesComponent } from './devises/devises.component';
+import {PermissionComponent} from "./utilisateurs/permission/permission.component";
 
 
 @NgModule({
-    declarations: [CommercialComponent,QuestionnaireVisiteComponent,TransporteurComponent,LogistiqueComponent,ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent, ListPrixComponent, CreationPrixComponent, EmballageComponent, LiquideComponent, VehiculesComponent, UtilisateursComponent, UtilisateurComponent, ProfilUtilisateurComponent, MoyenDePaiementComponent, DevisesComponent],
+    declarations: [PermissionComponent,CommercialComponent,QuestionnaireVisiteComponent,TransporteurComponent,LogistiqueComponent,ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent, ListPrixComponent, CreationPrixComponent, EmballageComponent, LiquideComponent, VehiculesComponent, UtilisateursComponent, UtilisateurComponent, ProfilUtilisateurComponent, MoyenDePaiementComponent, DevisesComponent],
     imports: [
       NgSelectModule,
       SharedComponentModule,

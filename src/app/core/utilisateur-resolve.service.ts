@@ -403,7 +403,7 @@ export class UtilisateurResolveService {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
-        this._http.delete(`${this.apiUrl}/v1/profil${id}`).subscribe(
+        this._http.delete(`${this.apiUrl}/v1/profil/${id}`).subscribe(
             (res: any) => {
                 console.log(res);
                 resolve(res);
@@ -416,42 +416,6 @@ export class UtilisateurResolveService {
     });
 }
 
-  AssignPermissions(data: any) {
-    return new Promise((resolve: any, reject: any) => {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${this.token}`
-      });
-      this._http
-        .post(`${this.apiUrl}/v1/profil/assign-permissions`, data,{headers})
-        .subscribe(
-          (res: any) => {
-            console.log(res);
-            resolve(res);
-          },
-          (err) => {
-            console.log(err);
-            reject(err);
-          }
-        );
-    });
-  }
-  DesassignPermissions(id: number) {
-    return new Promise((resolve: any, reject: any) => {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${this.token}`
-      });
-      this._http.delete(`${this.apiUrl}/v1/profil/bulk-delete${id}`,{headers}).subscribe(
-        (res: any) => {
-          console.log(res);
-          resolve(res);
-        },
-        (err) => {
-          console.log(err);
-          reject(err);
-        }
-      );
-    });
-  }
 
   UpdateProfil(id: number, data: any) {
     const headers = new HttpHeaders({
@@ -516,6 +480,46 @@ export class UtilisateurResolveService {
     });
   }
 
+  AssignPermissions(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .post(`${this.apiUrl}/v1/profil/assign-permissions`, data,{headers})
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+  DeletePermissions(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/profil/bulk-delete`, {
+        headers,
+        body: data
+      }).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+
+    });
+  }
   UpdatePermissions(id: number, data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -531,26 +535,6 @@ export class UtilisateurResolveService {
           reject(err);
         }
       );
-    });
-  }
-
-  DeletePermissions(id: number) {
-    return new Promise((resolve: any, reject: any) => {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${this.token}`
-      });
-      this._http
-        .delete(`${this.apiUrl}/v1/permissions/bulk-delete${id}`,{headers})
-        .subscribe(
-          (res: any) => {
-            console.log(res);
-            resolve(res);
-          },
-          (err) => {
-            console.log(err);
-            reject(err);
-          }
-        );
     });
   }
 

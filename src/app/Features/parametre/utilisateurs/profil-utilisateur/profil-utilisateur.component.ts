@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild,ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
@@ -16,12 +16,13 @@ export class ProfilUtilisateurComponent {
   @ViewChild('dt2') dt2!: Table;
   statuses!: any[];
   dataList!: any[];
+  searchForm!: FormGroup;
   ProfilForm!: FormGroup;
   loading: boolean = true;
   isModalOpen = false;
   activityValues: number[] = [0, 100];
   operation: string = '';
-  updateData: any = {};
+  updateData: any = null;
   articleId: any = 0;
   isEditMode: boolean = false;
   dataListFormats: any = [];
@@ -35,14 +36,24 @@ export class ProfilUtilisateurComponent {
   currentPage: number;
   rowsPerPage: any;
   totalPages: number;
+  selectedItems: any = []
+  selectedItemsIds: any = []
+  filteredPermissionList: any = []
+  permissionList: any = []
   constructor(
+    private cdr: ChangeDetectorRef,
     private _userService: UtilisateurResolveService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
-  ) {}
+  ) {
+
+  }
 
   ngOnInit() {
+    this.searchForm = this.fb.group({
+      searchQuery: ['', Validators.required]
+    });
     this.ProfilForm = this.fb.group({
       name: [null, Validators.required],
       description: [null, Validators.required],
@@ -50,7 +61,7 @@ export class ProfilUtilisateurComponent {
     this._userService.ListProfils.subscribe((res: any) => {
       this.dataListProduits = res;
     });
-
+    this.GetPermissionList(1)
     this.GetProfilList(1);
   }
 
@@ -60,9 +71,87 @@ export class ProfilUtilisateurComponent {
     this.dt2.filterGlobal(value, 'contains');
   }
 
-  clear(table: Table) {
-    table.clear();
+  toggleSelection(item: any): void {
+    console.log('item', item);
+
+    if (item.isChecked) {
+      this.selectedItems.push(item);
+      this.selectedItemsIds.push(item.id);
+    } else {
+      const indexToRemove = this.selectedItems.findIndex(
+        (selectedArticle:any) => selectedArticle.id === item.id
+      );
+      if (indexToRemove !== -1) {
+        this.selectedItems.splice(indexToRemove, 1);
+        this.selectedItemsIds.splice(indexToRemove, 1);
+      }
+    }
+    console.log('items', this.selectedItems);
+    // this.VisiteForm.controls['pointsDeVenteIds'].setValue(this.selectedItemsIds)
   }
+
+  filterData(): void {
+    const query = this.searchForm.get('searchQuery')?.value;
+
+    if (!query) {
+      // Si la recherche est vide, on réinitialise la liste filtrée à l'ensemble des points de vente
+      this.filteredPermissionList = this.permissionList;
+    } else {
+      // Sinon, on filtre les points de vente en fonction de la recherche (case insensitive)
+      this.filteredPermissionList = this.permissionList.filter((item: any) =>
+        item.code.toLowerCase().includes(query.toLowerCase())
+      );
+    }
+  }
+  AssignPermissions(roleId:number,item:any)
+  {
+    let data= {
+      roleId: roleId,
+      permissionIds:item
+    }
+    this._spinner.show();
+    this._userService.AssignPermissions(data).then((response:any) => {
+      this._spinner.hide()
+      if (response.statusCode === 200) {
+        this.OnCloseModal();
+        this.GetProfilList(1);
+        this.ProfilForm.reset();
+      }else{
+        this.toastr.error(response.message);
+      }
+    })
+  }
+  GetPermissionList(page: number) {
+    this._spinner.show();
+
+    const data = {
+      paginate: false,
+      page: page,
+      limit: 8,
+    };
+
+    this._userService.GetPermissionsList(data).then((response: any) => {
+      this._spinner.hide();
+
+      let existingPermissionIds: number[] = [];
+
+      // Si updateData et ses permissions existent, on récupère les IDs
+      if (this.updateData && this.updateData.permissions) {
+        existingPermissionIds = this.updateData.permissions.map((perm: any) => perm.id);
+      }
+
+      // Marque isChecked: true uniquement si la permission est déjà dans updateData
+      this.permissionList = response.data;
+      this.filteredPermissionList = this.permissionList.map((p: any) => ({
+        ...p,
+        isChecked: existingPermissionIds.includes(p.id)
+      }));
+
+      this.cdr.detectChanges();
+      console.log(this.filteredPermissionList);
+    });
+  }
+
 
   OnCloseModal() {
     this.isModalOpen = false;
@@ -80,6 +169,7 @@ export class ProfilUtilisateurComponent {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
+    this.GetPermissionList(1)
     this.articleId = data.id;
     this.isModalOpen = true;
     this.loadArticleDetails();
@@ -119,10 +209,10 @@ export class ProfilUtilisateurComponent {
       if (this.isEditMode) {
         this._userService.UpdateProfil(this.articleId, formValues).then(
           (response: any) => {
-            console.log('article mis à jour avec succès', response);
-            this.OnCloseModal();
-            this.GetProfilList(1);
-            this.toastr.success(response.message);
+            if (response.statusCode === 201) {
+              this.AssignPermissions(this.articleId,this.selectedItemsIds);
+              this.toastr.success(response.message);
+            }
           },
           (error: any) => {
             this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
@@ -132,11 +222,10 @@ export class ProfilUtilisateurComponent {
       } else {
         this._userService.CreateProfil(formValues).then(
           (response: any) => {
-            this.OnCloseModal();
-            this.GetProfilList(1);
-            this.ProfilForm.reset();
-            this.toastr.success(response.message);
-            // this.toastr.success('Succès!', 'Article créé avec succès.');
+            if (response.statusCode === 201) {
+              this.AssignPermissions(response.data.id,this.selectedItemsIds);
+              this.toastr.success(response.message);
+            }
             console.log('Nouvel article créé avec succès', response);
           },
           (error: any) => {

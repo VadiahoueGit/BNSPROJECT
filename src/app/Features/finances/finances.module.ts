@@ -116,10 +116,12 @@ import {CaisseComponent} from "./caisse/caisse.component";
 import {BrouillardComponent} from "./brouillard/brouillard.component";
 import {ComptesComponent} from "./comptes/comptes.component";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {PaiementGroupeComponent} from "./paiement-groupe/paiement-groupe.component";
 
 
 @NgModule({
   declarations: [
+    PaiementGroupeComponent,
     ComptabiliteComponent,
     FinancesComponent,
     SuiviComptesComponent,

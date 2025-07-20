@@ -5,19 +5,22 @@
             <img src="assets/image/armonyssansfond.png" >
         </div>
       <div class="p-1 my-4  d-flex justify-content-center">
-        <label class="fw-bold">Best Negoce Service</label>
+        <label class="fw-bold">Best Negoce Services</label>
       </div>
 
-      <ul class="list-unstyled ps-0 scrollable-menu ">
-            <li class="mb-1 d-flex justify-content-center" *ngFor="let item of items; let i = index"
-                (click)="navigate(item.url,i)">
-                <a class="btn btn-toggle gap-4 d-flex align-items-center  w-100 rounded my-1"
-                    [ngClass]="{'active': selectedItem === i}">
-                    <i [class]="item.icon" [ngClass]="{'active': selectedItem === i}"></i> <!-- Icone ici -->
-                    <label>{{ item.label }}</label>
-                </a>
-            </li>
-        </ul>
+      <ul class="list-unstyled ps-0 scrollable-menu">
+        <ng-container *ngFor="let item of items; let i = index">
+          <li class="mb-1 d-flex justify-content-center"
+              (click)="navigate(item.url, i)">
+            <a class="btn btn-toggle gap-4 d-flex align-items-center w-100 rounded my-1"
+               [ngClass]="{'active': selectedItem === i}">
+              <i [class]="item.icon" [ngClass]="{'active': selectedItem === i}"></i>
+              <label>{{ item.label }}</label>
+            </a>
+          </li>
+        </ng-container>
+      </ul>
+
     </nav>
 
     <!-- Page Content -->
@@ -97,9 +100,10 @@
   <div class="d-flex px-3 gap-2 pb-2">
     <span class="tab" [class.active]="activeTab === 'all'" (click)="setTab('all')">Toutes <b>{{ totalNotifications }}</b></span>
     <span class="tab" [class.active]="activeTab === 'FINANCIERE'" (click)="setTab('FINANCIERE')">Finance <b>{{ countByType.finance }}</b></span>
-    <span class="tab" [class.active]="activeTab === 'stock'" (click)="setTab('stock')">Stock <b>{{ countByType.stock }}</b></span>
-    <span class="tab" [class.active]="activeTab === 'livraison'" (click)="setTab('livraison')">Livraison <b>{{ countByType.livraison }}</b></span>
-    <span class="tab" [class.active]="activeTab === 'commercial'" (click)="setTab('commercial')">Commercial <b>{{ countByType.commercial }}</b></span>
+    <span class="tab" [class.active]="activeTab === 'STOCK'" (click)="setTab('STOCK')">Stock <b>{{ countByType.stock }}</b></span>
+    <span class="tab" [class.active]="activeTab === 'LOGISTIQUE'" (click)="setTab('LOGISTIQUE')">Livraison <b>{{ countByType.livraison }}</b></span>
+    <span class="tab" [class.active]="activeTab === 'COMMERCIALE'" (click)="setTab('COMMERCIALE')">Commercial <b>{{ countByType.commercial }}</b></span>
+    <span class="tab" [class.active]="activeTab === 'SYSTEME'" (click)="setTab('SYSTEME')">Systeme <b>{{ countByType.system }}</b></span>
   </div>
 
   <div class="notif-list px-3">
@@ -107,7 +111,7 @@
       <div class="d-flex align-items-center py-2 gap-2 border-bottom">
         <i [ngClass]="getIconClass(notif.type) + ' ' + getColorClass(notif.type)"></i>
         <div>
-          <div style="font-size:13px" class="fw-semibold">{{ notif.titre }}</div>
+          <div class="row"> <div style="font-size:13px" class="fw-semibold col">{{ notif.titre }}</div> <div style="font-size:10px" class="col-3">{{ notif.createdAt |  date:'dd/MM/yyyy HH:mm' }}</div></div>
           <div style="font-size:11px" class="text-muted">{{ notif.message }}</div>
         </div>
       </div>

@@ -1,3 +1,6 @@
+import {storage_keys} from "../Features/shared-component/utils";
+import * as CryptoJS from 'crypto-js';
+
 export enum StatutCommande {
   ATTENTE_VALIDATION = 'Attente de Validation',
   PLANIFICATION_LIVRAISON = 'Planification de Livraison',
@@ -28,6 +31,22 @@ export enum Status {
   TERMINE ='TERMINE',
   PAYE = 'Payé',
   RECUE = 'Reçue'
+}
+
+export function hasPermission(existingPermissionName: string): boolean {
+  const raw = localStorage.getItem(storage_keys.STOREUser);
+
+  try {
+    const bytes = CryptoJS.AES.decrypt(raw || '', 'secret');
+    const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+
+    const user = JSON.parse(decryptedData || '{}');
+    const allPermissions: any[] = user?.profil?.permissions || [];
+    return allPermissions.some(p => p.name === existingPermissionName);
+  } catch (e) {
+    return false;
+  }
+
 }
 
 
