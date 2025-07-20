@@ -269,8 +269,8 @@ export class SaisieEntreeGratuitesComponent {
           liquideId: article?.liquide?.id,
           emballageId:
             article?.liquide?.emballage?.id ?? article?.emballage?.id,
-          prixUnitaireLiquide: prixSousDistributeur?.PrixConsigne ?? article?.prixUnitaireLiquide,
-          prixUnitaireEmballage: prixSousDistributeur?.PrixConsigne ?? article?.prixUnitaireEmballage,
+          prixUnitaireLiquide: prixSousDistributeur?.PrixConsigne ?? parseInt(article?.prixUnitaireLiquide),
+          prixUnitaireEmballage: prixSousDistributeur?.PrixConsigne ?? parseInt(article?.prixUnitaireEmballage),
           commentaireEcart: article.commentaireEcart || '',
         };
       }),
