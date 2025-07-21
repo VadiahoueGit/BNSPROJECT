@@ -6,7 +6,7 @@ import {Table} from 'primeng/table';
 import {ArticleServiceService} from 'src/app/core/article-service.service';
 import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
 import {ALERT_QUESTION} from 'src/app/Features/shared-component/utils';
-import {Status, StatutCommande} from 'src/app/utils/utils';
+import {Status, StatutCommande, TypeSource} from 'src/app/utils/utils';
 import {ConfigService} from "../../../../core/config-service.service";
 
 @Component({
@@ -193,7 +193,7 @@ export class ListeCommandesMarchandisesComponent {
       commandeId: this.dataSendedToReceptionMarchandiseRequest.commandeId,
       numeroBonLivraison:
       this.dataSendedToReceptionMarchandiseRequest.numeroBonLivraison,
-      // numeroBonLivraison: 'BL-2024-001',
+      typeSource: TypeSource.COMMANDE,
       scanBonLivraison: 'https://monserveur.com/uploads/bon_livraison_001.pdf',
       articlesRecus: this.articlesRecues.map((article: any) => {
         const prixSousDistributeur = article.prix?.find(
