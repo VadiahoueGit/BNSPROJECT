@@ -7,7 +7,7 @@ import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { CoreServiceService } from 'src/app/core/core-service.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
-import { StatutCommande, TypeCommandeFournisseur } from 'src/app/utils/utils';
+import { StatutCommande, TypeCommandeFournisseur, TypeSource } from 'src/app/utils/utils';
 import { ConfigService } from "../../../../core/config-service.service";
 
 @Component({
@@ -17,7 +17,7 @@ import { ConfigService } from "../../../../core/config-service.service";
 })
 export class SaisieEntreeGratuitesComponent {
   @ViewChild('dt2') dt2!: Table;
-  @Input() ListenMode : boolean = false
+  @Input() ListenMode: boolean = false
   statuses!: any[];
   dataList: any[] = [];
   selectedArticles: any[] = [];
@@ -73,7 +73,7 @@ export class SaisieEntreeGratuitesComponent {
     articlesRecus: [],
     emballagesRendus: [],
   };
-  articlesRecues: any;
+  articlesRecues: any[] = [];
   constructor(
     private cdr: ChangeDetectorRef,
     private _coreService: CoreServiceService,
@@ -83,7 +83,7 @@ export class SaisieEntreeGratuitesComponent {
     private toastr: ToastrService,
     private utilisateurService: UtilisateurResolveService,
     private _config: ConfigService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.CommandeForm = this.fb.group({
@@ -134,7 +134,7 @@ export class SaisieEntreeGratuitesComponent {
       dateDebut: dateDebut || '',
       dateFin: dateFin || '',
     };
-    console.log(data,'data')
+    console.log(data, 'data')
 
     this._spinner.show();
     this.articleService.GetListEntreeGratuite(data).then((res: any) => {
@@ -152,7 +152,7 @@ export class SaisieEntreeGratuitesComponent {
       this.filters.dateDebut,
       this.filters.dateFin
     );
-    console.log(this.filters,'filters')
+    console.log(this.filters, 'filters')
   }
 
   change(event: any) {
@@ -170,6 +170,7 @@ export class SaisieEntreeGratuitesComponent {
     this.filteredArticleList = [];
     this.isModalOpen = false;
     this.selectedArticles = [];
+    this.articlesRecues = [];
     (this.CommandeForm.get('articles') as FormArray).clear();
     console.log(this.isModalOpen);
   }
@@ -222,7 +223,7 @@ export class SaisieEntreeGratuitesComponent {
         fournisseur: this.CommandeForm.controls['fournisseur'].value,
         dateReception: this.CommandeForm.controls['dateReception'].value,
         depot: this.CommandeForm.controls['depot'].value,
-        articles: this.selectedArticles.map((article: any) => {
+        articles: this.articlesRecues.map((article: any) => {
           console.log(article, 'article');
           return {
             groupearticle: article.groupearticle?.id,
@@ -252,12 +253,12 @@ export class SaisieEntreeGratuitesComponent {
       this.toastr.warning('Formulaire invalide');
     }
   }
-  onValidate(){
+  onValidate() {
     const payload = {
       commandeId: this.updateData.id,
       numeroBonLivraison:
-      this.dataSendedToReceptionMarchandiseRequest.numeroBonLivraison,
-  
+        this.dataSendedToReceptionMarchandiseRequest.numeroBonLivraison,
+      typeSource: TypeSource.ENTREE_GRATUITE,
       scanBonLivraison: 'https://monserveur.com/uploads/bon_livraison_001.pdf',
       articlesRecus: this.articlesRecues.map((article: any) => {
         const prixSousDistributeur = article.prix?.find(
@@ -315,22 +316,22 @@ export class SaisieEntreeGratuitesComponent {
   }
 
   onCheckboxChange(article: any): void {
-    // this.GetPrixByArticle(article)
-    if (article.isChecked) {
-      article.isNewAdd = true;
-      this.articlesRecues.push(article);
-      // this.newCommande = this.articlesRecues
-      this.afficherArticlesSelectionnes();
-    } else {
-      article.isNewAdd = false;
-      delete article.quantite;
-      const indexToRemove = this.articlesRecues.findIndex(
-        (selectedArticle: any) => selectedArticle.libelle === article.libelle
-      );
-      if (indexToRemove !== -1) {
-        this.articlesRecues.splice(indexToRemove, 1);
-        this.afficherArticlesSelectionnes();
+    if (article && article.isChecked !== undefined) {
+      if (article.isChecked) {
+        console.log(article)
+        article.isNewAdd = true;
+        this.articlesRecues.push(article);
+      } else {
+        article.isNewAdd = false;
+        delete article.quantite;
+        const indexToRemove = this.articlesRecues.findIndex(
+          (selectedArticle: any) => selectedArticle.libelle === article.libelle
+        );
+        if (indexToRemove !== -1) {
+          this.articlesRecues.splice(indexToRemove, 1);
+        }
       }
+      this.afficherArticlesSelectionnes();
     }
   }
 
@@ -354,13 +355,13 @@ export class SaisieEntreeGratuitesComponent {
     this.onCheckboxChange(item);
 
     // Supprimer l'article de la liste `selectedArticles`
-    const index = this.selectedArticles.findIndex((i: any) => i.id === item.id);
+    const index = this.articlesRecues.findIndex((i: any) => i.id === item.id);
 
     if (index !== -1) {
       // Suppression de l'article de la liste
-      this.selectedArticles = this.selectedArticles
+      this.articlesRecues = this.articlesRecues
         .slice(0, index)
-        .concat(this.selectedArticles.slice(index + 1));
+        .concat(this.articlesRecues.slice(index + 1));
     }
 
     // Optionnel : si tu as d'autres actions liées à la suppression, ajoute-les ici
@@ -371,7 +372,7 @@ export class SaisieEntreeGratuitesComponent {
   }
 
   afficherArticlesSelectionnes() {
-    console.log(this.selectedArticles);
+    console.log(this.articlesRecues);
   }
 
   filterArticles(): void {
@@ -399,13 +400,13 @@ export class SaisieEntreeGratuitesComponent {
   }
 
   deselectAllItems(): void {
-    this.selectedArticles.forEach((item: any) => {
+    this.articlesRecues.forEach((item: any) => {
       delete item.quantite;
       this.onCheckboxChange(item);
       item.isChecked = false;
     });
 
-    this.selectedArticles = [];
+    this.articlesRecues = [];
   }
 
   onPage(event: any) {
@@ -551,8 +552,8 @@ export class SaisieEntreeGratuitesComponent {
     // Forcer le rafraîchissement de l'interface
     this.cdr.detectChanges();
   }
-  imprimer(path:any) {
-    window.open(this.docUrl+path, '_blank');
+  imprimer(path: any) {
+    window.open(this.docUrl + path, '_blank');
   }
   GetDepotList(page: number) {
     let data = {

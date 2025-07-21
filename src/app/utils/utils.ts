@@ -8,7 +8,7 @@ export enum StatutCommande {
   COMMANDE_LIVREE = 'Commande Livrée',
   APPROUVEE = 'Approuvée',
   NON_APPROUVEE = 'Non approuvée',
-  NON_REGROUPE= 'Non regroupé',
+  NON_REGROUPE = 'Non regroupé',
   VALIDEE = 'Validée'
 }
 
@@ -28,9 +28,13 @@ export enum MotifRetour {
 export enum Status {
   ATTENTE = 'En attente',
   VALIDE = 'Validé',
-  TERMINE ='TERMINE',
+  TERMINE = 'TERMINE',
   PAYE = 'Payé',
   RECUE = 'Reçue'
+}
+export enum TypeSource {
+  ENTREE_GRATUITE = 'ENTREE_GRATUITE',
+  COMMANDE = 'COMMANDE'
 }
 
 export function hasPermission(existingPermissionName: string): boolean {
@@ -51,13 +55,13 @@ export function hasPermission(existingPermissionName: string): boolean {
 
 
 
-export function calculeDateEcheance(date: string, delai: number): Date |null {
-    const dateCreation = new Date(date);
+export function calculeDateEcheance(date: string, delai: number): Date | null {
+  const dateCreation = new Date(date);
 
-    if (isNaN(dateCreation.getTime()) || delai === null || delai === undefined) {
-      return null;
-    }
-
-    dateCreation.setDate(dateCreation.getDate() + delai);
-    return dateCreation;
+  if (isNaN(dateCreation.getTime()) || delai === null || delai === undefined) {
+    return null;
   }
+
+  dateCreation.setDate(dateCreation.getDate() + delai);
+  return dateCreation;
+}

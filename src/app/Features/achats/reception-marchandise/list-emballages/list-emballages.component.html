@@ -94,7 +94,7 @@
       <tr>
         <td>
            <span class="ml-1 vertical-align-middle">
-          {{ dataList?.commande.depot.nomDepot }}
+          {{ dataList?.commande?.depot?.nomDepot ?? dataList?.entreeGratuite?.depot?.nomDepot }}
            </span>
         </td>
         <td>
@@ -109,24 +109,24 @@
         </td>
         <td>
            <span class="ml-1 vertical-align-middle">
-          {{ dataList?.commande?.NumCommande }}
+          {{ dataList?.commande?.NumCommande ?? dataList?.entreeGratuite?.NumEntreeGratuite }}
            </span>
         </td>
 
         <td>
            <span class="ml-1 vertical-align-middle">
-          {{ dataList?.commande?.dateCommande }}
+          {{ dataList?.commande?.dateCommande ?? dataList?.entreeGratuite?.dateReception }}
            </span>
         </td>
 
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList?.commande?.typeCommande }}
+            {{ dataList?.commande?.typeCommande ?? 'Entree gratuite'}}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList?.commande?.statut }}
+            {{ dataList?.commande?.statut ?? 'Reçu'}}
           </span>
         </td>
         <td>
