@@ -6,6 +6,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CoreServiceService} from "../core/core-service.service";
 import {NgxSpinnerService} from "ngx-spinner";
 import {ToastrService} from "ngx-toastr";
+import {hasPermission} from "../utils/utils";
 
 @Component({
   selector: 'app-features',
@@ -28,16 +29,16 @@ export class FeaturesComponent {
   notifications:any = [];
 
   items = [
-    {label: 'Dashboard', icon: 'fas fa-chart-line', url: 'feature/dashboard'},
-    {label: 'Activités', icon: 'fas fa-truck-container', url: 'feature/activites'},
-    {label: 'Cartographie', icon: 'fas fa-map', url: '/feature/cartographie'},
-    {label: 'Rapports', icon: 'fas fa-file-chart-line', url: 'feature/rapport'},
-    {label: 'Paramètres', icon: 'fas fa-cogs', url: 'feature/parametre'},
-    {label: 'Achats', icon: 'fa-solid fa-cart-shopping', url: 'feature/achats'},
-    {label: 'Partenaires', icon: 'fas fa-handshake', url: '/feature/partenaire'},
-    {label: 'Finances', icon: 'fas fa-sack-dollar', url: 'feature/finances'},
-    {label: 'Stocks', icon: 'fas fa-warehouse-alt', url: 'feature/stocks'},
-    {label: 'Annonces', icon: 'fa-solid fa-bullhorn', url: 'feature/annonce'},
+    {label: 'Dashboard', icon: 'fas fa-chart-line', url: 'feature/dashboard',perm:'dashboard'},
+    {label: 'Activités', icon: 'fas fa-truck-container', url: 'feature/activites',perm:'activite'},
+    {label: 'Cartographie', icon: 'fas fa-map', url: '/feature/cartographie',perm:'carte'},
+    {label: 'Rapports', icon: 'fas fa-file-chart-line', url: 'feature/rapport',perm:'rapport'},
+    {label: 'Paramètres', icon: 'fas fa-cogs', url: 'feature/parametre',perm:'parametre'},
+    {label: 'Achats', icon: 'fa-solid fa-cart-shopping', url: 'feature/achats',perm:'achat'},
+    {label: 'Partenaires', icon: 'fas fa-handshake', url: '/feature/partenaire',perm:'partenaire'},
+    {label: 'Finances', icon: 'fas fa-sack-dollar', url: 'feature/finances',perm:'finance'},
+    {label: 'Stocks', icon: 'fas fa-warehouse-alt', url: 'feature/stocks',perm:'stock'},
+    {label: 'Annonces', icon: 'fa-solid fa-bullhorn', url: 'feature/annonce',perm:'annonce'},
     // { label: 'Données de références', icon: 'fas fa-warehouse-alt', url: 'feature/datareference' }
   ];
   UserInfo: any
@@ -104,13 +105,19 @@ export class FeaturesComponent {
     }
   }
 
-
+  playSound() {
+    const audio = new Audio();
+    audio.src = 'assets/sound/notif.mp3';
+    audio.load();
+    audio.play();
+  }
   getIconClass(type: string): string {
     switch (type) {
       case 'FINANCIERE': return 'fa-solid fa-money-check-dollar text-danger';
-      case 'stock': return 'fa-solid fa-triangle-exclamation text-warning';
-      case 'livraison': return 'fa-solid fa-truck text-primary';
-      case 'commercial': return 'fa-solid fa-user-slash text-success';
+      case 'STOCK': return 'fa-solid fa-triangle-exclamation text-warning';
+      case 'LOGISTIQUE': return 'fa-solid fa-truck text-primary';
+      case 'COMMERCIALE': return 'fa-solid fa-user-slash text-success';
+      case 'SYSTEME': return 'fa-solid fa-box-open text-success';
       default: return 'fa-solid fa-circle-info text-secondary';
     }
   }
@@ -143,14 +150,13 @@ export class FeaturesComponent {
 
           if (newNotifications.length > 0) {
             const latestNotif = newNotifications[0]; // Supposé trié par date DESC
-
             // Récupère l'ancienne notif stockée localement
             const storedNotif:any = this.localstorage.getItem(storage_keys.STORENotification);
-
+console.log(storedNotif);
             // Vérifie s'il y a une nouvelle notif (comparaison ID ou date)
             if (!storedNotif || storedNotif.id !== latestNotif.id) {
               this.hasNotif = true;
-
+              this.playSound()
               // Sauvegarde la nouvelle notification dans le localStorage
               this.localstorage.setItem(storage_keys.STORENotification, latestNotif);
             }
@@ -235,9 +241,10 @@ export class FeaturesComponent {
   get countByType() {
     return {
       finance: this.notifications.filter((n:any) => n.type === 'FINANCIERE').length,
-      stock: this.notifications.filter((n:any) => n.type === 'stock').length,
-      livraison: this.notifications.filter((n:any) => n.type === 'livraison').length,
-      commercial: this.notifications.filter((n:any) => n.type === 'commercial').length
+      stock: this.notifications.filter((n:any) => n.type === 'STOCK').length,
+      livraison: this.notifications.filter((n:any) => n.type === 'LOGISTIQUE').length,
+      commercial: this.notifications.filter((n:any) => n.type === 'COMMERCIALE').length,
+      system: this.notifications.filter((n:any) => n.type === 'SYSTEME').length
     };
   }
 
@@ -256,4 +263,6 @@ export class FeaturesComponent {
   setTab(tab: string) {
     this.activeTab = tab;
   }
+
+  protected readonly hasPermission = hasPermission;
 }

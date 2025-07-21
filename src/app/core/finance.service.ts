@@ -162,6 +162,25 @@ export class FinanceService {
     });
   }
 
+  GetPaiementAgentList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http
+        .get(
+          `${this.apiUrl}/v1/comptabilite/transaction-par-agent?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&nomAgent=${data.agent}`
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
    ApprouverVenteChine(id: any){
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({

@@ -340,6 +340,7 @@ export class ListReceptionMarchandiseComponent {
           });
 
           // 📏 3. Calcul des écarts et enrichissement
+          // 📏 3. Calcul des écarts et enrichissement
           const articlesAvecEcart = Object.values(mapParCode).map((recu: any) => {
             const codeRecu = recu.emballage?.code;
 
@@ -347,7 +348,8 @@ export class ListReceptionMarchandiseComponent {
               (item: any) => item.articleCommande?.emballage?.code === codeRecu
             );
 
-            const quantiteAttendue = attendu?.articleCommande?.quantiteAffectee || 0;
+            // 👉 Prendre la quantité réellement reçue comme référence
+            const quantiteAttendue = attendu?.quantiteRecue || 0;
             const quantiteReçue = recu.quantite || 0;
             const ecart = quantiteReçue - quantiteAttendue;
 
@@ -357,9 +359,11 @@ export class ListReceptionMarchandiseComponent {
               quantiteReçue,
               ecart,
               ecartPositif: ecart > 0,
-              ecartNegatif: ecart < 0
+              ecartNegatif: ecart < 0,
+              articleNonCommande: !attendu
             };
           });
+
 
           // 🔁 4. Écraser `emballagesRendus` avec une seule entrée contenant les articles groupés
           return {
