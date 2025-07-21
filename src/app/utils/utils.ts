@@ -41,7 +41,7 @@ export function hasPermission(existingPermissionName: string): boolean {
     const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
 
     const user = JSON.parse(decryptedData || '{}');
-    const allPermissions: any[] = user?.profil?.permissions || [];
+    const allPermissions: any[] = user?.role?.permissions || [];
     return allPermissions.some(p => p.name === existingPermissionName);
   } catch (e) {
     return false;

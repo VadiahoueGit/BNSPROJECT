@@ -102,7 +102,7 @@ export class PaiementenattenteComponent {
     };
     this._spinner.show();
     this.financeService.GetPaiementListAttente(data).then((res: any) => {
-      this.totalPages = res.totalPages; // nombre total d’enregistrements
+      this.totalPages = res.total; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages);
 
       this.dataList = res.data
