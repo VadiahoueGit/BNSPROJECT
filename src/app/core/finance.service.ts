@@ -162,11 +162,28 @@ export class FinanceService {
     });
   }
 
+  ValiderPaiementGroup(data: any){
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.patch(`${this.apiUrl}/v1/comptabilite/valider/transactions`,data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
   GetPaiementAgentList(data: any) {
     return new Promise((resolve: any, reject: any) => {
       this._http
         .get(
-          `${this.apiUrl}/v1/comptabilite/transaction-par-agent?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&nomAgent=${data.agent}`
+          `${this.apiUrl}/v1/comptabilite/transaction-par-agent?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&nomAgent=${data.nomAgent}`
         )
         .subscribe(
           (res: any) => {
