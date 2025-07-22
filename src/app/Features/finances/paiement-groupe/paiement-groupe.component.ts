@@ -79,18 +79,25 @@ export class PaiementGroupeComponent {
 
   ValiderPaiementGroup(item:any)
   {
-    const interm:any = []
-    console.log(item);
-    item.forEach((iter:any) => {
-      interm.push(iter.id)
-    })
-    let data = {
-      "paiementIds":interm
-    }
+    const interm: number[] = [];
+
+    item.forEach((transaction: any) => {
+      if (transaction.paiements && transaction.paiements.length > 0) {
+        transaction.paiements.forEach((paiement: any) => {
+          interm.push(paiement.id);
+        });
+      }
+    });
+
+    const data = {
+      paiementIds: interm
+    };
     this._spinner.show();
     this.financeService.ValiderPaiementGroup(data).then((res: any) => {
       if(res.statusCode === 200) {
         this.toastr.success(res.message);
+        this.OnCloseModal()
+        this.GetPaiementAgentList(1)
       }else{
         this.toastr.error(res.message);
       }
