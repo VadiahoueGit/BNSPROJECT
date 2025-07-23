@@ -78,17 +78,25 @@ export class ProfilUtilisateurComponent {
       this.selectedItems.push(item);
       this.selectedItemsIds.push(item.id);
     } else {
-      const indexToRemove = this.selectedItems.findIndex(
-        (selectedArticle:any) => selectedArticle.id === item.id
+      // Supprimer de selectedItems
+      const indexItem = this.selectedItems.findIndex(
+        (selected: any) => selected.id === item.id
       );
-      if (indexToRemove !== -1) {
-        this.selectedItems.splice(indexToRemove, 1);
-        this.selectedItemsIds.splice(indexToRemove, 1);
+      if (indexItem !== -1) {
+        this.selectedItems.splice(indexItem, 1);
+      }
+
+      // Supprimer de selectedItemsIds
+      const indexId = this.selectedItemsIds.indexOf(item.id);
+      if (indexId !== -1) {
+        this.selectedItemsIds.splice(indexId, 1);
       }
     }
+
     console.log('items', this.selectedItems);
     // this.VisiteForm.controls['pointsDeVenteIds'].setValue(this.selectedItemsIds)
   }
+
 
   filterData(): void {
     const query = this.searchForm.get('searchQuery')?.value;
@@ -138,6 +146,8 @@ export class ProfilUtilisateurComponent {
       // Si updateData et ses permissions existent, on récupère les IDs
       if (this.updateData && this.updateData.permissions) {
         existingPermissionIds = this.updateData.permissions.map((perm: any) => perm.id);
+        this.selectedItemsIds = [...existingPermissionIds];
+        console.log(this.selectedItemsIds);
       }
 
       // Marque isChecked: true uniquement si la permission est déjà dans updateData
