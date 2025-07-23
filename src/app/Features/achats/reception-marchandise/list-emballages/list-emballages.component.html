@@ -126,7 +126,7 @@
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList?.commande?.statut ?? 'Reçu'}}
+            {{ dataList?.commande?.statut ?? 'Reçue'}}
           </span>
         </td>
         <td>
@@ -190,15 +190,15 @@
             <div class="row">
               <div class="col-md-4">
                 <strong>Date commande : </strong>
-                <span>{{ updateData?.commande?.dateCommande }}</span>
+                <span>{{ updateData?.commande?.dateCommande ??updateData?.entreeGratuite?.dateReception }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Date livraison estimée : </strong>
-                <span>{{ updateData?.commande?.dateLivraisonEstimee }}</span>
+                <span>{{ updateData?.commande?.dateLivraisonEstimee ??updateData?.entreeGratuite?.dateReception }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Statut : </strong>
-                <span>{{ updateData?.commande?.statut }}</span>
+                <span>{{ updateData?.commande?.statut ??updateData?.entreeGratuite?.statut ?? 'Reçue' }}</span>
               </div>
             </div>
           </fieldset>
@@ -229,14 +229,14 @@
                   <td class="">
                     <p>
                       {{
-                        data.articleCommande ? data.articleCommande?.emballage?.code : data.emballage?.code ?? data?.code
+                        data.articleCommande ? data.articleCommande?.emballage?.code : data.emballage?.code ?? data?.articleEntree?.emballage?.code
                       }}
                     </p>
                   </td>
                   <td class="">
                     <p>
                       {{
-                        data?.articleCommande ? data.articleCommande?.emballage?.libelle : data.emballage?.libelle ?? data?.libelle
+                        data?.articleCommande ? data.articleCommande?.emballage?.libelle : data.emballage?.libelle ?? data?.articleEntree?.emballage?.libelle
                       }}
                     </p>
                   </td>

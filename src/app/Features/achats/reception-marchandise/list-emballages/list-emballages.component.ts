@@ -144,7 +144,7 @@ export class ListEmballagesComponent {
     console.log(data, 'data emballage');
     console.log(data?.emballagesRendus.length, 'taille');
 
-    this.depotId = data.commande.depot.id;
+    this.depotId = data.commande?.depot?.id ?? data.entreeGratuite?.depot?.id;
     this.isEditMode = true;
     this.updateData = data;
 
@@ -152,8 +152,10 @@ export class ListEmballagesComponent {
     const articlesRendus = data.articlesRecus ?? data.articlesRecus;
 
     articlesRendus.forEach((article: any) => {
-      if (article?.articleCommande.emballage?.code) {
-        article.articleCommande.emballage.code = this.formatCode(article.articleCommande.emballage.code);
+      if (article?.commande?.emballage?.code) {
+        article.commande.emballage.code = this.formatCode(article.commande.emballage.code);
+      } else if (article?.entreeGratuite?.emballage?.code) {
+        article.entreeGratuite.emballage.code = this.formatCode(article.entreeGratuite.emballage.code);
       }
     });
 console.log(articlesRendus);
