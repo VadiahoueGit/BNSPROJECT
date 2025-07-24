@@ -429,8 +429,10 @@ console.log(articlesRendus);
           prixUnitaireEmballage: parseInt(article?.prixUnitaireEmballage ?? article?.articleCommande?.prixUnitaireEmballage ?? article?.PrixSousDepot)
         };
       }),
+      
     };
     console.log(payload, 'payload');
+    console.log(this.emballagesrecues, 'emballagesrecues');
     this._spinner.show();
     this.articleService.CreateRetourEmballageFournisseurs(payload).then(
       (res: any) => {
