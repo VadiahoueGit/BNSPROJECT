@@ -426,7 +426,7 @@ console.log(articlesRendus);
         return {
           emballageId: article.articleCommande ? article?.articleCommande?.emballage.id : article.emballage?.id ?? article?.id,
           quantite: article?.quantiteRecue,
-          prixUnitaireEmballage: parseInt(article?.prixUnitaireEmballage ?? article?.articleCommande?.prixUnitaireEmballage ?? article?.PrixSousDepot)
+          prixUnitaireEmballage: parseInt(article?.prixUnitaireEmballage ?? article?.articleCommande?.prixUnitaireEmballage ?? article?.articleEntree?.prixUnitaireEmballage ?? article?.PrixSousDepot)
         };
       }),
       
