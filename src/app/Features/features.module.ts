@@ -17,10 +17,10 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {GoogleMapsModule} from "@angular/google-maps";
 import {AnnonceComponent} from './annonce/annonce.component';
 import {NgxFileDropModule} from "ngx-file-drop";
+import {ConfidentialityComponent} from "./confidentiality/confidentiality.component";
 
 @NgModule({
   declarations: [
-
     CartographieComponent,
     RapportComponent,
     FeaturesComponent,

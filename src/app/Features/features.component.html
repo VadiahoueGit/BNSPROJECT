@@ -10,7 +10,7 @@
 
       <ul class="list-unstyled ps-0 scrollable-menu">
         <ng-container *ngFor="let item of items; let i = index">
-          <li class="mb-1 d-flex justify-content-center"
+          <li class="mb-1 d-flex justify-content-center"  *ngIf="hasPermission(item.perm)"
               (click)="navigate(item.url, i)">
             <a class="btn btn-toggle gap-4 d-flex align-items-center w-100 rounded my-1"
                [ngClass]="{'active': selectedItem === i}">

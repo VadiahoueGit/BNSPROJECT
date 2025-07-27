@@ -48,7 +48,7 @@ export class CartographieComponent implements AfterViewInit{
       },
     ],
   };
-  message = 'Mercon';
+  message = '';
 
   coordinates: any[] = [];
   private gpsSubscription: Subscription;

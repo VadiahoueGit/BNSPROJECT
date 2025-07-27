@@ -26,12 +26,13 @@ import { AuthInterceptor } from './core/auth.interceptor';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
+import {ConfidentialityComponent} from "./Features/confidentiality/confidentiality.component";
 registerLocaleData(localeFr);
 export function initConfig(configService: ConfigService) {
   return () => configService.loadConfig();
 }
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent,ConfidentialityComponent],
   imports: [
     AuthModule,
     GoogleMapsModule,

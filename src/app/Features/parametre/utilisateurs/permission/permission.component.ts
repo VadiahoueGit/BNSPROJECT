@@ -101,7 +101,8 @@ export class PermissionComponent {
     this._spinner.show();
     this._userService.DeletePermissions(data).then((response:any) => {
       this._spinner.hide()
-      if (response.statusCode === 200) {
+      if (response.statusCode === 201) {
+        this.GetPermissionList(1)
         this.toastr.success(response.message);
       }else{
         this.toastr.error(response.message);

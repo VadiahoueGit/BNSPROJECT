@@ -504,7 +504,7 @@ export class UtilisateurResolveService {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
-      this._http.delete(`${this.apiUrl}/v1/profil/bulk-delete`, {
+      this._http.delete(`${this.apiUrl}/v1/permissions/bulk-delete`, {
         headers,
         body: data
       }).subscribe(

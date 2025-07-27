@@ -5,6 +5,7 @@ import { ParametreComponent } from './parametre/parametre.component';
 import { CartographieComponent } from './cartographie/cartographie.component';
 import { PartenairesComponent } from './partenaires/partenaires.component';
 import {AnnonceComponent} from "./annonce/annonce.component";
+import {ConfidentialityComponent} from "./confidentiality/confidentiality.component";
 
 const routes: Routes = [
     { path: '', redirectTo: '/feature', pathMatch: 'full' },
@@ -21,7 +22,7 @@ const routes: Routes = [
             { path: 'stocks', loadChildren: () => import('./stocks/stocks.module').then(m => m.StocksModule) },
             { path: 'achats', loadChildren: () => import('./achats/achats.module').then(m => m.AchatsModule) },
             { path: 'cartographie', component:CartographieComponent },
-            { path: 'annonce', component:AnnonceComponent }
+            { path: 'annonce', component:AnnonceComponent },
 
         ]
     },
