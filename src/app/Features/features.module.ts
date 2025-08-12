@@ -18,6 +18,9 @@ import {GoogleMapsModule} from "@angular/google-maps";
 import {AnnonceComponent} from './annonce/annonce.component';
 import {NgxFileDropModule} from "ngx-file-drop";
 import {ConfidentialityComponent} from "./confidentiality/confidentiality.component";
+import {PermissionComponent} from "./adminstration/permission/permission.component";
+import {AdminstrationComponent} from "./adminstration/adminstration.component";
+import {TableModule} from "primeng/table";
 
 @NgModule({
   declarations: [
@@ -25,6 +28,8 @@ import {ConfidentialityComponent} from "./confidentiality/confidentiality.compon
     RapportComponent,
     FeaturesComponent,
     AnnonceComponent,
+    PermissionComponent,
+    AdminstrationComponent
   ],
   imports: [
     FeaturesRoutingModule,
@@ -36,6 +41,7 @@ import {ConfidentialityComponent} from "./confidentiality/confidentiality.compon
     DashboardModule,
     CommonModule,
     NgxDatatableModule,
+    TableModule,
     GoogleMapsModule
 
   ],

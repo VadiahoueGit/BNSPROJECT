@@ -240,8 +240,14 @@ i.active {
     padding-left: 100px; /* Réduit l'espace lorsque la sidebar est plus petite */
   }
 }
+//.scrollable-menu {
+//  max-height: 700px;
+//  overflow-y: auto;
+//  scrollbar-width: thin; /* Pour rendre la barre de défilement plus discrète */
+//}
+
 .scrollable-menu {
-  max-height: 700px;
+  max-height: calc(100vh - 200px); /* Ajuste selon la hauteur de ton header + label */
   overflow-y: auto;
-  scrollbar-width: thin; /* Pour rendre la barre de défilement plus discrète */
+  padding-right: 4px;
 }

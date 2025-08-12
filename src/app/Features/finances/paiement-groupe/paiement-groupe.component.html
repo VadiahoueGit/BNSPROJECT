@@ -117,13 +117,13 @@
                   <!-- Ligne de titre -->
                   <tr style="font-weight: bold; background-color: #f2f2f2;">
                     <td colspan="5">
-                      Transaction #{{ transaction.id }} - {{ transaction.motif }}
+                      Transaction #{{ transaction.numTransaction }} - {{ transaction.motif }}
                     </td>
                   </tr>
 
                   <!-- Paiements -->
                   <tr *ngFor="let paiement of transaction.paiements">
-                    <td></td>
+                    <td>{{paiement.numPaiement}}</td>
                     <td>{{ transaction.motif }}</td>
                     <td>{{ paiement.moyenPaiement?.libelle || 'N/A' }}</td>
                     <td>{{ paiement.montant | number }}</td>

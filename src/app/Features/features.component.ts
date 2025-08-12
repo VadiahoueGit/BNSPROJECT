@@ -39,7 +39,7 @@ export class FeaturesComponent {
     {label: 'Finances', icon: 'fas fa-sack-dollar', url: 'feature/finances',perm:'finance'},
     {label: 'Stocks', icon: 'fas fa-warehouse-alt', url: 'feature/stocks',perm:'stock'},
     {label: 'Annonces', icon: 'fa-solid fa-bullhorn', url: 'feature/annonce',perm:'annonce'},
-    // { label: 'Données de références', icon: 'fas fa-warehouse-alt', url: 'feature/datareference' }
+    { label: 'Administration', icon: 'fa-solid fa-sliders', url: 'feature/administration',perm:'admin' }
   ];
   UserInfo: any
   selectedItem: number | null = null;
@@ -60,7 +60,7 @@ export class FeaturesComponent {
     this.getNotifications(1);
     setInterval(() => {
       this.getNotifications(1);
-    }, 10000);
+    }, 120000);
 
     // if (this.currentUrl.includes('parametre')) {
     if (this.currentUrl.includes('/feature/dashboard')) {
@@ -83,6 +83,8 @@ export class FeaturesComponent {
       this.setActive(8)
     } else if (this.currentUrl.includes('/feature/annonce')) {
       this.setActive(9)
+    } else if (this.currentUrl.includes('/feature/administration')) {
+      this.setActive(10)
     }
 
     if (this.UserInfo.isFirstLogin == true) {

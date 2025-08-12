@@ -127,6 +127,7 @@
                               class="form-control-custom"
                               [(ngModel)]="ecart.paiement"
                               [min]="0"
+                              (keydown)="validateAmount(ecart)"
                               [max]="ecart.prixUnitaire * ecart.quantite"
                               [ngClass]="{
                           invalid: ecart.paiement > ecart.prixUnitaire * ecart.quantite

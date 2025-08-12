@@ -412,6 +412,7 @@ export class LivraisonComponent {
 
   closeDetailModal() {
     this.isModalOpenDetail = false;
+    this.regroupementFinal = {};
   }
   closeDetailSign(){
     this.isModalOpenSign = false;

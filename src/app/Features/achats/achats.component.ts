@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import {hasPermission} from "../../utils/utils";
 
 @Component({
   selector: 'app-achats',
@@ -13,27 +14,20 @@ export class AchatsComponent {
       image: 'assets/icon/supply-chain.png',
       title: 'Commande fournisseurs',
       url: 'feature/achats/commande-fournisseur',
+      perm:'achat_commande_fournisseur'
     },
-    // {
-    //   image: 'assets/icon/lading.png',
-    //   title: 'Validation commande',
-    //   url:'feature/achats/validation-commande',
-    // },
     {
       image: 'assets/icon/delivery-box.png',
       title: 'Réception marchandise',
        url:'feature/achats/reception-marchandise',
+      perm:'achat_reception_marchandises'
     },
     {
       image: 'assets/icon/gift.png',
       title: 'Entrée de gratuité',
       url:'feature/achats/entree-de-gratuite',
+      perm:'achat_entree_gratuite'
     },
-    // {
-    //   image: 'assets/icon/history.png',
-    //   title: 'Historique & gestion des retours',
-    //   url: 'feature/achats/historique-de-gestion-retour',
-    // },
 
   ]
     constructor(private _router: Router) { }
@@ -44,4 +38,6 @@ export class AchatsComponent {
     console.log(elt)
     this._router.navigate([elt.url])
   }
+
+  protected readonly hasPermission = hasPermission;
 }

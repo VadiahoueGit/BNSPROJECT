@@ -104,6 +104,15 @@
                   placeholder="Entrez l'email"
                 />
               </div>
+              <div class="mb-3">
+                <label for="depotId" class="form-label">Dépôt <span class="text-danger">*</span></label>
+
+                <select class="form-control form-select form-select-sm" formControlName="depotId"
+                        aria-label=".form-select-sm example">
+                  <option value="" disabled selected>Choisir le dépot</option>
+                  <option [value]="item.id" *ngFor="let item of dataListDepot">{{item.nomDepot}}</option>
+                </select>
+              </div>
             </div>
 
             <!-- Colonne droite -->

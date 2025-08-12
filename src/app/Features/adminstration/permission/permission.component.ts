@@ -1,9 +1,9 @@
 import {Component} from '@angular/core';
-import {UtilisateurResolveService} from "../../../../core/utilisateur-resolve.service";
-import {CoreServiceService} from "../../../../core/core-service.service";
 import {NgxSpinnerService} from "ngx-spinner";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ToastrService} from "ngx-toastr";
+import {UtilisateurResolveService} from "../../../core/utilisateur-resolve.service";
+import {CoreServiceService} from "../../../core/core-service.service";
 
 @Component({
   selector: 'app-permission',

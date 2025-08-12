@@ -535,7 +535,7 @@ export class SaisieCommandeComponent {
 
   onSubmit(): void {
     const formData = this.commandClientForm.getRawValue();
-    console.log('Données à envoyer au service :', formData)
+
 
     const payload = {
       clientType: this.detailPointDevente.credit.clientType,
@@ -553,7 +553,7 @@ export class SaisieCommandeComponent {
       remise: formData.remise,
       articles: formData.articles,
     };
-
+    console.log('Données à envoyer au service :', payload)
     if (this.commandClientForm.valid) {
       this._spinner.show();
       this.articleService.CreateCommandClient(payload).then(

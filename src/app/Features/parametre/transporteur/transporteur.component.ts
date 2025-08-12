@@ -6,6 +6,7 @@ import { ALERT_QUESTION } from '../../shared-component/utils';
 import {LogistiqueService} from "../../../core/logistique.service";
 import {ActivatedRoute} from "@angular/router";
 import {ToastrService} from "ngx-toastr";
+import {CoreServiceService} from "../../../core/core-service.service";
 
 @Component({
   selector: 'app-transporteur',
@@ -24,10 +25,12 @@ export class TransporteurComponent {
   currentPage: number;
   rowsPerPage: any;
   totalPages: number;
+  dataListDepot: any[] = [];
   constructor(
     private toastr: ToastrService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
+    private _coreService: CoreServiceService,
     private _logistiqueService:LogistiqueService
   ) {
     this.transporteurForm = this.fb.group({
@@ -37,11 +40,16 @@ export class TransporteurComponent {
       nom: ['', [Validators.required]],
       prenoms: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      telephone: ['', [Validators.required, Validators.pattern(/^(\+?\d{1,3}[- ]?)?\d{10}$/)]]
+      telephone: ['', [Validators.required, Validators.pattern(/^(\+?\d{1,3}[- ]?)?\d{10}$/)]],
+      depotId: [0, Validators.required],
     });
   }
 
   ngOnInit() {
+    this._coreService.GetDepotList(1).then((res: any) => {
+      this.dataListDepot = res.data;
+      console.log(this.dataListDepot ,'dataListDepot')
+    });
     this.GetTransporteurList(1)
   }
 

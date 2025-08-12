@@ -6,6 +6,7 @@ import { CartographieComponent } from './cartographie/cartographie.component';
 import { PartenairesComponent } from './partenaires/partenaires.component';
 import {AnnonceComponent} from "./annonce/annonce.component";
 import {ConfidentialityComponent} from "./confidentiality/confidentiality.component";
+import {AdminstrationComponent} from "./adminstration/adminstration.component";
 
 const routes: Routes = [
     { path: '', redirectTo: '/feature', pathMatch: 'full' },
@@ -23,6 +24,7 @@ const routes: Routes = [
             { path: 'achats', loadChildren: () => import('./achats/achats.module').then(m => m.AchatsModule) },
             { path: 'cartographie', component:CartographieComponent },
             { path: 'annonce', component:AnnonceComponent },
+            { path: 'administration', component:AdminstrationComponent },
 
         ]
     },

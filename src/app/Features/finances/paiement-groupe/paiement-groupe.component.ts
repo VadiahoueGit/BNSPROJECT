@@ -50,12 +50,15 @@ export class PaiementGroupeComponent {
     for (const transaction of transactions) {
       if (transaction.paiements && transaction.paiements.length > 0) {
         for (const paiement of transaction.paiements) {
-          total += paiement.montant || 0;
+          if (paiement.statut != 'Payé') { // ✅ seulement si payé
+            total += paiement.montant || 0;
+          }
         }
       }
     }
     return total;
   }
+
   GetPaiementAgentList(page: number, agent?: string) {
     let data = {
       paginate: true,
@@ -84,10 +87,13 @@ export class PaiementGroupeComponent {
     item.forEach((transaction: any) => {
       if (transaction.paiements && transaction.paiements.length > 0) {
         transaction.paiements.forEach((paiement: any) => {
-          interm.push(paiement.id);
+          if (paiement.statut != 'Payé') { // ✅ uniquement si payé
+            interm.push(paiement.id);
+          }
         });
       }
     });
+
 
     const data = {
       paiementIds: interm

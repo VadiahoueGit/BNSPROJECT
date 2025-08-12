@@ -98,17 +98,45 @@ formData = {
   OnEdit(data: any) {
     console.log(data);
     this.updateData = data;
-    this.listeEcarts = data.ecarts.filter((item: any) => item.ecart > 0 && item.prixUnitaire > 0);
+    this.listeEcarts = data.ecarts
+      // .filter((item: any) => item.ecart > 0 && item.prixUnitaire > 0);
     this.formData.montant = this.calculTotalEcarts();
     this.isModalOpen = true;
   }
+
+  validateAmount(data: any): void {
+    console.log(data, 'validateAmount');
+
+    // Vérifier si la quantité saisie dépasse la quantité disponible
+    if((data.prixUnitaire * data.quantite) > 0)
+    {
+      if (data.paiement > data.prixUnitaire * data.quantite ) {
+        // Réinitialiser la quantité à la quantité disponible
+        data.paiement = '';
+
+        // Afficher un message de warning
+        this.toastr.warning('Vous êtes pas autorisés à solder ce montant.');
+      }
+    }else if((data.prixUnitaire * data.quantite) < 0)
+    {
+      if (data.paiement < data.prixUnitaire * data.quantite || data.paiement > 0 ) {
+        // Réinitialiser la quantité à la quantité disponible
+        data.paiement = '';
+
+        // Afficher un message de warning
+        this.toastr.warning('Vous êtes pas autorisés à solder ce montant.');
+      }
+    }
+
+  }
+
   calculTotalEcarts(){
     return this.listeEcarts.reduce((total, item) => total + (item.ecart * item.prixUnitaire), 0);
   }
   onSubmitSelected() {
     const requestData = {
       paiements: this.listeEcarts
-        .filter(item => item.paiement > 0 && item.moyenPaiementId) // ignore montant 0 ou moyenPaiementId nul
+        .filter(item => item.paiement != 0 && item.moyenPaiementId) // ignore montant 0 ou moyenPaiementId nul
         .map(item => ({
           inventaireId: item.inventoryId,
           montant: item.paiement,
@@ -120,10 +148,15 @@ formData = {
     if(requestData.paiements.length > 0){
       this._spinner.show();
       this._activite.CreateEcartEmballage(requestData).then((res: any) => {
+        if(res.statusCode === 201) {
+          this.toastr.success(res.message);
+          this.GetEcartEmbalageList(1);
+          this.OnCloseModal();
+        }else{
+          this.toastr.error(res.message);
+        }
         this._spinner.hide();
-        this.toastr.success(res.message);
-        this.GetEcartEmbalageList(1);
-        this.OnCloseModal();
+
       })
         .catch((err: any) => {
           this._spinner.hide();
