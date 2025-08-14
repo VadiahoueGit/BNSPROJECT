@@ -132,6 +132,7 @@ export class TransporteurComponent {
     this.updateData = data;
     this.transporteurId = data.id;
     this.transporteurForm.patchValue(data);
+    this.transporteurForm.controls['depotId'].setValue(data.depot?.id);
     this.isModalOpen = true;
     this.operation = 'edit';
     console.log(this.isModalOpen);

@@ -202,10 +202,14 @@ export class SaisieCommandeGratuiteComponent {
       this.articleService.CreateCommandGratuite(this.CommandeForm.value).then((res: any) => {
         console.log(res,'enregistré avec succes')
         this._spinner.hide();
-        this.CommandeForm.reset();
-        this.GetListCommandeGratuite(1)
-        this.OnCloseModal()
-        this.toastr.success(res.message);
+        if(res.statusCode === 201) {
+          this.CommandeForm.reset();
+          this.GetListCommandeGratuite(1)
+          this.OnCloseModal()
+          this.toastr.success(res.message);
+        }else{
+          this.toastr.error(res.message);
+        }
       }, (error: any) => {
           this._spinner.hide();
           this.toastr.info(error.error.message);

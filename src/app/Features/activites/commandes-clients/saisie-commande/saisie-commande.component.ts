@@ -560,10 +560,14 @@ export class SaisieCommandeComponent {
         (res: any) => {
           console.log(res, 'enregistré avec succes');
           this._spinner.hide();
-          this.commandClientForm.reset();
-          this.GetListCommandeClient(1);
-          this.OnCloseModal();
-          this.toastr.success(res.message);
+          if(res.statusCode === 201) {
+            this.commandClientForm.reset();
+            this.GetListCommandeClient(1);
+            this.OnCloseModal();
+            this.toastr.success(res.message);
+          }else{
+            this.toastr.error(res.message);
+          }
         },
         (error: any) => {
           this._spinner.hide();

@@ -158,17 +158,25 @@ export class VentechinepageComponent {
   }
 
   onSubmit() {
-    console.log(this.VenteForm.value, 'venteForm');
+
     if (this.VenteForm.valid) {
       this._spinner.show();
       this.utilisateurService.CreateVenteChine(this.VenteForm.value).then(
         (res: any) => {
           console.log(res, 'enregistré avec succes');
           this._spinner.hide();
-          this.GetVenteChineList(1);
-          this.OnCloseModal();
-
-          this.toastr.success(res.message);
+          if(res.statusCode === 201) {
+            this.VenteForm.reset()
+            this.selectedArticles = [];
+            (this.VenteForm.get('articles') as FormArray).clear();
+            (this.VenteForm.get('articlesGratuit') as FormArray).clear();
+            this.GetVenteChineList(1);
+            this.OnCloseModal();
+            console.log(this.VenteForm.value, 'venteForm');
+            this.toastr.success(res.message);
+          }else{
+            this.toastr.error(res.message);
+          }
         },
         (error: any) => {
           this._spinner.hide();
