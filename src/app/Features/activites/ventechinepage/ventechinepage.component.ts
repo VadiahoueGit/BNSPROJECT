@@ -8,6 +8,7 @@ import {UtilisateurResolveService} from '../../../core/utilisateur-resolve.servi
 import {CoreServiceService} from '../../../core/core-service.service';
 import {LogistiqueService} from '../../../core/logistique.service';
 import {ALERT_QUESTION} from '../../shared-component/utils';
+import {StatutCommande} from "../../../utils/utils";
 
 @Component({
   selector: 'app-ventechinepage',
@@ -23,8 +24,9 @@ export class VentechinepageComponent {
   isChoiceModalOpen: boolean;
   isChoiceModalFreeOpen: boolean;
   isEditMode: boolean;
+  // operation: 'create' | 'createNew' | 'edit' | 'update';
   operation: string = '';
-  currentPage: number;
+    currentPage: number;
   rowsPerPage: any;
   searchTerm: string = '';
   searchTermFree: string = '';
@@ -32,6 +34,7 @@ export class VentechinepageComponent {
   filteredArticleListFree: any = [];
   selectedArticles: any[] = [];
   selectedArticlesFree: any[] = [];
+  newCommandeGratuit: any[] = [];
   dataListLiquides: any = [];
   dataListLiquidesFree: any = [];
   stocksDisponibles: any = {};
@@ -64,6 +67,8 @@ export class VentechinepageComponent {
   totalLiquideFree: number = 0;
   totalEmballageFree :number = 0;
   signature: null;
+  detailPointDevente: any = {};
+  newCommande: any = [];
   constructor(
     private cdr: ChangeDetectorRef,
     private _spinner: NgxSpinnerService,
@@ -101,12 +106,94 @@ export class VentechinepageComponent {
   getFilteredArticles(data: any): any[] {
     return data.articles?.filter((a: any) => a.prixUnitaire > 0) || [];
   }
-
+  isFormMode(): boolean {
+    return ['create', 'edit', 'update'].includes(this.operation);
+  }
 
   activeElement(elt: string) {
     this.activeTab = elt;
   }
 
+  OnAddGoods(data: any,selectedItem:any, newCommande: any) {
+    let item = []
+    this.totalEmballage = 0;
+    this.totalLiquide = 0;
+    this.totalGlobal = 0;
+    this.totalQte = 0;
+    console.log(data);
+    console.log(this.selectedArticles);
+    if (data == 'edit') {
+      this.detailPointDevente = selectedItem.client
+      this.depotId = selectedItem.commercial.depot.id;
+      this.GetArticleList(1);
+      this.operation = 'createNew';
+    } else {
+      this.operation = 'edit';
+    }
+
+  }
+  selectArticleNew() {
+    this.isEditMode = false;
+    this.isChoiceModalOpen = true;
+    this.operation = 'createNew';
+    console.log(this.isModalOpen);
+  }
+  updateGoods(data: any) {
+    this.operation = 'update';
+    this.newCommande = this.updateData.articles
+    this.newCommande.forEach((item: any) => {
+      this.getLocalPrice(item)
+    })
+
+    console.log(this.operation);
+  }
+  saveGoods(data: any) {
+    if(data == 'createNew') {
+      console.log(data)
+      // this.AjouterArticleCommandeClient()
+    }else if(data == 'update') {
+      console.log(data)
+      // this.UpdateCommande()
+    }
+
+    console.log(this.operation);
+  }
+  DeleteArticleCommande(data:any){
+    this._spinner.show();
+    this.articleService.DeleteArticleCommandeClient(data.id).then(
+      (response: any) => {
+        this._spinner.hide();
+        this.toastr.success('Succès!', response.message);
+        this.GetListCommandeClientById()
+        this.newCommande = [];
+        this.operation = 'edit';
+      },
+      (error: any) => {
+        this._spinner.hide();
+        this.toastr.error('Erreur!', error.message);
+      }
+    );
+  }
+  GetListCommandeClientById(){
+    this.articleService.GetListCommandeClientById(this.updateData.id).then(
+      (response: any) => {
+        console.log('xxx')
+        // this.GetListCommandeClient(1)
+        this.updateData = response.data;
+        // this.newCommande = this.updateData.articles;
+      },
+      (error: any) => {
+        this.toastr.error('Erreur!', error.message);
+      }
+    );
+  }
+  async getLocalPrice(item:any) {
+    console.log(item);
+    this.prixLiquide[item.id] = item.prixUnitaireLiquide;
+    this.prixEmballage[item.id] = item.prixUnitaireEmballage;
+    this.calculatePrix(item);
+
+  }
   OnCloseModal() {
     this.totalEmballage = 0;
     this.totalEmballageFree = 0
@@ -147,6 +234,13 @@ export class VentechinepageComponent {
   selectArticleGratuit() {
     this.isEditMode = false;
     this.isChoiceModalFreeOpen = true;
+    this.operation = 'createNew';
+    console.log(this.isModalOpen);
+  }
+
+  selectArticleGratuitNew() {
+    this.isEditMode = false;
+    this.isChoiceModalFreeOpen = true;
     console.log(this.filteredArticleListFree)
     this.operation = 'create';
     console.log(this.isModalOpen);
@@ -158,10 +252,12 @@ export class VentechinepageComponent {
   }
 
   onSubmit() {
-
     if (this.VenteForm.valid) {
       this._spinner.show();
-      this.utilisateurService.CreateVenteChine(this.VenteForm.value).then(
+      let vente = this.VenteForm.value;
+      vente.articles = vente.articles.filter((a: any) => a.quantite > 0);
+      vente.articlesGratuit = vente.articlesGratuit.filter((a: any) => a.quantite > 0);
+      this.utilisateurService.CreateVenteChine(vente).then(
         (res: any) => {
           console.log(res, 'enregistré avec succes');
           this._spinner.hide();
@@ -194,6 +290,7 @@ export class VentechinepageComponent {
 
     if (article.isChecked) {
       this.selectedArticles.push(article);
+      this.newCommande = this.selectedArticles
       this.afficherArticlesSelectionnes();
     } else {
       delete article.quantite;
@@ -212,6 +309,7 @@ export class VentechinepageComponent {
 
     if (articles.isChecked) {
       this.selectedArticlesFree.push(articles)
+      this.newCommandeGratuit = this.selectedArticlesFree;
       this.afficherArticlesSelectionnes();
     } else {
       delete articles.quantite;
@@ -794,4 +892,5 @@ export class VentechinepageComponent {
   }
 
   protected readonly Number = Number;
+  protected readonly StatutCommande = StatutCommande;
 }

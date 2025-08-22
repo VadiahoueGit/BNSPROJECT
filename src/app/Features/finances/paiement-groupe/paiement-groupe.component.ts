@@ -37,6 +37,9 @@ export class PaiementGroupeComponent {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
+    this.updateData.transactions = this.updateData.transactions.filter((transaction: any) =>
+      transaction.paiements.some((paiement: any) => paiement.statut === 'En attente')
+    );
     this.isModalOpen = true;
     this.operation = 'edit';
     console.log(this.isModalOpen);

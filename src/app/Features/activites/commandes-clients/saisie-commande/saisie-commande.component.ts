@@ -365,6 +365,7 @@ export class SaisieCommandeComponent {
   }
 
   async getLocalPrice(item:any) {
+    console.log(item);
     this.prixLiquide[item.id] = item.prixUnitaireLiquide;
     this.prixEmballage[item.id] = item.prixUnitaireEmballage;
     this.calculatePrix(item);
@@ -422,23 +423,29 @@ export class SaisieCommandeComponent {
     for (let i = 0; i < articlesControl.length; i++) {
       const articleGroup = articlesControl.at(i) as FormGroup;
       const codeArticleLiquide = articleGroup.get('codeArticleLiquide')?.value;
-
+      console.log(articleGroup)
       if (codeArticleLiquide === codeArticle) {
         const quantite = articleGroup.get('quantite')?.value || 0;
         const codeArticleEmballage = articleGroup.get('codeArticleEmballage')?.value;
-
-        const prixLiquide = this.prixLiquide[codeArticleLiquide] || 0;
-        const prixEmballage = this.prixEmballage[codeArticleEmballage] || 0;
+        console.log(quantite)
+        const prixLiquide = this.prixLiquide[item.id] || 0;
+        const prixEmballage = this.prixEmballage[item.id] || 0;
         const montantTotal = (prixLiquide + prixEmballage) * quantite;
+        console.log( prixEmballage * quantite,prixLiquide * quantite,montantTotal,quantite )
+
+        delete this.prixLiquideTotal[item.id];
+        delete this.prixEmballageTotal[item.id];
+        delete this.montantTotal[item.id];
 
         this.totalEmballage -= prixEmballage * quantite;
         this.totalLiquide -= prixLiquide * quantite;
         this.totalGlobalBeforeRemise -= montantTotal;
         this.totalQte -= quantite;
-
+        console.log( this.totalEmballage,this.totalLiquide ,this.totalGlobalBeforeRemise,this.totalQte )
         articlesControl.removeAt(i);
         articlesControl.updateValueAndValidity();
         this.applyRemise();
+        this.cdr.detectChanges(); // 🔑 force refresh si OnPush
         break;
       }
     }
@@ -448,7 +455,9 @@ export class SaisieCommandeComponent {
   }
 
   calculatePrix(data: any) {
+    console.log(data);
     if (this.prixLiquideTotal[data.id]) {
+      console.log('okok')
       this.totalEmballage -= this.prixEmballageTotal[data.id] || 0;
       this.totalLiquide -= this.prixLiquideTotal[data.id] || 0;
       this.totalGlobalBeforeRemise -= this.montantTotal[data.id] || 0;

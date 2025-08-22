@@ -202,6 +202,9 @@ export class CommercialComponent {
       console.log('currentPage', this.totalPages);
       this._spinner.hide()
       console.log(this.dataList)
+    }, (error: any) => {
+      this._spinner.hide();
+      this.toastr.error('Erreur!', error.error.message);
     })
   }
 }

@@ -1,11 +1,11 @@
-import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
-import { Table } from 'primeng/table';
-import { ArticleServiceService } from 'src/app/core/article-service.service';
-import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
-import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
+import {ChangeDetectorRef, Component, ViewChild} from '@angular/core';
+import {FormGroup, FormBuilder, Validators, FormArray} from '@angular/forms';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {ToastrService} from 'ngx-toastr';
+import {Table} from 'primeng/table';
+import {ArticleServiceService} from 'src/app/core/article-service.service';
+import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
+import {ALERT_QUESTION} from 'src/app/Features/shared-component/utils';
 
 @Component({
   selector: 'app-list-emballages',
@@ -75,6 +75,7 @@ export class ListEmballagesComponent {
   totalPages: any;
   ListReceptionCommandeFournisseurs: any;
   emballagesrecues: any;
+  emballagesRendus:any
   constructor(
     private articleService: ArticleServiceService,
     private utilisateurService: UtilisateurResolveService,
@@ -82,25 +83,26 @@ export class ListEmballagesComponent {
     private fb: FormBuilder,
     private toastr: ToastrService,
     private cdr: ChangeDetectorRef
-  ) { }
+  ) {
+  }
 
   ngOnInit() {
     this.emballageRenduForm = this.fb.group({
       clientId: [null, Validators.required],
       clientType: ['revendeur'],
-      numeroCompte: [{ value: '' }],
-      raisonSociale: [{ value: 0, disabled: true }],
-      montantCredit: [{ value: 0, disabled: true }],
-      statutCompte: [{ value: '', disabled: true }],
-      enCours: [{ value: 0, disabled: true }],
-      soldeEmballage: [{ value: '', disabled: true }],
-      numeroSAP: [{ value: '', disabled: true }],
+      numeroCompte: [{value: ''}],
+      raisonSociale: [{value: 0, disabled: true}],
+      montantCredit: [{value: 0, disabled: true}],
+      statutCompte: [{value: '', disabled: true}],
+      enCours: [{value: 0, disabled: true}],
+      soldeEmballage: [{value: '', disabled: true}],
+      numeroSAP: [{value: '', disabled: true}],
       remise: [
         0,
         [Validators.required, Validators.min(0), Validators.max(100)],
       ],
-      contact: [{ value: '', disabled: true }],
-      soldeLiquide: [{ value: '', disabled: true }],
+      contact: [{value: '', disabled: true}],
+      soldeLiquide: [{value: '', disabled: true}],
       fraisTransport: [0, Validators.required],
       articles: this.fb.array([]),
     });
@@ -132,6 +134,7 @@ export class ListEmballagesComponent {
     this.GetListReceptionCommandeFournisseurs(1);
     (this.emballageRenduForm.get('articles') as FormArray).clear();
   }
+
   OnCreate() {
     this.isEditMode = false;
     this.isModalOpen = true;
@@ -141,37 +144,111 @@ export class ListEmballagesComponent {
   }
 
   OnEdit(data: any) {
-    console.log(data, 'data emballage');
-    console.log(data?.emballagesRendus.length, 'taille');
+    console.log(data, 'data complète');
 
+    // Dépot et mode édition
     this.depotId = data.commande?.depot?.id ?? data.entreeGratuite?.depot?.id;
     this.isEditMode = true;
     this.updateData = data;
 
-    // ✅ Formattage des codes des emballages rendus
-    const articlesRendus = data.articlesRecus ?? data.articlesRecus;
+    // -------------------------------
+    // ARTICLES REÇUS
+    // -------------------------------
+    const articlesRecus = data.articlesRecus ?? [];
 
-    articlesRendus.forEach((article: any) => {
-      if (article?.commande?.emballage?.code) {
-        article.commande.emballage.code = this.formatCode(article.commande.emballage.code);
-      } else if (article?.entreeGratuite?.emballage?.code) {
-        article.entreeGratuite.emballage.code = this.formatCode(article.entreeGratuite.emballage.code);
+    // Formattage des codes et marquage isNewAdd
+    articlesRecus.forEach((article:any) => {
+      const emballage = article.articleEntree?.emballage;
+      if (emballage?.code) {
+        emballage.code = this.formatCode(emballage.code);
+      }
+      article.isNewAdd = false;
+    });
+
+    // Affectation pour affichage
+    this.emballagesrecues = articlesRecus;
+
+    // -------------------------------
+    // EMBALLAGES RENDUS
+    // -------------------------------
+    const emballagesRendus = data.emballagesRendus ?? [];
+
+    // Formattage des codes
+    emballagesRendus.forEach((retour:any) => {
+      retour.articles.forEach((article:any) => {
+        if (article.emballage?.code) {
+          article.emballage.code = this.formatCode(article.emballage.code);
+        }
+      });
+    });
+
+    // Affectation pour affichage
+
+
+    // -------------------------------
+    // Totaux par code d'emballage (optionnel, séparé)
+    // -------------------------------
+    const totauxRecus = new Map<string, any>();
+    (this.updateData.articlesRecus ?? []).forEach((article:any) => {
+      const code = article.articleEntree.emballage?.code;
+      if (!code) return;
+
+      if (!totauxRecus.has(code)) {
+        totauxRecus.set(code, {
+          code: code,
+          libelle: article.articleEntree.emballage.libelle,
+          quantite: article.articleEntree.quantite,
+          quantiteRecue: article.quantiteRecue ?? article.articleEntree.quantite, // valeur initiale
+          prixUnitaireLiquide: article.articleEntree.prixUnitaireLiquide,
+          prixUnitaireEmballage: article.articleEntree.prixUnitaireEmballage,
+          montantLiquide: article.articleEntree.montantLiquide,
+          montantEmballage: article.articleEntree.montantEmballage,
+          createdAt: article.articleEntree.createdAt,
+          updatedAt: article.articleEntree.updatedAt,
+          emballage: article.articleEntree.emballage,
+          liquide: article.articleEntree.liquide,
+          groupearticle: article.articleEntree.groupearticle
+        });
+      } else {
+        totauxRecus.get(code).quantite += article.articleEntree.quantite;
       }
     });
-console.log(articlesRendus);
-    // Articles reçus
-    data.articlesRecus.map((item: any) => {
-      item.isNewAdd = false;
-    });
+    this.emballagesrecues = Array.from(totauxRecus.values());
 
-    this.emballagesrecues = data.articlesRecus;
+    if (this.updateData.emballagesRendus.length > 0) {
+      const mapRendus = new Map<string, any>();
+      (this.updateData.emballagesRendus[0].articles ?? []).forEach((article:any) => {
+        const code = article.emballage?.code;
+        if (!code) return;
+
+        if (!mapRendus.has(code)) {
+          mapRendus.set(code, {
+            code: code,
+            libelle: article.emballage.libelle,
+            quantite: article.quantite
+          });
+        } else {
+          mapRendus.get(code).quantite += article.quantite;
+        }
+      });
+      this.emballagesRendus = Array.from(mapRendus.values());
+
+      console.log('Emballages rendus:', this.emballagesRendus);
+    }
+
+    console.log('Totaux articles reçus par code:', totauxRecus);
+    console.log('Totaux emballages rendus par code:', emballagesRendus);
+
+    // -------------------------------
+    // Infos complémentaires
+    // -------------------------------
     this.articleId = data.id;
     this.isModalOpen = true;
     this.operation = 'edit';
 
-    console.log(this.isModalOpen);
-    console.log(this.emballagesrecues);
+    console.log('Articles reçus:', this.emballagesrecues);
   }
+
 
   async GetStockDisponibleByDepot(item: any): Promise<any> {
     let data = {
@@ -201,6 +278,7 @@ console.log(articlesRendus);
     console.log('totalite', this.stocksDisponibles);
     return 0;
   }
+
   async GetArticleList(page: number) {
     const data = {
       paginate: false,
@@ -272,14 +350,13 @@ console.log(articlesRendus);
   }
 
 
-
   removeArticle(item: any): void {
     item.isNewAdd = false;
     this.onCheckboxChange(item);
 
     const articlesControl = this.emballageRenduForm.controls[
       'articles'
-    ] as FormArray;
+      ] as FormArray;
     const articlesValue = articlesControl.value || [];
 
     // Trouver l'article à retirer
@@ -350,7 +427,7 @@ console.log(articlesRendus);
     // Accéder aux valeurs du FormArray
     const articlesControl = this.emballageRenduForm.controls[
       'articles'
-    ] as FormArray;
+      ] as FormArray;
     const articlesValue = articlesControl.value;
 
     // Vérifier si l'article existe déjà dans 'this.articles' (articlesValue)
@@ -412,6 +489,7 @@ console.log(articlesRendus);
         this._spinner.hide();
       });
   }
+
   // selectArticle() {
   //   this.isEditMode = false;
   //   this.isChoiceModalOpen = true;
@@ -424,12 +502,12 @@ console.log(articlesRendus);
       articles: this.emballagesrecues.map((article: any) => {
         console.log(article, 'article');
         return {
-          emballageId: article.articleCommande ? article?.articleCommande?.emballage.id : article.emballage?.id ?? article?.id,
-          quantite: article?.quantiteRecue,
+          emballageId: article.articleCommande ? article?.articleCommande?.emballage.id : article.emballage?.id,
+          quantite: article?.quantite,
           prixUnitaireEmballage: parseInt(article?.prixUnitaireEmballage ?? article?.articleCommande?.prixUnitaireEmballage ?? article?.articleEntree?.prixUnitaireEmballage ?? article?.PrixSousDepot)
         };
       }),
-      
+
     };
     console.log(payload, 'payload');
     console.log(this.emballagesrecues, 'emballagesrecues');
@@ -460,6 +538,7 @@ console.log(articlesRendus);
       this.filters.dateFin,
     );
   }
+
   // GetListRetourEmballageFournisseurs(
   //   page: number,
   //   numeroRetour?: string,
@@ -491,6 +570,7 @@ console.log(articlesRendus);
     this.cdr.detectChanges();
     console.log(this.isChoiceModalOpen);
   }
+
   validateQuantite(data: any): void {
     console.log(data, 'validateQuantiteData');
 
@@ -526,6 +606,7 @@ console.log(articlesRendus);
     }
     console.log(this.emballagesrecues, 'emballagesrecues');
   }
+
   removeArticleEmballage(item: any): void {
     const indexToRemove = this.emballagesrecues.findIndex(
       (selectedArticle: any) => selectedArticle.libelle === item.libelle
@@ -535,6 +616,7 @@ console.log(articlesRendus);
       this.afficherArticlesSelectionnes();
     }
   }
+
   async GetPrixByArticle(item: any): Promise<any> {
     let data = {
       id: item.id,
@@ -556,6 +638,7 @@ console.log(articlesRendus);
       console.log(error);
     }
   }
+
   afficherArticlesSelectionnes() {
     console.log(this.emballagesrecues);
   }
@@ -563,12 +646,14 @@ console.log(articlesRendus);
   onSubmitSelection() {
     this.isChoiceModalOpen = false;
   }
+
   OnCloseChoiceModal() {
     this.deselectAllItems();
     this.isChoiceModalOpen = false;
     console.log(this.isModalOpen);
     // this.filteredArticleList = []
   }
+
   deselectAllItems(): void {
     this.selectedArticles.forEach((item: any) => {
       delete item.quantite;
@@ -578,6 +663,7 @@ console.log(articlesRendus);
     this.filteredArticleList = []
     this.selectedArticles = [];
   }
+
   // onSearchClient(): void {}
   loadArticleDetails(): void {
     this.emballageRenduForm.patchValue({
@@ -592,6 +678,7 @@ console.log(articlesRendus);
       liquideId: 1,
     });
   }
+
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
@@ -617,6 +704,7 @@ console.log(articlesRendus);
       this.filteredArticleList = [...this.dataListLiquides];
     }
   }
+
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
       (res: any) => {
@@ -671,5 +759,6 @@ console.log(articlesRendus);
       console.error('Erreur lors de la récupération des données:', error);
     }
   }
+
   protected readonly Number = Number;
 }

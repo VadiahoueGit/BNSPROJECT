@@ -90,8 +90,16 @@
             </legend>
             <div class="row">
               <div class="col-md-4">
-                <strong>Client: </strong>
+                <strong>Agent: </strong>
                 <span> {{ updateData.agentNomComplet}} </span>
+              </div>
+              <div class="col-md-4">
+                <strong>Email agent: </strong>
+                <span> {{ updateData.agentMail}} </span>
+              </div>
+              <div class="col-md-4">
+                <strong>Email agent: </strong>
+                <span> {{ updateData.agentRole}} </span>
               </div>
             </div>
           </fieldset>
@@ -117,7 +125,7 @@
                   <!-- Ligne de titre -->
                   <tr style="font-weight: bold; background-color: #f2f2f2;">
                     <td colspan="5">
-                      Transaction #{{ transaction.numTransaction }} - {{ transaction.motif }}
+                      Transaction #{{ transaction.numTransaction }} - {{ transaction.motif }} chez : {{transaction.clientAssocie.nomEtablissement || transaction.clientAssocie.raisonSocial}}
                     </td>
                   </tr>
 

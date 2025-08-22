@@ -98,6 +98,7 @@ export class TransporteurComponent {
           console.log(res)
         },
         (error: any) => {
+          this._spinner.hide();
           this.isModalOpen = false;
           this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
           console.error('Erreur lors de la création', error);
@@ -113,6 +114,7 @@ export class TransporteurComponent {
           console.log(res)
         },
         (error: any) => {
+          this._spinner.hide();
           this.isModalOpen = false;
           this.toastr.error('Erreur!', "Erreur lors de l'enregistrement.");
           console.error('Erreur lors de la création', error);

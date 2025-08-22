@@ -1,13 +1,13 @@
-import { Component, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
-import { Table } from 'primeng/table';
-import { ArticleServiceService } from 'src/app/core/article-service.service';
-import { ALERT_QUESTION, storage_keys } from '../../shared-component/utils';
-import { Location } from '@angular/common';
-import { CoreServiceService } from '../../../core/core-service.service';
-import { LocalStorageService } from '../../../core/local-storage.service';
+import {Component, ViewChild} from '@angular/core';
+import {FormGroup, FormBuilder, Validators, FormArray} from '@angular/forms';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {ToastrService} from 'ngx-toastr';
+import {Table} from 'primeng/table';
+import {ArticleServiceService} from 'src/app/core/article-service.service';
+import {ALERT_QUESTION, storage_keys} from '../../shared-component/utils';
+import {Location} from '@angular/common';
+import {CoreServiceService} from '../../../core/core-service.service';
+import {LocalStorageService} from '../../../core/local-storage.service';
 
 @Component({
   selector: 'app-inventaire-stoks',
@@ -50,12 +50,14 @@ export class InventaireStoksComponent {
   isAllSelected: boolean = false;
   now = new Date().toISOString().split('T')[0];
   UserInfo: any;
+
   formatCode(code: string): string {
     if (!code) return code;
     if (code.startsWith('EMB_')) return code.replace('EMB_', 'VEMB_');
     if (code.startsWith('CAS_')) return code.replace('CAS_', 'CCAS_');
     return code;
   }
+
   constructor(
     private localstorage: LocalStorageService,
     private articleService: ArticleServiceService,
@@ -64,7 +66,8 @@ export class InventaireStoksComponent {
     private fb: FormBuilder,
     private toastr: ToastrService,
     private location: Location
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.UserInfo = this.localstorage.getItem(storage_keys.STOREUser);
@@ -110,7 +113,8 @@ export class InventaireStoksComponent {
     this.isArticleModalOpen = true;
     console.log(this.isModalOpen);
   }
-  OnViewInventaire(data:any) {
+
+  OnViewInventaire(data: any) {
     this.updateData = data
     this.detailModalOpen = true;
     console.log(this.isModalOpen);
@@ -121,12 +125,15 @@ export class InventaireStoksComponent {
     this.isArticleModalOpen = false;
     console.log(this.isModalOpen);
   }
+
   get filteredArticles() {
-    return this.updateData.articles?.filter((a:any) => a.prixUnitaire > 0);
+    return this.updateData.articles?.filter((a: any) => a.prixUnitaire > 0);
   }
+
   onSubmitSelection() {
     this.isArticleModalOpen = false;
   }
+
   toggleAllSelection(event: any): void {
     this.isAllSelected = event.target.checked; // Met à jour l'état global
     this.selectedArticles = []; // Réinitialise la liste des articles sélectionnés
@@ -148,19 +155,22 @@ export class InventaireStoksComponent {
     const depotId = this.InventaireForm.controls['depotId'].value;
 
     this.articleService.GetArticleListByDepot(depotId).then((res: any) => {
-      // Reformater les codes article
-      this.articleList = res.articles.map((article: any) => ({
-        ...article,
-        articleCode: this.formatCode(article.articleCode)
-      }));
+      this._spinner.hide();
+      if (res.statusCode === 200) {
+        // Reformater les codes article
+        this.articleList = res.articles.map((article: any) => ({
+          ...article,
+          articleCode: this.formatCode(article.articleCode)
+        }));
 
-      // Trier la liste filtrée par nom d'article
-      this.filteredArticleList = this.articleList.sort((a, b) =>
-        a.articleName.toLowerCase().localeCompare(b.articleName.toLowerCase())
-      );
+        // Trier la liste filtrée par nom d'article
+        this.filteredArticleList = this.articleList.sort((a, b) =>
+          a.articleName.toLowerCase().localeCompare(b.articleName.toLowerCase())
+        );
+      }
 
       console.log('DATATYPEPRIX:::>', this.articleList);
-      this._spinner.hide();
+
     });
   }
 
@@ -173,34 +183,37 @@ export class InventaireStoksComponent {
     this._spinner.show();
     this.articleService.GetInventaire(data).then((res: any) => {
       console.log('inventaire:::>', res);
+      if (res.statusCode === 200) {
+        this.dataList = res.data.map((item: any) => {
+          // reformater les codes des articles de cette ligne
+          const formattedArticles = item.articles.map((article: any) => {
+            let newCode = article.codeArticle;
 
-      this.dataList = res.data.map((item: any) => {
-        // reformater les codes des articles de cette ligne
-        const formattedArticles = item.articles.map((article: any) => {
-          let newCode = article.codeArticle;
+            if (newCode?.startsWith('EMB_')) {
+              newCode = newCode.replace('EMB_', 'VEMB_');
+            } else if (newCode?.startsWith('CAS_')) {
+              newCode = newCode.replace('CAS_', 'CCAS_');
+            }
 
-          if (newCode?.startsWith('EMB_')) {
-            newCode = newCode.replace('EMB_', 'VEMB_');
-          } else if (newCode?.startsWith('CAS_')) {
-            newCode = newCode.replace('CAS_', 'CCAS_');
-          }
+            return {
+              ...article,
+              codeArticle: newCode
+            };
+          });
 
           return {
-            ...article,
-            codeArticle: newCode
+            ...item,
+            articles: formattedArticles
           };
         });
+      }
 
-        return {
-          ...item,
-          articles: formattedArticles
-        };
-      });
 
       this._spinner.hide();
     });
 
   }
+
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
@@ -279,10 +292,11 @@ export class InventaireStoksComponent {
   OnCloseModal() {
     this.deselectAllItems();
     this.InventaireForm.reset()
-    this.selectedArticles =[]
+    this.selectedArticles = []
     this.isModalOpen = false;
     console.log(this.isModalOpen);
   }
+
   OnCloseDetailModal() {
     this.detailModalOpen = false;
     console.log(this.isModalOpen);
@@ -357,11 +371,11 @@ export class InventaireStoksComponent {
 
   articlesRequiredValidator(control: any): { [key: string]: boolean } | null {
     if (control.length === 0) {
-      return { articlesRequired: true }; // Le FormArray doit contenir au moins un article
+      return {articlesRequired: true}; // Le FormArray doit contenir au moins un article
     }
     // Vérifier la validité de chaque article (FormGroup)
     const allValid = control.controls.every((group: any) => group.valid);
-    return allValid ? null : { articlesInvalid: true };
+    return allValid ? null : {articlesInvalid: true};
   }
 
   async GetStockDisponibleByDepot(item: any): Promise<any> {
@@ -370,14 +384,14 @@ export class InventaireStoksComponent {
       depotId: this.InventaireForm.controls['depotId'].value,
     };
     console.log(data, 'les donnees');
-    console.log( item, 'les items');
+    console.log(item, 'les items');
     try {
       // Attendre la réponse de la promesse
       const response: any = await this.articleService.GetStockDisponibleByDepotInventaire(
         data
       );
       console.log(response);
-      console.log(response.quantiteDisponible,'response.quantiteDisponible;');
+      console.log(response.quantiteDisponible, 'response.quantiteDisponible;');
       // Vérifier si le statusCode est 200
       if (response) {
         this.stocksDisponibles[item.articleCode] = response.quantiteDisponible;
@@ -401,7 +415,7 @@ export class InventaireStoksComponent {
     const ecartPercent =
       stockTheorique > 0 ? (ecart / stockTheorique) * 100 : 100;
     console.log(ecart, ecartPercent);
-    return { ecart, ecartPercent }; // Facultatif : retournez un objet si besoin
+    return {ecart, ecartPercent}; // Facultatif : retournez un objet si besoin
   }
 
   // Méthode pour ajouter un article au FormArray
@@ -431,6 +445,7 @@ export class InventaireStoksComponent {
   get articles(): FormArray {
     return this.InventaireForm.get('articles') as FormArray;
   }
+
   validateQuantite(data: any, stockTheorique: number, index: number): void {
     data.stockTheorique = stockTheorique;
     this.ecart[index] = this.calculateData(stockTheorique, data.quantite).ecart;

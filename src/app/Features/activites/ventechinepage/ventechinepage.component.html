@@ -17,15 +17,21 @@
   >
     <ng-template pTemplate="header">
       <tr>
+        <th style="color: var(--secondary-color)">Numero de vente</th>
         <th style="color: var(--secondary-color)">Commercial</th>
         <th style="color: var(--secondary-color)">Localité</th>
-        <th style="color: var(--secondary-color)">Date</th>
+        <th style="color: var(--secondary-color)">Date prévue</th>
         <th style="color: var(--secondary-color)">Statut</th>
         <th class="d-flex justify-content-center" style="color: var(--secondary-color)">Action</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList>
       <tr>
+        <td>
+          <span class="">
+            {{ dataList.numVenteChine }}
+          </span>
+        </td>
         <td>
           <span class="">
             {{ dataList.commercial.nom }} {{ dataList.commercial.prenoms }}
@@ -105,6 +111,26 @@
       <div class="modal-body" style="max-height: 70vh;overflow-y: auto;">
         <!-- DETAIL VENTE-->
         <div class="row  tab-pane fade show active" *ngIf="activeTab === 'detail'">
+<!--          <div class="d-flex justify-content-end" *ngIf="updateData?.statut == StatutCommande.ATTENTE_VALIDATION">-->
+<!--            <button-->
+<!--              *ngIf="operation == 'edit' && updateData?.statut == StatutCommande.ATTENTE_VALIDATION"-->
+<!--              type="submit"-->
+<!--              class="btn btn-secondary px-2 mx-2"-->
+<!--              (click)="OnAddGoods(operation,updateData,updateData?.articles)"-->
+<!--            >-->
+<!--              <i class="fas fa-plus"></i>-->
+<!--              <span class="ms-2">Ajouter</span>-->
+<!--            </button>-->
+<!--            <button-->
+<!--              *ngIf="operation == 'edit' && updateData?.statut == StatutCommande.ATTENTE_VALIDATION"-->
+<!--              type="submit"-->
+<!--              class="btn btn-secondary px-2"-->
+<!--              (click)="updateGoods(operation)"-->
+<!--            >-->
+<!--              <i class="fas fa-edit"></i>-->
+<!--              <span class="ms-2">{{ operation === 'edit' ? 'Modifier' : 'Valider les changements' }}</span>-->
+<!--            </button>-->
+<!--          </div>-->
           <form [formGroup]="VenteForm" *ngIf="operation == 'create'">
             <fieldset class="row border my-2">
               <legend class="fs-6 text-primary">Ressources & chargement</legend>
@@ -146,6 +172,7 @@
                   >
                   <input
                     type="date"
+                    [min]="now"
                     class="form-control"
                     formControlName="venteDate"
                   />
@@ -168,136 +195,182 @@
 
             </fieldset>
           </form>
-          <fieldset class="row border my-1" *ngIf="operation == 'edit'">
-            <legend style="font-size: 14px" class="text-secondary">
-              Information Livraison
-            </legend>
+          <div>
+            <fieldset class="row border my-1"  *ngIf="operation == 'edit' || operation == 'update' || operation == 'createNew'">
+              <legend style="font-size: 14px" class="text-secondary">
+                Information Livraison
+              </legend>
 
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Numero vente: </strong>
-                <span>{{ updateData.numVenteChine }}</span>
+              <div class="row">
+                <div class="col-md-4">
+                  <strong>Numero vente: </strong>
+                  <span>{{ updateData.numVenteChine }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Commercial: </strong>
+                  <span>{{ updateData.commercial.nom }} {{ updateData.commercial.nom }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Localité: </strong>
+                  <span>{{ updateData.localite.nomLocalite }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Dépot: </strong>
+                  <span>{{ updateData.commercial.depot.nomDepot }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Montant liquide: </strong>
+                  <span>{{ totalLiquide | currency:'XOF' }}</span>
+                </div>
               </div>
-              <div class="col-md-4">
-                <strong>Commercial: </strong>
-                <span>{{ updateData.commercial.nom }} {{ updateData.commercial.nom }}</span>
+            </fieldset>
+            <fieldset class="row border my-2"  *ngIf="operation == 'edit' || operation == 'update' || operation == 'createNew'">
+              <legend style="font-size: 14px" class="text-secondary">
+                Informations du véhicule
+              </legend>
+              <div class="row">
+                <div class="col-md-4">
+                  <strong>Marque: </strong>
+                  <span>{{ updateData.vehicule.marque }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Immatriculation : </strong>
+                  <span>{{ updateData.vehicule.immatriculation }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Energie : </strong>
+                  <span>{{ updateData.vehicule.energie }}</span>
+                </div>
+                <div class="col-md-4">
+                  <strong>Capacité : </strong>
+                  <span>{{ updateData.vehicule.capacite }}</span>
+                </div>
               </div>
-              <div class="col-md-4">
-                <strong>Localité: </strong>
-                <span>{{ updateData.localite.nomLocalite }}</span>
+            </fieldset>
+            <fieldset class="row border my-2">
+              <div class="row">
+                <legend class="fs-6 text-primary">Articles payants</legend>
+                <div class="col-md-4">
+                  <button
+                    type="button"
+                    class="btn btn-secondary my-2"
+                    (click)="selectArticle()"
+                    [disabled]="VenteForm.controls['commercialId'].invalid"
+                  >
+                    Ajouter des articles
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-secondary my-2"
+                    (click)="selectArticleNew()"
+                    *ngIf="operation == 'createNew'"
+                  >
+                    Ajouter des articles
+                  </button>
+                </div>
               </div>
-              <div class="col-md-4">
-                <strong>Dépot: </strong>
-                <span>{{ updateData.commercial.depot.nomDepot }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant liquide: </strong>
-                <span>{{ totalLiquide | currency:'XOF' }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-2" *ngIf="operation == 'edit'">
-            <legend style="font-size: 14px" class="text-secondary">
-              Informations du véhicule
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Marque: </strong>
-                <span>{{ updateData.vehicule.marque }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Immatriculation : </strong>
-                <span>{{ updateData.vehicule.immatriculation }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Energie : </strong>
-                <span>{{ updateData.vehicule.energie }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Capacité : </strong>
-                <span>{{ updateData.vehicule.capacite }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-2">
-            <div class="row">
-              <legend class="fs-6 text-primary">Articles payants</legend>
-              <div class="col-md-4">
-                <button
-                  type="button"
-                  class="btn btn-secondary my-2"
-                  (click)="selectArticle()"
-                  [disabled]="VenteForm.controls['commercialId'].invalid"
-                >
-                  Ajouter des articles
-                </button>
-              </div>
-            </div>
-
-            <div
-              *ngIf="operation == 'edit'"
-              class="table-responsive"
-              style="max-height: 300px; overflow-y: auto"
-            >
-              <table class="table">
-                <thead>
-                <tr style="font-size: small">
-                  <th scope="col">Produits</th>
-                  <th scope="col">Qte liquide</th>
-                  <th scope="col">Qte vendue</th>
-                  <th scope="col">Qte restante</th>
-                  <th scope="col">Prix liquide</th>
-                  <th scope="col">Prix emballage</th>
-                  <th scope="col">Prix total</th>
+              <table *ngIf="operation == 'create' || operation == 'createNew'" class="table table-bordered">
+                <thead class="table-success">
+                <!-- Première ligne d'en-tête -->
+                <tr>
+                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
+                  <th scope="col" colspan="4">MONTANT TTC(FCFA)</th>
+                </tr>
+                <!-- Deuxième ligne d'en-tête -->
+                <tr>
+                  <th scope="col">Liquide</th>
+                  <th scope="col">Liquide (FCFA)</th>
+                  <th scope="col">Emballage (FCFA)</th>
+                  <th scope="col">Total (FCFA)</th>
+                  <th scope="col">Qte</th>
+                  <th scope="col">Liquide (FCFA)</th>
+                  <th scope="col">Emballage (FCFA)</th>
+                  <th scope="col">Total (FCFA)</th>
+                  <th scope="col">Actions</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr
-                  style="font-size: small"
-                  *ngFor="let item of updateData.articles; let i = index"
-                >
-                  <td>{{ item.liquide.libelle }}</td>
-                  <td>{{ item.quantiteAffectee }}</td>
-                  <td>{{ Number(item.quantiteAffectee - item.quantite) }}</td>
-                  <td>{{ item.quantite}}</td>
-                  <td>{{ item.montantLiquide| number }}</td>
-                  <td>{{ item.montantEmballage | number}}</td>
-                  <td>{{ (+item.montantLiquide || 0) + (+item.montantEmballage || 0)| number }}</td>
 
+                <tbody>
+                <tr *ngFor="let item of  operation == 'createNew'? newCommande : selectedArticles">
+                  <td>{{ item?.liquide?.libelle }}</td>
+                  <td>{{ prixLiquide[item.id] | number}}</td>
+                  <td>{{ prixEmballage[item.id] | number}}</td>
+                  <td>{{ prixEmballage[item.id] + prixLiquide[item.id]| number }}</td>
+                  <td>
+                    <input
+                      type="number"
+                      class="form-control-custom"
+                      [(ngModel)]="item.quantite"
+                      [min]="0"
+                      [max]="stocksDisponibles[item.liquide.id]"
+                      [disabled]="stocksDisponibles[item.liquide.id] === 0"
+                      [ngClass]="{
+                          invalid: item.quantite > stocksDisponibles[item.liquide.id]
+                        }"
+                      (blur)="validateQuantite(item)"
+                    />
+                    / {{stocksDisponibles[item.liquide.id]}}
+                  </td>
+                  <td>{{ prixLiquideTotal[item.id] | number}}</td>
+                  <td>{{ prixEmballageTotal[item.id] | number}}</td>
+                  <td>{{ montantTotal[item.id] | number}}</td>
+                  <td class="d-flex justify-content-center">
+                    <button
+                      type="button"
+                      class="btn btn-danger btn-sm"
+                      (click)="removeArticle(item)"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
                 </tr>
-                <tr class="table-dark" *ngIf="updateData.articles.length > 0">
-                  <th scope="col" colspan="1">Total :</th>
-                  <td>{{ totalQte| number }}</td>
-                  <td></td>
-                  <td></td>
-                  <td>{{ totalLiquide| number }}</td>
+                <tr class="table-dark">
+                  <th scope="col" colspan="4">Total :</th>
+                  <td>{{ totalQte | number}}</td>
+                  <td>{{ totalLiquide | number}}</td>
                   <td>{{ totalEmballage | number}}</td>
                   <td>{{ totalGlobal| number }}</td>
+                  <td></td>
                 </tr>
-                <!-- Ajoutez d'autres lignes si nécessaire -->
                 </tbody>
               </table>
-            </div>
-            <div
-              *ngIf="operation == 'create'"
-              class="table-responsive"
-              style="max-height: 300px; overflow-y: auto"
-            >
-              <table class="table table-bordered">
+              <table *ngIf="operation == 'update'" class="table table-bordered">
                 <thead class="table-success">
+                <!-- Première ligne d'en-tête -->
                 <tr>
-                  <th scope="col">Produits</th>
-                  <th scope="col">Qte liquide</th>
-                  <th scope="col">Prix liquide</th>
-                  <th scope="col">Prix emballage</th>
-                  <th scope="col">Prix total</th>
-                  <th scope="col">Action</th>
+                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
+                  <th scope="col" colspan="4">MONTANT TTC(FCFA)</th>
+                </tr>
+                <!-- Deuxième ligne d'en-tête -->
+                <tr>
+                  <th scope="col">Liquide</th>
+                  <th scope="col">Liquide (FCFA)</th>
+                  <th scope="col">Emballage (FCFA)</th>
+                  <th scope="col">Total (FCFA)</th>
+                  <th scope="col">Qte</th>
+                  <th scope="col">Liquide (FCFA)</th>
+                  <th scope="col">Emballage (FCFA)</th>
+                  <th scope="col">Total (FCFA)</th>
+                  <th scope="col">Actions</th>
                 </tr>
                 </thead>
 
                 <tbody>
-                <tr *ngFor="let item of selectedArticles">
-                  <td>{{ item.liquide.libelle }}</td>
+                <tr *ngFor="let item of newCommande">
+                  <td>{{ item?.liquide?.libelle }}</td>
+                  <td>{{ item.prixUnitaireLiquide | number}}</td>
+                  <td>{{ item.prixUnitaireEmballage | number}}</td>
+                  <td>{{ (item.prixUnitaireLiquide || 0) * 1 + (item.prixUnitaireEmballage || 0) * 1 | number}}</td>
+                  <td>
+                    <input
+                      type="number"
+                      class="form-control-custom"
+                      [(ngModel)]="item.quantite"
+                      [min]="0"
+                      (ngModelChange)="getLocalPrice(item)"
+                    />
+
+                  </td>
                   <td>
                     <input
                       type="number"
@@ -311,7 +384,7 @@
                       }"
                       (blur)="validateQuantite(item)"
                     />
-                    / {{ stocksDisponibles[item.liquide.id] }}
+                    / {{stocksDisponibles[item.liquide.id]}}
                   </td>
                   <td>{{ prixLiquideTotal[item.id] | number}}</td>
                   <td>{{ prixEmballageTotal[item.id] | number}}</td>
@@ -320,103 +393,188 @@
                     <button
                       type="button"
                       class="btn btn-danger btn-sm"
-                      (click)="removeArticle(item)"
+                      (click)="DeleteArticleCommande(item)"
                     >
                       <i class="fas fa-trash"></i>
                     </button>
                   </td>
                 </tr>
                 <tr class="table-dark">
-                  <th scope="col" colspan="1">Total :</th>
-                  <td>{{ totalQte | number}}</td>
-                  <td>{{ totalLiquide| number }}</td>
-                  <td>{{ totalEmballage| number }}</td>
-                  <td>{{ totalGlobal| number }}</td>
+                  <th scope="col" colspan="4">Total :</th>
+                  <td>{{ totalQte| number }}</td>
+                  <td>{{ totalLiquide | number}}</td>
+                  <td>{{ totalEmballage | number}}</td>
+                  <td>{{ totalGlobal | number}}</td>
+                  <td></td>
                 </tr>
                 </tbody>
               </table>
-
-            </div>
-          </fieldset>
-          <fieldset class="row border my-2">
-            <div class="row">
-              <legend class="fs-6 text-primary">Articles gratuits</legend>
-              <div class="col-md-4">
-                <button
-                  type="button"
-                  class="btn btn-secondary my-2"
-                  (click)="selectArticleGratuit()"
-                  [disabled]="VenteForm.controls['commercialId'].invalid"
-                >
-                  Ajouter des gratuités
-                </button>
-              </div>
-            </div>
-            <div
-              *ngIf="operation == 'edit'"
-              class="table-responsive"
-              style="max-height: 300px; overflow-y: auto"
-            >
-              <table class="table">
-                <thead>
-                <tr style="font-size: small">
-                  <th scope="col">Produits</th>
-                  <th scope="col">Qte liquide</th>
-                  <th scope="col">Qte offerte</th>
-                  <th scope="col">Qte restante</th>
-                  <th scope="col">Prix liquide</th>
-                  <th scope="col">Prix emballage</th>
-                  <th scope="col">Prix total</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr
-                  style="font-size: small"
-                  *ngFor="let item of updateData.articlesGratuit; let i = index"
-                >
-                  <td>{{ item.liquide.libelle }}</td>
-                  <td>{{ item.quantiteAffectee }}</td>
-                  <td>{{ Number(item.quantiteAffectee - item.quantite) }}</td>
-                  <td>{{ item.quantite}}</td>
-                  <td>{{ item.montantLiquide }}</td>
-                  <td>{{ item.montantEmballage }}</td>
-                  <td>{{ (+item.montantLiquide || 0) + (+item.montantEmballage || 0) }}</td>
-
-
-                </tr>
-                <tr class="table-dark" *ngIf="updateData.articlesGratuit.length > 0">
-                  <th scope="col" colspan="1">Total :</th>
-                  <td>{{ totalQteFree }}</td>
-                  <td></td>
-                  <td></td>
-                  <td>{{ totalLiquideFree }}</td>
-                  <td>{{ totalEmballageFree }}</td>
-                  <td>{{ totalGlobalFree }}</td>
-                </tr>
-                <!-- Ajoutez d'autres lignes si nécessaire -->
-                </tbody>
-              </table>
-            </div>
-            <div
-              *ngIf="operation == 'create'"
-              class="table-responsive"
-              style="max-height: 300px; overflow-y: auto"
-            >
-              <table class="table table-bordered">
+              <table *ngIf="operation == 'edit'" class="table table-bordered">
                 <thead class="table-success">
+                <!-- Première ligne d'en-tête -->
                 <tr>
-                  <th scope="col">Produits</th>
-                  <th scope="col">Qte liquide</th>
-                  <th scope="col">Prix liquide</th>
-                  <th scope="col">Prix emballage</th>
-                  <th scope="col">Prix total</th>
-                  <th scope="col">Action</th>
+                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
+                  <th scope="col" colspan="3">MONTANT TTC(FCFA)</th>
+                </tr>
+                <!-- Deuxième ligne d'en-tête -->
+                <tr>
+                  <th scope="col">Liquide</th>
+                  <th scope="col">Liquide (FCFA)</th>
+                  <th scope="col">Emballage (FCFA)</th>
+                  <th scope="col">Total (FCFA)</th>
+                  <th scope="col">Qte</th>
+                  <th scope="col">Liquide (FCFA)</th>
+                  <th scope="col">Emballage (FCFA)</th>
+                  <th scope="col">Total (FCFA)</th>
                 </tr>
                 </thead>
 
                 <tbody>
-                <tr *ngFor="let item of selectedArticlesFree">
-                  <td>{{ item.liquide.libelle }}</td>
+                <tr *ngFor="let item of updateData?.articles">
+                  <td>{{ item.liquide.libelle }}1</td>
+                  <td>{{ item.prixUnitaireLiquide | number}}</td>
+                  <td>{{ item.prixUnitaireEmballage | number}}</td>
+                  <td>{{ Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) | number}}</td>
+                  <td>{{ item.quantite }}</td>
+                  <td>{{ item.montantLiquide | number}}</td>
+                  <td>{{ item.montantEmballage | number}}</td>
+                  <td>{{ Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) | number}}</td>
+
+                </tr>
+                <tr class="table-dark">
+                  <th scope="col" colspan="4">Total :</th>
+                  <td>{{ totalQte| number }}</td>
+                  <td>{{ totalLiquide | number}}</td>
+                  <td>{{ totalEmballage | number}}</td>
+                  <td>{{ totalGlobal | number}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </fieldset>
+            <fieldset class="row border my-2">
+              <div class="row">
+                <legend class="fs-6 text-primary">Articles gratuits</legend>
+                <div class="col-md-4">
+                  <button
+                    type="button"
+                    class="btn btn-secondary my-2"
+                    (click)="selectArticleGratuit()"
+                    [disabled]="VenteForm.controls['commercialId'].invalid "
+                  >
+                    Ajouter des gratuités
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-secondary my-2"
+                    (click)="selectArticleGratuit()"
+                    *ngIf="operation == 'createNew'"
+                  >
+                    Ajouter des gratuités
+                  </button>
+                </div>
+              </div>
+              <table *ngIf="operation == 'create' || operation == 'createNew'" class="table table-bordered">
+                <thead class="table-success">
+                <!-- Première ligne d'en-tête -->
+                <tr>
+                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
+                  <th scope="col" colspan="4">MONTANT TTC(FCFA)</th>
+                </tr>
+                <!-- Deuxième ligne d'en-tête -->
+                <tr>
+                  <th scope="col">Liquide</th>
+                  <th scope="col">Liquide (FCFA)</th>
+                  <th scope="col">Emballage (FCFA)</th>
+                  <th scope="col">Total (FCFA)</th>
+                  <th scope="col">Qte</th>
+                  <th scope="col">Liquide (FCFA)</th>
+                  <th scope="col">Emballage (FCFA)</th>
+                  <th scope="col">Total (FCFA)</th>
+                  <th scope="col">Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr *ngFor="let item of  operation == 'createNew'? newCommandeGratuit : selectedArticlesFree">
+                  <td>{{ item?.liquide?.libelle }}</td>
+                  <td>{{ prixLiquideFree[item.id] | number}}</td>
+                  <td>{{ prixEmballageFree[item.id] | number}}</td>
+                  <td>{{ prixEmballageFree[item.id] + prixLiquideFree[item.id]| number }}</td>
+                  <td>
+                    <input
+                      type="number"
+                      class="form-control-custom"
+                      [(ngModel)]="item.quantite"
+                      [min]="0"
+                      [max]="stocksDisponibles[item.liquide.id]"
+                      [disabled]="stocksDisponibles[item.liquide.id] === 0"
+                      [ngClass]="{
+                          invalid: item.quantite > stocksDisponibles[item.liquide.id]
+                        }"
+                      (blur)="validateQuantiteFree(item)"
+                    />
+                    / {{stocksDisponibles[item.liquide.id]}}
+                  </td>
+                  <td>{{ prixLiquideTotalFree[item.id] | number}}</td>
+                  <td>{{ prixEmballageTotalFree[item.id] | number}}</td>
+                  <td>{{ montantTotalFree[item.id] | number}}</td>
+                  <td class="d-flex justify-content-center">
+                    <button
+                      type="button"
+                      class="btn btn-danger btn-sm"
+                      (click)="removeArticleFree(item)"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr class="table-dark">
+                  <th scope="col" colspan="4">Total :</th>
+                  <td>{{ totalQteFree | number }}</td>
+                  <td>{{ totalLiquideFree | number }}</td>
+                  <td>{{ totalEmballageFree | number}}</td>
+                  <td>{{ totalGlobalFree | number }}</td>
+                  <td></td>
+                </tr>
+                </tbody>
+              </table>
+              <table *ngIf="operation == 'update'" class="table table-bordered">
+                <thead class="table-success">
+                <!-- Première ligne d'en-tête -->
+                <tr>
+                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
+                  <th scope="col" colspan="4">MONTANT TTC(FCFA)</th>
+                </tr>
+                <!-- Deuxième ligne d'en-tête -->
+                <tr>
+                  <th scope="col">Liquide</th>
+                  <th scope="col">Liquide (FCFA)</th>
+                  <th scope="col">Emballage (FCFA)</th>
+                  <th scope="col">Total (FCFA)</th>
+                  <th scope="col">Qte</th>
+                  <th scope="col">Liquide (FCFA)</th>
+                  <th scope="col">Emballage (FCFA)</th>
+                  <th scope="col">Total (FCFA)</th>
+                  <th scope="col">Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr *ngFor="let item of newCommandeGratuit">
+                  <td>{{ item?.liquide?.libelle }}</td>
+                  <td>{{ item.prixUnitaireLiquide | number}}</td>
+                  <td>{{ item.prixUnitaireEmballage | number}}</td>
+                  <td>{{ (item.prixUnitaireLiquide || 0) * 1 + (item.prixUnitaireEmballage || 0) * 1 | number}}</td>
+                  <td>
+                    <input
+                      type="number"
+                      class="form-control-custom"
+                      [(ngModel)]="item.quantite"
+                      [min]="0"
+                      (ngModelChange)="getLocalPrice(item)"
+                    />
+
+                  </td>
                   <td>
                     <input
                       type="number"
@@ -430,33 +588,75 @@
                       }"
                       (blur)="validateQuantiteFree(item)"
                     />
-                    / {{ stocksDisponibles[item.liquide.id] }}
+                    / {{stocksDisponibles[item.liquide.id]}}
                   </td>
-                  <td>{{ prixLiquideTotalFree[item.id] }}</td>
-                  <td>{{ prixEmballageTotalFree[item.id] }}</td>
-                  <td>{{ montantTotalFree[item.id] }}</td>
+                  <td>{{ prixLiquideTotalFree[item.id] | number}}</td>
+                  <td>{{ prixEmballageTotalFree[item.id] | number}}</td>
+                  <td>{{ montantTotalFree[item.id]| number }}</td>
                   <td class="d-flex justify-content-center">
                     <button
                       type="button"
                       class="btn btn-danger btn-sm"
-                      (click)="removeArticleFree(item)"
+                      (click)="DeleteArticleCommande(item)"
                     >
                       <i class="fas fa-trash"></i>
                     </button>
                   </td>
                 </tr>
                 <tr class="table-dark">
-                  <th scope="col" colspan="1">Total :</th>
-                  <td>{{ totalQteFree }}</td>
-                  <td>{{ totalLiquideFree }}</td>
-                  <td>{{ totalEmballageFree}}</td>
-                  <td>{{ totalGlobalFree }}</td>
+                  <th scope="col" colspan="4">Total :</th>
+                  <td>{{ totalQteFree | number }}</td>
+                  <td>{{ totalLiquideFree | number }}</td>
+                  <td>{{ totalEmballageFree | number}}</td>
+                  <td>{{ totalGlobalFree | number }}</td>
+                  <td></td>
                 </tr>
                 </tbody>
               </table>
+              <table *ngIf="operation == 'edit'" class="table table-bordered">
+                <thead class="table-success">
+                <!-- Première ligne d'en-tête -->
+                <tr>
+                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
+                  <th scope="col" colspan="3">MONTANT TTC(FCFA)</th>
+                </tr>
+                <!-- Deuxième ligne d'en-tête -->
+                <tr>
+                  <th scope="col">Liquide</th>
+                  <th scope="col">Liquide (FCFA)</th>
+                  <th scope="col">Emballage (FCFA)</th>
+                  <th scope="col">Total (FCFA)</th>
+                  <th scope="col">Qte</th>
+                  <th scope="col">Liquide (FCFA)</th>
+                  <th scope="col">Emballage (FCFA)</th>
+                  <th scope="col">Total (FCFA)</th>
+                </tr>
+                </thead>
 
-            </div>
-          </fieldset>
+                <tbody>
+                <tr *ngFor="let item of updateData?.articlesGratuit">
+                  <td>{{ item.liquide.libelle }}1</td>
+                  <td>{{ item.prixUnitaireLiquide | number}}</td>
+                  <td>{{ item.prixUnitaireEmballage | number}}</td>
+                  <td>{{ Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) | number}}</td>
+                  <td>{{ item.quantite }}</td>
+                  <td>{{ item.montantLiquide | number}}</td>
+                  <td>{{ item.montantEmballage | number}}</td>
+                  <td>{{ Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) | number}}</td>
+
+                </tr>
+                <tr class="table-dark">
+                  <th scope="col" colspan="4">Total :</th>
+                  <td>{{ totalQteFree | number }}</td>
+                  <td>{{ totalLiquideFree | number }}</td>
+                  <td>{{ totalEmballageFree | number}}</td>
+                  <td>{{ totalGlobalFree | number }}</td>
+                </tr>
+                </tbody>
+              </table>
+            </fieldset>
+          </div>
+
         </div>
         <!--  SUIVI VENTE-->
         <div class="row tab-pane fade show active" *ngIf="activeTab === 'suivivente'">
@@ -575,6 +775,14 @@
           <label *ngIf="updateData.retours.length == 0" class="text-gray text-center my-4">Aucune recupération effectuée</label>
         </div>
         <div class="modal-footer gap-3 px-4y">
+          <button
+            *ngIf="operation == 'createNew' || operation == 'update' "
+            (click)="saveGoods(operation)"
+            type="button"
+            class="btn btn-primary"
+          >
+            Enregistrer
+          </button>
           <button
             (click)="OnCloseModal()"
             type="button"

@@ -154,6 +154,7 @@ export class ListeCommandesMarchandisesComponent {
     this.totalGlobal = 0;
     this.totalQte = 0;
     this.searchTerm = ''
+    this.dataSendedToReceptionMarchandiseRequest.numeroBonLivraison = ''
     this.GetArticleList(1);
     this.isModalOpen = false;
     this.selectedArticles = [];
@@ -223,6 +224,7 @@ export class ListeCommandesMarchandisesComponent {
         (res: any) => {
           console.log(res, 'enregistré avec succes');
           this._spinner.hide();
+          this.dataSendedToReceptionMarchandiseRequest.numeroBonLivraison = ''
           // this.GetListReceptionCommandeFournisseurs(1);
           this.GetListCommandeFournisseurs(1);
           this.OnCloseModal();

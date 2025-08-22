@@ -245,7 +245,7 @@
                       <input
                         type="number"
                         class="form-control-custom"
-                        [(ngModel)]="data.quantiteRecue"
+                        [(ngModel)]="data.quantite"
                         [min]="0"
                         value="0"
                       />
@@ -261,11 +261,11 @@
                 </tr>
               </tbody>
               <tbody *ngIf="updateData?.emballagesRendus.length > 0">
-                <tr *ngFor="let data of updateData?.emballagesRendus[0].articles; let i = index">
+                <tr *ngFor="let data of emballagesRendus; let i = index">
                   <td class="">
                     <p>
                       {{
-                        formatCode(data?.emballage?.code)
+                        formatCode(data?.emballage?.code ?? data?.code)
                       }}
                     </p>
                   </td>

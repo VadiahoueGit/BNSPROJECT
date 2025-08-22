@@ -74,15 +74,18 @@ export class VisualisationDeStockComponent {
     }
     this._spinner.show()
     this.articleService.GetStocksDetails().then((res: any) => {
-      this.dataList = res.data.map((item: any) => {
-        let code = item.code;
-        if (code.startsWith('CAS')) {
-          code = 'CCAS_' + code.slice(3);
-        } else if (code.startsWith('EMB')) {
-          code = 'VEMB_' + code.slice(3);
-        }
-        return { ...item, code };
-      });
+      if(res.statusCode === 201) {
+        this.dataList = res.data.map((item: any) => {
+          let code = item.code;
+          if (code.startsWith('CAS')) {
+            code = 'CCAS' + code.slice(3);
+          } else if (code.startsWith('EMB')) {
+            code = 'VEMB' + code.slice(3);
+          }
+          return { ...item, code };
+        });
+      }
+
       this._spinner.hide();
     });
   }
