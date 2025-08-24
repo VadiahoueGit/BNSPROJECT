@@ -234,7 +234,7 @@ export class VentechinepageComponent {
   selectArticleGratuit() {
     this.isEditMode = false;
     this.isChoiceModalFreeOpen = true;
-    this.operation = 'createNew';
+    this.operation = 'create';
     console.log(this.isModalOpen);
   }
 
@@ -242,7 +242,7 @@ export class VentechinepageComponent {
     this.isEditMode = false;
     this.isChoiceModalFreeOpen = true;
     console.log(this.filteredArticleListFree)
-    this.operation = 'create';
+    this.operation = 'createNew';
     console.log(this.isModalOpen);
   }
   OnCreate() {

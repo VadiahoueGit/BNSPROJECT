@@ -131,7 +131,7 @@ export class ListEmballagesComponent {
     this.emballagesrecues = []
     this.selectedArticles = [];
     this.updateData = [];
-    this.GetListReceptionCommandeFournisseurs(1);
+    this.GetListReceptionCommandeFournisseurs(this.currentPage);
     (this.emballageRenduForm.get('articles') as FormArray).clear();
   }
 
@@ -166,7 +166,7 @@ export class ListEmballagesComponent {
     });
 
     // Affectation pour affichage
-    this.emballagesrecues = articlesRecus;
+    this.emballagesrecues = articlesRecus?.filter((a:any) => Number(a.prixUnitaireEmballage) > 0);
 
     // -------------------------------
     // EMBALLAGES RENDUS
@@ -190,27 +190,27 @@ export class ListEmballagesComponent {
     // -------------------------------
     const totauxRecus = new Map<string, any>();
     (this.updateData.articlesRecus ?? []).forEach((article:any) => {
-      const code = article.articleEntree.emballage?.code;
+      const code = article.articleEntree?.emballage?.code ?? article.articleCommande?.emballage?.code ;
       if (!code) return;
 
       if (!totauxRecus.has(code)) {
         totauxRecus.set(code, {
           code: code,
-          libelle: article.articleEntree.emballage.libelle,
-          quantite: article.articleEntree.quantite,
-          quantiteRecue: article.quantiteRecue ?? article.articleEntree.quantite, // valeur initiale
-          prixUnitaireLiquide: article.articleEntree.prixUnitaireLiquide,
-          prixUnitaireEmballage: article.articleEntree.prixUnitaireEmballage,
-          montantLiquide: article.articleEntree.montantLiquide,
-          montantEmballage: article.articleEntree.montantEmballage,
-          createdAt: article.articleEntree.createdAt,
-          updatedAt: article.articleEntree.updatedAt,
-          emballage: article.articleEntree.emballage,
-          liquide: article.articleEntree.liquide,
-          groupearticle: article.articleEntree.groupearticle
+          libelle: article.articleEntree?.emballage.libelle  || article.articleCommande?.emballage?.libelle,
+          quantite: article.articleEntree?.quantite  || article.articleCommande?.quantite,
+          quantiteRecue: article.quantiteRecue ?? article.articleEntree?.quantite ?? article.articleCommande?.quantite, // valeur initiale
+          prixUnitaireLiquide: article.articleEntree?.prixUnitaireLiquide   || article.articleCommande?.prixUnitaireLiquide,
+          prixUnitaireEmballage: article.articleEntree?.prixUnitaireEmballage  || article.articleCommande?.prixUnitaireEmballage,
+          montantLiquide: article.articleEntree?.montantLiquide  || article.articleCommande?.montantLiquide,
+          montantEmballage: article.articleEntree?.montantEmballage  || article.articleCommande?.montantEmballage,
+          createdAt: article.articleEntree?.createdAt   || article.articleCommande?.createdAt ,
+          updatedAt: article.articleEntree?.updatedAt  || article.articleCommande?.updatedAt ,
+          emballage: article.articleEntree?.emballage  || article.articleCommande?.emballage,
+          liquide: article.articleEntree?.liquide  || article.articleCommande?.liquide,
+          groupearticle: article.articleEntree?.groupearticle  || article.articleCommande?.groupearticle,
         });
       } else {
-        totauxRecus.get(code).quantite += article.articleEntree.quantite;
+        totauxRecus.get(code).quantite += article.articleEntree?.quantite  || article.articleCommande?.quantite;
       }
     });
     this.emballagesrecues = Array.from(totauxRecus.values());
@@ -225,15 +225,18 @@ export class ListEmballagesComponent {
           mapRendus.set(code, {
             code: code,
             libelle: article.emballage.libelle,
-            quantite: article.quantite
+            quantite: article.quantite,
+            prixUnitaireEmballage: article.prixUnitaireEmballage,
           });
         } else {
           mapRendus.get(code).quantite += article.quantite;
         }
       });
       this.emballagesRendus = Array.from(mapRendus.values());
-
       console.log('Emballages rendus:', this.emballagesRendus);
+      this.emballagesRendus = this.emballagesRendus.filter((a:any) => Number(a.prixUnitaireEmballage) > 0)
+
+
     }
 
     console.log('Totaux articles reçus par code:', totauxRecus);
@@ -516,7 +519,7 @@ export class ListEmballagesComponent {
       (res: any) => {
         console.log(res, 'enregistré avec succes');
         this._spinner.hide();
-        this.GetListReceptionCommandeFournisseurs(1);
+        this.GetListReceptionCommandeFournisseurs(this.currentPage);
         this.OnCloseModal();
         this.toastr.success(res.message);
       },

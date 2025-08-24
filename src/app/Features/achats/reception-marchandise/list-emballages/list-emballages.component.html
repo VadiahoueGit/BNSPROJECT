@@ -259,6 +259,7 @@
                     </p>
                   </td>
                 </tr>
+              <tr *ngIf="emballagesrecues.length == 0">Pas d'emballage retourné</tr>
               </tbody>
               <tbody *ngIf="updateData?.emballagesRendus.length > 0">
                 <tr *ngFor="let data of emballagesRendus; let i = index">
@@ -282,6 +283,7 @@
                     </p>
                   </td>
                 </tr>
+                <tr class="text-center" *ngIf="emballagesRendus.length == 0">Pas d'emballage retourné</tr>
               </tbody>
             </table>
           </div>
