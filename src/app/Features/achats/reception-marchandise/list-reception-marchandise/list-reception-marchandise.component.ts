@@ -60,7 +60,7 @@ export class ListReceptionMarchandiseComponent {
   prixEmballageTotal: any = {};
   montantTotal: any = {};
   clients: any = [];
-  currentPage: number;
+  currentPage: number = 1;
   rowsPerPage: any;
   listRevendeurs: any[] = [];
   totalGlobalAfterRemise: number = 0;

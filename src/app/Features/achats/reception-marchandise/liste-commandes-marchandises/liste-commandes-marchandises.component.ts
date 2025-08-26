@@ -35,7 +35,7 @@ export class ListeCommandesMarchandisesComponent {
   dataListPlastiqueNu: any = [];
   dataListEmballage: any = [];
   dataListArticlesProduits: any = [];
-  currentPage: number;
+  currentPage: number = 1;
   rowsPerPage: any;
   stocksDisponibles: any = {};
   prixLiquide: any = {};
@@ -183,7 +183,7 @@ export class ListeCommandesMarchandisesComponent {
     console.log(data);
     this.dataSendedToReceptionMarchandiseRequest.commandeId = data.id;
     this.updateData = data;
-    this.articlesRecues = data.articles;
+    this.articlesRecues = data.articles?.filter((a:any) => Number(a.prixUnitaireEmballage) > 0);
     this.articleId = data.id;
     this.isModalOpen = true;
     console.log(this.isModalOpen);
@@ -195,7 +195,7 @@ export class ListeCommandesMarchandisesComponent {
       numeroBonLivraison:
       this.dataSendedToReceptionMarchandiseRequest.numeroBonLivraison,
       typeSource: TypeSource.COMMANDE,
-      scanBonLivraison: 'https://monserveur.com/uploads/bon_livraison_001.pdf',
+      scanBonLivraison: this.updateData.bonLivraison || '',
       articlesRecus: this.articlesRecues.map((article: any) => {
         const prixSousDistributeur = article.prix?.find(
           (p: any) => p.typePrix?.libelle === 'PRIX S/DISTRIBUTEUR'

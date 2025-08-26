@@ -366,7 +366,7 @@
               </table>
 
               <fieldset class="row border my-2">
-                <legend>Approbations</legend>
+                <legend>Evolutions</legend>
                 <table class="table table-bordered">
                   <thead>
                   <tr>
@@ -384,7 +384,7 @@
                       {{ retour.commande.NumCommande}}
                     </td>
                     <td>
-<!--                      {{ retour.clientInfo.raisonSocial || retour.clientInfo.nomEtablissement }}-->
+<!--                      {{ retour.commande.clientInfo.raisonSocial || retour.commande.clientInfo.nomEtablissement }}-->
                     </td>
                     <td>
                       {{ retour.dateLivraisonDebut | date: 'dd/MM/yyyy HH:mm' || ''}}

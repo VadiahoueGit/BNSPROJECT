@@ -192,12 +192,16 @@ export class ValidationCommandeGratuiteComponent {
       this._spinner.show();
       this.articleService.CreateCommandGratuite(this.CommandeForm.value).then(
         (res: any) => {
-          console.log(res, 'enregistré avec succes');
           this._spinner.hide();
-          this.CommandeForm.reset();
-          this.GetListCommandeGratuite(1);
-          this.OnCloseModal();
-          this.toastr.success(res.message);
+          if(res.statusCode === 400) {
+            this.toastr.error(res.message);
+          }else{
+            this.CommandeForm.reset();
+            this.GetListCommandeGratuite(1);
+            this.OnCloseModal();
+            this.toastr.success(res.message);
+          }
+
         },
         (error: any) => {
           this._spinner.hide();

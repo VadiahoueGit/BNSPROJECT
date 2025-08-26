@@ -348,12 +348,16 @@ export class ValidationCommandeClientComponent {
       this._spinner.show();
       this.articleService.CreateCommandClient(payload).then(
         (res: any) => {
-          console.log(res, 'enregistré avec succes');
+          if(res.statusCode === 400) {
+            this.toastr.error(res.message);
+          }else{
+            this.commandClientForm.reset();
+            this.GetListCommandeClient(1);
+            this.OnCloseModal();
+            this.toastr.success(res.message);
+          }
           this._spinner.hide();
-          this.commandClientForm.reset();
-          this.GetListCommandeClient(1);
-          this.OnCloseModal();
-          this.toastr.success(res.message);
+
         },
         (error: any) => {
           this._spinner.hide();

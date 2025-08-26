@@ -211,7 +211,7 @@ export class SaisieEntreeGratuitesComponent {
     data.articles.map((item: any) => {
       item.isNewAdd = false;
     });
-    this.articlesRecues = data.articles;
+    this.articlesRecues = data.articles?.filter((a:any) => Number(a.prixUnitaireEmballage) > 0);
     this.articleId = data.id;
     this.isModalOpen = true;
     this.operation = 'edit';

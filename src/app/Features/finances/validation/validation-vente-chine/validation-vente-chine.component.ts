@@ -125,10 +125,15 @@ export class ValidationVenteChineComponent {
         (res: any) => {
           console.log(res, 'enregistré avec succes');
           this._spinner.hide();
-          this.VenteForm.reset();
-          this.GetVenteChineList(1);
-          this.OnCloseModal();
-          this.toastr.success(res.message);
+          if(res.statusCode === 400) {
+            this.toastr.error(res.message);
+          }else{
+            this.VenteForm.reset();
+            this.GetVenteChineList(1);
+            this.OnCloseModal();
+            this.toastr.success(res.message);
+          }
+
         },
         (error: any) => {
           this._spinner.hide();
