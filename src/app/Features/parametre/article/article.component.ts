@@ -150,6 +150,7 @@ export class ArticleComponent {
   }
 
   OnCreate() {
+    this.ArticleForm.reset();
     this.isEditMode = false;
     this.isModalOpen = true;
     this.operation = 'create';
