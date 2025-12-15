@@ -1,31 +1,32 @@
 <div class="card">
 
-    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
-             [totalRecords]="totalPages" [lazy]="true"
-        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
+  <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+           [totalRecords]="totalPages" [lazy]="true"
+           [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
 
-        <ng-template pTemplate="header">
-            <tr>
-                <th style="color: var(--secondary-color);">N° commandes</th>
-                <th style="color: var(--secondary-color);">Clients</th>
-                <th style="color: var(--secondary-color);">Chauffeurs</th>
-                <th style="color: var(--secondary-color);">Date</th>
-                <th style="color: var(--secondary-color);">Actions</th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-dataList>
-            <tr>
-                <td>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="color: var(--secondary-color);">N° commandes</th>
+        <th style="color: var(--secondary-color);">Clients</th>
+        <th style="color: var(--secondary-color);">Chauffeurs</th>
+        <th style="color: var(--secondary-color);">Date</th>
+        <th scope="col">Depot</th>
+        <th style="color: var(--secondary-color);">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-dataList>
+      <tr>
+        <td>
                       <span class="ml-1 vertical-align-middle">
-                        {{ dataList.commandeClient?.NumCommande || dataList.commandeGratuite?.NumCommande || dataList.venteChine?.numVenteChine}}
+                        {{ dataList.commandeClient?.NumCommande || dataList.commandeGratuite?.NumCommande || dataList.venteChine?.numVenteChine }}
                     </span>
-                </td>
-              <td>
+        </td>
+        <td>
                    <span class="ml-1 vertical-align-middle">
-                         {{ dataList.clientALivrer.raisonSocial || dataList.clientALivrer.nomEtablissement  }}
+                         {{ dataList.clientALivrer.raisonSocial || dataList.clientALivrer.nomEtablissement }}
                     </span>
-              </td>
-                <td>
+        </td>
+        <td>
                      <span class="ml-1 vertical-align-middle">
                          {{
                          (dataList.venteChine)
@@ -36,26 +37,31 @@
                        }}
 
                        </span>
-                </td>
-                <td>
+        </td>
+        <td>
                       <span class="ml-1 vertical-align-middle">
                          {{ dataList.createdAt |date }}
                     </span>
-                </td>
-                <td>
-                    <tr class=" gap-3">
-                        <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>
-                    </tr>
+        </td>
+        <td>
+                      <span class="ml-1 vertical-align-middle">
+                          {{ dataList.depot?.nomDepot }}
+                    </span>
+        </td>
+        <td>
+      <tr class=" gap-3">
+        <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>
+      </tr>
 
-                    </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="5">Aucun élément trouvé.</td>
-            </tr>
-        </ng-template>
-    </p-table>
+      </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">Aucun élément trouvé.</td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>
 
 <div *ngIf="isModalOpen" class="custom-modal">
@@ -76,7 +82,9 @@
         <div class="row">
           <fieldset class="row border my-1" *ngIf="operation == 'edit'">
             <legend style="font-size: 13px" class="text-secondary">
-              Numero Commande :  {{ updateData.commandeClient?.NumCommande || updateData.commandeGratuite?.NumCommande || updateData.venteChine?.NumCommande}} du
+              Numero Commande
+              :  {{ updateData.commandeClient?.NumCommande || updateData.commandeGratuite?.NumCommande || updateData.venteChine?.NumCommande }}
+              du
               {{ updateData.createdAt | date }}
             </legend>
             <div class="row">
@@ -113,14 +121,14 @@
                   }}
                 </span>
               </div>
-<!--              <div class="col-md-4 text-bg-primary">-->
-<!--                <strong>Montant à perçevoir: </strong>-->
-<!--                <span>{{ updateData.transaction?.montantAPercevoir |currency:'XOF'}}</span>-->
-<!--              </div>-->
-<!--              <div class="col-md-4 text-bg-primary">-->
-<!--                <strong>Montant perçu : </strong>-->
-<!--                <span>{{ updateData.transaction?.montantPercu |currency:'XOF'}}</span>-->
-<!--              </div>-->
+              <!--              <div class="col-md-4 text-bg-primary">-->
+              <!--                <strong>Montant à perçevoir: </strong>-->
+              <!--                <span>{{ updateData.transaction?.montantAPercevoir |currency:'XOF'}}</span>-->
+              <!--              </div>-->
+              <!--              <div class="col-md-4 text-bg-primary">-->
+              <!--                <strong>Montant perçu : </strong>-->
+              <!--                <span>{{ updateData.transaction?.montantPercu |currency:'XOF'}}</span>-->
+              <!--              </div>-->
 
             </div>
           </fieldset>
@@ -132,11 +140,11 @@
             <div class="row">
               <div class="col-md-4">
                 <strong>Groupe de client : </strong>
-                <span>{{ updateData.client ? updateData.client?.groupeClient?.nomGroupe || updateData.client?.GroupeClient?.nomGroupe : ''}}</span>
+                <span>{{ updateData.client ? updateData.client?.groupeClient?.nomGroupe || updateData.client?.GroupeClient?.nomGroupe : '' }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Type de client : </strong>
-                <span>{{ updateData.clientALivrer.role}}</span>
+                <span>{{ updateData.clientALivrer.role }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Établissement : </strong>
@@ -173,29 +181,29 @@
               </tbody>
             </table>
           </fieldset>
-<!--          <fieldset class="row border my-2">-->
-<!--            <legend style="font-size: 13px" class="text-secondary">-->
-<!--              Articles Chargés-->
-<!--            </legend>-->
-<!--            <table class="table table-bordered">-->
-<!--              <thead class="table-success">-->
-<!--              <tr>-->
-<!--                <th scope="col">Code</th>-->
-<!--                <th scope="col">Désignation</th>-->
-<!--                <th scope="col">Conditionnement</th>-->
-<!--                <th scope="col">Quantité</th>-->
-<!--              </tr>-->
-<!--              </thead>-->
-<!--              <tbody>-->
-<!--              <tr *ngFor="let item of (updateData?.paiementsCommandeClient?.articles || updateData?.paiementsCommandeGratuit?.articles ||  updateData?.paiementsVente?.articles) || []">-->
-<!--                <td>{{ item.liquide.code }}</td>-->
-<!--                <td>{{ item.liquide.libelle }}</td>-->
-<!--                <td>{{ item.liquide.condition }}</td>-->
-<!--                <td>{{ item.quantite }}</td>-->
-<!--              </tr>-->
-<!--              </tbody>-->
-<!--            </table>-->
-<!--          </fieldset>-->
+          <!--          <fieldset class="row border my-2">-->
+          <!--            <legend style="font-size: 13px" class="text-secondary">-->
+          <!--              Articles Chargés-->
+          <!--            </legend>-->
+          <!--            <table class="table table-bordered">-->
+          <!--              <thead class="table-success">-->
+          <!--              <tr>-->
+          <!--                <th scope="col">Code</th>-->
+          <!--                <th scope="col">Désignation</th>-->
+          <!--                <th scope="col">Conditionnement</th>-->
+          <!--                <th scope="col">Quantité</th>-->
+          <!--              </tr>-->
+          <!--              </thead>-->
+          <!--              <tbody>-->
+          <!--              <tr *ngFor="let item of (updateData?.paiementsCommandeClient?.articles || updateData?.paiementsCommandeGratuit?.articles ||  updateData?.paiementsVente?.articles) || []">-->
+          <!--                <td>{{ item.liquide.code }}</td>-->
+          <!--                <td>{{ item.liquide.libelle }}</td>-->
+          <!--                <td>{{ item.liquide.condition }}</td>-->
+          <!--                <td>{{ item.quantite }}</td>-->
+          <!--              </tr>-->
+          <!--              </tbody>-->
+          <!--            </table>-->
+          <!--          </fieldset>-->
         </div>
       </div>
 

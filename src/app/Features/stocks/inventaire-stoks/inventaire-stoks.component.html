@@ -418,7 +418,7 @@
               <tbody>
               <tr *ngFor="let item of updateData.articles">
                 <td>{{ item.codeArticle }}</td>
-                <td>{{ item.description ?? 'NA' }}</td>
+                <td>{{ item.emballage?.libelle || item.liquide?.libelle || 'NA' }}</td>
                 <td>{{ item.stockPhysique }}</td>
                 <td>{{ item.stockTheorique }}</td>
                 <td>{{ item.ecart }}</td>

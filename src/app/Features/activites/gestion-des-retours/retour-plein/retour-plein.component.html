@@ -1,7 +1,7 @@
 <div class="card">
 
-    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
-        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
+  <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8" [totalRecords]="totalPages"
+           [lazy]="true" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
 
         <ng-template pTemplate="header">
             <tr>
@@ -11,6 +11,7 @@
               <th style="color: var(--secondary-color);">Opération</th>
                 <th style="color: var(--secondary-color);">Dépot</th>
               <th style="color: var(--secondary-color);">Statut</th>
+              <th style="color: var(--secondary-color);">Date</th>
                 <th style="color: var(--secondary-color);">Actions</th>
             </tr>
         </ng-template>
@@ -42,8 +43,16 @@
                     </span>
                 </td>
               <td>
-                  <span class="ml-1 vertical-align-middle">
+                  <span class="ml-1 vertical-align-middle" [style.color]="
+                  dataList?.statut === 'Validé' ? 'green' :
+                  dataList?.statut === 'En attente' ? 'red' : 'black'
+                  ">
                          {{ dataList.statut }}
+                    </span>
+              </td>
+              <td>
+                  <span class="ml-1 vertical-align-middle">
+                         {{ dataList.createdAt | date:'dd/MM/yyyy HH:mm' }}
                     </span>
               </td>
                 <td>
@@ -146,7 +155,9 @@
                 <th scope="col">Code</th>
                 <th scope="col">Désignation</th>
                 <th scope="col">Conditionnement</th>
-                <th scope="col">Quantité</th>
+                <th scope="col">Qte theorique</th>
+                <th scope="col">Qte physique</th>
+                <th scope="col">Ecart</th>
                 <th scope="col">Prix U. liquide</th>
                 <th scope="col">Prix U. emballage</th>
               </tr>
@@ -154,38 +165,25 @@
               <tbody>
               <tr *ngFor="let item of updateData.articles">
                 <td>{{ item.liquide.code }}</td>
-                <td>{{ item.liquide.libelle }}</td>
+                <td>
+                  {{ item.liquide.libelle }}
+                  <span *ngIf="item.prixUnitaireLiquide == 0" class="badge bg-success ml-2">
+                      Gratuit
+                  </span>
+                </td>
                 <td>{{ item.liquide.condition }}</td>
                 <td>{{ item.quantite }}</td>
+                <input type="number" class="form-control-custom text-center text-secondary"
+                       [(ngModel)]="item.quantiteReelle"
+                       [disabled]="updateData?.statut == 'Validé'"
+                       [min]="0">
+                <td>{{ item.ecart }}</td>
                 <td>{{ item.prixUnitaireLiquide | number}}</td>
                 <td>{{ item.prixUnitaireEmballage | number}}</td>
               </tr>
               </tbody>
             </table>
           </fieldset>
-<!--          <fieldset class="row border my-2">-->
-<!--            <legend style="font-size: 13px" class="text-secondary">-->
-<!--              Articles Chargés-->
-<!--            </legend>-->
-<!--            <table class="table table-bordered">-->
-<!--              <thead class="table-success">-->
-<!--              <tr>-->
-<!--                <th scope="col">Code</th>-->
-<!--                <th scope="col">Désignation</th>-->
-<!--                <th scope="col">Conditionnement</th>-->
-<!--                <th scope="col">Quantité</th>-->
-<!--              </tr>-->
-<!--              </thead>-->
-<!--              <tbody>-->
-<!--              <tr *ngFor="let item of updateData.commande || []">-->
-<!--                <td>{{ item.liquide.code }}</td>-->
-<!--                <td>{{ item.liquide.libelle }}</td>-->
-<!--                <td>{{ item.liquide.condition }}</td>-->
-<!--                <td>{{ item.quantite }}</td>-->
-<!--              </tr>-->
-<!--              </tbody>-->
-<!--            </table>-->
-<!--          </fieldset>-->
         </div>
       </div>
 
@@ -202,7 +200,7 @@
           *ngIf="updateData?.statut !== 'Validé'"
           type="submit"
           class="btn btn-primary px-2"
-          (click)="ValidateReturn(updateData.id)"
+          (click)="ValidateReturn(updateData)"
         >
           Valider
         </button>

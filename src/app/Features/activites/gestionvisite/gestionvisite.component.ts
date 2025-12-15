@@ -111,7 +111,7 @@ export class GestionvisiteComponent {
       page: 1,
       limit: 8,
     };
-    this._spinner.show()
+    // this._spinner.show()
     this.activiteService.GetVisiteList(data).then((res: any) => {
       res.data.forEach((item: any) => {
         const startDate = startOfDay(new Date(item.dateVisite));
@@ -124,7 +124,7 @@ export class GestionvisiteComponent {
           },
         ];
       });
-      this._spinner.hide()
+      // this._spinner.hide()
       console.log('Visite', res)
     })
   }

@@ -6,6 +6,7 @@ import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
 import {UtilisateurResolveService} from "../../../../core/utilisateur-resolve.service";
+import {ConfigService} from "../../../../core/config-service.service";
 
 @Component({
   selector: 'app-saisie-commande-gratuite',
@@ -49,6 +50,7 @@ export class SaisieCommandeGratuiteComponent {
   selectedOption: string = 'gratuitClient';
   listRevendeurs: any[] = [];
   dataRevendeur: any[] = [];
+  docUrl: any;
   dataPointDeVente: any[] = [];
   ListCommandeGratuites: any[] = [];
   depotId: any = 0;
@@ -63,11 +65,13 @@ export class SaisieCommandeGratuiteComponent {
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
+    private _config: ConfigService,
     private toastr: ToastrService,
     private utilisateurService:UtilisateurResolveService
   ) {}
 
   ngOnInit() {
+    this.docUrl = this._config.docUrl;
     this.CommandeForm = this.fb.group({
       clientId: [null, Validators.required],
       clientType: [null, Validators.required],
@@ -93,6 +97,15 @@ export class SaisieCommandeGratuiteComponent {
       this._spinner.hide();
     });
   }
+
+  PrintDoc(item: any) {
+    const url = item.bonLivraison;
+    const win = window.open(this.docUrl+'/'+url, '_blank');
+    console.log(this.docUrl+'/'+url)
+    win?.focus();
+    win?.print();
+  }
+
   GetArticleList(page:number) {
     let data = {
       paginate: false,

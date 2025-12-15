@@ -63,7 +63,7 @@ export class DashboardComponent implements OnInit {
 
     this.coreServices.GetBestSeller(data).then((response: any) => {
       this.articles = [];
-      this.bestSellers = response.data.filter((item:any) => item.type == 'liquides');
+      this.bestSellers = response.data.filter((item:any) => item.type == 'liquide');
       this.bestSellers.forEach((element:any) => {
         this.articles.push(
           {

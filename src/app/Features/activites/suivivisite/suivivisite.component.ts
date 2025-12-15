@@ -10,7 +10,7 @@ import { ActiviteService } from 'src/app/core/activite.service';
 })
 export class SuivivisiteComponent {
   @ViewChild('dt2') dt2!: Table;
-  dataList!: any[];
+  dataList!: any;
   visiteDetail: any
   isModalOpen: boolean = false;
   totalPages: number = 0;
@@ -43,6 +43,11 @@ export class SuivivisiteComponent {
     return `${hours}h ${minutes}m`;
   }
 
+  getVisiteEffectue(item:any)
+  {
+    return item.pointDeVentes.filter((a:any)=> a.status == "TERMINÉ").length;
+
+  }
   LoadVisite(page: number ) {
     let data = {
       paginate: true,

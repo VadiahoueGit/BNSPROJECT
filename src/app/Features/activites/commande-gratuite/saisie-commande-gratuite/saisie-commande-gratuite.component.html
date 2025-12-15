@@ -38,7 +38,7 @@
              (keydown.enter)="filterGlobal()"
              placeholder="Recherche"/>
     </span>
-     
+
 
   </div>
    <div class="col-12 col-sm-6 col-md-3 mb-3">
@@ -85,7 +85,7 @@
         <td>
           {{ ListCommandeGratuites?.client?.nomEtablissement ? ListCommandeGratuites.client.nomEtablissement : ListCommandeGratuites.client.raisonSocial}}
         </td>
-    
+
         <td>
           {{ ListCommandeGratuites?.client?.depot?.nomDepot }}
         </td>
@@ -195,7 +195,12 @@
           </div>
         </form>
         <fieldset class="row border my-1"  *ngIf="operation == 'edit'">
-          <legend style="font-size: 14px;" class="text-secondary">Numero Commande : {{updateData.NumCommande}} du {{updateData.createdAt | date}}</legend>
+          <div class="d-flex justify-content-around">
+            <legend style="font-size: 14px;" class="text-secondary">Numero Commande : {{updateData.NumCommande}} du {{updateData.createdAt | date}}</legend>
+            <button type="button" class="btn btn-warning px-4" (click)="PrintDoc(updateData)" *ngIf="operation == 'edit'">
+              Imprimer
+            </button>
+          </div>
         </fieldset>
         <fieldset class="row border my-2"  *ngIf="operation == 'edit'">
           <legend style="font-size: 14px;" class="text-secondary">Informations du client</legend>

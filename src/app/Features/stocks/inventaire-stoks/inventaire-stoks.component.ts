@@ -117,7 +117,7 @@ export class InventaireStoksComponent {
   OnViewInventaire(data: any) {
     this.updateData = data
     this.detailModalOpen = true;
-    console.log(this.isModalOpen);
+    console.log(this.updateData);
   }
 
   CloseArticleModal() {
@@ -299,6 +299,7 @@ export class InventaireStoksComponent {
 
   OnCloseDetailModal() {
     this.detailModalOpen = false;
+    this.OnCloseModal()
     console.log(this.isModalOpen);
   }
 
@@ -346,9 +347,7 @@ export class InventaireStoksComponent {
       this.articleService.SaveInventaire(this.InventaireForm.value).then(
         (response: any) => {
           if (response.statusCode === 201) {
-            this.InventaireForm.reset();
-            this.deselectAllItems();
-            // this.InventaireForm.controls['dateEnregistrement'].setValue(this.now)
+            this.OnCloseModal()
             this.toastr.success(response.message);
             this.GetInventaireList(1);
           } else {

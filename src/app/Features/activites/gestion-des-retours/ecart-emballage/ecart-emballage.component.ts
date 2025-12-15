@@ -348,12 +348,10 @@ formData = {
       page: 1,
       limit: 8,
     };
-    this._spinner.show();
     return this._financeService.GetMoyenPaiementList(data).then((res: any) => {
       console.log('retour ecart emballage list:::>', res);
       this.dataListMoyenPaiement = res.data;
       this.totalPages = res.total;
-      this._spinner.hide();
     });
   }
 

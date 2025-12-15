@@ -27,7 +27,7 @@ export class ListDesReceptionsEmballagesComponent {
   updateData: any = {};
   cargaison: number = 0;
   isEditMode: boolean = false;
-  regroupementList: any[] = [];
+  dates: any;
   ramassageList: any[] = [];
   regroupementTable: any[] = [];
   regroupementFinal: {
@@ -83,6 +83,7 @@ export class ListDesReceptionsEmballagesComponent {
   OnEdit(data: any) {
     console.log(data);
     this.updateData = data;
+    this.dates = this.getFirstAndLastDate(this.updateData.retours)
     this.extractAllArticles(this.updateData.retours)
     if (this.updateData.inventaires.length > 0) {
       this.preloadInventaire(this.updateData.inventaires);
@@ -239,6 +240,17 @@ export class ListDesReceptionsEmballagesComponent {
         }
       );
     }
+  }
+
+  getFirstAndLastDate<T extends { createdAt: string }>(items: T[]): { firstDate: Date, lastDate: Date } | null {
+    if (!items || items.length === 0) {
+      return null;
+    }
+
+    const firstDate = new Date(items[items.length - 1].createdAt);
+    const lastDate = new Date(items[0].createdAt);
+
+    return { firstDate, lastDate };
   }
 
   GetRetourList(page: number): Promise<void> {

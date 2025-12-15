@@ -19,6 +19,7 @@
     [value]="listRegroupements"
     dataKey="id"
     [rows]="8"
+    [totalRecords]="totalPages" [lazy]="true"
     [rowsPerPageOptions]="[10, 25, 50]"
     [paginator]="true"
     (onPage)="onPage($event)"
@@ -381,13 +382,13 @@
                   <tbody>
                   <tr *ngFor="let retour of updateData.livraisons; let i = index">
                     <td>
-                      {{ retour.commande.NumCommande}}
+                      {{ retour.commande?.NumCommande}}
                     </td>
                     <td>
-<!--                      {{ retour.commande.clientInfo.raisonSocial || retour.commande.clientInfo.nomEtablissement }}-->
+                      {{ retour.commande?.clientInfo.raisonSocial || retour.commande.clientInfo.nomEtablissement }}
                     </td>
                     <td>
-                      {{ retour.dateLivraisonDebut | date: 'dd/MM/yyyy HH:mm' || ''}}
+                      {{ retour?.dateLivraisonDebut | date: 'dd/MM/yyyy HH:mm' || ''}}
                     </td>
                     <td>
                       {{ retour.dateLivraisonFin | date: 'dd/MM/yyyy HH:mm' || '' }}

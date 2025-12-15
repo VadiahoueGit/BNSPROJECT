@@ -1,7 +1,7 @@
 <div class="card">
   <div class="d-flex justify-content-end py-3">
     <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
-      Ajouter un crédit
+      Ajouter ou complêter un crédit
     </button>
   </div>
   <p-table
@@ -21,8 +21,12 @@
         <th style="color: var(--secondary-color)">Type client</th>
         <th style="color: var(--secondary-color)">Groupe client</th>
         <th style="color: var(--secondary-color)">Client ou commercial</th>
-        <th style="color: var(--secondary-color)">Credit emballage</th>
         <th style="color: var(--secondary-color)">Crédit liquide</th>
+        <th style="color: var(--secondary-color)">Credit emballage</th>
+        <th style="color: var(--secondary-color)">Solde liquide</th>
+        <th style="color: var(--secondary-color)">Solde emballage</th>
+        <th style="color: var(--secondary-color)">Crédit liquide restant</th>
+        <th style="color: var(--secondary-color)">Credit emballage restant</th>
         <th style="color: var(--secondary-color)">Total crédit</th>
         <th style="color: var(--secondary-color)">Actions</th>
       </tr>
@@ -43,16 +47,39 @@
           </span>
         </td>
         <td>
-          {{ dataList.creditEmballageDeduit| number }}
-        </td>
-        <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.creditLiquideDeduit | number}}
+            {{ dataList.creditLiquide | number }}
           </span>
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.totalCreditDeduit | number}}
+          {{ dataList.creditEmballage| number }}
+             </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.soldeLiquide | number }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+          {{ dataList.soldeEmballage| number }}
+             </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.creditLiquide -  dataList.soldeLiquide | number }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+          {{ dataList.creditEmballage - dataList.soldeEmballage| number }}
+             </span>
+        </td>
+
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.totalCreditDeduit | number }}
           </span>
         </td>
 
@@ -197,18 +224,18 @@
                   formControlName="totalCredit"
                 />
               </div>
-      
+
             </div>
           </div>
         </form>
-        <div class="row" *ngIf="operation == 'detail'" >
+        <div class="row" *ngIf="operation == 'detail'">
           <div class="col-md-4">
             <strong>Crée par : </strong>
-            <span>{{ detail.createdBy.nom +' '+ detail.createdBy.nom }}</span>
+            <span>{{ detail.createdBy.nom + ' ' + detail.createdBy.prenoms }}</span>
           </div>
           <div class="col-md-4">
             <strong>Solde liquide : </strong>
-            <span>{{ detail.soldeLiquide | number}}</span>
+            <span>{{ detail.soldeLiquide | number }}</span>
           </div>
           <div class="col-md-4">
             <strong>Solde emballage :</strong>
@@ -244,8 +271,8 @@
             <td>{{ item.typeMouvement }}</td>
             <td>{{ item.description }}</td>
             <td>{{ item.montantLiquide| number }}</td>
-            <td>{{ item.montantEmballage | number}}</td>
-            <td>{{ item.soldeApresMouvement | number}}</td>
+            <td>{{ item.montantEmballage | number }}</td>
+            <td>{{ item.soldeApresMouvement | number }}</td>
             <td>{{ item.createdAt | date:'dd/MM/yyyy' }}</td>
           </tr>
           </tbody>

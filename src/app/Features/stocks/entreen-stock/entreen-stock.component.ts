@@ -317,9 +317,15 @@ export class EntreenStockComponent {
         console.error("Les données de liquides ne sont pas un tableau");
       }
       if (Array.isArray(emballage.data)) {
-        // this.dataListLiquides = emballage.data;
-        // Utilisation de l'opérateur de décomposition uniquement si c'est un tableau
-        this.dataList.push(...emballage.data);
+        this.dataList.push(...emballage.data.map((item: any) => {
+          let code = item.code;
+          if (code.startsWith('CAS')) {
+            code = 'CCAS' + code.slice(3);
+          } else if (code.startsWith('EMB')) {
+            code = 'VEMB' + code.slice(3);
+          }
+          return { ...item, code };
+        }));
       } else {
         console.error("Les données de liquides ne sont pas un tableau");
       }

@@ -1,0 +1,256 @@
+<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
+  <i style="font-size: 18px;" class="fas fw-bold fa-chevron-left me-2"></i>
+  <h4 class="fw-bold mb-0">Ventes chines</h4>
+</div>
+<div class="card">
+<!--  Vente-->
+  <div class="container py-2">
+    <ng-wizard [config]="config" (stepChanged)="stepChanged($event)">
+      <ng-wizard-step [title]="'Etape 1'" [description]="'Effectue le vente'" [canEnter]="isValidTypeBoolean" [canExit]="isValidFunctionReturnsBoolean.bind(this)">
+        <div class="table-responsive mb-2">
+          <table class="table table-bordered">
+            <thead class="table-success">
+            <tr>
+              <th>Libellé</th>
+              <th>Format</th>
+              <th>Prix U liquide (XOF)</th>
+              <th>Prix U emballage (XOF)</th>
+              <th>Quantité</th>
+              <th>Sous-total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let article of updateData?.articles">
+              <td>{{ article.liquide.libelle }}</td>
+              <td>{{ article.liquide.format }}</td>
+              <td>{{ article.prixUnitaireLiquide | number }}</td>
+              <td>{{ article.prixUnitaireEmballage | number }}</td>
+              <td>
+                <div style="max-width: 120px;">
+                  <input type="number" class="form-control-custom text-center"
+                         [min]="0"
+                         [max]="article.quantiteAffectee"
+                         [(ngModel)]="article.liquide.quantite"
+                         (ngModelChange)="emballageCalcul(article)"
+                         (blur)="validate(article)"
+                         [value]="0"> / {{article.quantite}}
+                </div>
+              </td>
+              <td>{{ (article.prixUnitaireLiquide * article.liquide.quantite | number) || 0 }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-wizard-step>
+
+      <ng-wizard-step [title]="'Etape 2'" [description]="'Récapitulatif de la vente'" [canEnter]="isValidFunctionReturnsObservable.bind(this)" [canExit]="isValidFunctionReturnsBoolean.bind(this)">
+        <table class="table table-bordered">
+          <thead class="table-success">
+          <tr>
+            <th>Libellé</th>
+            <th>Format</th>
+            <th>Prix U liquide (XOF)</th>
+            <th>Quantité</th>
+            <th>Sous-total</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let article of articlesVendus">
+            <td>{{ article.liquide.libelle }}</td>
+            <td>{{ article.liquide.format }}</td>
+            <td>{{ article.prixUnitaireLiquide | number }}</td>
+            <td>
+              <div style="max-width: 120px;">
+                <input type="number" class="form-control-custom text-center"
+                       readonly
+                       [value]="article.liquide.quantite">
+              </div>
+            </td>
+            <td>{{ (article.prixUnitaireLiquide * article.liquide.quantite | number) || 0 }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </ng-wizard-step>
+
+      <ng-wizard-step [title]="'Etape 3'" [description]="'Recuperation emballages'">
+        <!--  recuperation emballage-->
+        <div class="container py-2"><!-- réduit de py-4 à py-2 -->
+          <!-- Modes -->
+          <div class="mb-2">
+            <div class="btn-group btn-group-sm" role="group">
+              <input type="radio" class="btn-check" name="mode" id="maintenant" value="IMMEDIATE" [(ngModel)]="mode">
+              <label class="btn btn-outline-primary" for="maintenant">Maintenant</label>
+
+              <input type="radio" class="btn-check" name="mode" id="auComptant" value="COMPTANT" [(ngModel)]="mode">
+              <label class="btn btn-outline-primary" for="auComptant">Au comptant</label>
+
+              <input type="radio" class="btn-check" name="mode" id="surRdv" value="APPOINTMENT" [(ngModel)]="mode">
+              <label class="btn btn-outline-primary" for="surRdv">Sur RDV</label>
+            </div>
+          </div>
+
+
+          <!-- Vue pour "Maintenant" -->
+          <div *ngIf="mode === 'IMMEDIATE'">
+            <!-- Ton tableau existant -->
+            <div class="alert alert-success">
+              Emballages à récuperer sur place.
+            </div>
+            <div class="table-responsive mb-2">
+              <table class="table table-bordered">
+                <thead class="table-success">
+                <tr>
+                  <th>Libellé</th>
+                  <th>Format</th>
+                  <th>Prix unitaire (XOF)</th>
+                  <th>Quantité</th>
+                  <th>Sous-total</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let article of emballageRecup">
+                  <td>{{ article.emballage.libelle }}</td>
+                  <td>{{ article.emballage.format }}</td>
+                  <td>{{ article.prixUnitaireEmballage | number }}</td>
+                  <td>
+                    <div style="max-width: 120px;">
+                      <input type="number" class="form-control-custom text-center"
+                             [(ngModel)]="article.emballage.quantite"
+                             (ngModelChange)="emballageCalcul(article)"
+                             [min]="article.liquide.quantite">
+                    </div>
+                  </td>
+                  <td>{{ article.prixEmballage || 0 }}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+
+          <!-- Vue pour "Au comptant" -->
+          <div *ngIf="mode === 'COMPTANT'">
+            <div class="alert alert-info">
+              Emballages à laisser en consigne.
+            </div>
+            <div class="table-responsive mb-2">
+              <table class="table table-bordered">
+                <thead class="table-success">
+                <tr>
+                  <th>Libellé</th>
+                  <th>Format</th>
+                  <th>Prix unitaire (XOF)</th>
+                  <th>Quantité</th>
+                  <th>Sous-total</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let article of emballageRecup">
+                  <td>{{ article.emballage.libelle }}</td>
+                  <td>{{ article.emballage.format }}</td>
+                  <td>{{ article.prixUnitaireEmballage | number }}</td>
+                  <td>
+                    <div style="max-width: 120px;">
+                      <input type="number" class="form-control-custom text-center"
+                             [(ngModel)]="article.emballage.quantite"
+                             (ngModelChange)="emballageCalcul(article)"
+                             [max]="article.liquide.quantite">
+                    </div>
+                  </td>
+                  <td>{{ article.prix * article.quantite | number }}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- Ici tu peux mettre un formulaire ou un message spécifique -->
+          </div>
+
+
+          <!-- Vue pour "Sur RDV" -->
+          <div *ngIf="mode === 'APPOINTMENT'">
+            <div class="alert alert-warning">
+              Emballages à récuperer à une date ulterieure.
+            </div>
+            <!-- Ici tu peux afficher un calendrier, champ de date, etc. -->
+            <div class="mb-2">
+              <label for="rdvDate">Date du RDV :</label>
+              <input type="date" id="rdvDate" class="form-control form-control-sm" [(ngModel)]="rdvDate">
+            </div>
+            <div class="table-responsive mb-2">
+              <table class="table table-bordered">
+                <thead class="table-success">
+                <tr>
+                  <th>Libellé</th>
+                  <th>Format</th>
+                  <th>Prix unitaire (XOF)</th>
+                  <th>Quantité</th>
+                  <th>Sous-total</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let article of emballageRecup">
+                  <td>{{ article.emballage.libelle }}</td>
+                  <td>{{ article.emballage.format }}</td>
+                  <td>{{ article.prixUnitaireEmballage | number }}</td>
+                  <td>
+                    <div style="max-width: 120px;">
+                      <input type="number" class="form-control-custom text-center"
+                             [value]="article.liquide.quantite" >
+                    </div>
+                  </td>
+                  <td>{{ article.prix * article.quantite | number }}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+
+          <!-- Montant total -->
+          <div class="alert alert-success fw-bold text-end py-2 mb-2" *ngIf="mode === 'Maintenant'">
+<!--            Montant total : {{ total | number }} XOF-->
+          </div>
+
+        </div>
+      </ng-wizard-step>
+
+      <ng-wizard-step [title]="'Etape 4'" [description]="'Récapitulatif de la recuperation emballage'" >
+        <div class="mb-3">
+          <label class="form-label">Point de vente <span
+            class="text-danger">*</span></label>
+          <ng-select class="form-control" [items]="pointDeVente" bindLabel="nomEtablissement" bindValue="id"
+                     (change)="ChoicePdv($event);" [searchable]="true">
+          </ng-select>
+        </div>
+        <table class="table table-bordered">
+          <thead class="table-success">
+          <tr>
+            <th>Libellé</th>
+            <th>Format</th>
+            <th>Prix unitaire (XOF)</th>
+            <th>Quantité</th>
+            <th>Sous-total</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let article of emballageRecup">
+            <td>{{ article.emballage.libelle }}</td>
+            <td>{{ article.emballage.format }}</td>
+            <td>{{ article.prixUnitaireEmballage | number }}</td>
+            <td>
+              <div style="max-width: 120px;">
+                <input type="number" class="form-control-custom text-center"
+                       [value]="article.emballage.quantite" readonly>
+              </div>
+            </td>
+            <td>{{ (article.prixUnitaireEmballage * article.emballage.quantite | number) || 0 }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </ng-wizard-step>
+
+    </ng-wizard>
+
+  </div>
+
+</div>

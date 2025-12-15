@@ -85,6 +85,7 @@
         <th style="color: var(--secondary-color)">Gérant</th>
         <th style="color: var(--secondary-color)">Propriétaire</th>
         <th style="color: var(--secondary-color)">Groupe client</th>
+        <th style="color: var(--secondary-color)">Depots</th>
         <th
           class="d-flex justify-content-center"
           style="color: var(--secondary-color)"
@@ -102,7 +103,8 @@
         </td>
         <td>
           <span class="ml-1 vertical-align-middle">
-            {{ dataList.agentCommercial?.nom + ' ' + dataList.agentCommercial?.prenoms }}
+            {{ dataList.agentCommercial ? dataList.agentCommercial?.nom + ' ' + dataList.agentCommercial?.prenoms :
+            dataList.agentTransporteur?.nom + ' ' + dataList.agentTransporteur?.prenoms}}
           </span>
         </td>
         <td>
@@ -123,6 +125,11 @@
         <td>
           <span class="ml-1 vertical-align-middle">
             {{ dataList.groupeClient.nomGroupe }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList.depot.nomDepot }}
           </span>
         </td>
         <td>

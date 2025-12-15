@@ -1085,11 +1085,11 @@ export class ArticleServiceService {
         )
         .subscribe(
           (res: any) => {
-            console.log(res);
+            // console.log(res);
             resolve(res);
           },
           (err) => {
-            console.log(err);
+            // console.log(err);
             reject(err);
           }
         );
@@ -1522,6 +1522,25 @@ export class ArticleServiceService {
       );
     });
   }
+
+  GetListVenteChineById(id: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.get(`${this.apiUrl}/v1/ventes/${id}`,{headers}).subscribe(
+        (res: any) => {
+          resolve(res);
+          console.log(res);
+          (res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
   GetListCommandeFournisseursById(id: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -1550,6 +1569,43 @@ export class ArticleServiceService {
         (res: any) => {
           console.log(res);
           resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  AjouterArticleVenteChine(id:any,data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/ventes/${id}/articles`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  DeleteArticleVenteChine(id: any,isGratuit:boolean) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.delete(`${this.apiUrl}/v1/ventes/delete/articles/${id}?isGratuit=${isGratuit}`,{headers}).subscribe(
+        (res: any) => {
+          resolve(res);
+          console.log(res);
+          (res);
         },
         (err) => {
           console.log(err);
@@ -1619,6 +1675,23 @@ export class ArticleServiceService {
     });
   }
 
+  UpdateVente(id:any,data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/ventes/${id}`, data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
   UpdateCommandeClient(id:any,data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({

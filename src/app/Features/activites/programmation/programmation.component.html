@@ -163,7 +163,7 @@
                       </td>
                       <td>{{ point.nomEtablissement }}</td>
                       <td *ngIf="i === 0" [attr.rowspan]="visite.pointsDeVente.length">
-                        {{ visite.vehicule.marque}} - {{ visite.vehicule.immatriculation}}
+                        {{ visite.vehicule?.marque}} - {{ visite.vehicule?.immatriculation}}
                       </td>
                       <td *ngIf="i === 0" [attr.rowspan]="visite.pointsDeVente.length">
                         <div class="d-flex flex-column gap-3">

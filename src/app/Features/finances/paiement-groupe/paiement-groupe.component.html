@@ -13,6 +13,7 @@
     <ng-template pTemplate="header">
       <tr>
         <th style="color: var(--secondary-color)">Agent</th>
+        <th style="color: var(--secondary-color)">Dépot</th>
         <th style="color: var(--secondary-color)">Montant</th>
         <th style="color: var(--secondary-color)">Nbre de transactions</th>
         <th class="d-flex justify-content-center" style="color: var(--secondary-color)">Actions</th>
@@ -24,6 +25,13 @@
           <span class="ml-1 vertical-align-middle" style="font-size: 11px">
             {{
               dataList?.agentNomComplet
+            }}
+          </span>
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
+            {{
+              dataList?.transactions[0]?.paiements[0]?.encaisseurCommercial?.depot.nomDepot || dataList?.transactions[0]?.paiements[0]?.encaisseurTransporteur?.depot.nomDepot
             }}
           </span>
         </td>
@@ -113,6 +121,7 @@
                 <thead>
                 <tr>
                   <th>#</th>
+                  <th>Encaissé par</th>
                   <th>Motif</th>
                   <th>Moyen de paiement</th>
                   <th>Montant</th>
@@ -125,13 +134,14 @@
                   <!-- Ligne de titre -->
                   <tr style="font-weight: bold; background-color: #f2f2f2;">
                     <td colspan="5">
-                      Transaction #{{ transaction.numTransaction }} - {{ transaction.motif }} chez : {{transaction.clientAssocie.nomEtablissement || transaction.clientAssocie.raisonSocial}}
+                      Transaction #{{ transaction.numTransaction }} - {{ transaction.motif }} chez : {{transaction.clientAssocie}}
                     </td>
                   </tr>
 
                   <!-- Paiements -->
                   <tr *ngFor="let paiement of transaction.paiements">
                     <td>{{paiement.numPaiement}}</td>
+                    <td>{{paiement.encaisseurCommercial?.nom+' '+paiement.encaisseurCommercial?.prenoms || paiement.encaisseurTransporteur?.nom+' '+paiement.encaisseurTransporteur?.prenoms }}</td>
                     <td>{{ transaction.motif }}</td>
                     <td>{{ paiement.moyenPaiement?.libelle || 'N/A' }}</td>
                     <td>{{ paiement.montant | number }}</td>
@@ -148,14 +158,21 @@
         </ng-container>
       </div>
 
-      <div class="modal-footer gap-3 px-4">
+      <div class="modal-footer gap-3 d-flex align-items-center">
+        <input
+          style="width:120px !important;"
+          type="text"
+          name="search"
+          [(ngModel)]="amountReal"
+          class="form-control"
+        />FCFA
         <button
           (click)="ValiderPaiementGroup(updateData?.transactions)"
           type="button"
-          class="btn btn-warning px-2"
+          class="btn btn-warning px-5"
           [disabled]="calculerTotalPaiements(updateData?.transactions) <= 0"
         >
-          Solder ({{calculerTotalPaiements(updateData?.transactions) | currency:'XOF'}})
+          Solder
         </button>
         <button
           (click)="OnCloseModal()"

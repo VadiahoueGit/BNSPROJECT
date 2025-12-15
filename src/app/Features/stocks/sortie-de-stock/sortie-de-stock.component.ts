@@ -320,10 +320,16 @@ export class SortieDeStockComponent {
       }
       if (Array.isArray(emballage.data)) {
         // Appliquer formatCode uniquement sur les emballages
-        const emballagesFormates = emballage.data.map((article: any) => ({
-          ...article,
-          code: this.formatCode(article.code)
-        }));
+
+        const emballagesFormates = emballage.data.map((item: any) => {
+          let code = item.code;
+          if (code.startsWith('CAS')) {
+            code = 'CCAS' + code.slice(3);
+          } else if (code.startsWith('EMB')) {
+            code = 'VEMB' + code.slice(3);
+          }
+          return { ...item, code };
+        });
         this.dataList.push(...emballagesFormates);
       }  else {
         console.error("Les données de liquides ne sont pas un tableau");

@@ -85,7 +85,13 @@ export class SuiviDesRDVComponent {
       this.dataList = res.data;
       this.totalPages =  res.total; // nombre total d’enregistrements
       this._spinner.hide();
-    });
+    } ,
+      (error: any) => {
+        this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
+        this._spinner.hide();
+        console.error('Erreur lors de la mise à jour', error);
+      })
+
   }
   onSubmit(): void {
     console.log(this.ArticleForm.value);

@@ -73,7 +73,7 @@ export class LivraisonComponent {
   prixEmballageTotal: any = {};
   montantTotal: any = {};
   clients: any = [];
-  currentPage: number;
+  currentPage: number =1;
   rowsPerPage: any;
   listRevendeurs: any[] = [];
   listRegroupements: any[] = [];
@@ -85,6 +85,7 @@ export class LivraisonComponent {
   cargaison: number = 0;
   format: number = 33;
   signature: null;
+  totalPages=0
   regroupementList: any[] = [];
   regroupementTable: any[] = [];
   regroupementFinal: {
@@ -134,12 +135,12 @@ export class LivraisonComponent {
     }
 
     // this.selectedArticle = this.articles[0];
-    this.GetListZone();
+    this.GetRegroupementList(this.currentPage);
     this.GetRegroupementRules();
     this.GetTransporteurList();
     this.GetVehiculeList();
     this.GetListCommande(1);
-    this.GetRegroupementList();
+    this.GetListZone();
     this.articleService.ListTypeArticles.subscribe((res: any) => {
       this.dataListProduits = res;
       console.log(this.dataListProduits, 'this.dataListProduits ');
@@ -152,7 +153,7 @@ export class LivraisonComponent {
 
   getTotalGeneral(commandes: any): number {
     return commandes.reduce(
-      (total: any, commande: any) => total + commande.montantTotal,
+      (total: any, commande: any) => total + commande.montantTotal || 0,
       0
     );
   }
@@ -346,7 +347,7 @@ export class LivraisonComponent {
       etablissement: '',
       statut: StatutCommande.NON_REGROUPE,
     };
-    this._spinner.show();
+    // this._spinner.show();
     const [commandeClient, commandeGratuite]: [any, any] = await Promise.all([
       this.articleService.GetListCommandeGratuite(data),
       this.articleService.GetListCommandeClient(data),
@@ -358,7 +359,7 @@ export class LivraisonComponent {
       .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     console.log('filteredList', this.filteredList);
 
-    this._spinner.hide();
+    // this._spinner.hide();
   }
 
   onFilterGlobal(event: Event) {
@@ -508,12 +509,12 @@ export class LivraisonComponent {
       page: page,
       limit: 8,
     };
-    this._spinner.show();
+    // this._spinner.show();
     this.articleService.GetArticleList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.dataListLiquides = res.data;
       this.filteredArticleList = this.dataListLiquides;
-      this._spinner.hide();
+      // this._spinner.hide();
     });
   }
 
@@ -523,24 +524,25 @@ export class LivraisonComponent {
       page: page,
       limit: 8,
     };
-    this._spinner.show();
+    // this._spinner.show();
     this.articleService.GetListRevendeur(data).then((res: any) => {
       console.log('GetListRevendeur:::>', res);
       this.listRevendeurs = res.data;
-      this._spinner.hide();
+      // this._spinner.hide();
     });
   }
 
-  GetRegroupementList() {
+  GetRegroupementList(page:any) {
     let data = {
-      paginate: false,
-      page: 1,
+      paginate: true,
+      page: page,
       limit: 8,
     };
     this._spinner.show();
     this.activiteService.GetRegroupementList(data).then((res: any) => {
       console.log('GetRegroupementList:::>', res);
       this.listRegroupements = res.data;
+      this.totalPages = res.total;
       this._spinner.hide();
     });
   }
@@ -562,7 +564,7 @@ export class LivraisonComponent {
         this.toastr.success(res.message);
         this.isModalOpen = false;
         this.GetListCommande(1)
-        this.GetRegroupementList();
+        this.GetRegroupementList(1);
       } else {
         this.toastr.error(res.message);
       }
@@ -712,7 +714,7 @@ export class LivraisonComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
-    this.GetArticleList(this.currentPage);
+    this.GetRegroupementList(this.currentPage);
   }
 
   onChange(event: any): void {

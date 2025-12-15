@@ -382,10 +382,15 @@ export class ValidationCommandeGratuiteComponent {
             .ApprouverCommandeGratuite(data.id)
             .then((res: any) => {
               console.log('VALIDEEEEEEEEEE:::>', res);
-              this.toastr.success(res.message);
-              this.OnCloseModal();
+              if(res.statusCode ==200)
+              {
+                this.toastr.success(res.message);
+                this.GetListCommandeGratuite(1);
+                this.OnCloseModal();
+              }else{
+                this.toastr.error(res.message);
+              }
               this._spinner.hide();
-              this.GetListCommandeGratuite(1);
             });
         } else {
           this.isModalOpen = false;

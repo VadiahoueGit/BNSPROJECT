@@ -117,34 +117,6 @@ export class ValidationVenteChineComponent {
     console.log(this.isModalOpen);
   }
 
-  onSubmit() {
-    console.log(this.VenteForm.value, 'venteForm');
-    if (this.VenteForm.valid) {
-      this._spinner.show();
-      this.utilisateurService.CreateVenteChine(this.VenteForm.value).then(
-        (res: any) => {
-          console.log(res, 'enregistré avec succes');
-          this._spinner.hide();
-          if(res.statusCode === 400) {
-            this.toastr.error(res.message);
-          }else{
-            this.VenteForm.reset();
-            this.GetVenteChineList(1);
-            this.OnCloseModal();
-            this.toastr.success(res.message);
-          }
-
-        },
-        (error: any) => {
-          this._spinner.hide();
-          this.toastr.info(error.error.message);
-          console.error('Erreur lors de la création', error);
-        }
-      );
-    } else {
-      this.toastr.warning('Formulaire invalide');
-    }
-  }
 
   onCheckboxChange(article: any): void {
     this.GetPrixByArticle(article);
@@ -292,10 +264,17 @@ export class ValidationVenteChineComponent {
           this._spinner.show();
           this._financeService.ApprouverVenteChine(data.id).then((res: any) => {
             console.log('VALIDEEEEEEEEEE:::>', res);
-            this.toastr.success(res.message);
-            this.OnCloseModal();
+            if(res.statusCode ==200)
+            {
+              this.toastr.success(res.message);
+              this.GetVenteChineList(1);
+              this.OnCloseModal();
+            }else{
+              this.toastr.error(res.message);
+            }
+
             this._spinner.hide();
-            this.GetVenteChineList(1);
+
           });
         } else {
           this.isModalOpen = false;
@@ -317,7 +296,7 @@ export class ValidationVenteChineComponent {
         this.GetStockDisponibleByDepot(item);
       });
       this.filteredArticleList = this.dataListLiquides;
-      this._spinner.hide();
+      // this._spinner.hide();
     });
   }
   OnEdit(data: any) {
@@ -374,13 +353,11 @@ export class ValidationVenteChineComponent {
       limit: 8,
     };
     this._spinner.show();
-    this.utilisateurService.GetVenteChineList(data).then((res: any) => {
+    this.utilisateurService.GetVenteChineListAttente(data).then((res: any) => {
       console.log('GetVenteChineList:::>', res.data);
       this.totalPages = res.total; // nombre total d’enregistrements
 
-      this.dataList = res.data.filter(
-        (x: any) => x.statut === StatutCommande.ATTENTE_VALIDATION
-      );
+      this.dataList = res.data
       this._spinner.hide();
     });
   }
@@ -399,7 +376,7 @@ export class ValidationVenteChineComponent {
         ...item,
         fullLabel: `${item.nom} ${item.prenom}`,
       }));
-      this._spinner.hide();
+      // this._spinner.hide();
     });
   }
 
@@ -413,7 +390,7 @@ export class ValidationVenteChineComponent {
     this.coreService.GetLocaliteList(data).then((res: any) => {
       console.log('dataListLocalite:::>', res);
       this.dataListLocalite = res.data;
-      this._spinner.hide();
+      // this._spinner.hide();
     });
   }
 
@@ -427,7 +404,7 @@ export class ValidationVenteChineComponent {
     this.logistiqueService.GetVehiculeList(data).then((res: any) => {
       console.log('DATATYPEPRIX:::>', res);
       this.dataListCamion = res.data;
-      this._spinner.hide();
+      // this._spinner.hide();
     });
   }
 

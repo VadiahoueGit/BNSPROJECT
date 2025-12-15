@@ -166,7 +166,7 @@ export class ListEmballagesComponent {
     });
 
     // Affectation pour affichage
-    this.emballagesrecues = articlesRecus?.filter((a:any) => Number(a.prixUnitaireEmballage) > 0);
+    // this.emballagesrecues = articlesRecus?.filter((a:any) => Number(a.prixUnitaireEmballage) > 0);
 
     // -------------------------------
     // EMBALLAGES RENDUS
@@ -213,7 +213,7 @@ export class ListEmballagesComponent {
         totauxRecus.get(code).quantite += article.articleEntree?.quantite  || article.articleCommande?.quantite;
       }
     });
-    this.emballagesrecues = Array.from(totauxRecus.values());
+    this.emballagesrecues = Array.from(totauxRecus.values()).filter((a:any) => Number(a.prixUnitaireEmballage) > 0);;
 
     if (this.updateData.emballagesRendus.length > 0) {
       const mapRendus = new Map<string, any>();

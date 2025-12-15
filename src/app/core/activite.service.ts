@@ -374,6 +374,28 @@ export class ActiviteService {
     });
   }
 
+  GetVenteInfo(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/ventes/${data}`,{headers}
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
   GetVenteGlobalList(data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -509,12 +531,12 @@ export class ActiviteService {
 
   //GESTION DES RETOURS
 
-  ValidateRetourPlein(id: any) {
+  ValidateRetourPlein(id: any,data :any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
-      this._http.patch(`${this.apiUrl}/v1/retours-pleins/${id}/valider`,{headers}).subscribe(
+      this._http.patch(`${this.apiUrl}/v1/retours-pleins/${id}/valider`,data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -532,6 +554,24 @@ export class ActiviteService {
         Authorization: `Bearer ${this.token}`
       });
       this._http.post(`${this.apiUrl}/v1/retours/valider/${id}`,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  RetourEmballageManual(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/retours`,data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);

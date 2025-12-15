@@ -10,6 +10,7 @@
         <th style="color: var(--secondary-color);">Agent</th>
         <th style="color: var(--secondary-color);">Date Rdv</th>
         <th style="color: var(--secondary-color);">Client</th>
+        <th style="color: var(--secondary-color);">Dépot</th>
         <!--                <th style="color: var(&#45;&#45;secondary-color);">Statut Rdv</th>-->
         <th style="color: var(--secondary-color);">Actions</th>
       </tr>
@@ -46,6 +47,9 @@
                         dataList.clientALivrer?.raisonSocial
                       }}
                     </span>
+        </td>
+        <td>
+          {{ dataList?.depot?.nomDepot}}
         </td>
         <td>
       <tr class="gap-3">

@@ -183,7 +183,7 @@ export class ListeCommandesMarchandisesComponent {
     console.log(data);
     this.dataSendedToReceptionMarchandiseRequest.commandeId = data.id;
     this.updateData = data;
-    this.articlesRecues = data.articles?.filter((a:any) => Number(a.prixUnitaireEmballage) > 0);
+    this.articlesRecues = data.articles;
     this.articleId = data.id;
     this.isModalOpen = true;
     console.log(this.isModalOpen);

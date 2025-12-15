@@ -33,6 +33,7 @@ export class SuiviComptesComponent {
   currentPage: number;
   rowsPerPage: any;
   totalPages: number;
+  dates:any
   constructor(
     private _financeService: FinanceService,
     private _articleService: ArticleServiceService,
@@ -105,6 +106,9 @@ export class SuiviComptesComponent {
     console.log(this.isModalOpen);
   }
 
+
+
+
   OnEdit(data: any) {
     this.isEditMode = true;
     console.log(data);
@@ -112,6 +116,7 @@ export class SuiviComptesComponent {
     this.creditId = data.id;
     this.isModalOpen = true;
     this.loadUpdateData();
+
     this.CreditForm.controls['codeClient'].disable();
     this.operation = 'edit';
     console.log(this.isModalOpen);

@@ -128,9 +128,12 @@ import { VenteGlobalFacturesComponent } from './facturation/vente-global-facture
 import { ProgrammationComponent } from './programmation/programmation.component';
 import { EcartEmballageComponent } from './gestion-des-retours/ecart-emballage/ecart-emballage.component';
 import {ProformatComponent} from "./proformat/proformat.component";
+import {VentemanuelleComponent} from "./ventemanuelle/ventemanuelle.component";
+import {NgWizardModule} from "ng-wizard";
 registerLocaleData(localeFr, 'fr');
 @NgModule({
   declarations: [
+    VentemanuelleComponent,
     ProformatComponent,
     ProgrammationComponent,
     ActivitesComponent,
@@ -272,6 +275,7 @@ registerLocaleData(localeFr, 'fr');
     RippleModule,
     StyleClassModule,
     AutoFocusModule,
+    NgWizardModule,
 
   ],
   providers: [

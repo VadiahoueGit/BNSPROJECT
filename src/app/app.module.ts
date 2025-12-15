@@ -28,12 +28,18 @@ import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import {ConfidentialityComponent} from "./Features/confidentiality/confidentiality.component";
 registerLocaleData(localeFr);
+import { NgWizardModule, NgWizardConfig, THEME } from 'ng-wizard';
+
+const ngWizardConfig: NgWizardConfig = {
+  theme: THEME.default,
+};
 export function initConfig(configService: ConfigService) {
   return () => configService.loadConfig();
 }
 @NgModule({
   declarations: [AppComponent,ConfidentialityComponent],
   imports: [
+    NgWizardModule.forRoot(ngWizardConfig),
     AuthModule,
     GoogleMapsModule,
     FeaturesModule,

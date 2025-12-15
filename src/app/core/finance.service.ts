@@ -4,6 +4,7 @@ import { ConfigService } from './config-service.service';
 import { LocalStorageService } from './local-storage.service';
 import { storage_keys } from '../Features/shared-component/utils';
 import { Observable } from 'rxjs';
+import {NgxSpinnerService} from "ngx-spinner";
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class FinanceService {
   token:string;
   apiUrl: any;
   ws:any;
-  constructor(private localstorage:LocalStorageService,private _http: HttpClient, private configService: ConfigService) {
+  constructor(private localstorage:LocalStorageService,private _http: HttpClient, private configService: ConfigService,private _spinner: NgxSpinnerService) {
     this.apiUrl = this.configService.apiUrl;
     this.ws = this.configService.wsUrl;
     this.token = this.localstorage.getItem(storage_keys.STOREToken) || '';
@@ -31,6 +32,7 @@ export class FinanceService {
           resolve(res);
         },
         (err) => {
+          this._spinner.hide();
           console.log(err);
           reject(err);
         }
@@ -50,6 +52,7 @@ export class FinanceService {
             resolve(res);
           },
           (err) => {
+            this._spinner.hide();
             console.log(err);
             reject(err);
           }
@@ -65,6 +68,7 @@ export class FinanceService {
           resolve(res);
         },
         (err) => {
+          this._spinner.hide();
           console.log(err);
           reject(err);
         }
@@ -82,6 +86,7 @@ export class FinanceService {
             resolve(res);
           },
           (err) => {
+            this._spinner.hide();
             console.log(err);
             reject(err);
           }
@@ -98,6 +103,7 @@ export class FinanceService {
             resolve(res);
           },
           (err) => {
+            this._spinner.hide();
             console.log(err);
             reject(err);
           }
@@ -118,6 +124,7 @@ export class FinanceService {
             resolve(res);
           },
           (err) => {
+            this._spinner.hide();
             console.log(err);
             reject(err);
           }
@@ -137,12 +144,34 @@ export class FinanceService {
             resolve(res);
           },
           (err) => {
+            this._spinner.hide();
             console.log(err);
             reject(err);
           }
         );
     });
   }
+
+  GetCreanceList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http
+        .get(
+          `${this.apiUrl}/v1/comptabilite/ecart-paiement?&page=${data.page}&limit=${data.limit}`
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            this._spinner.hide();
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
   GetPaiementList(data: any) {
     return new Promise((resolve: any, reject: any) => {
       this._http
@@ -155,6 +184,7 @@ export class FinanceService {
             resolve(res);
           },
           (err) => {
+            this._spinner.hide();
             console.log(err);
             reject(err);
           }
@@ -173,6 +203,7 @@ export class FinanceService {
           resolve(res);
         },
         (err) => {
+          this._spinner.hide();
           console.log(err);
           reject(err);
         }
@@ -191,6 +222,7 @@ export class FinanceService {
             resolve(res);
           },
           (err) => {
+            this._spinner.hide();
             console.log(err);
             reject(err);
           }
@@ -209,6 +241,7 @@ export class FinanceService {
           resolve(res);
         },
         (err) => {
+          this._spinner.hide();
           console.log(err);
           reject(err);
         }
@@ -226,6 +259,7 @@ export class FinanceService {
           resolve(res);
         },
         (err) => {
+          this._spinner.hide();
           console.log(err);
           reject(err);
         }
@@ -244,12 +278,33 @@ export class FinanceService {
           resolve(res);
         },
         (err) => {
+          this._spinner.hide();
           console.log(err);
           reject(err);
         }
       );
     });
    }
+
+  ValidatePaiementEcart(data: any,id:number){
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/comptabilite/ecart-paiement/${id}/payer`,data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          this._spinner.hide();
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
    ValidatePaiement(id: any){
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -261,6 +316,7 @@ export class FinanceService {
           resolve(res);
         },
         (err) => {
+          this._spinner.hide();
           console.log(err);
           reject(err);
         }
@@ -279,6 +335,7 @@ export class FinanceService {
             resolve(res);
           },
           (err) => {
+            this._spinner.hide();
             console.log(err);
             reject(err);
           }
@@ -297,6 +354,7 @@ export class FinanceService {
             resolve(res);
           },
           (err) => {
+            this._spinner.hide();
             console.log(err);
             reject(err);
           }
@@ -312,6 +370,7 @@ export class FinanceService {
           resolve(res);
         },
         (err) => {
+          this._spinner.hide();
           console.log(err);
           reject(err);
         }
@@ -332,6 +391,7 @@ export class FinanceService {
             resolve(res);
           },
           (err) => {
+            this._spinner.hide();
             console.log(err);
             reject(err);
           }
@@ -350,6 +410,7 @@ export class FinanceService {
           resolve(res);
         },
         (err) => {
+          this._spinner.hide();
           console.log(err);
           reject(err);
         }
@@ -373,6 +434,7 @@ export class FinanceService {
             resolve(res);
           },
           (err) => {
+            this._spinner.hide();
             console.log(err);
             reject(err);
           }
@@ -391,6 +453,7 @@ export class FinanceService {
           resolve(res);
         },
         (err) => {
+          this._spinner.hide();
           console.log(err);
           reject(err);
         }

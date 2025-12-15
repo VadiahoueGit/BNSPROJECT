@@ -63,6 +63,7 @@
         <th style="color: var(--secondary-color)">Commandes</th>
         <th style="color: var(--secondary-color)">Motif</th>
         <th style="color: var(--secondary-color)">Agent</th>
+        <th style="color: var(--secondary-color)">Depot</th>
         <th style="color: var(--secondary-color)">Numéro SAP</th>
         <th style="color: var(--secondary-color)">Client</th>
         <th style="color: var(--secondary-color)">Montant à verser</th>
@@ -104,6 +105,7 @@
             {{ dataList?.motif }}
           </span>
         </td>
+
         <td>
           {{
             dataList?.paiementsCommandeClient?.length
@@ -121,6 +123,11 @@
                     ? dataList?.returnStock?.venteChine?.commercial?.nom + ' ' +
                     dataList?.returnStock?.venteChine?.commercial?.prenoms : ""
           }}
+        </td>
+        <td>
+          <span class="ml-1 vertical-align-middle">
+            {{ dataList?.depot.nomDepot }}
+          </span>
         </td>
         <td>
           {{
@@ -294,44 +301,44 @@
               </table>
             </div>
           </fieldset>
-          <fieldset class="row border my-2">
-            <legend class="fs-6 text-primary">Articles</legend>
-            <div
-              class="table-responsive"
-              style="max-height: 300px; overflow-y: auto"
-            >
-              <table class="table">
-                <thead>
-                <tr style="font-size: small">
-                  <th scope="col">Emballage</th>
-                  <th scope="col">Liquide</th>
-                  <th scope="col">Prix unitaire</th>
-                  <th scope="col">Quantité</th>
-                  <!--                  <th scope="col">Montant total</th>-->
-                </tr>
-                </thead>
-                <tbody>
-                <tr
-                  style="font-size: small"
-                  *ngFor="
-                      let item of updateData?.paiementsCommandeFournisseur[0]
-                        ?.articles;
-                      let i = index
-                    "
-                >
-                  <td>{{ item.emballage.libelle }}</td>
-                  <td>{{ item.liquide.libelle }}</td>
-                  <td>{{ item.prixUnitaireLiquide }}</td>
-                  <td>{{ item.quantite }}</td>
-                  <!--                  <td>{{ item.montantTotal| number }}</td>-->
-                </tr>
-                <!-- Ajoutez d'autres lignes si nécessaire -->
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+<!--          <fieldset class="row border my-2">-->
+<!--            <legend class="fs-6 text-primary">Articles</legend>-->
+<!--            <div-->
+<!--              class="table-responsive"-->
+<!--              style="max-height: 300px; overflow-y: auto"-->
+<!--            >-->
+<!--              <table class="table">-->
+<!--                <thead>-->
+<!--                <tr style="font-size: small">-->
+<!--                  <th scope="col">Emballage</th>-->
+<!--                  <th scope="col">Liquide</th>-->
+<!--                  <th scope="col">Prix unitaire</th>-->
+<!--                  <th scope="col">Quantité</th>-->
+<!--                  &lt;!&ndash;                  <th scope="col">Montant total</th>&ndash;&gt;-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                <tr-->
+<!--                  style="font-size: small"-->
+<!--                  *ngFor="-->
+<!--                      let item of updateData?.paiementsCommandeFournisseur[0]-->
+<!--                        ?.articles;-->
+<!--                      let i = index-->
+<!--                    "-->
+<!--                >-->
+<!--                  <td>{{ item.emballage.libelle }}</td>-->
+<!--                  <td>{{ item.liquide.libelle }}</td>-->
+<!--                  <td>{{ item.prixUnitaireLiquide }}</td>-->
+<!--                  <td>{{ item.quantite }}</td>-->
+<!--                  &lt;!&ndash;                  <td>{{ item.montantTotal| number }}</td>&ndash;&gt;-->
+<!--                </tr>-->
+<!--                &lt;!&ndash; Ajoutez d'autres lignes si nécessaire &ndash;&gt;-->
+<!--                </tbody>-->
+<!--              </table>-->
+<!--            </div>-->
+<!--          </fieldset>-->
         </ng-container>
-        <ng-container *ngIf="updateData.motif == 'COMMANDE CLIENT'">
+        <ng-container *ngIf="updateData.motif == 'COMMANDE CLIENT' || updateData.motif == 'COMMANDE GRATUITE'">
           <fieldset class="row border my-1">
             <legend style="font-size: 14px" class="text-secondary">
               Information de la Commande :
@@ -478,42 +485,42 @@
               </table>
             </div>
           </fieldset>
-          <fieldset class="row border my-2">
-            <legend class="fs-6 text-primary">Articles</legend>
-            <div
-              class="table-responsive"
-              style="max-height: 300px; overflow-y: auto"
-            >
-              <table class="table">
-                <thead>
-                <tr style="font-size: small">
-                  <th scope="col">Emballage</th>
-                  <th scope="col">Liquide</th>
-                  <th scope="col">Prix unitaire</th>
-                  <th scope="col">Quantité</th>
-                  <!--                    <th scope="col">Montant total</th>-->
-                </tr>
-                </thead>
-                <tbody>
-                <tr
-                  style="font-size: small"
-                  *ngFor="
-                      let item of updateData?.paiementsCommandeClient[0]
-                        ?.articles;
-                      let i = index
-                    "
-                >
-                  <td>{{ item.emballage.libelle }}</td>
-                  <td>{{ item.liquide.libelle }}</td>
-                  <td>{{ item.prixUnitaireLiquide }}</td>
-                  <td>{{ item.quantite }}</td>
-                  <!--                    <td>{{ item.montantTotal| number }}</td>-->
-                </tr>
-                <!-- Ajoutez d'autres lignes si nécessaire -->
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+<!--          <fieldset class="row border my-2">-->
+<!--            <legend class="fs-6 text-primary">Articles</legend>-->
+<!--            <div-->
+<!--              class="table-responsive"-->
+<!--              style="max-height: 300px; overflow-y: auto"-->
+<!--            >-->
+<!--              <table class="table">-->
+<!--                <thead>-->
+<!--                <tr style="font-size: small">-->
+<!--                  <th scope="col">Emballage</th>-->
+<!--                  <th scope="col">Liquide</th>-->
+<!--                  <th scope="col">Prix unitaire</th>-->
+<!--                  <th scope="col">Quantité</th>-->
+<!--                  &lt;!&ndash;                    <th scope="col">Montant total</th>&ndash;&gt;-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                <tr-->
+<!--                  style="font-size: small"-->
+<!--                  *ngFor="-->
+<!--                      let item of updateData?.paiementsCommandeClient[0]-->
+<!--                        ?.articles;-->
+<!--                      let i = index-->
+<!--                    "-->
+<!--                >-->
+<!--                  <td>{{ item.emballage.libelle }}</td>-->
+<!--                  <td>{{ item.liquide.libelle }}</td>-->
+<!--                  <td>{{ item.prixUnitaireLiquide }}</td>-->
+<!--                  <td>{{ item.quantite }}</td>-->
+<!--                  &lt;!&ndash;                    <td>{{ item.montantTotal| number }}</td>&ndash;&gt;-->
+<!--                </tr>-->
+<!--                &lt;!&ndash; Ajoutez d'autres lignes si nécessaire &ndash;&gt;-->
+<!--                </tbody>-->
+<!--              </table>-->
+<!--            </div>-->
+<!--          </fieldset>-->
         </ng-container>
         <ng-container *ngIf="updateData.motif == 'VENTE CHINE'">
           <fieldset class="row border my-1">
@@ -636,43 +643,43 @@
               </table>
             </div>
           </fieldset>
-          <fieldset class="row border my-2">
-            <legend class="fs-6 text-primary">Articles</legend>
-            <div
-              class="table-responsive"
-              style="max-height: 300px; overflow-y: auto"
-            >
-              <table class="table">
-                <thead>
-                <tr style="font-size: small">
-                  <th scope="col">Emballage</th>
-                  <th scope="col">Liquide</th>
-                  <th scope="col">Prix unitaire</th>
-                  <th scope="col">Quantité</th>
-                  <th scope="col">Montant total</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr
-                  style="font-size: small"
-                  *ngFor="
-                      let item of updateData?.paiementsVente[0]?.articles;
-                      let i = index
-                    "
-                >
-                  <td>{{ item.emballage.libelle }}</td>
-                  <td>{{ item.liquide.libelle }}</td>
-                  <td>{{ item.prixUnitaire }}</td>
-                  <td>{{ item.quantite }}</td>
-                  <td>{{ item.montantTotal| number }}</td>
-                </tr>
-                <!-- Ajoutez d'autres lignes si nécessaire -->
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+<!--          <fieldset class="row border my-2">-->
+<!--            <legend class="fs-6 text-primary">Articles</legend>-->
+<!--            <div-->
+<!--              class="table-responsive"-->
+<!--              style="max-height: 300px; overflow-y: auto"-->
+<!--            >-->
+<!--              <table class="table">-->
+<!--                <thead>-->
+<!--                <tr style="font-size: small">-->
+<!--                  <th scope="col">Emballage</th>-->
+<!--                  <th scope="col">Liquide</th>-->
+<!--                  <th scope="col">Prix unitaire</th>-->
+<!--                  <th scope="col">Quantité</th>-->
+<!--                  <th scope="col">Montant total</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                <tr-->
+<!--                  style="font-size: small"-->
+<!--                  *ngFor="-->
+<!--                      let item of updateData?.paiementsVente[0]?.articles;-->
+<!--                      let i = index-->
+<!--                    "-->
+<!--                >-->
+<!--                  <td>{{ item.emballage.libelle }}</td>-->
+<!--                  <td>{{ item.liquide.libelle }}</td>-->
+<!--                  <td>{{ item.prixUnitaire }}</td>-->
+<!--                  <td>{{ item.quantite }}</td>-->
+<!--                  <td>{{ item.montantTotal| number }}</td>-->
+<!--                </tr>-->
+<!--                &lt;!&ndash; Ajoutez d'autres lignes si nécessaire &ndash;&gt;-->
+<!--                </tbody>-->
+<!--              </table>-->
+<!--            </div>-->
+<!--          </fieldset>-->
         </ng-container>
-        <ng-container *ngIf="updateData.motif == 'CONSIGNE'">
+        <ng-container *ngIf="updateData.motif == 'CONSIGNE' || updateData.motif == 'ECART RETOUR PLEIN'">
           <fieldset class="row border my-1">
             <legend style="font-size: 14px" class="text-secondary">
               Informationde la Commande :
@@ -681,8 +688,8 @@
             </legend>
             <div class="row">
               <div class="col-md-4">
-                <strong>Client: </strong>
-                <span>{{ updateData?.client?.raisonSocial }}</span>
+                <strong>Payeur: </strong>
+                <span>{{ updateData?.client?.raisonSocial || updateData?.client?.nom+' '+updateData?.client?.prenoms }}</span>
               </div>
               <!--              <div class="col-md-4">-->
               <!--                <strong>Localité: </strong>-->
@@ -694,7 +701,7 @@
               </div>
             </div>
           </fieldset>
-          <fieldset class="row border my-1">
+          <fieldset class="row border my-1"  *ngIf="updateData.motif == 'CONSIGNE' ">
             <legend style="font-size: 14px" class="text-secondary">
               Informations regroupement
             </legend>
@@ -716,7 +723,7 @@
               </div>
             </div>
           </fieldset>
-          <fieldset class="row border my-1">
+          <fieldset class="row border my-1"  *ngIf="updateData.motif == 'CONSIGNE' "  >
             <legend style="font-size: 14px" class="text-secondary">
               Informations véhicule
             </legend>
@@ -776,7 +783,7 @@
               </div>
             </div>
           </fieldset>
-          <fieldset class="row border my-2">
+          <fieldset class="row border my-2" >
             <legend class="fs-6 text-primary">Historique de paiement</legend>
             <div
               class="table-responsive"
@@ -817,42 +824,42 @@
               </table>
             </div>
           </fieldset>
-          <fieldset class="row border my-2">
-            <legend class="fs-6 text-primary">Articles</legend>
-            <div
-              class="table-responsive"
-              style="max-height: 300px; overflow-y: auto"
-            >
-              <table class="table">
-                <thead>
-                <tr style="font-size: small">
-                  <th scope="col">Emballage</th>
-                  <th scope="col">Liquide</th>
-                  <th scope="col">Prix unitaire</th>
-                  <th scope="col">Quantité</th>
-                  <th scope="col">Montant total</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr
-                  style="font-size: small"
-                  *ngFor="
-                      let item of updateData?.paiementsCommandeGratuit[0]
-                        ?.articles;
-                      let i = index
-                    "
-                >
-                  <td>{{ item.emballage.libelle }}</td>
-                  <td>{{ item.liquide.libelle }}</td>
-                  <td>{{ item.prixUnitaire }}</td>
-                  <td>{{ item.quantite }}</td>
-                  <td>{{ item.montantTotal| number }}</td>
-                </tr>
-                <!-- Ajoutez d'autres lignes si nécessaire -->
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+<!--          <fieldset class="row border my-2"  *ngIf="updateData.motif == 'CONSIGNE' ">-->
+<!--            <legend class="fs-6 text-primary">Articles</legend>-->
+<!--            <div-->
+<!--              class="table-responsive"-->
+<!--              style="max-height: 300px; overflow-y: auto"-->
+<!--            >-->
+<!--              <table class="table">-->
+<!--                <thead>-->
+<!--                <tr style="font-size: small">-->
+<!--                  <th scope="col">Emballage</th>-->
+<!--                  <th scope="col">Liquide</th>-->
+<!--                  <th scope="col">Prix unitaire</th>-->
+<!--                  <th scope="col">Quantité</th>-->
+<!--                  <th scope="col">Montant total</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                <tr-->
+<!--                  style="font-size: small"-->
+<!--                  *ngFor="-->
+<!--                      let item of updateData?.paiementsCommandeGratuit[0]-->
+<!--                        ?.articles;-->
+<!--                      let i = index-->
+<!--                    "-->
+<!--                >-->
+<!--                  <td>{{ item.emballage.libelle }}</td>-->
+<!--                  <td>{{ item.liquide.libelle }}</td>-->
+<!--                  <td>{{ item.prixUnitaire }}</td>-->
+<!--                  <td>{{ item.quantite }}</td>-->
+<!--                  <td>{{ item.montantTotal| number }}</td>-->
+<!--                </tr>-->
+<!--                &lt;!&ndash; Ajoutez d'autres lignes si nécessaire &ndash;&gt;-->
+<!--                </tbody>-->
+<!--              </table>-->
+<!--            </div>-->
+<!--          </fieldset>-->
         </ng-container>
       </div>
 

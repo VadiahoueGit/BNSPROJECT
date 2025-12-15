@@ -181,7 +181,7 @@ export class RevendeurComponent {
   loadClientDetails(): void {
     this.revendeurForm.patchValue({
       isAssocie: this.updateData.isAssocie,
-      typePrixId:this.updateData.typePrix.id,
+      typePrixId:this.updateData.typePrix?.id,
       groupeClientId: this.updateData.groupeClient.id,
       numeroRegistre: this.updateData.numeroRegistre,
       raisonSocial: this.updateData.raisonSocial,

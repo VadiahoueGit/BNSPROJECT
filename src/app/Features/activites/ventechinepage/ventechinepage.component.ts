@@ -9,6 +9,7 @@ import {CoreServiceService} from '../../../core/core-service.service';
 import {LogistiqueService} from '../../../core/logistique.service';
 import {ALERT_QUESTION} from '../../shared-component/utils';
 import {StatutCommande} from "../../../utils/utils";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-ventechinepage',
@@ -26,7 +27,7 @@ export class VentechinepageComponent {
   isEditMode: boolean;
   // operation: 'create' | 'createNew' | 'edit' | 'update';
   operation: string = '';
-    currentPage: number;
+    currentPage: number = 1;
   rowsPerPage: any;
   searchTerm: string = '';
   searchTermFree: string = '';
@@ -69,8 +70,12 @@ export class VentechinepageComponent {
   signature: null;
   detailPointDevente: any = {};
   newCommande: any = [];
+  totalQteVendue = 0
+  totalQteRestant = 0
+  allArticle: any = [];
   constructor(
     private cdr: ChangeDetectorRef,
+    private router: Router,
     private _spinner: NgxSpinnerService,
     private articleService: ArticleServiceService,
     private logistiqueService: LogistiqueService,
@@ -114,12 +119,24 @@ export class VentechinepageComponent {
     this.activeTab = elt;
   }
 
+  selectArticleNew() {
+    this.isEditMode = false;
+    this.isChoiceModalOpen = true;
+    this.operation = 'createNew';
+    console.log(this.isModalOpen);
+  }
   OnAddGoods(data: any,selectedItem:any, newCommande: any) {
     let item = []
+    this.newCommandeGratuit = []
+    this.newCommande = []
     this.totalEmballage = 0;
     this.totalLiquide = 0;
     this.totalGlobal = 0;
     this.totalQte = 0;
+    this.totalEmballageFree = 0;
+    this.totalLiquideFree = 0;
+    this.totalGlobalFree = 0;
+    this.totalQteFree = 0;
     console.log(data);
     console.log(this.selectedArticles);
     if (data == 'edit') {
@@ -132,15 +149,18 @@ export class VentechinepageComponent {
     }
 
   }
-  selectArticleNew() {
-    this.isEditMode = false;
-    this.isChoiceModalOpen = true;
-    this.operation = 'createNew';
-    console.log(this.isModalOpen);
-  }
-  updateGoods(data: any) {
+
+  updateGoods(data: any,operation:string) {
+    this.depotId = data.commercial.depot.id;
+    this.GetArticleList(1);
     this.operation = 'update';
     this.newCommande = this.updateData.articles
+    this.newCommandeGratuit= this.updateData.articlesGratuit
+    // this.GetPrixByArticleFree(articles);
+    this.newCommandeGratuit.forEach((item: any) => {
+      this.getLocalPriceFree(item)
+    })
+
     this.newCommande.forEach((item: any) => {
       this.getLocalPrice(item)
     })
@@ -150,22 +170,23 @@ export class VentechinepageComponent {
   saveGoods(data: any) {
     if(data == 'createNew') {
       console.log(data)
-      // this.AjouterArticleCommandeClient()
+      this.AjouterArticleVenteChine()
     }else if(data == 'update') {
       console.log(data)
-      // this.UpdateCommande()
+       this.UpdateVente()
     }
 
     console.log(this.operation);
   }
-  DeleteArticleCommande(data:any){
+  DeleteArticleCommandeFree(data:any){
     this._spinner.show();
-    this.articleService.DeleteArticleCommandeClient(data.id).then(
+    this.articleService.DeleteArticleVenteChine(data.id,true).then(
       (response: any) => {
         this._spinner.hide();
         this.toastr.success('Succès!', response.message);
-        this.GetListCommandeClientById()
+        this.GetListVenteChineById()
         this.newCommande = [];
+        this.newCommandeGratuit = [];
         this.operation = 'edit';
       },
       (error: any) => {
@@ -174,16 +195,143 @@ export class VentechinepageComponent {
       }
     );
   }
-  GetListCommandeClientById(){
-    this.articleService.GetListCommandeClientById(this.updateData.id).then(
+  DeleteArticleCommande(data:any){
+    this._spinner.show();
+    this.articleService.DeleteArticleVenteChine(data.id,false).then(
+      (response: any) => {
+        this._spinner.hide();
+        this.toastr.success('Succès!', response.message);
+        this.GetListVenteChineById()
+        this.newCommande = [];
+        this.newCommandeGratuit = [];
+        this.operation = 'edit';
+      },
+      (error: any) => {
+        this._spinner.hide();
+        this.toastr.error('Erreur!', error.message);
+      }
+    );
+  }
+  GetListVenteChineById(){
+    this.totalEmballage = 0;
+    this.totalLiquide = 0;
+    this.totalGlobal = 0;
+    this.totalQte = 0;
+    this.totalEmballageFree = 0;
+    this.totalLiquideFree = 0;
+    this.totalGlobalFree = 0;
+    this.totalQteFree = 0;
+    this.articleService.GetListVenteChineById(this.updateData.id).then(
       (response: any) => {
         console.log('xxx')
         // this.GetListCommandeClient(1)
-        this.updateData = response.data;
+        response.articles.forEach((article: any) => {
+          this.totalEmballage += Number(article.montantEmballage);
+          this.totalLiquide += Number(article.montantLiquide);
+          this.totalGlobal = this.totalLiquide + this.totalEmballage;
+          this.totalQte += article.quantiteAffectee;
+        });
+
+        response.articlesGratuit.forEach((article: any) => {
+          this.totalEmballageFree += Number(article.montantEmballage);
+          this.totalLiquideFree += Number(article.montantLiquide);
+          this.totalGlobalFree = this.totalLiquide + this.totalEmballage;
+          this.totalQteFree += article.quantiteAffectee;
+        });
+        this.updateData = response;
         // this.newCommande = this.updateData.articles;
       },
       (error: any) => {
         this.toastr.error('Erreur!', error.message);
+      }
+    );
+  }
+
+  UpdateVente(){
+    const data = this.newCommande.map((item: any) => ({
+      id: item.id,
+      groupeArticleId: item.groupearticle?.id ? item.groupearticle?.id : item.groupeArticle?.id,
+      codeArticleLiquide: item.liquide.code,
+      codeArticleEmballage: item.liquide.emballage ? item.liquide.emballage.code : item.emballage.code,
+      prixUnitaireLiquide: Number(this.prixLiquide[item.id]),
+      prixUnitaireEmballage: Number(this.prixEmballage[item.id]),
+      quantite: Number(item.quantite) || 0,
+    })).filter((item: any) => item.quantite != 0);
+
+    const dataGratuit = this.newCommandeGratuit.map((item: any) => ({
+      id: item.id,
+      groupeArticleId: item.groupearticle?.id ? item.groupearticle?.id : item.groupeArticle?.id,
+      codeArticleLiquide: item.liquide.code,
+      codeArticleEmballage: item.liquide.emballage ? item.liquide.emballage.code : item.emballage.code,
+      prixUnitaireLiquide: Number(this.prixLiquideFree[item.id]),
+      prixUnitaireEmballage: Number(this.prixEmballageFree[item.id]),
+      quantite: Number(item.quantite) || 0,
+    })).filter((item: any) => item.quantite != 0);
+    console.log(this.prixLiquideFree,this.newCommande);
+    const payload = {
+      commercialId: this.updateData.commercial.id,
+      vehiculeId: this.updateData.vehicule.id,
+      localiteId: this.updateData.localite.id,
+      venteDate: this.updateData.dateVente,
+      articles: data,
+      articlesGratuit: dataGratuit
+    };
+
+    console.log(payload);
+    this.articleService.UpdateVente(this.updateData.id, payload).then(
+      (response: any) => {
+        this._spinner.hide();
+        this.toastr.success(response.message);
+        this.GetListVenteChineById()
+        this.operation = 'edit';
+      },
+      (error: any) => {
+        this._spinner.hide();
+        this.toastr.error('Erreur!', 'Erreur lors de la modification.');
+      }
+    );
+
+  }
+  AjouterArticleVenteChine() {
+    const data = this.newCommande.map((item: any) => ({
+      id: item.id,
+      groupeArticleId: item.groupearticle?.id ? item.groupearticle?.id : item.groupeArticle?.id,
+      codeArticleLiquide: item.liquide.code,
+      codeArticleEmballage: item.liquide.emballage.code,
+      prixUnitaireLiquide: this.prixLiquide[item.id],
+      prixUnitaireEmballage: this.prixEmballage[item.id],
+      quantite: item.quantite,
+    }));
+    const dataGratuit = this.newCommandeGratuit.map((item: any) => ({
+      id: item.id,
+      groupeArticleId: item.groupearticle?.id ? item.groupearticle?.id : item.groupeArticle?.id,
+      codeArticleLiquide: item.liquide.code,
+      codeArticleEmballage: item.liquide.emballage ? item.liquide.emballage.code : item.emballage.code,
+      prixUnitaireLiquide: Number(this.prixLiquideFree[item.id]),
+      prixUnitaireEmballage: Number(this.prixEmballageFree[item.id]),
+      quantite: Number(item.quantite) || 0,
+    })).filter((item: any) => item.quantite != 0);
+
+    const payload = {
+      articles: data,
+      articlesGratuit: dataGratuit
+    };
+
+    this._spinner.show();
+    this.articleService.AjouterArticleVenteChine(this.updateData.id, payload).then(
+      (response: any) => {
+        this._spinner.hide();
+        this.newCommande = [];
+        this.newCommandeGratuit = [];
+        this.selectedArticles = [];
+        this.selectedArticlesFree = [];
+        this.toastr.success(response.message);
+        this.GetListVenteChineById()
+        this.operation = 'edit';
+      },
+      (error: any) => {
+        this._spinner.hide();
+        this.toastr.error('Erreur!', 'Erreur lors de la modification.');
       }
     );
   }
@@ -194,22 +342,43 @@ export class VentechinepageComponent {
     this.calculatePrix(item);
 
   }
+  async getLocalPriceFree(item:any) {
+    console.log(item);
+    this.prixLiquideFree[item.id] = item.prixUnitaireLiquide;
+    this.prixEmballageFree[item.id] = item.prixUnitaireEmballage;
+    this.calculatePrixFree(item);
+
+  }
   OnCloseModal() {
-    this.totalEmballage = 0;
-    this.totalEmballageFree = 0
-    this.totalLiquide = 0;
-    this.totalLiquideFree = 0;
-    this.totalGlobal = 0;
-    this.totalGlobalFree = 0;
-    this.totalQte = 0;
-    this.totalQteFree = 0;
-    this.isModalOpen = false;
+    this.newCommandeGratuit = []
+    this.newCommande = []
+    if(this.operation == 'createNew' || this.operation == 'update') {
+      this.operation = 'edit';
+      // this.GetListVenteChineById()
+    }else{
+      this.isModalOpen = false;
+      // this.GetVenteChineList(this.currentPage);
+      this.totalEmballage = 0;
+      this.totalEmballageFree = 0
+      this.totalLiquide = 0;
+      this.totalLiquideFree = 0;
+      this.totalGlobal = 0;
+      this.totalGlobalFree = 0;
+      this.totalQte = 0;
+      this.totalQteFree = 0;
+      this.totalQteVendue = 0
+      this.totalQteRestant = 0
+    }
+
     this.selectedArticles = [];
     this.VenteForm.reset();
     this.VenteForm.controls['venteDate'].setValue(this.now);
     console.log(this.isModalOpen);
   }
 
+  goToVenteManuelle(data:any){
+    this.router.navigate(['/feature/activites/ventechinemanuelle'], { queryParams: { id: data.id } });
+  }
   onCommercialChange(selectedItem: any): void {
     console.log('Élément sélectionné :', selectedItem);
     this.depotId = selectedItem.depot.id;
@@ -328,7 +497,7 @@ export class VentechinepageComponent {
       productCode: item.liquide.code,
       depotId: this.depotId,
     };
-
+    console.log(data);
     try {
       // Attendre la réponse de la promesse
       const response: any = await this.articleService.GetStockDisponibleByDepot(
@@ -349,7 +518,7 @@ export class VentechinepageComponent {
         this.stocksDisponibles[item.liquide.id] = 0; // Si le code est 404, retourner 0
       }
     }
-    console.log('totalite', this.stocksDisponibles);
+    // console.log('totalite', this.stocksDisponibles);
   }
   removeArticleFree(item: any): void {
     console.log(item);
@@ -361,8 +530,8 @@ export class VentechinepageComponent {
     };
 
     item.isChecked = false;
-    this.calculatePrix(data);
-    this.onCheckboxChange(item);
+    this.calculatePrixFree(data);
+    this.onCheckboxFreeChange(item);
     const index = this.selectedArticlesFree.findIndex((i: any) => i.id === item.id);
 
     if (index !== -1) {
@@ -495,7 +664,7 @@ export class VentechinepageComponent {
       this.filteredArticleListFree.forEach((item: any) => {
         this.GetStockDisponibleByDepot(item);
       });
-
+  console.log(this.filteredArticleList,this.filteredArticleListFree);
       this.dataListLiquides = [...this.filteredArticleList];
       this.dataListLiquidesFree = [...this.filteredArticleListFree];
       // this.filteredArticleList = this.dataListLiquides;
@@ -508,7 +677,12 @@ export class VentechinepageComponent {
     this.totalLiquide = 0;
     this.totalGlobal = 0;
     this.totalQte = 0;
+    this.totalEmballageFree = 0;
+    this.totalLiquideFree = 0;
+    this.totalGlobalFree = 0;
     this.totalQteFree = 0
+    this.totalQteVendue = 0
+    this.totalQteRestant = 0
     this.isEditMode = true;
     console.log(data, 'updateData');
     this.updateData = data;
@@ -517,7 +691,7 @@ export class VentechinepageComponent {
         parseInt(article.prixUnitaireLiquide) +
         parseInt(article.prixUnitaireEmballage);
     });
-    console.log(this.updateData.articles, 'this.updateData.articles');
+    console.log(data.articles, 'this.updateData.articles');
 
     data.articles.forEach((article: any) => {
       this.totalEmballage += Number(article.montantEmballage);
@@ -532,7 +706,7 @@ export class VentechinepageComponent {
         parseInt(article.prixUnitaireLiquide) +
         parseInt(article.prixUnitaireEmballage);
     });
-    console.log(this.updateData.articlesGratuit, 'this.updateData.articlesGratuit');
+    console.log(data.articlesGratuit, 'this.updateData.articlesGratuit');
 
     data.articlesGratuit.forEach((article: any) => {
       this.totalEmballageFree += Number(article.montantEmballage);
@@ -541,10 +715,32 @@ export class VentechinepageComponent {
       this.totalQteFree += article.quantiteAffectee;
     });
 
+    this.updateData.ventes.forEach((vente: any) => {
+      // Ajouter isGratuit à chaque article
+      const articlesPayants = (vente.articles || []).map((a: any) => ({
+        ...a,
+        isGratuit: false,
+      }));
+
+      const articlesGratuits = (vente.articlesGratuit || []).map((a: any) => ({
+        ...a,
+        isGratuit: true,
+      }));
+
+      // Combiner les deux tableaux
+      vente.articles = [...articlesPayants, ...articlesGratuits];
+    });
+    if (this.updateData?.articles) {
+      this.totalQteVendue = this.updateData.articles
+        .reduce((sum: number, item: any) => sum + Number(item.quantiteVendue || 0), 0);
+
+      this.totalQteRestant = this.updateData.articles
+        .reduce((sum: number, item: any) => sum + Number(item.quantite || 0), 0);
+    }
+
     this.venteId = data.id;
     this.isModalOpen = true;
     this.operation = 'edit';
-    console.log(this.isModalOpen);
   }
 
   get filteredArticlesFree() {
@@ -565,6 +761,8 @@ export class VentechinepageComponent {
       console.log('GetVenteChineList:::>', res.data);
       this.totalPages = res.total; // nombre total d’enregistrements
       this.dataList = res.data;
+      this._spinner.hide();
+    },(err) => {
       this._spinner.hide();
     });
   }
@@ -610,12 +808,7 @@ export class VentechinepageComponent {
   }
 
   validateQuantite(data: any): void {
-    console.log(
-      'data.quantite',
-      data.quantite,
-      'stocksDisponibles',
-      this.stocksDisponibles[data.liquide.id]
-    );
+
     if (data.quantite > this.stocksDisponibles[data.liquide.id]) {
       // Réinitialiser la quantité à la quantité disponible
       data.quantite = '';
@@ -627,12 +820,7 @@ export class VentechinepageComponent {
   }
 
   validateQuantiteFree(data: any): void {
-    console.log(
-      'data.quantite',
-      data.quantite,
-      'stocksDisponibles',
-      this.stocksDisponibles[data.liquide.id]
-    );
+
     if (data.quantite > this.stocksDisponibles[data.liquide.id]) {
       // Réinitialiser la quantité à la quantité disponible
       data.quantite = '';
@@ -657,7 +845,6 @@ export class VentechinepageComponent {
     const prixEmballage = this.prixEmballage[data.id] || 0;
     const quantite = data.quantite || 0;
 
-    console.log('groupearticle:::>', data.groupearticle.id);
     const existingArticleIndex = this.articles.controls.findIndex(
       (control: any) => control.value.codeArticleLiquide === data.liquide.code
     );
@@ -708,7 +895,7 @@ export class VentechinepageComponent {
         this.fb.group({
           groupeArticleId: data.groupearticle.id,
           codeArticleLiquide: data.liquide.code,
-          codeArticleEmballage: data.liquide.emballage.code,
+          codeArticleEmballage: data.emballage.code,
           prixUnitaireLiquide: prixLiquide,
           prixUnitaireEmballage: prixEmballage,
           quantite: quantite,
@@ -752,7 +939,7 @@ export class VentechinepageComponent {
   }
 
   calculatePrixFree(data: any) {
-    console.log('DATA:::>', data);
+    console.log('DATA:::>', this.prixEmballageFree);
 
     const prixLiquide = 0;
     const prixEmballage = this.prixEmballageFree[data.id] || 0;
@@ -774,6 +961,7 @@ export class VentechinepageComponent {
         delete this.prixLiquideTotalFree[data.id]
       } else {
         // Mise à jour
+        console.log(quantite,prixEmballage)
         this.prixEmballageTotalFree[data.id] = quantite * prixEmballage;
         this.prixLiquideTotalFree[data.id] = quantite * prixLiquide;
         this.articlesGratuit.at(existingArticleIndex).patchValue({
@@ -784,11 +972,14 @@ export class VentechinepageComponent {
       // Ajout d'un nouvel article gratuit
       this.prixEmballageTotalFree[data.id] = quantite * prixEmballage;
       this.prixLiquideTotalFree[data.id] = quantite * prixLiquide;
+      this.totalEmballageFree += this.prixEmballageTotalFree[data.id];
+      this.totalLiquideFree += this.prixLiquideTotalFree[data.id];
+      this.totalQteFree += quantite;
       this.articlesGratuit.push(
         this.fb.group({
           groupeArticleId: data.groupearticle.id,
           codeArticleLiquide: data.liquide.code,
-          codeArticleEmballage: data.liquide.emballage.code,
+          codeArticleEmballage: data.emballage.code,
           prixUnitaireLiquide: prixLiquide,
           prixUnitaireEmballage: prixEmballage,
           quantite: quantite,

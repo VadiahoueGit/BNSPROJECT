@@ -6,7 +6,7 @@ import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
 import {ActiviteService} from "../../../../core/activite.service";
-
+import {StatutCommande} from "../../../../utils/utils";
 @Component({
   selector: 'app-retour-plein',
   templateUrl: './retour-plein.component.html',
@@ -26,6 +26,7 @@ export class RetourPleinComponent {
   isEditMode: boolean = false;
   currentPage: number;
   rowsPerPage: any;
+  totalPages: number = 0;
   constructor(
     private activiteService: ActiviteService,
     private articleService: ArticleServiceService,
@@ -63,9 +64,15 @@ export class RetourPleinComponent {
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
+    this.updateData.articles.forEach((item: any) => {
+      if (item.quantiteReelle == 0 && StatutCommande.ATTENTE_VALIDATION) {
+        item.quantiteReelle = item.quantite;
+      }
+    });
     this.articleId = data.id;
     this.isModalOpen = true;
     this.operation = 'edit';
+
     console.log(this.isModalOpen);
   }
   GetRetourPleinList(page:any) {
@@ -77,7 +84,7 @@ export class RetourPleinComponent {
     this._spinner.show();
     this.activiteService.GetRetourPleinList(data).then((res: any) => {
       this.dataList = res.data;
-
+      this.totalPages = res.total;
       console.log('ALL:::>', this.dataList);
       this._spinner.hide();
     });
@@ -85,7 +92,7 @@ export class RetourPleinComponent {
   get filteredArticles() {
     return this.updateData.articles?.filter((a:any) => a.prixUnitaire > 0);
   }
-  ValidateReturn(id:any){
+  ValidateReturn(item:any){
     ALERT_QUESTION(
       'warning',
       'Attention !',
@@ -93,7 +100,13 @@ export class RetourPleinComponent {
     ).then((res) => {
       if (res.isConfirmed == true) {
         this._spinner.show();
-        this.activiteService.ValidateRetourPlein(id).then((res: any) => {
+        let data = {
+          "articlesRecus": item.articles.map((a: any) => ({
+            id: a.id,
+            quantiteReelle: a.quantiteReelle,
+          }))
+        }
+        this.activiteService.ValidateRetourPlein(item.id,data).then((res: any) => {
           this.dataList = res.data;
           this.GetRetourPleinList(1)
           this.OnCloseModal();
@@ -130,4 +143,5 @@ export class RetourPleinComponent {
       }
     );
   }
+  protected readonly StatutCommande = StatutCommande;
 }

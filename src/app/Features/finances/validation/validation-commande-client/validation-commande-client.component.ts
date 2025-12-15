@@ -400,10 +400,15 @@ export class ValidationCommandeClientComponent {
           this._spinner.show();
           this._financeService.ApprouverCommandeClient(data.id).then((res: any) => {
             console.log('VALIDEEEEEEEEEE:::>', res);
-            this.toastr.success(res.message);
-            this.OnCloseModal();
+            if(res.statusCode ==200)
+            {
+              this.toastr.success(res.message);
+              this.GetListCommandeClient(1);
+              this.OnCloseModal();
+            }else{
+              this.toastr.error(res.message);
+            }
             this._spinner.hide();
-            this.GetListCommandeClient(1);
           });
         } else {
           this.isModalOpen = false;

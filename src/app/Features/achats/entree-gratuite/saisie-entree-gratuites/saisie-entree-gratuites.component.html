@@ -188,7 +188,7 @@
               <div style="max-height: 350px; overflow-y: auto">
                 <div class="d-flex justify-content-between" *ngIf="ListenMode">
                   <div class="mb-3">
-                   <input type="text" class="form-control" id="numeroBonLivraison" [(ngModel)]="dataSendedToReceptionMarchandiseRequest.numeroBonLivraison"
+                   <input  *ngIf="updateData.statut == false" type="text" class="form-control" id="numeroBonLivraison" [(ngModel)]="dataSendedToReceptionMarchandiseRequest.numeroBonLivraison"
                           placeholder="Entrez le numéro bon">
                  </div>
                </div>
@@ -243,7 +243,7 @@
           type="submit"
           (click)="onValidate()"
           class="btn btn-primary px-2"
-          *ngIf="ListenMode"
+          *ngIf="ListenMode && updateData.statut == false"
           [disabled]="!dataSendedToReceptionMarchandiseRequest.numeroBonLivraison "
         >
 

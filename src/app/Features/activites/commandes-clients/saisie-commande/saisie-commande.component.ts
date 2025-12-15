@@ -65,7 +65,6 @@ export class SaisieCommandeComponent {
   totalGlobalAfterRemise: number = 0;
   prixLiquideArticleSelected: any;
   prixEmballageArticleSelected: any;
-  ListCommandeClient: any;
   filters: any = {
     numeroCommande: '',
     date: '',
@@ -84,6 +83,7 @@ export class SaisieCommandeComponent {
   }
 
   ngOnInit() {
+    this.docUrl = this._config.docUrl;
     this.commandClientForm = this.fb.group({
       clientId: [null, Validators.required],
       clientType: ['revendeur',],
@@ -126,8 +126,11 @@ export class SaisieCommandeComponent {
 
   }
 
-  onDelete(item: any) {
-    console.log(item);
+  PrintDoc(item: any) {
+    const url = item.bonLivraison;
+    const win = window.open(this.docUrl+'/'+url, '_blank');
+    win?.focus();
+    win?.print();
   }
 
   onFilterGlobal(event: Event) {

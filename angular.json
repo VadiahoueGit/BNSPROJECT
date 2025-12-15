@@ -40,8 +40,11 @@
               "src/styles.scss",
               "src/assets/font-awesome-v6/css/all.css",
               "src/app/GlobalStyle.scss",
-              "node_modules/angular-calendar/css/angular-calendar.css"
-
+              "node_modules/angular-calendar/css/angular-calendar.css",
+              "node_modules/ng-wizard/themes/ng_wizard.min.css",
+              "node_modules/ng-wizard/themes/ng_wizard_theme_arrows.min.css",
+              "node_modules/ng-wizard/themes/ng_wizard_theme_circles.min.css",
+              "node_modules/ng-wizard/themes/ng_wizard_theme_dots.min.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",

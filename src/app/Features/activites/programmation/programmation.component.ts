@@ -6,7 +6,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {UtilisateurResolveService} from "../../../core/utilisateur-resolve.service";
 import {LogistiqueService} from "../../../core/logistique.service";
 import {ToastrService} from "ngx-toastr";
-import { ALERT_QUESTION } from '../../shared-component/utils';
+import {ALERT_QUESTION} from '../../shared-component/utils';
 
 @Component({
   selector: 'app-programmation',
@@ -29,23 +29,24 @@ export class ProgrammationComponent {
   filteredPointDeVente: any[] = [];
   isModalOpen: boolean = false;
   totalPages: number = 0;
-  currentPage:any
+  currentPage: any
   VisiteForm: FormGroup;
-  rowsPerPage:any
+  rowsPerPage: any
   filters: any = {
     dateDebut: '',
     dateFin: '',
     commercialNomPrenom: ''
   };
-  updateData:any;
-  operation:string = ''
+  updateData: any;
+  operation: string = ''
   commerciaux = []
   vehicules = []
-  typeVisite  = []
+  typeVisite = []
   selectedItems: any = []
   selectedItemsIds: any = []
   searchForm: FormGroup
   visiteId: number;
+
   constructor(
     private toastr: ToastrService,
     private fb: FormBuilder,
@@ -75,6 +76,7 @@ export class ProgrammationComponent {
       IsRepetitive: [true, Validators.required],
     });
   }
+
   ViewDetails(data: any) {
     this.operation = 'edit'
     this.isModalOpen = true;
@@ -89,7 +91,7 @@ export class ProgrammationComponent {
 
   onDelete(data: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
-      (res:any) => {
+      (res: any) => {
         if (res.isConfirmed == true) {
           this._spinner.show();
           this.activiteService.DeletePlanification(data.id).then((res: any) => {
@@ -104,12 +106,13 @@ export class ProgrammationComponent {
       }
     );
   }
-  loadDepotDetails(data:any): void {
+
+  loadDepotDetails(data: any): void {
     this.selectedItems = data.pointsDeVente
-    this.selectedItems.forEach((pdv:any) => pdv.isChecked = true);
+    this.selectedItems.forEach((pdv: any) => pdv.isChecked = true);
     this.LoadPdv(data.commercial)
     this.visiteId = data.id
-    data.pointsDeVente.forEach((pdv:any) => {
+    data.pointsDeVente.forEach((pdv: any) => {
       this.toggleSelection(pdv);
     });
 
@@ -117,7 +120,7 @@ export class ProgrammationComponent {
     this.VisiteForm.patchValue({
       typeVisite: data.typeVisite.id,
       commercialId: data.commercial.id,
-      pointsDeVenteIds: data.pointsDeVente.map((pdv:any) => pdv.id), // ✅ extraire uniquement les IDs
+      pointsDeVenteIds: data.pointsDeVente.map((pdv: any) => pdv.id), // ✅ extraire uniquement les IDs
       vehiculeId: data.vehicule.id,
       dateVisite: data.dateDebut,
       repetitionDays: data.repetitionDays,
@@ -127,6 +130,7 @@ export class ProgrammationComponent {
 
 
   }
+
   filterData(): void {
     const query = this.searchForm.get('searchQuery')?.value;
 
@@ -140,6 +144,7 @@ export class ProgrammationComponent {
       );
     }
   }
+
   filterGlobal() {
     this.LoadVisite(
       1,
@@ -148,7 +153,8 @@ export class ProgrammationComponent {
       this.filters.commercialNomPrenom
     );
   }
-  LoadVisite(page: number, dateDebut?: string,dateFin?: string,commercialNomPrenom?: string,) {
+
+  LoadVisite(page: number, dateDebut?: string, dateFin?: string, commercialNomPrenom?: string,) {
     let data = {
       paginate: true,
       page: page,
@@ -201,25 +207,26 @@ export class ProgrammationComponent {
       })
   }
 
-  LoadPdv(item:any) {
+  LoadPdv(item: any) {
     let data = {
       paginate: false,
       page: 1,
       limit: 8,
-      id:item.depot.id
+      id: item.depot.id
     };
     this.utilisateurService.GetPointDeVenteListByDepot(data).then((res: any) => {
       this.pointDeVente = res.data
       this.filteredPointDeVente = this.pointDeVente;
 
       this.filteredPointDeVente.forEach(pdv => {
-        pdv.isChecked = this.selectedItems.some((sel:any) => sel.id === pdv.id);
+        pdv.isChecked = this.selectedItems.some((sel: any) => sel.id === pdv.id);
       });
       console.log('pointDeVente', res)
     }, (error: any) => {
       this._spinner.hide()
     })
   }
+
   LoadTypeVisite() {
     let data = {
       paginate: false,
@@ -257,7 +264,7 @@ export class ProgrammationComponent {
         this.selectedItemsIds.splice(idIndex, 1);
       }
       this.filteredPointDeVente.forEach(pdv => {
-        pdv.isChecked = this.selectedItems.some((sel:any) => sel.id === pdv.id);
+        pdv.isChecked = this.selectedItems.some((sel: any) => sel.id === pdv.id);
       });
     }
 
@@ -292,13 +299,15 @@ export class ProgrammationComponent {
     item.isChecked = false;
     this.toggleSelection(item);
   }
+
   OnCloseModal() {
     this.isModalOpen = false;
+    this.VisiteForm.reset()
+    this.updateData = []
     console.log(this.isModalOpen);
   }
 
-  onValidate()
-  {
+  onValidate() {
     this._spinner.show()
     const formValues = {
       "commercialId": this.VisiteForm.value.commercialId,
@@ -310,11 +319,16 @@ export class ProgrammationComponent {
       "vehiculeId": this.VisiteForm.value.vehiculeId,
       "IsRepetitive": this.VisiteForm.value.IsRepetitive
     };
-    this.activiteService.UpdateVisiteProgrammation(this.visiteId,formValues).then((res: any) => {
+    this.activiteService.UpdateVisiteProgrammation(this.visiteId, formValues).then((res: any) => {
         this._spinner.hide()
+        this.filteredPointDeVente = []
+        this.OnCloseModal()
+        this.updateData = []
+        this.selectedItemsIds = []
         this.toastr.success(res
           .message);
         this.LoadVisite(1)
+
       },
       (error: any) => {
         this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');

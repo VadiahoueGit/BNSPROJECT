@@ -15,12 +15,26 @@ export class LoginComponent implements OnInit {
   public loginForm!: FormGroup;
   isLoading:Boolean = false;
   submitError:Boolean = false;
+  testVersion:boolean = false;
   constructor(private _router: Router,
     private localstorage:LocalStorageService,
     private _auth : CoreServiceService,
     private _spinner :NgxSpinnerService
   ) {}
   ngOnInit(): void {
+    // 🔍 Détection automatique de l’environnement
+    const hostname = window.location.hostname.toLowerCase();
+    if (
+      hostname.includes('test') ||
+      hostname.includes('staging') ||
+      hostname.includes('local') ||
+      hostname === 'localhost' ||
+      hostname.startsWith('127.')
+    ) {
+      this.testVersion = true
+    }else{
+      this.testVersion = false;
+    }
     this.loginForm = new FormGroup({
       login: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [
@@ -30,7 +44,7 @@ export class LoginComponent implements OnInit {
       appType: new FormControl('BO'),
     });
   }
-  
+
   async ToConnect() {
     this.isLoading = true;
     if (this.loginForm.valid) {

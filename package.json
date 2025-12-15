@@ -39,6 +39,7 @@
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.46",
     "ng-otp-input": "^1.9.3",
+    "ng-wizard": "^19.0.1",
     "ngx-datatable": "^1.0.3",
     "ngx-drag-drop": "^19.0.0",
     "ngx-file-drop": "^16.0.0",

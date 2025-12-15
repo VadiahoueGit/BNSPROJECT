@@ -41,6 +41,7 @@ export class PaiementenattenteComponent {
   totalQte: number;
   selectedArticles: never[];
   totalPages: number;
+  hstoriquePayment: any = [];
   constructor(
     private articleService: ArticleServiceService,
     private financeService: FinanceService,
@@ -62,7 +63,14 @@ export class PaiementenattenteComponent {
   clear(table: Table) {
     table.clear();
   }
-
+  GetHistoriquePayment(id: number) {
+    this._spinner.show();
+    this.financeService.GetHistoriquePayment(id).then((res: any) => {
+      this.hstoriquePayment = res.data
+      console.log('data:::>', res);
+      this._spinner.hide();
+    });
+  }
   OnCreate() {
     this.isEditMode = false;
     this.isModalOpen = true;
@@ -71,6 +79,7 @@ export class PaiementenattenteComponent {
   }
 
   OnEdit(data: any) {
+    this.GetHistoriquePayment(data.id)
     this.isEditMode = true;
     console.log(data);
     this.updateData = data;
@@ -212,4 +221,6 @@ export class PaiementenattenteComponent {
       }
     });
   }
+
+  protected readonly Status = Status;
 }

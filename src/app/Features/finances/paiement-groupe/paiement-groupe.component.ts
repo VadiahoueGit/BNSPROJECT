@@ -16,7 +16,7 @@ export class PaiementGroupeComponent {
   dataList: any = [];
   currentPage: number
   rowsPerPage: number
-
+  amountReal: number = 0
   isModalOpen = false;
   operation: string = '';
   updateData: any = {};
@@ -41,6 +41,7 @@ export class PaiementGroupeComponent {
       transaction.paiements.some((paiement: any) => paiement.statut === 'En attente')
     );
     this.isModalOpen = true;
+    this.amountReal = this.calculerTotalPaiements(this.updateData?.transactions)
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
@@ -99,7 +100,8 @@ export class PaiementGroupeComponent {
 
 
     const data = {
-      paiementIds: interm
+      paiementIds: interm,
+      montantTotalRecu: this.amountReal,
     };
     this._spinner.show();
     this.financeService.ValiderPaiementGroup(data).then((res: any) => {
