@@ -190,6 +190,9 @@ export class PaiementenattenteComponent {
       }
     );
   }
+  get filteredArticles() {
+    return this.updateData.returnStock?.ventesReturn?.filter((a:any) => a.prixUnitaire > 0);
+  }
   OnCloseModal() {
     this.totalEmballage = 0;
     this.totalLiquide = 0;
@@ -199,7 +202,7 @@ export class PaiementenattenteComponent {
     this.selectedArticles = [];
     console.log(this.isModalOpen);
   }
-  ValidatePaiement(id: number) {
+  ValidatePaiement(item: any) {
     ALERT_QUESTION(
       'warning',
       'Attention !',
@@ -207,7 +210,7 @@ export class PaiementenattenteComponent {
     ).then((res) => {
       if (res.isConfirmed == true) {
         this._spinner.show();
-        this.financeService.ValidatePaiement(id).then((res: any) => {
+        this.financeService.ValidatePaiement(item.id).then((res: any) => {
           console.log('validation:::>', res);
           this._spinner.hide();
           this.GetPaiementList(1);

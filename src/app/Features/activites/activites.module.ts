@@ -130,6 +130,7 @@ import { EcartEmballageComponent } from './gestion-des-retours/ecart-emballage/e
 import {ProformatComponent} from "./proformat/proformat.component";
 import {VentemanuelleComponent} from "./ventemanuelle/ventemanuelle.component";
 import {NgWizardModule} from "ng-wizard";
+import { ConsigneComponent } from './gestion-des-retours/consigne/consigne.component';
 registerLocaleData(localeFr, 'fr');
 @NgModule({
   declarations: [
@@ -161,7 +162,8 @@ registerLocaleData(localeFr, 'fr');
     VenteGlobalComponent,
     VenteGlobalFacturesComponent,
     ProgrammationComponent,
-    EcartEmballageComponent
+    EcartEmballageComponent,
+    ConsigneComponent
   ],
   imports: [
     TableModule,

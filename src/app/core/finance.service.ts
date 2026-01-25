@@ -132,6 +132,25 @@ export class FinanceService {
     });
   }
 
+  GetConsigne(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http
+        .get(
+          `${this.apiUrl}/v1/comptabilite/transactions/consigne?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&numeroCommande=${data.numeroCommande}&agent=${data.agent}&clientNom=${data.clientNom}&statut=${data.statut}`
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            this._spinner.hide();
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
   GetPaiementListAttente(data: any) {
     return new Promise((resolve: any, reject: any) => {
       this._http

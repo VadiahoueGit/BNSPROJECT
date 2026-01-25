@@ -104,6 +104,7 @@ export class RetourPleinComponent {
           "articlesRecus": item.articles.map((a: any) => ({
             id: a.id,
             quantiteReelle: a.quantiteReelle,
+            type: a.isFree == true ? "GRATUIT" : "PAYANT"
           }))
         }
         this.activiteService.ValidateRetourPlein(item.id,data).then((res: any) => {

@@ -8,6 +8,9 @@
     <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'suiviRdv'"
         (click)="activeElement('suiviRdv')">Suivi des Rdv</a>
 
+     <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'consigne'"
+     (click)="activeElement('consigne')">Consignes</a>
+
     <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'receptionEmallage'"
         (click)="activeElement('receptionEmallage')">Réceptions emballages</a>
 
@@ -29,7 +32,9 @@
     <div *ngIf="activeTab === 'suiviRdv'" class="tab-pane fade show active">
         <app-suivi-des-rdv></app-suivi-des-rdv>
     </div>
-
+  <div *ngIf="activeTab === 'consigne'" class="tab-pane fade show active">
+    <app-consigne></app-consigne>
+  </div>
     <div *ngIf="activeTab === 'listReceptionEmallage'" class="tab-pane fade show active">
         <app-list-des-receptions-emballages></app-list-des-receptions-emballages>
     </div>

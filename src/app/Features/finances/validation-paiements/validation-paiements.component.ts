@@ -71,7 +71,9 @@ export class ValidationPaiementsComponent {
     this.operation = 'create';
     console.log(this.isModalOpen);
   }
-
+  get filteredArticles() {
+    return this.updateData.returnStock?.ventesReturn?.filter((a:any) => a.prixUnitaire > 0);
+  }
   OnEdit(data: any) {
     this.GetHistoriquePayment(data.id)
     this.isEditMode = true;

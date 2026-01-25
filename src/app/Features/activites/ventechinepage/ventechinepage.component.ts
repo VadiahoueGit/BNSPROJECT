@@ -74,6 +74,7 @@ export class VentechinepageComponent {
   totalQteRestant = 0
   allArticle: any = [];
   constructor(
+    private activite:ActiviteService,
     private cdr: ChangeDetectorRef,
     private router: Router,
     private _spinner: NgxSpinnerService,
@@ -669,6 +670,32 @@ export class VentechinepageComponent {
       this.dataListLiquidesFree = [...this.filteredArticleListFree];
       // this.filteredArticleList = this.dataListLiquides;
       // this.filteredArticleListFree = this.dataListLiquidesFree;
+    });
+  }
+
+  OnCancel(data:any){
+    console.log(data);
+    ALERT_QUESTION(
+      'warning',
+      'Attention !',
+      'Voulez-vous annuler cette vente?'
+    ).then((res) => {
+      if (res.isConfirmed == true) {
+        this._spinner.show();
+        this.activite.AnnulerVente(data.id).then((res: any) => {
+          console.log('validation :::>', res);
+          this._spinner.hide();
+          this.GetVenteChineList(1);
+          this.isModalOpen = false
+          this.toastr.success(res.message);
+        },
+          (error: any) => {
+            this._spinner.hide();
+            this.toastr.info(error.error.message);
+          })
+      } else {
+        this.isModalOpen = false;
+      }
     });
   }
 

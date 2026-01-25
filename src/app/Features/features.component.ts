@@ -7,6 +7,7 @@ import {CoreServiceService} from "../core/core-service.service";
 import {NgxSpinnerService} from "ngx-spinner";
 import {ToastrService} from "ngx-toastr";
 import {hasPermission} from "../utils/utils";
+import {CorsMonitorService} from "../core/cors-monitoring.service";
 
 @Component({
   selector: 'app-features',
@@ -46,6 +47,7 @@ export class FeaturesComponent {
 
   constructor(private _auth: CoreServiceService, private router: Router, private coreServices: CoreServiceService, private localstorage: LocalStorageService, private _spinner: NgxSpinnerService,
               private fb: FormBuilder,
+              private corsMonitor: CorsMonitorService,
               private toastr: ToastrService,) {
     this.currentUrl = this.router.url; // URL courante
     this.passwordForm = this.fb.group({
@@ -55,6 +57,7 @@ export class FeaturesComponent {
   }
 
   ngOnInit(): void {
+    this.corsMonitor.startMonitoring();
     this.UserInfo = this.localstorage.getItem(storage_keys.STOREUser);
     console.log(this.UserInfo)
     this.getNotifications(1);

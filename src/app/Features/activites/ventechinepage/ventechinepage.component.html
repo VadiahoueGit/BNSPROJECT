@@ -55,7 +55,6 @@
             class="fas fa-eye text-secondary"
           ></i>
         </td>
-
       </tr>
       </td>
       </tr>
@@ -101,9 +100,10 @@
         </h1>
       </div>
       <nav class="nav nav-pills flex-column flex-sm-row gap-1 border-bottom">
-        <a class="flex-sm text-sm-center nav-link" *ngIf="operation == 'edit'"[class.active]="activeTab === 'detail'"
+        <a class="flex-sm text-sm-center nav-link" *ngIf="operation == 'edit'" [class.active]="activeTab === 'detail'"
            (click)="activeElement('detail')">Détails</a>
-        <a class="flex-sm text-sm-center nav-link" *ngIf="operation == 'edit'" [class.active]="activeTab === 'suivivente'"
+        <a class="flex-sm text-sm-center nav-link" *ngIf="operation == 'edit'"
+           [class.active]="activeTab === 'suivivente'"
            (click)="activeElement('suivivente')">Suivi des ventes</a>
         <a class="flex-sm text-sm-center nav-link" *ngIf="operation == 'edit'" [class.active]="activeTab === 'retour'"
            (click)="activeElement('retour')">Retours d'emballage</a>
@@ -111,7 +111,8 @@
       <div class="modal-body" style="max-height: 70vh;overflow-y: auto;">
         <!-- DETAIL VENTE-->
         <div class="row  tab-pane fade show active" *ngIf="activeTab === 'detail'">
-          <div class="d-flex justify-content-end" *ngIf="updateData?.statut == StatutCommande.APPROUVEE && operation == 'edit'">
+          <div class="d-flex justify-content-end"
+               *ngIf="updateData?.statut == StatutCommande.APPROUVEE && operation == 'edit'">
             <button
               type="submit"
               class="btn btn-warning px-2 mx-2"
@@ -206,7 +207,8 @@
             </fieldset>
           </form>
           <div>
-            <fieldset class="row border my-1"  *ngIf="operation == 'edit' || operation == 'update' || operation == 'createNew'">
+            <fieldset class="row border my-1"
+                      *ngIf="operation == 'edit' || operation == 'update' || operation == 'createNew'">
               <legend style="font-size: 14px" class="text-secondary">
                 Information Livraison
               </legend>
@@ -234,7 +236,8 @@
                 </div>
               </div>
             </fieldset>
-            <fieldset class="row border my-2"  *ngIf="operation == 'edit' || operation == 'update' || operation == 'createNew'">
+            <fieldset class="row border my-2"
+                      *ngIf="operation == 'edit' || operation == 'update' || operation == 'createNew'">
               <legend style="font-size: 14px" class="text-secondary">
                 Informations du véhicule
               </legend>
@@ -304,8 +307,8 @@
                 <tbody>
                 <tr *ngFor="let item of  operation == 'createNew'? newCommande : selectedArticles">
                   <td>{{ item?.liquide?.libelle }}</td>
-                  <td>{{ prixLiquide[item.id] | number}}</td>
-                  <td>{{ prixEmballage[item.id] | number}}</td>
+                  <td>{{ prixLiquide[item.id] | number }}</td>
+                  <td>{{ prixEmballage[item.id] | number }}</td>
                   <td>{{ prixEmballage[item.id] + prixLiquide[item.id]| number }}</td>
                   <td>
                     <input
@@ -320,11 +323,11 @@
                         }"
                       (blur)="validateQuantite(item)"
                     />
-                    / {{stocksDisponibles[item.liquide.id]}}
+                    / {{ stocksDisponibles[item.liquide.id] }}
                   </td>
-                  <td>{{ prixLiquideTotal[item.id] | number}}</td>
-                  <td>{{ prixEmballageTotal[item.id] | number}}</td>
-                  <td>{{ montantTotal[item.id] | number}}</td>
+                  <td>{{ prixLiquideTotal[item.id] | number }}</td>
+                  <td>{{ prixEmballageTotal[item.id] | number }}</td>
+                  <td>{{ montantTotal[item.id] | number }}</td>
                   <td class="d-flex justify-content-center">
                     <button
                       type="button"
@@ -337,9 +340,9 @@
                 </tr>
                 <tr class="table-dark">
                   <th scope="col" colspan="4">Total :</th>
-                  <td>{{ totalQte | number}}</td>
-                  <td>{{ totalLiquide | number}}</td>
-                  <td>{{ totalEmballage | number}}</td>
+                  <td>{{ totalQte | number }}</td>
+                  <td>{{ totalLiquide | number }}</td>
+                  <td>{{ totalEmballage | number }}</td>
                   <td>{{ totalGlobal| number }}</td>
                   <td></td>
                 </tr>
@@ -369,9 +372,9 @@
                 <tbody>
                 <tr *ngFor="let item of newCommande">
                   <td>{{ item?.liquide?.libelle }}</td>
-                  <td>{{ item.prixUnitaireLiquide | number}}</td>
-                  <td>{{ item.prixUnitaireEmballage | number}}</td>
-                  <td>{{ (item.prixUnitaireLiquide || 0) * 1 + (item.prixUnitaireEmballage || 0) * 1 | number}}</td>
+                  <td>{{ item.prixUnitaireLiquide | number }}</td>
+                  <td>{{ item.prixUnitaireEmballage | number }}</td>
+                  <td>{{ (item.prixUnitaireLiquide || 0) * 1 + (item.prixUnitaireEmballage || 0) * 1 | number }}</td>
                   <td>
                     <input
                       type="number"
@@ -380,10 +383,10 @@
                       [min]="0"
                       (ngModelChange)="getLocalPrice(item)"
                     />
-                    / {{stocksDisponibles[item.liquide.id]}}
+                    / {{ stocksDisponibles[item.liquide.id] }}
                   </td>
-                  <td>{{ prixLiquideTotal[item.id] | number}}</td>
-                  <td>{{ prixEmballageTotal[item.id] | number}}</td>
+                  <td>{{ prixLiquideTotal[item.id] | number }}</td>
+                  <td>{{ prixEmballageTotal[item.id] | number }}</td>
                   <td>{{ montantTotal[item.id]| number }}</td>
                   <td class="d-flex justify-content-center">
                     <button
@@ -398,9 +401,9 @@
                 <tr class="table-dark">
                   <th scope="col" colspan="4">Total :</th>
                   <td>{{ totalQte| number }}</td>
-                  <td>{{ totalLiquide | number}}</td>
-                  <td>{{ totalEmballage | number}}</td>
-                  <td>{{ totalGlobal | number}}</td>
+                  <td>{{ totalLiquide | number }}</td>
+                  <td>{{ totalEmballage | number }}</td>
+                  <td>{{ totalGlobal | number }}</td>
                   <td></td>
                 </tr>
                 </tbody>
@@ -430,25 +433,25 @@
                 <tbody>
                 <tr *ngFor="let item of updateData?.articles">
                   <td>{{ item.liquide.libelle }}1</td>
-                  <td>{{ item.prixUnitaireLiquide | number}}</td>
-                  <td>{{ item.prixUnitaireEmballage | number}}</td>
-                  <td>{{ Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) | number}}</td>
+                  <td>{{ item.prixUnitaireLiquide | number }}</td>
+                  <td>{{ item.prixUnitaireEmballage | number }}</td>
+                  <td>{{ Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) | number }}</td>
                   <td>{{ item.quantiteVendue }}</td>
                   <td>{{ item.quantite }}</td>
                   <td>{{ item.quantiteAffectee }}</td>
-                  <td>{{ item.montantLiquide | number}}</td>
-                  <td>{{ item.montantEmballage | number}}</td>
-                  <td>{{ Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) | number}}</td>
+                  <td>{{ item.montantLiquide | number }}</td>
+                  <td>{{ item.montantEmballage | number }}</td>
+                  <td>{{ Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) | number }}</td>
 
                 </tr>
                 <tr class="table-dark">
                   <th scope="col" colspan="4">Total :</th>
-                  <td>{{totalQteVendue | number}}</td>
-                  <td>{{totalQteRestant | number}}</td>
+                  <td>{{ totalQteVendue | number }}</td>
+                  <td>{{ totalQteRestant | number }}</td>
                   <td>{{ totalQte| number }}</td>
-                  <td>{{ totalLiquide | number}}</td>
-                  <td>{{ totalEmballage | number}}</td>
-                  <td>{{ totalGlobal | number}}</td>
+                  <td>{{ totalLiquide | number }}</td>
+                  <td>{{ totalEmballage | number }}</td>
+                  <td>{{ totalGlobal | number }}</td>
                 </tr>
                 </tbody>
               </table>
@@ -500,8 +503,8 @@
                 <tbody>
                 <tr *ngFor="let item of  operation == 'createNew'? newCommandeGratuit : selectedArticlesFree">
                   <td>{{ item?.liquide?.libelle }}</td>
-                  <td>{{ prixLiquideFree[item.id] | number}}</td>
-                  <td>{{ prixEmballageFree[item.id] | number}}</td>
+                  <td>{{ prixLiquideFree[item.id] | number }}</td>
+                  <td>{{ prixEmballageFree[item.id] | number }}</td>
                   <td>{{ prixEmballageFree[item.id] + prixLiquideFree[item.id]| number }}</td>
                   <td>
                     <input
@@ -516,12 +519,12 @@
                         }"
                       (blur)="validateQuantiteFree(item)"
                     />
-                    / {{stocksDisponibles[item.liquide.id]}}
+                    / {{ stocksDisponibles[item.liquide.id] }}
                   </td>
 
-                  <td>{{ prixLiquideTotalFree[item.id] | number}}</td>
-                  <td>{{ prixEmballageTotalFree[item.id] | number}}</td>
-                  <td>{{ montantTotalFree[item.id] | number}}</td>
+                  <td>{{ prixLiquideTotalFree[item.id] | number }}</td>
+                  <td>{{ prixEmballageTotalFree[item.id] | number }}</td>
+                  <td>{{ montantTotalFree[item.id] | number }}</td>
                   <td class="d-flex justify-content-center">
                     <button
                       type="button"
@@ -537,7 +540,7 @@
                   <td></td>
                   <td>{{ totalQteFree | number }}</td>
                   <td>{{ totalLiquideFree | number }}</td>
-                  <td>{{ totalEmballageFree | number}}</td>
+                  <td>{{ totalEmballageFree | number }}</td>
                   <td>{{ totalGlobalFree | number }}</td>
                   <td></td>
                 </tr>
@@ -567,9 +570,9 @@
                 <tbody>
                 <tr *ngFor="let item of newCommandeGratuit">
                   <td>{{ item?.liquide?.libelle }}</td>
-                  <td>{{ item.prixUnitaireLiquide | number}}</td>
-                  <td>{{ item.prixUnitaireEmballage | number}}</td>
-                  <td>{{ (item.prixUnitaireLiquide || 0) * 1 + (item.prixUnitaireEmballage || 0) * 1 | number}}</td>
+                  <td>{{ item.prixUnitaireLiquide | number }}</td>
+                  <td>{{ item.prixUnitaireEmballage | number }}</td>
+                  <td>{{ (item.prixUnitaireLiquide || 0) * 1 + (item.prixUnitaireEmballage || 0) * 1 | number }}</td>
                   <td>
                     <input
                       type="number"
@@ -583,10 +586,10 @@
                       }"
                       (blur)="validateQuantiteFree(item)"
                     />
-                    / {{stocksDisponibles[item.liquide.id]}}
+                    / {{ stocksDisponibles[item.liquide.id] }}
                   </td>
-                  <td>{{ prixLiquideTotalFree[item.id] | number}}</td>
-                  <td>{{ prixEmballageTotalFree[item.id] | number}}</td>
+                  <td>{{ prixLiquideTotalFree[item.id] | number }}</td>
+                  <td>{{ prixEmballageTotalFree[item.id] | number }}</td>
                   <td>{{ montantTotalFree[item.id]| number }}</td>
                   <td class="d-flex justify-content-center">
                     <button
@@ -602,7 +605,7 @@
                   <th scope="col" colspan="4">Total :</th>
                   <td>{{ totalQteFree | number }}</td>
                   <td>{{ totalLiquideFree | number }}</td>
-                  <td>{{ totalEmballageFree | number}}</td>
+                  <td>{{ totalEmballageFree | number }}</td>
                   <td>{{ totalGlobalFree | number }}</td>
                   <td></td>
                 </tr>
@@ -633,23 +636,24 @@
                 <tbody>
                 <tr *ngFor="let item of updateData?.articlesGratuit">
                   <td>{{ item.liquide.libelle }}1</td>
-                  <td>{{ item.prixUnitaireLiquide | number}}</td>
-                  <td>{{ item.prixUnitaireEmballage | number}}</td>
-                  <td>{{ Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) | number}}</td>
+                  <td>{{ item.prixUnitaireLiquide | number }}</td>
+                  <td>{{ item.prixUnitaireEmballage | number }}</td>
+                  <td>{{ Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) | number }}</td>
                   <td>{{ item.quantiteAffectee - item.quantite }}</td>
                   <td>{{ item.quantite }}</td>
                   <td>{{ item.quantiteAffectee }}</td>
-                  <td>{{ item.montantLiquide | number}}</td>
-                  <td>{{ item.montantEmballage | number}}</td>
-                  <td>{{ Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) | number}}</td>
+                  <td>{{ item.montantLiquide | number }}</td>
+                  <td>{{ item.montantEmballage | number }}</td>
+                  <td>{{ Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) | number }}</td>
 
                 </tr>
                 <tr class="table-dark">
                   <th scope="col" colspan="4">Total :</th>
-                  <td></td><td></td>
+                  <td></td>
+                  <td></td>
                   <td>{{ totalQteFree | number }}</td>
                   <td>{{ totalLiquideFree | number }}</td>
-                  <td>{{ totalEmballageFree | number}}</td>
+                  <td>{{ totalEmballageFree | number }}</td>
                   <td>{{ totalGlobalFree | number }}</td>
                 </tr>
                 </tbody>
@@ -662,15 +666,39 @@
         <div class="row tab-pane fade show active" *ngIf="activeTab === 'suivivente' && operation == 'edit'">
           <fieldset class="row border my-2" *ngFor="let data of updateData.ventes">
             <div class="row d-flex justify-content-between align-items-center">
+              <legend class="text-primary">Client - {{ data.pointdevente.nomEtablissement }}
+                au {{ data.pointdevente.telephone }} -  {{ data.statut }}
+              </legend>
+              <div class="d-flex justify-content-between align-items-center">
+                <label class="text-secondary"
+                       *ngIf="data.signatureClient"
+                       style="cursor:pointer"
+                       (click)="OnViewSign(data.signatureClient)">
+                  Voir signature
+                </label>
 
-              <legend class="text-primary">Client - {{data.pointdevente.nomEtablissement}} au {{data.pointdevente.telephone}} </legend>
-              <label class="text-secondary" *ngIf="data.signatureClient" style="cursor:pointer" (click)="OnViewSign(data.signatureClient)">Voir signature</label>
+                <div class="d-flex flex-column align-items-end">
+                  <!-- Bouton en dessous -->
+                  <button class="btn btn-danger w-auto"
+                          [disabled]="data.statut == 'Annulée'"
+                          (click)="OnCancel(data)"
+                          style="cursor: pointer">
+                    <i class="fas fa-arrow-rotate-left text-white"></i>
+                    Annuler
+                  </button>
+                </div>
+              </div>
+
             </div>
-            <div class="d-flex flex-row justify-content-between align-items-center flex-wrap my-2" >
-              <div><span>Date - {{data.dateVente | date:'dd/MM/yyyy HH:mm:ss'}}</span></div>
-             <div><span>Montant à perçevoir : </span><span>{{data.transaction?.montantAPercevoir | currency :'XOF'}}</span></div>
-              <div><span>Montant perçu : </span><span>{{data.transaction?.montantPercu | currency :'XOF'}}</span></div>
-              <div><span>Montant restant : </span><span>{{data.transaction?.montantRestant | currency :'XOF'}}</span></div>
+            <div class="d-flex flex-row justify-content-between align-items-center flex-wrap my-2">
+              <div><span>Date - {{ data.dateVente | date:'dd/MM/yyyy HH:mm:ss' }}</span></div>
+              <div>
+                <span>Montant à perçevoir : </span><span>{{ data.transaction?.montantAPercevoir | currency :'XOF' }}</span>
+              </div>
+              <div><span>Montant perçu : </span><span>{{ data.transaction?.montantPercu | currency :'XOF' }}</span>
+              </div>
+              <div><span>Montant restant : </span><span>{{ data.transaction?.montantRestant | currency :'XOF' }}</span>
+              </div>
             </div>
             <div
               class="table-responsive"
@@ -696,9 +724,9 @@
                       Gratuit
                       </span>
                   </td>
-                  <td>{{ item.quantite | number}}</td>
-                  <td>{{ item.prixUnitaire | number}}</td>
-                  <td>{{ item.montantTotal | number}}</td>
+                  <td>{{ item.quantite | number }}</td>
+                  <td>{{ item.prixUnitaire | number }}</td>
+                  <td>{{ item.montantTotal | number }}</td>
 
                 </tr>
 
@@ -707,42 +735,43 @@
               </table>
             </div>
 
-<!--            <div-->
-<!--              class="table-responsive"-->
-<!--              style="max-height: 300px; overflow-y: auto"-->
-<!--            >-->
-<!--              <table class="table">-->
-<!--                <thead>-->
-<!--                <tr style="font-size: small">-->
-<!--                  <th scope="col">Produits</th>-->
-<!--                  <th scope="col" class="text-center">Qte Emballage retourné</th>-->
-<!--                </tr>-->
-<!--                </thead>-->
-<!--                <tbody>-->
-<!--                <tr-->
-<!--                  style="font-size: small"-->
-<!--                  *ngFor="let item of data.articles; let i = index"-->
-<!--                >-->
-<!--                  <td>{{ item.emballage.libelle }}</td>-->
-<!--                  <td class="text-center">{{ item.quantite }}</td>-->
+            <!--            <div-->
+            <!--              class="table-responsive"-->
+            <!--              style="max-height: 300px; overflow-y: auto"-->
+            <!--            >-->
+            <!--              <table class="table">-->
+            <!--                <thead>-->
+            <!--                <tr style="font-size: small">-->
+            <!--                  <th scope="col">Produits</th>-->
+            <!--                  <th scope="col" class="text-center">Qte Emballage retourné</th>-->
+            <!--                </tr>-->
+            <!--                </thead>-->
+            <!--                <tbody>-->
+            <!--                <tr-->
+            <!--                  style="font-size: small"-->
+            <!--                  *ngFor="let item of data.articles; let i = index"-->
+            <!--                >-->
+            <!--                  <td>{{ item.emballage.libelle }}</td>-->
+            <!--                  <td class="text-center">{{ item.quantite }}</td>-->
 
-<!--                </tr>-->
+            <!--                </tr>-->
 
-<!--                &lt;!&ndash; Ajoutez d'autres lignes si nécessaire &ndash;&gt;-->
-<!--                </tbody>-->
-<!--              </table>-->
-<!--            </div>-->
+            <!--                &lt;!&ndash; Ajoutez d'autres lignes si nécessaire &ndash;&gt;-->
+            <!--                </tbody>-->
+            <!--              </table>-->
+            <!--            </div>-->
           </fieldset>
           <label *ngIf="updateData.ventes.length == 0" class="text-gray text-center my-4">Aucune vente effectuée</label>
         </div>
         <!--  RETOUR EMBALLAGE-->
         <div class="row tab-pane fade show active" *ngIf="activeTab === 'retour'  && operation == 'edit'">
           <fieldset class="row border my-2" *ngFor="let data of updateData.retours">
-            <legend class="text-primary">Client - {{data.client?.nomEtablissement}} au {{data.client?.telephone}} </legend>
-            <div class="d-flex flex-row justify-content-between align-items-center flex-wrap my-2" >
-              <div><span>Date de retour- {{data.createdAt | date:'dd/MM/yyyy HH:mm:ss'}}</span></div>
-              <div><span>Type de retour- {{data.returnType}}</span></div>
-              <div><span>Statut : {{data.status}}</span></div>
+            <legend class="text-primary">Client - {{ data.client?.nomEtablissement }}au {{ data.client?.telephone }}
+            </legend>
+            <div class="d-flex flex-row justify-content-between align-items-center flex-wrap my-2">
+              <div><span>Date de retour- {{ data.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}</span></div>
+              <div><span>Type de retour- {{ data.returnType }}</span></div>
+              <div><span>Statut : {{ data.status }}</span></div>
             </div>
             <div
               class="table-responsive"
@@ -777,7 +806,8 @@
             </div>
 
           </fieldset>
-          <label *ngIf="updateData.retours.length == 0" class="text-gray text-center my-4">Aucune recupération effectuée</label>
+          <label *ngIf="updateData.retours.length == 0" class="text-gray text-center my-4">Aucune recupération
+            effectuée</label>
         </div>
         <div class="modal-footer gap-3 px-4y">
           <button
@@ -811,243 +841,243 @@
     </div>
   </div>
 </div>
-  <!--CHOIX ARTICLE-->
-  <div *ngIf="isChoiceModalOpen" class="custom-modal">
-    <div class="modal-dialog2 modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header d-flex align-items-center">
-          <div
-            class="d-flex justify-content-center align-items-center"
-            style="
-            background-color: rgb(219, 255, 232);
-            border-radius: 3rem;
-            width: 3rem;
-            height: 3rem;
-          "
-          >
-            <i class="fas fa-box-check text-primary fs-3"></i>
-          </div>
-          <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
-            Selection des articles
-          </h1>
-        </div>
-
-        <div class="modal-body">
-          <form>
-            <div class="row">
-              <fieldset class="row border my-2">
-                <div class="p-3">
-                  <!-- Champ de recherche -->
-                  <input
-                    type="text"
-                    name="search"
-                    (input)="filterArticles()"
-                    [(ngModel)]="searchTerm"
-                    placeholder="Rechercher un produit"
-                    class="form-control mb-3"
-                  />
-                </div>
-                <div
-                  class="table-responsive"
-                  style="max-height: 200px; overflow-y: auto"
-                >
-                  <table class="table">
-                    <thead>
-                    <tr style="font-size: small">
-                      <th scope="col" class="text-secondary">Code</th>
-                      <th scope="col" class="text-secondary">Produits</th>
-                      <th scope="col" class="text-secondary">Disponibilité</th>
-                      <th scope="col" class="text-secondary text-center">
-                        Choix
-                      </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr
-                      *ngFor="let article of filteredArticleList ; let i = index"
-                      style="font-size: small"
-                    >
-                      <th scope="row">{{ article.reference }}</th>
-                      <th scope="row">{{ article.libelle }}</th>
-                      <th scope="row">{{ stocksDisponibles[article.liquide.id] }}</th>
-                      <td class="">
-                        <input
-                          type="checkbox"
-                          class="form-control-custom"
-                          [name]="'checkbox_' + i"
-                          [(ngModel)]="article.isChecked"
-                          (change)="onCheckboxChange(article)"
-                          [disabled]="stocksDisponibles[article.liquide.id] <=0"
-                        />
-
-                      </td>
-                    </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </fieldset>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer gap-3 px-4y">
-          <button
-            (click)="OnCloseChoiceModal()"
-            type="button"
-            class="btn btn-secondary px-2"
-          >
-            Annuler
-          </button>
-          <button
-            type="submit"
-            (click)="onSubmitSelection()"
-            class="btn btn-primary px-2"
-          >
-            Valider
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!--CHOIX GRATUITE-->
-  <div *ngIf="isChoiceModalFreeOpen" class="custom-modal">
-    <div class="modal-dialog2 modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header d-flex align-items-center">
-          <div
-            class="d-flex justify-content-center align-items-center"
-            style="
-            background-color: rgb(219, 255, 232);
-            border-radius: 3rem;
-            width: 3rem;
-            height: 3rem;
-          "
-          >
-            <i class="fas fa-box-check text-primary fs-3"></i>
-          </div>
-          <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
-            Selection des articles gratuits
-          </h1>
-        </div>
-
-        <div class="modal-body">
-          <form>
-            <div class="row">
-              <fieldset class="row border my-2">
-                <div class="p-3">
-                  <!-- Champ de recherche -->
-                  <input
-                    type="text"
-                    name="search"
-                    (input)="filterArticlesFree()"
-                    [(ngModel)]="searchTermFree"
-                    placeholder="Rechercher un produit"
-                    class="form-control mb-3"
-                  />
-                </div>
-                <div
-                  class="table-responsive"
-                  style="max-height: 200px; overflow-y: auto"
-                >
-                  <table class="table">
-                    <thead>
-                    <tr style="font-size: small">
-                      <th scope="col" class="text-secondary">Code</th>
-                      <th scope="col" class="text-secondary">Produits</th>
-                      <th scope="col" class="text-secondary">Disponibilité</th>
-                      <th scope="col" class="text-secondary text-center">
-                        Choix
-                      </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr
-                      *ngFor="let articles of filteredArticleListFree ; let i = index"
-                      style="font-size: small"
-                    >
-                      <th scope="row">{{ articles.reference }}</th>
-                      <th scope="row">{{ articles.libelle }}</th>
-                      <th scope="row">{{ stocksDisponibles[articles.liquide.id] }}</th>
-                      <td class="">
-                        <input
-                          type="checkbox"
-                          class="form-control-custom"
-                          [name]="'checkbox_free_' + i"
-                          [(ngModel)]="articles.isChecked"
-                          (change)="onCheckboxFreeChange(articles)"
-                          [disabled]="stocksDisponibles[articles.liquide.id] <=0"
-                        />
-
-                      </td>
-                    </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </fieldset>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer gap-3 px-4y">
-          <button
-            (click)="OnCloseChoiceFreeModal()"
-            type="button"
-            class="btn btn-secondary px-2"
-          >
-            Annuler
-          </button>
-          <button
-            type="submit"
-            (click)="onSubmitSelection()"
-            class="btn btn-primary px-2"
-          >
-            Valider
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal détail -->
-  <!-- Modal -->
-  <div *ngIf="isModalOpenSign" class="custom-modal">
-    <div
-      class="modal-dialog-sign modal-dialog-centered"
-      style=" max-width: 1200px"
-    >
-      <div class="modal-content">
-        <!-- Header -->
-        <div class="modal-header">
-          <h5 class="modal-title text-success">Signature</h5>
-          <button type="button" class="btn-close" aria-label="Close"></button>
-        </div>
-
-        <!-- Body -->
+<!--CHOIX ARTICLE-->
+<div *ngIf="isChoiceModalOpen" class="custom-modal">
+  <div class="modal-dialog2 modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex align-items-center">
         <div
-          class="modal-body"
-          style="padding: 20px; max-height: 70vh; overflow-y: auto"
+          class="d-flex justify-content-center align-items-center"
+          style="
+            background-color: rgb(219, 255, 232);
+            border-radius: 3rem;
+            width: 3rem;
+            height: 3rem;
+          "
         >
-          <div class="row">
-            <!-- Regroupement et Zone -->
-          </div>
-          <div class="col-md-12">
-            <div class="row">
-              <div class="container">
-                <img style="width:100%;height:100%" *ngIf="signature" [src]=signature alt="">
-              </div>
-            </div>
-          </div>
+          <i class="fas fa-box-check text-primary fs-3"></i>
         </div>
+        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
+          Selection des articles
+        </h1>
+      </div>
 
-        <!-- Table des commandes -->
-        <div class="modal-footer gap-3 px-4">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            (click)="closeDetailSign()"
-          >
-            Fermer
-          </button>
-        </div>
+      <div class="modal-body">
+        <form>
+          <div class="row">
+            <fieldset class="row border my-2">
+              <div class="p-3">
+                <!-- Champ de recherche -->
+                <input
+                  type="text"
+                  name="search"
+                  (input)="filterArticles()"
+                  [(ngModel)]="searchTerm"
+                  placeholder="Rechercher un produit"
+                  class="form-control mb-3"
+                />
+              </div>
+              <div
+                class="table-responsive"
+                style="max-height: 200px; overflow-y: auto"
+              >
+                <table class="table">
+                  <thead>
+                  <tr style="font-size: small">
+                    <th scope="col" class="text-secondary">Code</th>
+                    <th scope="col" class="text-secondary">Produits</th>
+                    <th scope="col" class="text-secondary">Disponibilité</th>
+                    <th scope="col" class="text-secondary text-center">
+                      Choix
+                    </th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr
+                    *ngFor="let article of filteredArticleList ; let i = index"
+                    style="font-size: small"
+                  >
+                    <th scope="row">{{ article.reference }}</th>
+                    <th scope="row">{{ article.libelle }}</th>
+                    <th scope="row">{{ stocksDisponibles[article.liquide.id] }}</th>
+                    <td class="">
+                      <input
+                        type="checkbox"
+                        class="form-control-custom"
+                        [name]="'checkbox_' + i"
+                        [(ngModel)]="article.isChecked"
+                        (change)="onCheckboxChange(article)"
+                        [disabled]="stocksDisponibles[article.liquide.id] <=0"
+                      />
+
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </fieldset>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer gap-3 px-4y">
+        <button
+          (click)="OnCloseChoiceModal()"
+          type="button"
+          class="btn btn-secondary px-2"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          (click)="onSubmitSelection()"
+          class="btn btn-primary px-2"
+        >
+          Valider
+        </button>
       </div>
     </div>
   </div>
+</div>
+
+<!--CHOIX GRATUITE-->
+<div *ngIf="isChoiceModalFreeOpen" class="custom-modal">
+  <div class="modal-dialog2 modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex align-items-center">
+        <div
+          class="d-flex justify-content-center align-items-center"
+          style="
+            background-color: rgb(219, 255, 232);
+            border-radius: 3rem;
+            width: 3rem;
+            height: 3rem;
+          "
+        >
+          <i class="fas fa-box-check text-primary fs-3"></i>
+        </div>
+        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
+          Selection des articles gratuits
+        </h1>
+      </div>
+
+      <div class="modal-body">
+        <form>
+          <div class="row">
+            <fieldset class="row border my-2">
+              <div class="p-3">
+                <!-- Champ de recherche -->
+                <input
+                  type="text"
+                  name="search"
+                  (input)="filterArticlesFree()"
+                  [(ngModel)]="searchTermFree"
+                  placeholder="Rechercher un produit"
+                  class="form-control mb-3"
+                />
+              </div>
+              <div
+                class="table-responsive"
+                style="max-height: 200px; overflow-y: auto"
+              >
+                <table class="table">
+                  <thead>
+                  <tr style="font-size: small">
+                    <th scope="col" class="text-secondary">Code</th>
+                    <th scope="col" class="text-secondary">Produits</th>
+                    <th scope="col" class="text-secondary">Disponibilité</th>
+                    <th scope="col" class="text-secondary text-center">
+                      Choix
+                    </th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr
+                    *ngFor="let articles of filteredArticleListFree ; let i = index"
+                    style="font-size: small"
+                  >
+                    <th scope="row">{{ articles.reference }}</th>
+                    <th scope="row">{{ articles.libelle }}</th>
+                    <th scope="row">{{ stocksDisponibles[articles.liquide.id] }}</th>
+                    <td class="">
+                      <input
+                        type="checkbox"
+                        class="form-control-custom"
+                        [name]="'checkbox_free_' + i"
+                        [(ngModel)]="articles.isChecked"
+                        (change)="onCheckboxFreeChange(articles)"
+                        [disabled]="stocksDisponibles[articles.liquide.id] <=0"
+                      />
+
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </fieldset>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer gap-3 px-4y">
+        <button
+          (click)="OnCloseChoiceFreeModal()"
+          type="button"
+          class="btn btn-secondary px-2"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          (click)="onSubmitSelection()"
+          class="btn btn-primary px-2"
+        >
+          Valider
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal détail -->
+<!-- Modal -->
+<div *ngIf="isModalOpenSign" class="custom-modal">
+  <div
+    class="modal-dialog-sign modal-dialog-centered"
+    style=" max-width: 1200px"
+  >
+    <div class="modal-content">
+      <!-- Header -->
+      <div class="modal-header">
+        <h5 class="modal-title text-success">Signature</h5>
+        <button type="button" class="btn-close" aria-label="Close"></button>
+      </div>
+
+      <!-- Body -->
+      <div
+        class="modal-body"
+        style="padding: 20px; max-height: 70vh; overflow-y: auto"
+      >
+        <div class="row">
+          <!-- Regroupement et Zone -->
+        </div>
+        <div class="col-md-12">
+          <div class="row">
+            <div class="container">
+              <img style="width:100%;height:100%" *ngIf="signature" [src]=signature alt="">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table des commandes -->
+      <div class="modal-footer gap-3 px-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="closeDetailSign()"
+        >
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
