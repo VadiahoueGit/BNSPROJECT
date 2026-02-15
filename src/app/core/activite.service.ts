@@ -434,6 +434,28 @@ export class ActiviteService {
         );
     });
   }
+
+  GetVenteInterchangeList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/interchanges/retours?returnStockId=${data.returnStockId}&paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
   GetVenteGlobalFactures(data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({

@@ -6,6 +6,7 @@ import {NgxSpinnerService} from 'ngx-spinner';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ToastrService} from 'ngx-toastr';
 import {ConfigService} from "../../../core/config-service.service";
+import {UtilisateurResolveService} from "../../../core/utilisateur-resolve.service";
 
 @Component({
   selector: 'app-article',
@@ -38,8 +39,9 @@ export class ArticleComponent {
   currentPage: number;
   rowsPerPage: any;
   totalPages: number;
-
+  Listfournisseurs: any = [];
   constructor(
+    private utilisateurService:UtilisateurResolveService,
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
@@ -49,6 +51,7 @@ export class ArticleComponent {
   }
 
   ngOnInit() {
+    this.GetFournisseursList(1)
     this.ArticleForm = this.fb.group({
       reference: [null, Validators.required],
       photo: [null],
@@ -59,6 +62,7 @@ export class ArticleComponent {
       groupeId: [0, Validators.required],
       liquideId: [0, Validators.required],
       emballageId: [0, Validators.required],
+      fournisseurId: [0, Validators.required]
     });
     this.articleService.ListPlastiquesNu.subscribe((res: any) => {
       this.dataListPlastiqueNu = res;
@@ -191,6 +195,23 @@ export class ArticleComponent {
     });
   }
 
+  GetFournisseursList(page: number) {
+    let data = {
+      paginate: false,
+      page: page,
+      limit: 8,
+    };
+    this.utilisateurService.GetFournisseursList(data).then(
+      (res: any) => {
+        this.Listfournisseurs = res.data;
+        console.log('Listfournisseurs', res);
+      },
+      (error: any) => {
+        this._spinner.hide();
+      }
+    );
+  }
+
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
@@ -219,7 +240,7 @@ export class ArticleComponent {
             console.log('article mis à jour avec succès', response);
             this._spinner.hide();
             this.OnCloseModal();
-            this.GetArticleList(1);
+            this.GetArticleList(this.currentPage);
             this.toastr.success(response.message);
           },
           (error: any) => {
@@ -232,7 +253,7 @@ export class ArticleComponent {
           (response: any) => {
             this.OnCloseModal();
             this._spinner.hide();
-            this.GetArticleList(1);
+            this.GetArticleList(this.currentPage);
             this.ArticleForm.reset();
             this.toastr.success(response.message);
             console.log('Nouvel article créé avec succès', response);
@@ -258,6 +279,7 @@ export class ArticleComponent {
       groupeId: this.updateData.groupearticle.id,
       liquideId: this.updateData.liquide?.id,
       emballageId: this.updateData.emballage?.id,
+      fournisseurId: this.updateData.fournisseur.id,
     });
   }
 

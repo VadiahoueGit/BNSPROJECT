@@ -363,32 +363,149 @@ export class ListDesReceptionsEmballagesComponent {
     this.GetRetourList(this.currentPage);
   }
 
-  extractAllArticles(data: any) {
+
+  extractAllArticles(data: any[]) {
     const articleMap = new Map<string, any>();
 
-
     data.forEach((retour: any) => {
-      if (retour.articles && Array.isArray(retour.articles)) {
-        retour.articles = retour.articles.filter((article: any) => article.prixUnitaire !== 0);
-      }
-      retour.articles.forEach((article: any) => {
-        const libelle = article.produit.libelle;
-        const existing = articleMap.get(libelle);
 
-        if (!existing) {
-          articleMap.set(libelle, {
-            libelle,
-            expectedQuantity: article.quantity,
-            codeEmballage: article.productCode,
+      // ---------------- ARTICLES ----------------
+      retour.articles?.forEach((article: any) => {
+
+        if (article.prixUnitaire === 0) return;
+
+        const code = article.productCode;
+        console.log(article.interchangeDetails);
+
+        if (!articleMap.has(code)) {
+          articleMap.set(code, {
+            libelle: article.produit.libelle,
+            codeEmballage: code,
+            expectedQuantity: 0,
+            interchangeDetails: [],
+            hasInterchange: false
           });
-        } else {
-          existing.expectedQuantity += article.quantity;
         }
+
+        articleMap.get(code).expectedQuantity += article.quantity;
       });
+
+      // ---------------- INTERCHANGES ----------------
+      retour.interchanges?.forEach((inter: any) => {
+
+        const sourceCode = inter.codeEmballageSource;
+        const sourceLibelle = inter.emballageSource?.libelle;
+
+        // 🔴 SOURCE
+        if (!articleMap.has(sourceCode)) {
+          articleMap.set(sourceCode, {
+            libelle: sourceLibelle,
+            codeEmballage: sourceCode,
+            expectedQuantity: 0,
+            interchangeDetails: [],
+            hasInterchange: true
+          });
+        }
+
+        inter.cibles?.forEach((cible: any) => {
+
+          const cibleCode = cible.codeEmballageCible;
+          const cibleLibelle = cible.emballageCible?.libelle;
+
+          // 🟢 CIBLE
+          if (!articleMap.has(cibleCode)) {
+            articleMap.set(cibleCode, {
+              libelle: cibleLibelle,
+              codeEmballage: cibleCode,
+              expectedQuantity: 0,
+              interchangeDetails: [],
+              hasInterchange: true
+            });
+          }
+
+          // Ajouter détail côté source
+          articleMap.get(sourceCode).interchangeDetails.push({
+            type: 'OUT',
+            contre: cibleLibelle,
+            quantite: cible.quantite
+          });
+
+          // Ajouter détail côté cible
+          articleMap.get(cibleCode).interchangeDetails.push({
+            type: 'IN',
+            contre: sourceLibelle,
+            quantite: cible.quantite
+          });
+
+          articleMap.get(sourceCode).hasInterchange = true;
+          articleMap.get(cibleCode).hasInterchange = true;
+        });
+
+      });
+
     });
 
     this.allArticles = Array.from(articleMap.values());
-    console.log(this.allArticles)
+  }
+
+  interchangeTooltip(retour: any, article: any): string {
+
+    if (!retour?.interchanges) return '';
+
+    const details: any[] = [];
+
+    retour.interchanges.forEach((inter: any) => {
+
+      const sourceCode = inter.codeEmballageSource;
+      const sourceLibelle = inter.emballageSource?.libelle;
+
+      inter.cibles?.forEach((cible: any) => {
+
+        const cibleCode = cible.codeEmballageCible;
+        const cibleLibelle = cible.emballageCible?.libelle;
+
+        // 🔴 ARTICLE = SOURCE
+        if (article.codeEmballage === sourceCode) {
+          details.push({
+            type: 'OUT',
+            contre: cibleLibelle,
+            quantite: cible.quantite
+          });
+        }
+
+        // 🟢 ARTICLE = CIBLE
+        if (article.codeEmballage === cibleCode) {
+          details.push({
+            type: 'IN',
+            contre: sourceLibelle,
+            quantite: cible.quantite
+          });
+        }
+
+      });
+
+    });
+
+    // 🔥 Génération directe du texte (ancienne logique interchangeTooltip)
+
+    if (details.length === 0) return '';
+
+    return details
+      .map(detail => {
+
+        const type = detail?.type === 'IN'
+          ? 'Reçu en '
+          : detail?.type === 'OUT'
+            ? 'Donné en '
+            : '';
+
+        const contre = detail?.contre || 'Inconnu';
+        const quantite = detail?.quantite ?? 0;
+
+        return `${type}${contre} (${quantite})`;
+
+      })
+      .join(' | ');
   }
 
   getQuantity(retour: any, libelle: string): number {

@@ -42,6 +42,7 @@ export function initConfig(configService: ConfigService) {
     NgWizardModule.forRoot(ngWizardConfig),
     AuthModule,
     GoogleMapsModule,
+    // InterchangeTooltipPipe,x
     FeaturesModule,
     SharedComponentModule,
     HttpClientModule,

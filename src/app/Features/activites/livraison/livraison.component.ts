@@ -317,17 +317,21 @@ export class LivraisonComponent {
 
 
   onZoneChange(zone: any | null): void {
-    console.log('zoneId', zone.id);
-    if (zone.id) {
-      // Filtrer selon l'ID de la zone
+    console.log('zone', zone);
+
+    if (zone && zone.id) {
       this.filteredList = this.ListCommande
-        .filter((item: any) => item.client.zoneDeLivraison.id === zone.id)
-        .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        .filter((item: any) => item.client.zoneDeLivraison?.id === zone.id)
+        .sort(
+          (a: any, b: any) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
     } else {
-      // Si aucune zone n'est sélectionnée, afficher toute la liste
+      // champ vidé → on remet toute la liste
       this.filteredList = [...this.ListCommande];
     }
   }
+
 
   getTotalQuantite(articles: any[]): number {
     console.log(articles)

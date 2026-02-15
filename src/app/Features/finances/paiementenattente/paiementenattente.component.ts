@@ -114,7 +114,9 @@ export class PaiementenattenteComponent {
       this.totalPages = res.total; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages);
 
-      this.dataList = res.data
+      this.dataList = res.data.filter(
+        (item: any) => item.montantAPercevoir > 0
+      );
       this.dataList = this.dataList.map(paiement => ({
         ...paiement,
         dateEchanceCalculer: calculeDateEcheance(paiement?.createdAt, paiement?.credit?.delaiReglement)

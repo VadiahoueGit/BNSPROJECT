@@ -124,15 +124,30 @@
                   <thead>
                   <tr>
                     <th>Raison Sociale</th>
-                    <th class="text-center" *ngFor="let article of allArticles">{{ article.libelle }}</th>
+                    <th class="text-center" *ngFor="let article of allArticles">
+                      <span>
+                          {{ article.libelle }}
+                      </span>
+                    </th>
+
+
                   </tr>
                   </thead>
                   <tbody>
                   <tr *ngFor="let retour of updateData.retours; let i = index">
                     <td>{{ retour?.clientALivrer?.raisonSocial || retour?.clientALivrer?.nomEtablissement }}</td>
-                    <td class="text-center" *ngFor="let article of allArticles">
+                    <td class="text-center"
+                        *ngFor="let article of allArticles"
+                        [title]="interchangeTooltip(retour, article)">
+
                       {{ getQuantity(retour, article.libelle) }}
+
+                      <span *ngIf="interchangeTooltip(retour, article)">
+                        🔁
+                      </span>
+
                     </td>
+
                   </tr>
                   <tr class="font-weight-bold">
                     <td class="fw-bold">Total théorique</td>

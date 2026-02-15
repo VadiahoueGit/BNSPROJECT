@@ -181,6 +181,16 @@
                   >
                   </ng-select>
               </div>
+
+              <div class="mb-3">
+                <label for="Conditionnement" class="form-label">Fournisseur <span
+                  class="text-danger">*</span></label>
+                <select class="form-control form-select form-select-sm" formControlName="fournisseurId"
+                        aria-label=".form-select-sm example">
+                  <option value="" disabled selected>Choisir le fournisseur</option>
+                  <option [value]="item.id" *ngFor="let item of Listfournisseurs">{{ item.nom }}</option>
+                </select>
+              </div>
             </div>
           </div>
         </form>

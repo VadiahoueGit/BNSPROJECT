@@ -427,29 +427,36 @@ export class VentechinepageComponent {
       let vente = this.VenteForm.value;
       vente.articles = vente.articles.filter((a: any) => a.quantite > 0);
       vente.articlesGratuit = vente.articlesGratuit.filter((a: any) => a.quantite > 0);
-      this.utilisateurService.CreateVenteChine(vente).then(
-        (res: any) => {
-          console.log(res, 'enregistré avec succes');
-          this._spinner.hide();
-          if(res.statusCode === 201) {
-            this.VenteForm.reset()
-            this.selectedArticles = [];
-            (this.VenteForm.get('articles') as FormArray).clear();
-            (this.VenteForm.get('articlesGratuit') as FormArray).clear();
-            this.GetVenteChineList(1);
-            this.OnCloseModal();
-            console.log(this.VenteForm.value, 'venteForm');
-            this.toastr.success(res.message);
-          }else{
-            this.toastr.error(res.message);
+      if(this.totalLiquide > 0)
+      {
+        this.utilisateurService.CreateVenteChine(vente).then(
+          (res: any) => {
+            console.log(res, 'enregistré avec succes');
+            this._spinner.hide();
+            if(res.statusCode === 201) {
+              this.VenteForm.reset()
+              this.selectedArticles = [];
+              (this.VenteForm.get('articles') as FormArray).clear();
+              (this.VenteForm.get('articlesGratuit') as FormArray).clear();
+              this.GetVenteChineList(1);
+              this.OnCloseModal();
+              console.log(this.VenteForm.value, 'venteForm');
+              this.toastr.success(res.message);
+            }else{
+              this.toastr.error(res.message);
+            }
+          },
+          (error: any) => {
+            this._spinner.hide();
+            this.toastr.info(error.error.message);
+            console.error('Erreur lors de la création', error.message);
           }
-        },
-        (error: any) => {
-          this._spinner.hide();
-          this.toastr.info(error.error.message);
-          console.error('Erreur lors de la création', error.message);
-        }
-      );
+        );
+      }else{
+        this._spinner.hide();
+        this.toastr.warning('Verifiez les montants des articles !');
+      }
+
     } else {
       this.toastr.warning('Formulaire invalide');
     }
