@@ -324,6 +324,9 @@
                   </td>
                   <td>{{ item.montant | number}}</td>
                   <td>{{ item.datePaiement | date : "dd/MM/yyyy HH:mm" }}</td>
+                  <td>
+                    <p class="text-success" *ngIf="item?.statut == Status.PAYE && item?.typePaiement == 'AVANCE'">Payé en avance</p>
+                  </td>
                 </tr>
                 <!-- Ajoutez d'autres lignes si nécessaire -->
                 </tbody>

@@ -301,7 +301,8 @@
                   <td>{{ item.montant | number }}</td>
                   <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
                   <td>
-                    <p class="text-success" *ngIf="item?.statut == Status.PAYE">Payé</p>
+                    <p class="text-success" *ngIf="item?.statut == Status.PAYE">Payé </p>
+
                     <button
                       *ngIf="item?.statut !== Status.PAYE"
                       type="submit"
@@ -484,8 +485,9 @@
                   <td>{{ item.moyenPaiement.libelle ? item.moyenPaiement.libelle : 'N/A' }}</td>
                   <td>{{ item.montant | number }}</td>
                   <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
-                  <td>
-                    <p class="text-success" *ngIf="item?.statut == Status.PAYE">Payé</p>
+                  <td class="row">
+                    <p class="text-success" *ngIf="item?.statut == Status.PAYE && item?.typePaiement == 'NORMAL'">Payé</p>
+                    <p class="text-success" *ngIf="item?.statut == Status.PAYE && item?.typePaiement == 'AVANCE'">Payé en avance</p>
                     <button
                       *ngIf="item?.statut !== Status.PAYE"
                       type="submit"

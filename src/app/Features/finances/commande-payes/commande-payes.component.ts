@@ -141,4 +141,6 @@ export class CommandePayesComponent {
       this._spinner.hide();
     });
   }
+
+  protected readonly Status = Status;
 }
