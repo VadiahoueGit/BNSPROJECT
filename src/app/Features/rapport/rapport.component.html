@@ -1,1 +1,70 @@
-<p>rapport works!</p>
+<!-- ===== HEADER ===== -->
+<div class="rp-page-header">
+  <div class="rp-page-header-left">
+    <div class="rp-page-icon">
+      <i class="fas fa-file-chart-line"></i>
+    </div>
+    <div>
+      <h3 class="rp-page-title">Rapports</h3>
+      <span class="rp-page-sub">{{ totalRapports }} rapport{{ totalRapports > 1 ? 's' : '' }} disponible{{ totalRapports > 1 ? 's' : '' }}</span>
+    </div>
+  </div>
+  <div class="rp-search-wrap">
+    <i class="fas fa-search rp-search-icon"></i>
+    <input class="rp-search-input" type="text" placeholder="Rechercher un rapport..." [(ngModel)]="recherche" />
+  </div>
+</div>
+
+<!-- ===== CATÉGORIES ===== -->
+<ng-container *ngFor="let cat of categoriesVisibles">
+  <div class="rp-section">
+    <!-- Section header -->
+    <div class="rp-section-header">
+      <div class="rp-section-badge" [ngClass]="cat.couleur">
+        <i [class]="cat.icone"></i>
+      </div>
+      <div class="rp-section-info">
+        <div class="rp-section-title">{{ cat.label }}</div>
+        <div class="rp-section-desc">{{ cat.description }}</div>
+      </div>
+      <div class="rp-section-count" [ngClass]="cat.couleur">
+        {{ getRapportsParCategorie(cat.id).length }}
+      </div>
+    </div>
+
+    <!-- Rapport cards -->
+    <div class="rp-cards-grid" *ngIf="getRapportsParCategorie(cat.id).length > 0; else emptyState">
+      <div class="rp-card" *ngFor="let rapport of getRapportsParCategorie(cat.id)" (click)="ouvrirRapport(rapport)">
+        <div class="rp-card-icon" [ngClass]="rapport.couleur">
+          <i [class]="rapport.icone"></i>
+        </div>
+        <div class="rp-card-body">
+          <div class="rp-card-title">{{ rapport.titre }}</div>
+          <div class="rp-card-sub">{{ rapport.sousTitre }}</div>
+        </div>
+        <div class="rp-card-actions">
+          <span class="rp-export-tag excel"><i class="fas fa-file-excel"></i> Excel</span>
+          <span class="rp-export-tag pdf"><i class="fas fa-file-pdf"></i> PDF</span>
+          <i class="fas fa-chevron-right rp-arrow"></i>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #emptyState>
+      <div class="rp-empty">
+        <div class="rp-empty-icon" [ngClass]="cat.couleur">
+          <i [class]="cat.icone"></i>
+        </div>
+        <div class="rp-empty-text">Rapports {{ cat.label | lowercase }} bientôt disponibles</div>
+        <div class="rp-empty-hint">Les rapports seront ajoutés prochainement</div>
+      </div>
+    </ng-template>
+  </div>
+</ng-container>
+
+<!-- ===== ÉTAT RECHERCHE VIDE ===== -->
+<div class="rp-no-result" *ngIf="recherche && categoriesVisibles.length === 0">
+  <i class="fas fa-search-minus"></i>
+  <div>Aucun rapport ne correspond à "<strong>{{ recherche }}</strong>"</div>
+  <button class="rp-btn-clear" (click)="recherche = ''">Effacer la recherche</button>
+</div>

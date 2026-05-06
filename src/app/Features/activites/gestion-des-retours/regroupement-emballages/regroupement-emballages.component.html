@@ -6,13 +6,13 @@
 
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color);">Agent</th>
-        <th style="color: var(--secondary-color);">Client</th>
-        <th style="color: var(--secondary-color);">Opération</th>
-        <th style="color: var(--secondary-color);">Dépot</th>
-        <th style="color: var(--secondary-color);">Type retour</th>
-        <th style="color: var(--secondary-color);">Véhicule</th>
-        <th style="color: var(--secondary-color);">Actions</th>
+        <th>Agent</th>
+        <th>Client</th>
+        <th>Opération</th>
+        <th>Dépot</th>
+        <th>Type retour</th>
+        <th>Véhicule</th>
+        <th>Actions</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList>
@@ -53,12 +53,11 @@
         <td>
           {{ dataList?.vehicule?.marque || dataList.venteChine.vehicule.marque }}
         </td>
-        <td>
-      <tr class="d-flex justify-content-center gap-3">
-        <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>
-      </tr>
-
-      </td>
+        <td class="text-center">
+      <div class="d-flex justify-content-center gap-2">
+        <span class="bui-icon-btn view" (click)="OnEdit(dataList)"><i class="fas fa-eye"></i></span>
+      </div>
+    </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
@@ -71,139 +70,106 @@
 
 
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div
-    class="modal-dialog modal-dialog-centered"
-
-  >
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Détails regroupement emballage</h5>
-        <button type="button" class="btn-close" aria-label="Close"></button>
-      </div>
-
-      <div
-        class="modal-body"
-        style="padding: 20px; max-height: 70vh; overflow-y: auto"
-      >
-        <div class="row">
-          <div class="d-flex justify-content-end py-3">
-            <button
-              type="button"
-              class="btn btn-secondary px-4"
-              (click)="PrintDoc(updateData)"
-            >
-              Imprimer
-            </button>
+  <div class="vd-modal-dialog wide">
+    <div class="vd-modal-header">
+      <div class="vd-mh-left">
+        <div class="vd-mh-icon green"><i class="fas fa-layer-group"></i></div>
+        <div>
+          <div class="vd-mh-title">Détails regroupement emballage</div>
+          <div class="vd-mh-sub">
+            {{ updateData?.commande?.numVenteChine || updateData?.commande?.NumCommande || updateData?.commandeClient?.NumCommande || '' }} — {{ updateData.createdAt | date:'dd/MM/yyyy' }}
           </div>
-          <fieldset class="row border my-1">
-            <legend style="font-size: 13px" class="text-secondary">
-              Numero Commande
-              :  {{ updateData?.commande?.numVenteChine || updateData?.commande?.NumCommande || updateData?.commandeClient?.NumCommande || '' }}
-              du
-              {{ updateData.createdAt | date }}
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Dépot : </strong>
-                <span>
-                    {{ updateData.depot?.nomDepot || 'NEANT' }}
-                  </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Gérant: </strong>
-                <span>
-                    {{ updateData.depot?.gerant || 'NEANT' }}
-                  </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Type retour : </strong>
-                <span>
-                   {{ updateData?.returnType || 'NEANT' }}
-                  </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Transporteur : </strong>
-                <span>
-                   {{ updateData?.transporteur?.nom }} {{ updateData?.transporteur?.prenoms }}
-                  </span>
-              </div>
-            </div>
-          </fieldset>
+        </div>
+      </div>
+      <div class="vd-mh-right">
+        <button type="button" class="vd-btn-outline" (click)="PrintDoc(updateData)">
+          <i class="fas fa-print"></i>Imprimer
+        </button>
+        <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
 
-          <fieldset class="row border my-2">
-            <legend style="font-size: 13px" class="text-secondary">
-              Informations du commande client
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Type client : </strong>
-                <span>{{ updateData?.commandeClient?.clientType || updateData?.venteChine?.clientType || updateData?.commandeGratuite?.clientType || 'NEANT' }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Établissement : </strong>
-                <span>{{ updateData.clientALivrer?.raisonSocial
-                  ? updateData.clientALivrer?.raisonSocial
-                  : updateData.clientALivrer?.nomEtablissement || 'NEANT' }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Solde emballage : </strong>
-                <span>{{
-                    updateData.commandeClient?.soldeEmballage  ??
-                    updateData.commandeGratuite?.soldeEmballage ??
-                    updateData.venteChine?.soldeEmballage
-                      | currency: 'XOF':'symbol':'1.0-0'
-                  }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-2">
-            <legend style="font-size: 13px" class="text-secondary">
-              Emballages
-            </legend>
-            <table class="table table-bordered">
-              <thead class="table-success">
-              <tr>
-                <th scope="col">Code</th>
-                <th scope="col">Désignation</th>
-                <th scope="col">Conditionnement</th>
-                <th scope="col">Format</th>
-                <th scope="col">Prix unitaire</th>
-                <th scope="col">Quantité</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr *ngFor="let item of filteredArticles">
-                <td>{{ item.produit.code }}</td>
-                <td>{{ item.produit.libelle }}</td>
-                <td>{{ item.produit.condition }}</td>
-                <td>{{ item.produit.format }}</td>
-                <td>{{ item.prixUnitaire | number}}</td>
-                <td>{{ item.quantity }}</td>
-              </tr>
-              </tbody>
-            </table>
-          </fieldset>
+    <div class="vd-modal-body">
+      <div class="vd-info-grid">
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-warehouse me-1"></i>Dépôt</div>
+          <div class="vd-info-value">{{ updateData.depot?.nomDepot || 'NÉANT' }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-user-tie me-1"></i>Gérant</div>
+          <div class="vd-info-value">{{ updateData.depot?.gerant || 'NÉANT' }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-tag me-1"></i>Type retour</div>
+          <div class="vd-info-value">{{ updateData?.returnType || 'NÉANT' }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-truck me-1"></i>Transporteur</div>
+          <div class="vd-info-value">{{ (updateData?.transporteur?.nom || '') + ' ' + (updateData?.transporteur?.prenoms || '') }}</div>
         </div>
       </div>
 
-      <!-- Footer -->
-      <div class="modal-footer gap-3 px-4">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          (click)="OnCloseModal()"
-        >
-          Fermer
-        </button>
-        <button
-          *ngIf="updateData?.status !== 'Validé'"
-          type="submit"
-          class="btn btn-primary px-2"
-          (click)="ValidateEmballage(updateData.id)"
-        >
-          Valider
-        </button>
+      <div class="vd-card">
+        <div class="vd-card-header">
+          <div class="vd-card-icon blue"><i class="fas fa-store"></i></div>
+          <div class="vd-section-label">Informations commande client</div>
+        </div>
+        <div class="vd-info-grid">
+          <div class="vd-info-block">
+            <div class="vd-info-label">Type client</div>
+            <div class="vd-info-value">{{ updateData?.commandeClient?.clientType || updateData?.venteChine?.clientType || updateData?.commandeGratuite?.clientType || 'NÉANT' }}</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label">Établissement</div>
+            <div class="vd-info-value">{{ updateData.clientALivrer?.raisonSocial || updateData.clientALivrer?.nomEtablissement || 'NÉANT' }}</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label">Solde emballage</div>
+            <div class="vd-info-value">{{ (updateData.commandeClient?.soldeEmballage ?? updateData.commandeGratuite?.soldeEmballage ?? updateData.venteChine?.soldeEmballage) | number }} XOF</div>
+          </div>
+        </div>
       </div>
+
+      <div class="vd-card">
+        <div class="vd-card-header">
+          <div class="vd-card-icon orange"><i class="fas fa-recycle"></i></div>
+          <div class="vd-section-label">Emballages</div>
+        </div>
+        <div class="vd-table-wrap">
+          <table class="vd-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Désignation</th>
+                <th>Conditionnement</th>
+                <th>Format</th>
+                <th class="text-right">Prix unitaire</th>
+                <th class="text-center">Quantité</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of filteredArticles">
+                <td><span class="vd-badge gray">{{ item.produit.code }}</span></td>
+                <td>{{ item.produit.libelle }}</td>
+                <td>{{ item.produit.condition }}</td>
+                <td>{{ item.produit.format }}</td>
+                <td class="text-right">{{ item.prixUnitaire | number }}</td>
+                <td class="text-center fw-bold">{{ item.quantity }}</td>
+              </tr>
+              <tr *ngIf="!filteredArticles?.length">
+                <td colspan="6"><div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucun emballage</span></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="vd-modal-footer">
+      <button type="button" class="vd-btn-outline" (click)="OnCloseModal()">Fermer</button>
+      <button *ngIf="updateData?.status !== 'Validé'" type="button" class="vd-btn-primary" (click)="ValidateEmballage(updateData.id)">
+        <i class="fas fa-check"></i>Valider
+      </button>
     </div>
   </div>
 </div>

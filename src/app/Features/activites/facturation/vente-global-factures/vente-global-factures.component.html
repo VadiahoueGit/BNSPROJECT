@@ -16,12 +16,12 @@
   >
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color)">Référence</th>
-        <!-- <th style="color: var(--secondary-color)">Numéro livraison</th> -->
-        <th style="color: var(--secondary-color)">Date facture</th>
-        <!-- <th style="color: var(--secondary-color)">Facture</th> -->
-        <th style="color: var(--secondary-color)">Montant total</th>
-        <th style="color: var(--secondary-color)">Actions</th>
+        <th>Référence</th>
+        <!-- <th>Numéro livraison</th> -->
+        <th>Date facture</th>
+        <!-- <th>Facture</th> -->
+        <th>Montant total</th>
+        <th>Actions</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList let-i="index">
@@ -41,16 +41,10 @@
             {{ dataList.montantTotal | number}}
           </span>
         </td>
-        <td>
-          <tr class="d-flex justify-content-center gap-3">
-            <td>
-              <i
-                (click)="OnEdit(dataList)"
-                style="cursor: pointer"
-                class="fas fa-eye text-secondary"
-              ></i>
-            </td>
-          </tr>
+        <td class="text-center">
+          <div class="d-flex justify-content-center gap-2">
+            <span class="bui-icon-btn view" (click)="OnEdit(dataList)"><i class="fas fa-eye"></i></span>
+          </div>
         </td>
       </tr>
     </ng-template>
@@ -68,17 +62,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header d-flex align-items-center">
-        <div
-          class="d-flex justify-content-center align-items-center"
-          style="
-            background-color: rgb(219, 255, 232);
-            border-radius: 3rem;
-            width: 3rem;
-            height: 3rem;
-          "
-        >
-          <i class="fas fa-box-check text-primary fs-3"></i>
-        </div>
+        <div class="bui-modal-icon"><i class="fas fa-box-check text-primary fs-3"></i></div>
         <h1
           *ngIf="operation == 'create'"
           class="modal-title fs-5 ms-3"
@@ -97,14 +81,8 @@
       <div class="modal-body">
         <div class="row">
           <div class="d-flex justify-content-end py-3">
-            <button
-              type="button"
-              class="btn btn-secondary px-4"
-              (click)="DownloadFacture(updateData.id)"
-            >
-              Génerer facture
-            </button>
-          </div>
+  <button type="button" class="bui-btn-add" (DownloadFacture)="DownloadFacture(updateData.id)">Génerer facture</button>
+</div>
           <fieldset class="row border my-1" *ngIf="updateData?.vente !== null">
             <legend style="font-size: 14px" class="text-secondary">
               Information vente
@@ -291,17 +269,7 @@
   <div class="modal-dialog2 modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header d-flex align-items-center">
-        <div
-          class="d-flex justify-content-center align-items-center"
-          style="
-            background-color: rgb(219, 255, 232);
-            border-radius: 3rem;
-            width: 3rem;
-            height: 3rem;
-          "
-        >
-          <i class="fas fa-box-check text-primary fs-3"></i>
-        </div>
+        <div class="bui-modal-icon"><i class="fas fa-box-check text-primary fs-3"></i></div>
         <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
           Selection des articles
         </h1>

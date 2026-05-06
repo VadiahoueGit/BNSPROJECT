@@ -1,256 +1,478 @@
-<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
-  <i style="font-size: 18px;" class="fas fw-bold fa-chevron-left me-2"></i>
-  <h4 class="fw-bold mb-0">Ventes chines</h4>
-</div>
-<div class="card">
-<!--  Vente-->
-  <div class="container py-2">
-    <ng-wizard [config]="config" (stepChanged)="stepChanged($event)">
-      <ng-wizard-step [title]="'Etape 1'" [description]="'Effectue le vente'" [canEnter]="isValidTypeBoolean" [canExit]="isValidFunctionReturnsBoolean.bind(this)">
-        <div class="table-responsive mb-2">
-          <table class="table table-bordered">
-            <thead class="table-success">
-            <tr>
-              <th>Libellé</th>
-              <th>Format</th>
-              <th>Prix U liquide (XOF)</th>
-              <th>Prix U emballage (XOF)</th>
-              <th>Quantité</th>
-              <th>Sous-total</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let article of updateData?.articles">
-              <td>{{ article.liquide.libelle }}</td>
-              <td>{{ article.liquide.format }}</td>
-              <td>{{ article.prixUnitaireLiquide | number }}</td>
-              <td>{{ article.prixUnitaireEmballage | number }}</td>
-              <td>
-                <div style="max-width: 120px;">
-                  <input type="number" class="form-control-custom text-center"
-                         [min]="0"
-                         [max]="article.quantiteAffectee"
-                         [(ngModel)]="article.liquide.quantite"
-                         (ngModelChange)="emballageCalcul(article)"
-                         (blur)="validate(article)"
-                         [value]="0"> / {{article.quantite}}
-                </div>
-              </td>
-              <td>{{ (article.prixUnitaireLiquide * article.liquide.quantite | number) || 0 }}</td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-      </ng-wizard-step>
-
-      <ng-wizard-step [title]="'Etape 2'" [description]="'Récapitulatif de la vente'" [canEnter]="isValidFunctionReturnsObservable.bind(this)" [canExit]="isValidFunctionReturnsBoolean.bind(this)">
-        <table class="table table-bordered">
-          <thead class="table-success">
-          <tr>
-            <th>Libellé</th>
-            <th>Format</th>
-            <th>Prix U liquide (XOF)</th>
-            <th>Quantité</th>
-            <th>Sous-total</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let article of articlesVendus">
-            <td>{{ article.liquide.libelle }}</td>
-            <td>{{ article.liquide.format }}</td>
-            <td>{{ article.prixUnitaireLiquide | number }}</td>
-            <td>
-              <div style="max-width: 120px;">
-                <input type="number" class="form-control-custom text-center"
-                       readonly
-                       [value]="article.liquide.quantite">
-              </div>
-            </td>
-            <td>{{ (article.prixUnitaireLiquide * article.liquide.quantite | number) || 0 }}</td>
-          </tr>
-          </tbody>
-        </table>
-      </ng-wizard-step>
-
-      <ng-wizard-step [title]="'Etape 3'" [description]="'Recuperation emballages'">
-        <!--  recuperation emballage-->
-        <div class="container py-2"><!-- réduit de py-4 à py-2 -->
-          <!-- Modes -->
-          <div class="mb-2">
-            <div class="btn-group btn-group-sm" role="group">
-              <input type="radio" class="btn-check" name="mode" id="maintenant" value="IMMEDIATE" [(ngModel)]="mode">
-              <label class="btn btn-outline-primary" for="maintenant">Maintenant</label>
-
-              <input type="radio" class="btn-check" name="mode" id="auComptant" value="COMPTANT" [(ngModel)]="mode">
-              <label class="btn btn-outline-primary" for="auComptant">Au comptant</label>
-
-              <input type="radio" class="btn-check" name="mode" id="surRdv" value="APPOINTMENT" [(ngModel)]="mode">
-              <label class="btn btn-outline-primary" for="surRdv">Sur RDV</label>
-            </div>
-          </div>
-
-
-          <!-- Vue pour "Maintenant" -->
-          <div *ngIf="mode === 'IMMEDIATE'">
-            <!-- Ton tableau existant -->
-            <div class="alert alert-success">
-              Emballages à récuperer sur place.
-            </div>
-            <div class="table-responsive mb-2">
-              <table class="table table-bordered">
-                <thead class="table-success">
-                <tr>
-                  <th>Libellé</th>
-                  <th>Format</th>
-                  <th>Prix unitaire (XOF)</th>
-                  <th>Quantité</th>
-                  <th>Sous-total</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let article of emballageRecup">
-                  <td>{{ article.emballage.libelle }}</td>
-                  <td>{{ article.emballage.format }}</td>
-                  <td>{{ article.prixUnitaireEmballage | number }}</td>
-                  <td>
-                    <div style="max-width: 120px;">
-                      <input type="number" class="form-control-custom text-center"
-                             [(ngModel)]="article.emballage.quantite"
-                             (ngModelChange)="emballageCalcul(article)"
-                             [min]="article.liquide.quantite">
-                    </div>
-                  </td>
-                  <td>{{ article.prixEmballage || 0 }}</td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-
-          <!-- Vue pour "Au comptant" -->
-          <div *ngIf="mode === 'COMPTANT'">
-            <div class="alert alert-info">
-              Emballages à laisser en consigne.
-            </div>
-            <div class="table-responsive mb-2">
-              <table class="table table-bordered">
-                <thead class="table-success">
-                <tr>
-                  <th>Libellé</th>
-                  <th>Format</th>
-                  <th>Prix unitaire (XOF)</th>
-                  <th>Quantité</th>
-                  <th>Sous-total</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let article of emballageRecup">
-                  <td>{{ article.emballage.libelle }}</td>
-                  <td>{{ article.emballage.format }}</td>
-                  <td>{{ article.prixUnitaireEmballage | number }}</td>
-                  <td>
-                    <div style="max-width: 120px;">
-                      <input type="number" class="form-control-custom text-center"
-                             [(ngModel)]="article.emballage.quantite"
-                             (ngModelChange)="emballageCalcul(article)"
-                             [max]="article.liquide.quantite">
-                    </div>
-                  </td>
-                  <td>{{ article.prix * article.quantite | number }}</td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
-            <!-- Ici tu peux mettre un formulaire ou un message spécifique -->
-          </div>
-
-
-          <!-- Vue pour "Sur RDV" -->
-          <div *ngIf="mode === 'APPOINTMENT'">
-            <div class="alert alert-warning">
-              Emballages à récuperer à une date ulterieure.
-            </div>
-            <!-- Ici tu peux afficher un calendrier, champ de date, etc. -->
-            <div class="mb-2">
-              <label for="rdvDate">Date du RDV :</label>
-              <input type="date" id="rdvDate" class="form-control form-control-sm" [(ngModel)]="rdvDate">
-            </div>
-            <div class="table-responsive mb-2">
-              <table class="table table-bordered">
-                <thead class="table-success">
-                <tr>
-                  <th>Libellé</th>
-                  <th>Format</th>
-                  <th>Prix unitaire (XOF)</th>
-                  <th>Quantité</th>
-                  <th>Sous-total</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let article of emballageRecup">
-                  <td>{{ article.emballage.libelle }}</td>
-                  <td>{{ article.emballage.format }}</td>
-                  <td>{{ article.prixUnitaireEmballage | number }}</td>
-                  <td>
-                    <div style="max-width: 120px;">
-                      <input type="number" class="form-control-custom text-center"
-                             [value]="article.liquide.quantite" >
-                    </div>
-                  </td>
-                  <td>{{ article.prix * article.quantite | number }}</td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-
-          <!-- Montant total -->
-          <div class="alert alert-success fw-bold text-end py-2 mb-2" *ngIf="mode === 'Maintenant'">
-<!--            Montant total : {{ total | number }} XOF-->
-          </div>
-
-        </div>
-      </ng-wizard-step>
-
-      <ng-wizard-step [title]="'Etape 4'" [description]="'Récapitulatif de la recuperation emballage'" >
-        <div class="mb-3">
-          <label class="form-label">Point de vente <span
-            class="text-danger">*</span></label>
-          <ng-select class="form-control" [items]="pointDeVente" bindLabel="nomEtablissement" bindValue="id"
-                     (change)="ChoicePdv($event);" [searchable]="true">
-          </ng-select>
-        </div>
-        <table class="table table-bordered">
-          <thead class="table-success">
-          <tr>
-            <th>Libellé</th>
-            <th>Format</th>
-            <th>Prix unitaire (XOF)</th>
-            <th>Quantité</th>
-            <th>Sous-total</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let article of emballageRecup">
-            <td>{{ article.emballage.libelle }}</td>
-            <td>{{ article.emballage.format }}</td>
-            <td>{{ article.prixUnitaireEmballage | number }}</td>
-            <td>
-              <div style="max-width: 120px;">
-                <input type="number" class="form-control-custom text-center"
-                       [value]="article.emballage.quantite" readonly>
-              </div>
-            </td>
-            <td>{{ (article.prixUnitaireEmballage * article.emballage.quantite | number) || 0 }}</td>
-          </tr>
-          </tbody>
-        </table>
-      </ng-wizard-step>
-
-    </ng-wizard>
-
+<!-- ===== HEADER ===== -->
+<div class="vd-header d-flex align-items-center justify-content-between mb-4">
+  <div class="d-flex align-items-center gap-3" style="cursor:pointer" (click)="goBack()">
+    <div class="vd-back-btn">
+      <i class="fas fa-chevron-left"></i>
+    </div>
+    <div>
+      <h4 class="fw-bold mb-0">Ventes chines</h4>
+      <span class="text-muted" style="font-size:12px">{{ updateData?.numVenteChine }}</span>
+    </div>
   </div>
 
+  <div class="vd-client-badge d-flex align-items-center gap-3" *ngIf="updateData?.commercial">
+    <div class="vd-avatar">
+      <i class="fas fa-user-tie"></i>
+    </div>
+    <div>
+      <div class="fw-semibold" style="font-size:13px">{{ updateData?.commercial?.nom }}</div>
+      <div class="text-muted" style="font-size:11px">{{ updateData?.commercial?.depot?.nomDepot }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STEPPER ===== -->
+<div class="vd-stepper mb-4">
+  <div class="vd-stepper-track">
+    <ng-container *ngFor="let step of steps; let i = index">
+      <div class="vd-step"
+           [class.active]="currentStep === step.num"
+           [class.done]="currentStep > step.num"
+           (click)="goToStep(step.num)">
+        <div class="vd-step-circle">
+          <i *ngIf="currentStep > step.num" class="fas fa-check"></i>
+          <i *ngIf="currentStep <= step.num" [class]="step.icon"></i>
+        </div>
+        <span class="vd-step-label">{{ step.label }}</span>
+      </div>
+      <div *ngIf="i < steps.length - 1"
+           class="vd-step-line"
+           [class.done]="currentStep > step.num + 1"
+           [class.active]="currentStep === step.num + 1">
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<!-- ===== ÉTAPE 1 : Articles ===== -->
+<div class="vd-card" *ngIf="currentStep === 1">
+  <div class="vd-card-header">
+    <div class="vd-card-icon green">
+      <i class="fas fa-box-open"></i>
+    </div>
+    <div>
+      <h6 class="fw-bold mb-0">Articles de la vente</h6>
+      <span class="text-muted" style="font-size:12px">Sélectionnez le client puis saisissez les quantités</span>
+    </div>
+  </div>
+
+  <!-- Sélection client -->
+  <div class="vd-client-select-block mt-3 mb-4">
+    <div class="vd-client-select-label">
+      <div class="vd-card-icon blue" style="width:32px;height:32px;font-size:14px">
+        <i class="fas fa-store"></i>
+      </div>
+      <span>Point de vente <span class="text-danger">*</span></span>
+    </div>
+    <ng-select class="vd-client-ng-select"
+      [items]="pointDeVente"
+      bindLabel="nomEtablissement"
+      [searchable]="true"
+      placeholder="Rechercher un point de vente..."
+      [(ngModel)]="client"
+      (change)="ChoicePdv($event)">
+    </ng-select>
+  </div>
+
+  <!-- Articles payants -->
+  <div class="vd-section-title mt-3">Articles payants</div>
+  <div class="table-responsive">
+    <table class="vd-table">
+      <thead>
+      <tr>
+        <th>Produit</th>
+        <th>Format</th>
+        <th class="text-end">Prix liquide</th>
+        <th class="text-end">Prix emballage</th>
+        <th class="text-center">Qté affectée</th>
+        <th class="text-center">Qté vendue</th>
+        <th class="text-end">Sous-total</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let article of updateData?.articles">
+        <td>
+          <div class="vd-product-cell">
+            <div class="vd-product-dot" [style.background-color]="article.groupeArticle?.libelle === 'BIERE' ? '#f59e0b' : '#8dae56'"></div>
+            <span>{{ article.liquide.libelle }}</span>
+          </div>
+        </td>
+        <td><span class="vd-badge">{{ article.liquide.format }} cl</span></td>
+        <td class="text-end fw-semibold">{{ article.prixUnitaireLiquide | number:'1.0-0' }} <small class="text-muted">XOF</small></td>
+        <td class="text-end">{{ article.prixUnitaireEmballage | number:'1.0-0' }} <small class="text-muted">XOF</small></td>
+        <td class="text-center"><span class="vd-qty-total">{{ article.quantite }}</span></td>
+        <td class="text-center">
+          <div class="vd-qty-input-wrap">
+            <input type="number" class="vd-qty-input"
+                   [min]="0"
+                   [max]="article.quantite"
+                   [(ngModel)]="article.liquide.quantite"
+                   [value]="0">
+          </div>
+        </td>
+        <td class="text-end fw-semibold" style="color:var(--primary-color)">
+          {{ (article.prixUnitaireLiquide * (article.liquide.quantite || 0)) | number:'1.0-0' }}
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="vd-total-bar mt-3">
+    <span class="text-muted" style="font-size:13px">Total articles payants</span>
+    <span class="vd-total-amount">{{ totalLivraison | number:'1.0-0' }} XOF</span>
+  </div>
+
+  <!-- Articles gratuits -->
+  <div class="vd-section-title mt-4">Articles gratuits</div>
+  <div class="table-responsive">
+    <table class="vd-table">
+      <thead>
+      <tr>
+        <th>Produit</th>
+        <th>Format</th>
+        <th class="text-end">Prix liquide</th>
+        <th class="text-end">Prix emballage</th>
+        <th class="text-center">Qté affectée</th>
+        <th class="text-center">Qté vendue</th>
+        <th class="text-end">Sous-total</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let article of updateData?.articlesGratuit">
+        <td>
+          <div class="vd-product-cell">
+            <div class="vd-product-dot" style="background-color:#8dae56"></div>
+            <span>{{ article.liquide.libelle }}</span>
+          </div>
+        </td>
+        <td><span class="vd-badge">{{ article.liquide.format }} cl</span></td>
+        <td class="text-end fw-semibold">{{ article.prixUnitaireLiquide | number:'1.0-0' }} <small class="text-muted">XOF</small></td>
+        <td class="text-end">{{ article.prixUnitaireEmballage | number:'1.0-0' }} <small class="text-muted">XOF</small></td>
+        <td class="text-center"><span class="vd-qty-total">{{ article.quantite }}</span></td>
+        <td class="text-center">
+          <div class="vd-qty-input-wrap">
+            <input type="number" class="vd-qty-input"
+                   [min]="0"
+                   [max]="article.quantite"
+                   [(ngModel)]="article.liquide.quantite"
+                   [value]="0">
+          </div>
+        </td>
+        <td class="text-end fw-semibold" style="color:var(--primary-color)">
+          {{ (article.prixUnitaireLiquide * (article.liquide.quantite || 0)) | number:'1.0-0' }}
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="vd-total-bar mt-3" style="background:linear-gradient(135deg,rgba(141,174,86,0.06),rgba(141,174,86,0.03))">
+    <span class="text-muted" style="font-size:13px">Total articles gratuits</span>
+    <span class="vd-total-amount">{{ totalLivraisonGratuit | number:'1.0-0' }} XOF</span>
+  </div>
+</div>
+
+<!-- ===== ÉTAPE 2 : Récapitulatif ===== -->
+<div class="vd-card" *ngIf="currentStep === 2">
+  <div class="vd-card-header">
+    <div class="vd-card-icon blue">
+      <i class="fas fa-list-check"></i>
+    </div>
+    <div>
+      <h6 class="fw-bold mb-0">Récapitulatif de la vente</h6>
+      <span class="text-muted" style="font-size:12px">{{ articlesVendus.length }} payant(s) · {{ articlesGratuits.length }} gratuit(s)</span>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="vd-kpi-row mt-3">
+    <div class="vd-kpi">
+      <span class="vd-kpi-label">Articles payants</span>
+      <span class="vd-kpi-value">{{ articlesVendus.length }}</span>
+    </div>
+    <div class="vd-kpi">
+      <span class="vd-kpi-label">Articles gratuits</span>
+      <span class="vd-kpi-value">{{ articlesGratuits.length }}</span>
+    </div>
+    <div class="vd-kpi green">
+      <span class="vd-kpi-label">Montant total</span>
+      <span class="vd-kpi-value">{{ totalLivraison | number:'1.0-0' }} <small>XOF</small></span>
+    </div>
+  </div>
+
+  <!-- Recap payants -->
+  <div *ngIf="articlesVendus.length > 0">
+    <div class="vd-section-title mt-3">Articles payants</div>
+    <div class="table-responsive">
+      <table class="vd-table">
+        <thead>
+        <tr>
+          <th>Produit</th>
+          <th>Format</th>
+          <th class="text-center">Quantité</th>
+          <th class="text-end">Prix unitaire</th>
+          <th class="text-end">Sous-total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let article of articlesVendus">
+          <td>
+            <div class="vd-product-cell">
+              <div class="vd-product-dot" [style.background-color]="article.groupeArticle?.libelle === 'BIERE' ? '#f59e0b' : '#8dae56'"></div>
+              <span>{{ article.liquide.libelle }}</span>
+            </div>
+          </td>
+          <td><span class="vd-badge">{{ article.liquide.format }} cl</span></td>
+          <td class="text-center"><span class="vd-qty-total">{{ article.liquide.quantite }}</span></td>
+          <td class="text-end">{{ article.prixUnitaireLiquide | number:'1.0-0' }} XOF</td>
+          <td class="text-end fw-semibold" style="color:var(--primary-color)">
+            {{ (article.prixUnitaireLiquide * article.liquide.quantite) | number:'1.0-0' }} XOF
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recap gratuits -->
+  <div *ngIf="articlesGratuits.length > 0">
+    <div class="vd-section-title mt-3">Articles gratuits</div>
+    <div class="table-responsive">
+      <table class="vd-table">
+        <thead>
+        <tr>
+          <th>Produit</th>
+          <th>Format</th>
+          <th class="text-center">Quantité</th>
+          <th class="text-end">Prix unitaire</th>
+          <th class="text-end">Sous-total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let article of articlesGratuits">
+          <td>
+            <div class="vd-product-cell">
+              <div class="vd-product-dot" style="background-color:#8dae56"></div>
+              <span>{{ article.liquide.libelle }}</span>
+            </div>
+          </td>
+          <td><span class="vd-badge">{{ article.liquide.format }} cl</span></td>
+          <td class="text-center"><span class="vd-qty-total">{{ article.liquide.quantite }}</span></td>
+          <td class="text-end">{{ article.prixUnitaireLiquide | number:'1.0-0' }} XOF</td>
+          <td class="text-end fw-semibold" style="color:var(--primary-color)">
+            {{ (article.prixUnitaireLiquide * article.liquide.quantite) | number:'1.0-0' }} XOF
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ÉTAPE 3 : Emballages ===== -->
+<div class="vd-card" *ngIf="currentStep === 3">
+  <div class="vd-card-header">
+    <div class="vd-card-icon orange">
+      <i class="fas fa-recycle"></i>
+    </div>
+    <div>
+      <h6 class="fw-bold mb-0">Récupération des emballages</h6>
+      <span class="text-muted" style="font-size:12px">Choisissez le mode de récupération</span>
+    </div>
+  </div>
+
+  <!-- Mode selector -->
+  <div class="vd-mode-selector mt-3">
+    <div class="vd-mode-card" [class.selected]="mode === 'IMMEDIATE'" (click)="setMode('IMMEDIATE')">
+      <i class="fas fa-bolt"></i>
+      <span>Maintenant</span>
+      <small>Récupération immédiate</small>
+    </div>
+    <div class="vd-mode-card" [class.selected]="mode === 'COMPTANT'" (click)="setMode('COMPTANT')">
+      <i class="fas fa-coins"></i>
+      <span>Au comptant</span>
+      <small>Laisser en consigne</small>
+    </div>
+    <div class="vd-mode-card" [class.selected]="mode === 'APPOINTMENT'" (click)="setMode('APPOINTMENT')">
+      <i class="fas fa-calendar-check"></i>
+      <span>Sur RDV</span>
+      <small>Date ultérieure</small>
+    </div>
+  </div>
+
+  <!-- Alerte contextuelle -->
+  <div class="vd-alert green mt-3" *ngIf="mode === 'IMMEDIATE'">
+    <i class="fas fa-info-circle me-2"></i> Les emballages sont récupérés sur place immédiatement.
+  </div>
+  <div class="vd-alert blue mt-3" *ngIf="mode === 'COMPTANT'">
+    <i class="fas fa-info-circle me-2"></i> Les emballages restent en consigne chez le client.
+  </div>
+  <div class="vd-alert orange mt-3" *ngIf="mode === 'APPOINTMENT'">
+    <i class="fas fa-info-circle me-2"></i> Les emballages seront récupérés à la date du RDV.
+  </div>
+
+  <!-- Date RDV -->
+  <div class="vd-date-row mt-2" *ngIf="mode === 'APPOINTMENT' || (mode === 'COMPTANT' && isRdv)">
+    <label class="form-label">Date du RDV</label>
+    <input type="date" class="vd-date-input" [(ngModel)]="rdvDate">
+  </div>
+
+  <!-- Tableau emballages -->
+  <div class="table-responsive mt-3" *ngIf="emballageRecup.length > 0">
+    <table class="vd-table">
+      <thead>
+      <tr>
+        <th>Emballage</th>
+        <th>Format</th>
+        <th class="text-end">Prix unitaire</th>
+        <th class="text-center">Quantité</th>
+        <th class="text-end">Sous-total</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let article of emballageRecup">
+        <td>{{ article.emballage.libelle }}</td>
+        <td><span class="vd-badge">{{ article.emballage.format }} cl</span></td>
+        <td class="text-end">{{ article.prixUnitaireEmballage | number:'1.0-0' }} XOF</td>
+        <td class="text-center">
+          <div class="vd-qty-input-wrap" *ngIf="mode !== 'IMMEDIATE'; else readonlyQty">
+            <input type="number" class="vd-qty-input"
+                   [(ngModel)]="article.emballage.quantite"
+                   (ngModelChange)="emballageCalcul(article)"
+                   [max]="article.liquide.quantite">
+          </div>
+          <ng-template #readonlyQty>
+            <span class="vd-qty-total">{{ article.emballage.quantite || article.liquide.quantite }}</span>
+          </ng-template>
+        </td>
+        <td class="text-end fw-semibold" style="color:var(--secondary-color)">
+          {{ (article.prixUnitaireEmballage * (article.emballage.quantite || 0)) | number:'1.0-0' }} XOF
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="vd-empty mt-3" *ngIf="emballageRecup.length === 0">
+    <i class="fas fa-box-open"></i>
+    <span>Aucun emballage à récupérer.</span>
+  </div>
+</div>
+
+<!-- ===== ÉTAPE 4 : Validation ===== -->
+<div class="vd-card" *ngIf="currentStep === 4">
+  <div class="vd-card-header">
+    <div class="vd-card-icon green">
+      <i class="fas fa-check-circle"></i>
+    </div>
+    <div>
+      <h6 class="fw-bold mb-0">Confirmation de la vente</h6>
+      <span class="text-muted" style="font-size:12px">Sélectionnez le point de vente et confirmez</span>
+    </div>
+  </div>
+
+  <!-- Point de vente (déjà sélectionné à l'étape 1) -->
+  <div class="mt-3" *ngIf="client">
+    <div class="vd-info-block">
+      <div class="vd-info-label"><i class="fas fa-store me-1"></i> Point de vente</div>
+      <div class="vd-info-value fw-semibold">{{ client?.nomEtablissement }}</div>
+    </div>
+  </div>
+
+  <!-- Info commercial -->
+  <div class="vd-info-grid mt-3">
+    <div class="vd-info-block">
+      <div class="vd-info-label"><i class="fas fa-user-tie me-1"></i> Commercial</div>
+      <div class="vd-info-value">{{ updateData?.commercial?.nom }}</div>
+    </div>
+    <div class="vd-info-block">
+      <div class="vd-info-label"><i class="fas fa-warehouse me-1"></i> Dépôt</div>
+      <div class="vd-info-value">{{ updateData?.commercial?.depot?.nomDepot }}</div>
+    </div>
+    <div class="vd-info-block">
+      <div class="vd-info-label"><i class="fas fa-hashtag me-1"></i> Réf. vente</div>
+      <div class="vd-info-value">{{ updateData?.numVenteChine }}</div>
+    </div>
+    <div class="vd-info-block">
+      <div class="vd-info-label"><i class="fas fa-recycle me-1"></i> Mode retour</div>
+      <div class="vd-info-value">
+        <span class="vd-mode-chip"
+              [class.green]="mode==='IMMEDIATE'"
+              [class.blue]="mode==='COMPTANT'"
+              [class.orange]="mode==='APPOINTMENT'">
+          {{ mode === 'IMMEDIATE' ? 'Maintenant' : mode === 'COMPTANT' ? 'Au comptant' : 'Sur RDV' }}
+        </span>
+      </div>
+    </div>
+    <div class="vd-info-block" *ngIf="mode !== 'IMMEDIATE'">
+      <div class="vd-info-label"><i class="fas fa-calendar me-1"></i> Date RDV</div>
+      <div class="vd-info-value">{{ rdvDate | date:'dd/MM/yyyy' }}</div>
+    </div>
+  </div>
+
+  <!-- Recap emballages -->
+  <div class="mt-3" *ngIf="emballageRecup.length > 0">
+    <div class="vd-section-title">Emballages</div>
+    <div class="table-responsive">
+      <table class="vd-table">
+        <thead>
+        <tr>
+          <th>Emballage</th>
+          <th class="text-center">Quantité</th>
+          <th class="text-end">Prix unit.</th>
+          <th class="text-end">Sous-total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let article of emballageRecup">
+          <td>{{ article.emballage.libelle }}</td>
+          <td class="text-center"><span class="vd-qty-total">{{ article.emballage.quantite || article.liquide.quantite }}</span></td>
+          <td class="text-end">{{ article.prixUnitaireEmballage | number:'1.0-0' }} XOF</td>
+          <td class="text-end fw-semibold" style="color:var(--secondary-color)">
+            {{ (article.prixUnitaireEmballage * (article.emballage.quantite || 0)) | number:'1.0-0' }} XOF
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Totaux finaux -->
+  <div class="vd-final-totals mt-4">
+    <div class="vd-final-row">
+      <span>Articles payants</span>
+      <span class="fw-semibold">{{ totalLivraison | number:'1.0-0' }} XOF</span>
+    </div>
+    <div class="vd-final-row">
+      <span>Articles gratuits</span>
+      <span class="fw-semibold">{{ totalLivraisonGratuit | number:'1.0-0' }} XOF</span>
+    </div>
+    <div class="vd-final-row">
+      <span>Emballages</span>
+      <span class="fw-semibold">{{ totalEmballageRecup | number:'1.0-0' }} XOF</span>
+    </div>
+    <div class="vd-final-row total">
+      <span>Total général</span>
+      <span>{{ (totalLivraison + totalLivraisonGratuit + totalEmballageRecup) | number:'1.0-0' }} XOF</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== NAVIGATION ===== -->
+<div class="vd-nav mt-4">
+  <button class="vd-btn-outline" (click)="prevStep()" *ngIf="currentStep > 1">
+    <i class="fas fa-chevron-left me-2"></i> Retour
+  </button>
+  <div *ngIf="currentStep === 1"></div>
+
+  <button class="vd-btn-primary" (click)="nextStep()"
+          *ngIf="currentStep < totalSteps"
+          [disabled]="!currentStepValid"
+          [class.disabled]="!currentStepValid">
+    Suivant <i class="fas fa-chevron-right ms-2"></i>
+  </button>
+  <button class="vd-btn-success" (click)="valider()" *ngIf="currentStep === totalSteps">
+    <i class="fas fa-check me-2"></i> Confirmer la vente
+  </button>
 </div>

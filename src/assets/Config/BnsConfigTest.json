@@ -1,5 +1,5 @@
 {
-  "apiUrlBns":"https://testarmonysapi.bnsgroupe.net/api",
+  "apiUrlBns":"http://localhost:4000/api",
   "webSocketUrl":"wsbnsapi.localdev.business/",
-  "docUrl":"https://testarmonysapi.bnsgroupe.net"
+  "docUrl":"http://localhost:4000"
 }

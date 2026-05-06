@@ -22,6 +22,7 @@ const routes: Routes = [
             { path: 'finances', loadChildren: () => import('./finances/finances.module').then(m => m.FinancesModule) },
             { path: 'stocks', loadChildren: () => import('./stocks/stocks.module').then(m => m.StocksModule) },
             { path: 'achats', loadChildren: () => import('./achats/achats.module').then(m => m.AchatsModule) },
+            { path: 'rapport', loadChildren: () => import('./rapport/rapport.module').then(m => m.RapportModule) },
             { path: 'cartographie', component:CartographieComponent },
             { path: 'annonce', component:AnnonceComponent },
             { path: 'administration', component:AdminstrationComponent },

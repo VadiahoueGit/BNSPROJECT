@@ -1,141 +1,178 @@
-<div class="card">
-  <div class="container py-4">
-    <h2>Gestion des Annonces</h2>
-    <div class="row">
-      <div class="col">
-        <form [formGroup]="annonceForm" (ngSubmit)="onSubmit()" class="col g-3 mb-4">
-          <div class="col-md-4">
-            <div *ngIf="!changeValue" class="center border border-primary rounded p-3"
-                 style="width: 400px;height: 200px;">
-              <ngx-file-drop
-                dropZoneLabel="Déposez vos fichiers ici"
-                [dropZoneClassName]="'drop-zone'"
-                (onFileDrop)="dropped($event)"
-                (onFileOver)="fileOver($event)"
-                (onFileLeave)="fileLeave($event)"
-              >
-                <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
-                  <div class="d-flex flex-column align-items-center justify-content-center h-100">
-                    <i class="fa-solid fa-images mb-2" style="font-size: 70px; color: lightskyblue;"></i>
-                    <button type="button" class="btn btn-outline-primary btn-sm" (click)="openFileSelector()">
-                      Importer
-                    </button>
-                  </div>
-                </ng-template>
-              </ngx-file-drop>
-            </div>
-            <div class="mt-3">
-              <div class="row">
-                <div class="col-4" *ngFor="let img of previews">
-                  <img [src]="img" class="img-thumbnail" style="width: 100%; height: auto;">
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Titre</label>
-            <input type="text" class="form-control" formControlName="titre">
-            <div *ngIf="annonceForm.get('titre')?.invalid && annonceForm.get('titre')?.touched" class="text-danger">
-              Titre requis
-            </div>
-          </div>
-          <div class="col-md-4 my-2">
-            <label class="form-label">Description</label>
-            <textarea class="form-control" id="description" formControlName="texte" name="description" rows="8"
-                      placeholder="Saisissez une description ici..."></textarea>
-          </div>
-          <div class="col-12 my-2">
-            <div class="form-check">
-              <input type="checkbox" class="form-check-input" (change)="onChange()" formControlName="isTexte"
-                     id="isTexte">
-              <label class="form-check-label" for="isTexte">Annonce de texte</label>
-            </div>
-          </div>
-          <div class="col-12 my-2">
-            <button class="btn btn-primary" type="submit"
-                    [disabled]="annonceForm.invalid || (!annonceForm.get('isTexte')?.value && previews.length === 0)">
-              {{ editingId ? 'Mettre à jour' : 'Ajouter' }}
-            </button>
+<div class="an-page">
 
-            <button class="btn btn-secondary ms-2" type="button" (click)="resetForm()">Annuler</button>
+  <!-- Header -->
+  <div class="an-header">
+    <div>
+      <h2 class="an-title">Annonces</h2>
+      <p class="an-subtitle">Gérez les annonces diffusées sur l'application</p>
+    </div>
+    <span class="an-count">{{ annonces.length }} annonce{{ annonces.length !== 1 ? 's' : '' }}</span>
+  </div>
+
+  <div class="an-layout">
+
+    <!-- Form card -->
+    <div class="an-form-card">
+      <div class="an-form-head">
+        <div class="an-form-icon">
+          <i class="fas fa-bullhorn"></i>
+        </div>
+        <span>{{ editingId ? 'Modifier l\'annonce' : 'Nouvelle annonce' }}</span>
+      </div>
+
+      <form [formGroup]="annonceForm" (ngSubmit)="onSubmit()">
+
+        <!-- Type toggle -->
+        <div class="an-toggle-wrap">
+          <label class="an-toggle">
+            <input type="checkbox" formControlName="isTexte" (change)="onChange()">
+            <span class="an-toggle-slider"></span>
+          </label>
+          <span class="an-toggle-label">Annonce texte uniquement</span>
+        </div>
+
+        <!-- Drop zone -->
+        <div *ngIf="!changeValue" class="an-drop-zone">
+          <ngx-file-drop
+            dropZoneLabel="Déposez vos fichiers ici"
+            [dropZoneClassName]="'drop-zone'"
+            (onFileDrop)="dropped($event)"
+            (onFileOver)="fileOver($event)"
+            (onFileLeave)="fileLeave($event)"
+          >
+            <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+              <div class="an-drop-inner">
+                <i class="fas fa-cloud-upload-alt an-drop-icon"></i>
+                <p class="an-drop-text">Glissez une image ici</p>
+                <button type="button" class="an-btn-outline" (click)="openFileSelector()">
+                  <i class="fas fa-folder-open me-1"></i> Parcourir
+                </button>
+              </div>
+            </ng-template>
+          </ngx-file-drop>
+        </div>
+
+        <!-- Preview -->
+        <div *ngIf="previews.length > 0" class="an-previews">
+          <div *ngFor="let img of previews" class="an-preview-item">
+            <img [src]="img" alt="preview">
           </div>
-        </form>
+        </div>
+
+        <!-- Fields -->
+        <div class="an-field">
+          <label class="an-label">Titre</label>
+          <input type="text" class="an-input" formControlName="titre" placeholder="Titre de l'annonce">
+          <span *ngIf="annonceForm.get('titre')?.invalid && annonceForm.get('titre')?.touched" class="an-error">
+            Titre requis
+          </span>
+        </div>
+
+        <div class="an-field">
+          <label class="an-label">Description</label>
+          <textarea class="an-input an-textarea" formControlName="texte" rows="5"
+                    placeholder="Saisissez le contenu de l'annonce..."></textarea>
+        </div>
+
+        <!-- Actions -->
+        <div class="an-form-actions">
+          <button class="an-btn-primary" type="submit"
+                  [disabled]="annonceForm.invalid || (!annonceForm.get('isTexte')?.value && previews.length === 0)">
+            <i class="fas fa-check me-2"></i>{{ editingId ? 'Mettre à jour' : 'Publier' }}
+          </button>
+          <button class="an-btn-secondary" type="button" (click)="resetForm()">
+            <i class="fas fa-times me-1"></i> Annuler
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Table card -->
+    <div class="an-table-card">
+      <div class="an-table-head">
+        <i class="fas fa-list me-2"></i>Liste des annonces
       </div>
-      <div class="col">
-        <table class="table">
-          <thead>
-          <tr style="font-size: small">
-            <th scope="col" class="text-secondary">Image</th>
-            <th scope="col" class="text-secondary">Titre</th>
-            <th scope="col" class="text-secondary">Description</th>
-            <th scope="col" class="text-secondary">Date création</th>
-            <th scope="col" class="text-secondary text-center">
-              Action
-            </th>
+
+      <div *ngIf="annonces.length === 0" class="an-empty">
+        <i class="fas fa-bullhorn"></i>
+        <span>Aucune annonce publiée</span>
+      </div>
+
+      <table *ngIf="annonces.length > 0" class="an-table">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Titre</th>
+            <th>Description</th>
+            <th>Date</th>
+            <th class="text-center">Actions</th>
           </tr>
-          </thead>
-          <tbody>
+        </thead>
+        <tbody>
           <tr *ngFor="let item of annonces">
-            <td><img style="width: 20px" [src]="item.image ? docUrl + item.image : 'N/A'" alt=""></td>
-            <td><span>{{item.titre || 'N/A'}}</span></td>
-            <td><span>{{item.texte || 'N/A'}}</span></td>
-            <td><span>{{item.createdAt | date}}</span></td>
-          <td><tr class="d-flex justify-content-center gap-3">
-            <td><i (click)="OnView(item)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>
-            <td><i (click)="DeleteAnnonce(item.id)" style="cursor: pointer;"
-                   class="fas fa-trash-alt text-danger"></i></td>
-          </tr></td>
+            <td>
+              <div class="an-thumb">
+                <img *ngIf="item.image" [src]="docUrl + item.image" alt="">
+                <i *ngIf="!item.image" class="fas fa-image"></i>
+              </div>
+            </td>
+            <td class="an-cell-title">{{ item.titre || '—' }}</td>
+            <td class="an-cell-desc">{{ item.texte || '—' }}</td>
+            <td class="an-cell-date">{{ item.createdAt | date:'dd/MM/yyyy' }}</td>
+            <td class="text-center">
+              <div class="an-actions">
+                <span class="bui-icon-btn view" (click)="OnView(item)" title="Voir">
+                  <i class="fas fa-eye"></i>
+                </span>
+                <span class="bui-icon-btn delete" (click)="DeleteAnnonce(item.id)" title="Supprimer">
+                  <i class="fas fa-trash-alt"></i>
+                </span>
+              </div>
+            </td>
           </tr>
-          </tbody>
-        </table>
-      </div>
+        </tbody>
+      </table>
     </div>
 
   </div>
-
-
 </div>
 
-
-
+<!-- Detail modal -->
 <div *ngIf="isModalDetailOpen" class="custom-modal">
-  <div class="modal-dialog  modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div class="d-flex justify-content-center align-items-center"
-             style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
-          <i class="fas fa-box-check text-primary fs-3"></i>
-        </div>
-        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">Détails
-          de l'article</h1>
+  <div class="an-modal">
+    <div class="an-modal-header">
+      <div class="an-modal-icon">
+        <i class="fas fa-bullhorn"></i>
       </div>
-      <div class="modal-body">
-        <div class="row" >
-          <div class="col-md-6" *ngIf="updateData.image">
-            <div class="mb-3">
-              <img style="width: 300px;max-height:400px;" [src]="docUrl + updateData.image" alt="Photo"
-                   class="img-thumbnail vertical-align-middle"/>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label for="reference" class="form-label">Titre <span
-                class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="reference" [value]="updateData.titre" [disabled]="true">
-            </div>
-            <div class="mb-3">
-              <label for="groupeId" class="form-label">Description <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="groupeId" [value]="updateData.texte" [disabled]="true">
-            </div>
-
-          </div>
+      <h5 class="an-modal-title">Détail de l'annonce</h5>
+      <button class="an-modal-close" (click)="OnCloseDetailModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="an-modal-body">
+      <div *ngIf="updateData.image" class="an-modal-img-wrap">
+        <img [src]="docUrl + updateData.image" alt="Annonce">
+      </div>
+      <div class="an-modal-fields">
+        <div class="an-info-row">
+          <span class="an-info-label">Titre</span>
+          <span class="an-info-value">{{ updateData.titre || '—' }}</span>
+        </div>
+        <div class="an-info-row">
+          <span class="an-info-label">Description</span>
+          <span class="an-info-value">{{ updateData.texte || '—' }}</span>
+        </div>
+        <div class="an-info-row">
+          <span class="an-info-label">Date</span>
+          <span class="an-info-value">{{ updateData.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
         </div>
       </div>
-
-
-      <div class="modal-footer gap-3 px-4">
-        <button (click)="OnCloseDetailModal()" type="button" class="btn btn-secondary px-2">Fermer</button>
-      </div>
+    </div>
+    <div class="an-modal-footer">
+      <button class="an-btn-secondary" (click)="OnCloseDetailModal()">
+        <i class="fas fa-times me-1"></i> Fermer
+      </button>
     </div>
   </div>
 </div>

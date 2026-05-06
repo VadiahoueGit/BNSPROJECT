@@ -5,12 +5,12 @@
 
         <ng-template pTemplate="header">
             <tr>
-                <th style="color: var(--secondary-color);">Type</th>
-                <th style="color: var(--secondary-color);">Commercial</th>
-                <th style="color: var(--secondary-color);">Nombre de visites</th>
-                <th style="color: var(--secondary-color);">Date de la visite</th>
-                <th style="color: var(--secondary-color);">Statut</th>
-                <th style="color: var(--secondary-color);">Actions</th>
+                <th>Type</th>
+                <th>Commercial</th>
+                <th>Nombre de visites</th>
+                <th>Date de la visite</th>
+                <th>Statut</th>
+                <th>Actions</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-dataList>
@@ -41,13 +41,11 @@
                         {{ dataList.status }}
                     </span>
                 </td>
-                <td>
-            <tr class="d-flex justify-content-center gap-3">
-                <td><i style="cursor: pointer;" *ngIf="dataList.visiteEffectuee == false"
-                        (click)="ViewDetails(dataList)" class="fas fa-eye text-secondary"></i></td>
-            </tr>
-
-            </td>
+                <td class="text-center">
+          <div class="d-flex justify-content-center gap-2">
+            <span class="bui-icon-btn view" (click)="ViewDetails(dataList)"><i class="fas fa-eye"></i></span>
+          </div>
+        </td>
             </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
@@ -59,132 +57,105 @@
 </div>
 
 <!-- Modal detail -->
-<!-- Modal -->
 <div *ngIf="isModalOpen && visiteDetail" class="custom-modal">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header d-flex align-items-center">
-                <div class="d-flex justify-content-center align-items-center"
-                    style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
-                    <i class="fas fa-box-check text-primary fs-3"></i>
-                </div>
-                <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">Détails de la visite</h1>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-6">
-                        <div><strong>Statut:</strong><label class="mx-2 my-2"> {{visiteDetail.status}}</label></div>
-
-                        <div><strong>Commercial :</strong> <label class="mx-2 my-2"> {{visiteDetail.commercial.nom}}
-                                {{visiteDetail.commercial.prenom}}</label></div>
-                        <div><strong>Vehicule :</strong> <label class="mx-2 my-2"> {{visiteDetail.vehicule?.marque}} /
-                                {{visiteDetail.vehicule?.immatriculation}}</label></div>
-
-                    </div>
-
-                    <div class="col-6">
-                        <div  class="my-2"><strong>Mission :</strong> <label class="mx-2"> {{visiteDetail.typeVisite.libelle}}</label>
-                        </div>
-                        <div  class="my-2"><strong>Heure debut :</strong> <label class="mx-2" *ngIf="visiteDetail.DateDebut">
-                                {{visiteDetail.DateDebut | date: 'HH:mm'}}</label>
-                            <label class="mx-2 text-danger" *ngIf="visiteDetail.DateDebut == null"> Pas encore
-                                debuté</label>
-                        </div>
-                        <div class="my-2"><strong>Heure fin :</strong> <label class="mx-2"> {{visiteDetail.DateFin | date:
-                                'HH:mm'}}</label></div>
-                        <div class="my-2"><strong>Durée :</strong> <label class="mx-2" *ngIf="visiteDetail.DateFin != null">{{
-                                getFormattedDuration() }}</label></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div id="accordionExample" class="accordion col-12 fieldset1" style="overflow-y: auto; max-height: 400px;">
-                        <div *ngFor="let item of visiteDetail.pointDeVentes; let idx = index" class="accordion-item my-2">
-                            <h2 class="accordion-header" id="heading{{idx}}">
-                                <button
-                                    class="accordion-button collapsed "
-                                    type="button"
-                                    data-bs-toggle="collapse"
-                                    [attr.data-bs-target]="'#collapse' + idx"
-                                    aria-expanded="false"
-                                    [attr.aria-controls]="'collapse' + idx">
-                                    <div class="w-100 d-flex justify-content-between">
-                                        <label class="text-secondary fw-bold">
-                                            Client - {{ item.pointDeVente.nomEtablissement }}
-                                        </label>
-                                        <label
-                                            [ngStyle]="{
-                                                color: item.status == 'TERMINÉ' ? 'green' :
-                                                       item.status === 'EN COURS' ? 'orange' : 'red'
-                                            }">
-                                            {{ item.status }}
-                                        </label>
-                                    </div>
-                                </button>
-                            </h2>
-                            <div
-                                id="collapse{{idx}}"
-                                class="accordion-collapse collapse"
-                                [attr.aria-labelledby]="'heading' + idx"
-                                data-bs-parent="#accordionExample">
-                                <div class="accordion-body">
-                                    <!-- Nested Fieldset -->
-                                    <fieldset class="row border my-2">
-                                        <legend style="font-size: 14px;" class="text-secondary">Questionnaire</legend>
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">#</th>
-                                                    <th scope="col">Questions</th>
-                                                    <th scope="col">Réponses</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr *ngFor="let quest of item.reponses; let i = index">
-                                                    <th scope="row">{{ i + 1 }}</th>
-                                                    <td>{{ quest.question.texte }}</td>
-                                                    <td>{{ quest.reponse }}</td>
-                                                </tr>
-                                                <tr *ngIf="item.reponses.length === 0">
-                                                    <td colspan="3" class="text-danger text-center">Pas encore de réponses</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </fieldset>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- <div class="col-md-6">
-                        <fieldset class="row border my-2">
-                            <legend class="fs-6 text-primary">Ventes</legend>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Articles</th>
-                                        <th scope="col">Quantités</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>FANTA 33CL</td>
-                                        <td>10</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </fieldset>
-                    </div> -->
-                </div>
-
-
-
-            </div>
-
-            <div class="modal-footer gap-3 px-4">
-                <button (click)="OnCloseModal()" class="btn btn-primary px-2">Fermer</button>
-            </div>
+  <div class="vd-modal-dialog">
+    <div class="vd-modal-header">
+      <div class="vd-mh-left">
+        <div class="vd-mh-icon blue"><i class="fas fa-route"></i></div>
+        <div>
+          <div class="vd-mh-title">Détails de la visite</div>
+          <div class="vd-mh-sub">{{ visiteDetail.typeVisite?.libelle }}</div>
         </div>
+      </div>
+      <div class="vd-mh-right">
+        <span [ngClass]="{
+          'vd-statut-chip green':  visiteDetail.status == 'TERMINÉ',
+          'vd-statut-chip orange': visiteDetail.status == 'EN COURS',
+          'vd-statut-chip red':    visiteDetail.status != 'TERMINÉ' && visiteDetail.status != 'EN COURS'
+        }">{{ visiteDetail.status }}</span>
+        <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+      </div>
     </div>
+
+    <div class="vd-modal-body">
+      <div class="vd-info-grid">
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-user me-1"></i>Commercial</div>
+          <div class="vd-info-value">{{ visiteDetail.commercial?.nom }} {{ visiteDetail.commercial?.prenom }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-car me-1"></i>Véhicule</div>
+          <div class="vd-info-value">{{ visiteDetail.vehicule?.marque }} / {{ visiteDetail.vehicule?.immatriculation }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-clock me-1"></i>Heure début</div>
+          <div class="vd-info-value">
+            <span *ngIf="visiteDetail.DateDebut">{{ visiteDetail.DateDebut | date:'HH:mm' }}</span>
+            <span *ngIf="!visiteDetail.DateDebut" style="color:#ef4444">Pas encore débuté</span>
+          </div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-clock me-1"></i>Heure fin</div>
+          <div class="vd-info-value">{{ visiteDetail.DateFin ? (visiteDetail.DateFin | date:'HH:mm') : '—' }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-hourglass-half me-1"></i>Durée</div>
+          <div class="vd-info-value">{{ visiteDetail.DateFin ? getFormattedDuration() : '—' }}</div>
+        </div>
+      </div>
+
+      <div class="vd-card">
+        <div class="vd-card-header">
+          <div class="vd-card-icon blue"><i class="fas fa-store"></i></div>
+          <div class="vd-section-label">Points de vente ({{ visiteDetail.pointDeVentes?.length || 0 }})</div>
+        </div>
+        <div id="accordionVisite">
+          <div *ngFor="let item of visiteDetail.pointDeVentes; let idx = index" class="accordion-item" style="border:1px solid #e5e7eb; border-radius:8px; margin-bottom:8px; overflow:hidden">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button"
+                data-bs-toggle="collapse" [attr.data-bs-target]="'#collapseV' + idx"
+                aria-expanded="false" [attr.aria-controls]="'collapseV' + idx"
+                style="font-size:13px; font-weight:600; background:#f7fcff">
+                <div class="w-100 d-flex justify-content-between align-items-center pe-3">
+                  <span>{{ item.pointDeVente?.nomEtablissement }}</span>
+                  <span [ngClass]="{
+                    'vd-badge green':  item.status == 'TERMINÉ',
+                    'vd-badge orange': item.status == 'EN COURS',
+                    'vd-badge red':    item.status != 'TERMINÉ' && item.status != 'EN COURS'
+                  }">{{ item.status }}</span>
+                </div>
+              </button>
+            </h2>
+            <div [id]="'collapseV' + idx" class="accordion-collapse collapse" data-bs-parent="#accordionVisite">
+              <div class="accordion-body p-0">
+                <table class="vd-table">
+                  <thead>
+                    <tr>
+                      <th style="width:40px">#</th>
+                      <th>Question</th>
+                      <th>Réponse</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let quest of item.reponses; let i = index">
+                      <td class="text-center">{{ i + 1 }}</td>
+                      <td>{{ quest.question?.texte }}</td>
+                      <td><strong>{{ quest.reponse }}</strong></td>
+                    </tr>
+                    <tr *ngIf="item.reponses?.length === 0">
+                      <td colspan="3"><div class="vd-empty"><i class="fas fa-comment-slash"></i><span>Pas encore de réponses</span></div></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vd-modal-footer">
+      <button (click)="OnCloseModal()" class="vd-btn-outline">Fermer</button>
+    </div>
+  </div>
 </div>

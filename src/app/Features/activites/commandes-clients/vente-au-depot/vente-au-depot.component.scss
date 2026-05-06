@@ -1,0 +1,620 @@
+// ===== VARIABLES =====
+$primary: #8dae56;
+$blue: #0071c2;
+$orange: #f59e0b;
+$red: #ef4444;
+$gray-light: #f7fcff;
+$gray-border: #e5e7eb;
+$text-muted: #9ca3af;
+$radius: 12px;
+$radius-sm: 8px;
+
+// ===== HEADER =====
+.vd-back-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  color: $blue;
+  transition: all 0.2s;
+
+  &:hover {
+    background: $blue;
+    color: white;
+    transform: translateX(-2px);
+  }
+}
+
+.vd-client-badge {
+  background: white;
+  border-radius: $radius;
+  padding: 10px 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.vd-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $blue, lighten($blue, 20%));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 15px;
+}
+
+// ===== STEPPER =====
+.vd-stepper {
+  background: white;
+  border-radius: $radius;
+  padding: 20px 32px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.vd-stepper-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vd-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  position: relative;
+
+  &.done .vd-step-circle {
+    background: $primary;
+    border-color: $primary;
+    color: white;
+  }
+
+  &.active .vd-step-circle {
+    background: $blue;
+    border-color: $blue;
+    color: white;
+    box-shadow: 0 0 0 4px rgba($blue, 0.15);
+  }
+
+  &.active .vd-step-label {
+    color: $blue;
+    font-weight: 600;
+  }
+
+  &.done .vd-step-label {
+    color: $primary;
+    font-weight: 600;
+  }
+}
+
+.vd-step-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid $gray-border;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: $text-muted;
+  transition: all 0.3s ease;
+}
+
+.vd-step-label {
+  font-size: 12px;
+  color: $text-muted;
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+.vd-step-line {
+  flex: 1;
+  height: 2px;
+  background: $gray-border;
+  margin: 0 8px;
+  margin-bottom: 22px;
+  transition: background 0.3s;
+
+  &.done {
+    background: $primary;
+  }
+
+  &.active {
+    background: linear-gradient(to right, $primary, $blue);
+  }
+}
+
+// ===== CARD =====
+.vd-card {
+  background: white;
+  border-radius: $radius;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.vd-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid $gray-border;
+}
+
+.vd-card-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+
+  &.green {
+    background: rgba($primary, 0.12);
+    color: $primary;
+  }
+
+  &.blue {
+    background: rgba($blue, 0.1);
+    color: $blue;
+  }
+
+  &.orange {
+    background: rgba($orange, 0.12);
+    color: $orange;
+  }
+}
+
+// ===== TABLE =====
+.vd-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+
+  thead tr {
+    background: $gray-light;
+  }
+
+  thead th {
+    padding: 10px 14px;
+    font-weight: 600;
+    color: #6b7280;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid $gray-border;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    transition: background 0.15s;
+
+    &:hover {
+      background: rgba($blue, 0.03);
+    }
+
+    &:not(:last-child) td {
+      border-bottom: 1px solid $gray-border;
+    }
+  }
+
+  tbody td {
+    padding: 12px 14px;
+    color: #374151;
+    vertical-align: middle;
+  }
+}
+
+// ===== PRODUCT CELL =====
+.vd-product-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vd-product-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+// ===== BADGE =====
+.vd-badge {
+  background: $gray-light;
+  border: 1px solid $gray-border;
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+// ===== QTY INPUT =====
+.vd-qty-input-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.vd-qty-input {
+  width: 72px;
+  height: 34px;
+  border: 1.5px solid $gray-border;
+  border-radius: $radius-sm;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  transition: border-color 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: $blue;
+    box-shadow: 0 0 0 3px rgba($blue, 0.1);
+  }
+}
+
+.vd-qty-total {
+  display: inline-block;
+  background: rgba($primary, 0.1);
+  color: darken($primary, 10%);
+  border-radius: 6px;
+  padding: 3px 12px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+// ===== TOTAL BAR =====
+.vd-total-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, rgba($primary, 0.08), rgba($primary, 0.04));
+  border: 1px solid rgba($primary, 0.2);
+  border-radius: $radius-sm;
+  padding: 12px 20px;
+}
+
+.vd-total-amount {
+  font-size: 18px;
+  font-weight: 700;
+  color: $primary;
+}
+
+// ===== KPI ROW =====
+.vd-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.vd-kpi {
+  background: $gray-light;
+  border-radius: $radius-sm;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &.green {
+    background: rgba($primary, 0.08);
+    border: 1px solid rgba($primary, 0.2);
+
+    .vd-kpi-value {
+      color: darken($primary, 5%);
+    }
+  }
+}
+
+.vd-kpi-label {
+  font-size: 11px;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.vd-kpi-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2937;
+
+  small {
+    font-size: 12px;
+    font-weight: 400;
+    color: $text-muted;
+    margin-left: 3px;
+  }
+}
+
+// ===== MODE SELECTOR =====
+.vd-mode-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.vd-mode-card {
+  border: 2px solid $gray-border;
+  border-radius: $radius;
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+
+  i {
+    font-size: 22px;
+    color: $text-muted;
+    transition: color 0.2s;
+  }
+
+  span {
+    font-weight: 600;
+    font-size: 13px;
+    color: #374151;
+  }
+
+  small {
+    font-size: 11px;
+    color: $text-muted;
+  }
+
+  &:hover {
+    border-color: $blue;
+    background: rgba($blue, 0.03);
+
+    i { color: $blue; }
+  }
+
+  &.selected {
+    border-color: $blue;
+    background: rgba($blue, 0.06);
+
+    i { color: $blue; }
+    span { color: $blue; }
+  }
+}
+
+// ===== ALERTS =====
+.vd-alert {
+  border-radius: $radius-sm;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+
+  &.green {
+    background: rgba($primary, 0.08);
+    color: darken($primary, 15%);
+    border-left: 3px solid $primary;
+  }
+
+  &.blue {
+    background: rgba($blue, 0.07);
+    color: darken($blue, 5%);
+    border-left: 3px solid $blue;
+  }
+
+  &.orange {
+    background: rgba($orange, 0.08);
+    color: darken($orange, 20%);
+    border-left: 3px solid $orange;
+  }
+}
+
+// ===== DATE INPUT =====
+.vd-date-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .form-label {
+    margin: 0;
+    white-space: nowrap;
+  }
+}
+
+.vd-date-input {
+  height: 36px;
+  border: 1.5px solid $gray-border;
+  border-radius: $radius-sm;
+  padding: 0 12px;
+  font-size: 13px;
+  color: #374151;
+  width: 180px;
+
+  &:focus {
+    outline: none;
+    border-color: $blue;
+    box-shadow: 0 0 0 3px rgba($blue, 0.1);
+  }
+}
+
+// ===== EMPTY =====
+.vd-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px;
+  color: $text-muted;
+
+  i { font-size: 28px; }
+  span { font-size: 13px; }
+}
+
+// ===== INFO GRID =====
+.vd-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.vd-info-block {
+  background: $gray-light;
+  border-radius: $radius-sm;
+  padding: 12px 16px;
+}
+
+.vd-info-label {
+  font-size: 11px;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.vd-info-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+// ===== MODE CHIP =====
+.vd-mode-chip {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+
+  &.green {
+    background: rgba($primary, 0.12);
+    color: darken($primary, 10%);
+  }
+
+  &.blue {
+    background: rgba($blue, 0.1);
+    color: $blue;
+  }
+
+  &.orange {
+    background: rgba($orange, 0.1);
+    color: darken($orange, 15%);
+  }
+}
+
+// ===== SECTION TITLE =====
+.vd-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: $text-muted;
+  margin-bottom: 10px;
+}
+
+// ===== FINAL TOTALS =====
+.vd-final-totals {
+  background: $gray-light;
+  border-radius: $radius-sm;
+  padding: 4px 0;
+  overflow: hidden;
+}
+
+.vd-final-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  font-size: 13px;
+  color: #374151;
+  border-bottom: 1px solid $gray-border;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &.total {
+    background: linear-gradient(135deg, rgba($primary, 0.1), rgba($blue, 0.08));
+    font-size: 15px;
+    font-weight: 700;
+    color: #1f2937;
+  }
+}
+
+// ===== NAVIGATION =====
+.vd-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vd-btn-outline {
+  height: 42px;
+  padding: 0 24px;
+  border: 1.5px solid $gray-border;
+  border-radius: $radius-sm;
+  background: white;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: $blue;
+    color: $blue;
+  }
+}
+
+.vd-btn-primary {
+  height: 42px;
+  padding: 0 28px;
+  border: none;
+  border-radius: $radius-sm;
+  background: $blue;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 10px rgba($blue, 0.3);
+
+  &:hover:not(:disabled) {
+    background: darken($blue, 8%);
+    box-shadow: 0 4px 14px rgba($blue, 0.4);
+    transform: translateY(-1px);
+  }
+
+  &:disabled, &.disabled {
+    background: #c5d5e8;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+    opacity: 0.7;
+  }
+}
+
+.vd-btn-success {
+  height: 42px;
+  padding: 0 28px;
+  border: none;
+  border-radius: $radius-sm;
+  background: $primary;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 10px rgba($primary, 0.35);
+
+  &:hover {
+    background: darken($primary, 8%);
+    box-shadow: 0 4px 14px rgba($primary, 0.45);
+    transform: translateY(-1px);
+  }
+}

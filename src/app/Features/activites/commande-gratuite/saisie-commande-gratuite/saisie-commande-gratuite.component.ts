@@ -146,7 +146,7 @@ export class SaisieCommandeGratuiteComponent {
     this._spinner.show();
     this.articleService.GetListCommandeGratuite(data).then((res: any) => {
       console.log('ListCommandeGratuites:::>', res);
-      this.totalPages = res.totalPages; // nombre total d’enregistrements
+      this.totalPages = res.total; // nombre total d’enregistrements
       this.ListCommandeGratuites = res.data;
       this._spinner.hide();
     });

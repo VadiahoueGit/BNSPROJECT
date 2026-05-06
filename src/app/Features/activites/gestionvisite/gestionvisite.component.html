@@ -90,7 +90,7 @@
                     <tbody>
                     <tr *ngFor="let item of filteredPointDeVente; let i = index" style="font-size: small;">
                       <td><input type="checkbox" [name]="'checkbox_' + i" [(ngModel)]="item.isChecked"
-                                 (change)="toggleSelection(item)"></td>
+                                 (change)="toggleSelectionPdv(item)"></td>
                       <td>{{ item.nomEtablissement }}</td>
                     </tr>
                     </tbody>

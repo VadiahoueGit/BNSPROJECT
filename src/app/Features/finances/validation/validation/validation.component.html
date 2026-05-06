@@ -1,30 +1,22 @@
+<div class="bui-back mb-4" (click)="goBack()">
+  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="fw-bold mb-0">Validation</h4>
+</div>
 
-<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
-    <i style="font-size: 18px; " class="fas fw-bold fa-chevron-left me-2 "></i>
-    <h4 class="fw-bold mb-0">Validation</h4>
-  </div>
-  <nav class="nav nav-pills flex-column flex-sm-row gap-1 border-bottom">
+<div class="cc-tabs mb-3">
+  <button class="cc-tab-btn" [class.active]="activeTab === 'validationVenteChine'" (click)="activeElement('validationVenteChine')">Ventes chine</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'validationCommandeGratuite'" (click)="activeElement('validationCommandeGratuite')">Commandes gratuite</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'validationCommandeClient'" (click)="activeElement('validationCommandeClient')">Commandes client</button>
+</div>
 
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'validationVenteChine'"
-      (click)="activeElement('validationVenteChine')">Ventes chine</a>
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'validationCommandeGratuite'"
-      (click)="activeElement('validationCommandeGratuite')">Commandes gratuite</a>
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'validationCommandeClient'"
-      (click)="activeElement('validationCommandeClient')">Commandes client</a>
+<div *ngIf="activeTab === 'validationVenteChine'">
+  <app-validation-vente-chine></app-validation-vente-chine>
+</div>
 
+<div *ngIf="activeTab === 'validationCommandeGratuite'">
+  <app-validation-commande-gratuite></app-validation-commande-gratuite>
+</div>
 
-  </nav>
-
-  <div class="tab-content mt-3">
-    <div *ngIf="activeTab === 'validationVenteChine'" class="tab-pane fade show active">
-       <app-validation-vente-chine></app-validation-vente-chine>
-    </div>
-    <div *ngIf="activeTab === 'validationCommandeGratuite'" class="tab-pane fade show active">
-       <app-validation-commande-gratuite></app-validation-commande-gratuite>
-    </div>
-    <div *ngIf="activeTab === 'validationCommandeClient'" class="tab-pane fade show active">
-       <app-validation-commande-client></app-validation-commande-client>
-    </div>
-
-
-  </div>
+<div *ngIf="activeTab === 'validationCommandeClient'">
+  <app-validation-commande-client></app-validation-commande-client>
+</div>

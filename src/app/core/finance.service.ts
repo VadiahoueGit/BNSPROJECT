@@ -132,6 +132,25 @@ export class FinanceService {
     });
   }
 
+  GetSousCompte(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http
+        .get(
+          `${this.apiUrl}/v1/comptabilite/sous-comptes?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&clientType=revendeur`
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            this._spinner.hide();
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
   GetConsigne(data: any) {
     return new Promise((resolve: any, reject: any) => {
       this._http

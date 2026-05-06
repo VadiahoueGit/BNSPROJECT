@@ -1,46 +1,46 @@
+<div class="bui-back mb-4" (click)="goBack()">
+  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="fw-bold mb-0">Comptabilité</h4>
+</div>
 
-<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
-    <i style="font-size: 18px; " class="fas fw-bold fa-chevron-left me-2 "></i>
-    <h4 class="fw-bold mb-0">Comptabilité</h4>
-  </div>
-  <nav class="nav nav-pills flex-column flex-sm-row gap-1 border-bottom">
+<div class="cc-tabs mb-3">
+  <button class="cc-tab-btn" [class.active]="activeTab === 'suiviCompte'" (click)="activeElement('suiviCompte')">Suivi des comptes</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'sousCompte'" (click)="activeElement('sousCompte')">Sous comptes</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'paiementEnAttente'" (click)="activeElement('paiementEnAttente')">Paiements en attente</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'validationPaiement'" (click)="activeElement('validationPaiement')">Validation des paiements</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'commandeGroupe'" (click)="activeElement('commandeGroupe')">Validation agent</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'commandePayees'" (click)="activeElement('commandePayees')">Commande payées</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'creance'" (click)="activeElement('creance')">Créances</button>
+</div>
 
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'suiviCompte'"
-      (click)="activeElement('suiviCompte')">Suivi des comptes</a>
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'paiementEnAttente'"
-       (click)="activeElement('paiementEnAttente')">Paiements en attente</a>
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'validationPaiement'"
-      (click)="activeElement('validationPaiement')">Validation des paiements</a>
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'commandeGroupe'"
-      (click)="activeElement('commandeGroupe')">Validation agent</a>
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'commandePayees'"
-      (click)="activeElement('commandePayees')">Commande payées</a>
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'creance'"
-       (click)="activeElement('creance')">Créances</a>
+<div *ngIf="activeTab === 'suiviCompte'">
+  <app-suivi-comptes></app-suivi-comptes>
+</div>
 
+<div *ngIf="activeTab === 'sousCompte'">
+  <app-sous-compte></app-sous-compte>
+</div>
 
-  </nav>
+<div *ngIf="activeTab === 'paiementEnAttente'">
+  <app-paiementenattente></app-paiementenattente>
+</div>
 
-  <div class="tab-content mt-3">
-    <div *ngIf="activeTab === 'suiviCompte'" class="tab-pane fade show active">
-       <app-suivi-comptes></app-suivi-comptes>
-    </div>
-    <div *ngIf="activeTab === 'paiementEnAttente'" class="tab-pane fade show active">
-      <app-paiementenattente></app-paiementenattente>
-    </div>
-    <div *ngIf="activeTab === 'validationPaiement'" class="tab-pane fade show active">
-       <app-validation-paiements></app-validation-paiements>
-    </div>
-    <div *ngIf="activeTab === 'commandePayeesPatiellement'" class="tab-pane fade show active">
-       <app-commande-payes-partiellement></app-commande-payes-partiellement>
-    </div>
-    <div *ngIf="activeTab === 'commandeGroupe'" class="tab-pane fade show active">
-      <app-paiement-groupe></app-paiement-groupe>
-    </div>
-    <div *ngIf="activeTab === 'commandePayees'" class="tab-pane fade show active">
-       <app-commande-payes></app-commande-payes>
-    </div>
-    <div *ngIf="activeTab === 'creance'" class="tab-pane fade show active">
-      <app-ecart></app-ecart>
-    </div>
-  </div>
+<div *ngIf="activeTab === 'validationPaiement'">
+  <app-validation-paiements></app-validation-paiements>
+</div>
+
+<div *ngIf="activeTab === 'commandePayeesPatiellement'">
+  <app-commande-payes-partiellement></app-commande-payes-partiellement>
+</div>
+
+<div *ngIf="activeTab === 'commandeGroupe'">
+  <app-paiement-groupe></app-paiement-groupe>
+</div>
+
+<div *ngIf="activeTab === 'commandePayees'">
+  <app-commande-payes></app-commande-payes>
+</div>
+
+<div *ngIf="activeTab === 'creance'">
+  <app-ecart></app-ecart>
+</div>

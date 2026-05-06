@@ -50,7 +50,7 @@ export class ListPrixComponent implements OnInit {
     this._spinner.show();
     this.articleService.GetListTypePrix(data).then((res: any) => {
       console.log('DATAPRIX:::>', res);
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total ; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages);
 
       this.dataList = res.data;
@@ -106,13 +106,13 @@ export class ListPrixComponent implements OnInit {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  
+
   onSubmit(): void {
     console.log(this.prixForm.value);
     if (this.prixForm.valid) {
       const formValues = this.prixForm.value;
-  
-    
+
+
       if (this.isEditMode) {
         this.articleService.UpdateTypePrix(this.prixId, formValues).then(
           (response: any) => {

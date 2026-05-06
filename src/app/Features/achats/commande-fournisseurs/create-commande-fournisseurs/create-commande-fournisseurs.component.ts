@@ -666,7 +666,8 @@ export class CreateCommandeFournisseursComponent {
       const prixDetail = response.data.find((item: any) => {
         return this.selectedOption === 'Sous distributeur'
           ? item.libelle === 'PRIX S/DISTRIBUTEUR'
-          : item.libelle === 'PRIX USINE';
+          : item.libelle === 'PRIX ACHAT';
+
       });
 
 

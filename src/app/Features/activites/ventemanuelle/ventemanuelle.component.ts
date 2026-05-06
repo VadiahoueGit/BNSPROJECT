@@ -1,11 +1,9 @@
 import {Component} from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {NgxSpinnerService} from "ngx-spinner";
 import {ArticleServiceService} from "../../../core/article-service.service";
 import {ToastrService} from "ngx-toastr";
 import {Location} from "@angular/common";
-import {of} from 'rxjs';
-import {NgWizardConfig, NgWizardService, StepChangedArgs, StepValidationArgs, STEP_STATE, THEME} from 'ng-wizard';
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActiviteService} from "../../../core/activite.service";
 import {UtilisateurResolveService} from "../../../core/utilisateur-resolve.service";
@@ -33,42 +31,34 @@ export class VentemanuelleComponent {
   montantTotal: any = {};
   VenteForm: FormGroup;
   mode: string = 'IMMEDIATE';
+  isRdv: boolean = false;
   rdvDate: string = '';
   articlesVendus: any = []
+  articlesGratuits: any = []
   emballageRecup: any = []
   pointDeVente: any = []
-  client: any
-  stepStates = {
-    normal: STEP_STATE.normal,
-    disabled: STEP_STATE.disabled,
-    error: STEP_STATE.error,
-    hidden: STEP_STATE.hidden,
-  };
+  client: any = null
+  currentStep: number = 1;
+  totalSteps: number = 4;
 
-  config: NgWizardConfig = {
-    selected: 0,
-    theme: THEME.arrows,
-    lang: {
-      next: 'Suivant ➡',
-      previous: '⬅ Retour'
-    },
-    toolbarSettings: {
-      toolbarExtraButtons: [
-        {
-          text: 'Valider',
-          class: 'btn btn-success',
-          event: () => {
-            this.valider();
-          },
-        },
-      ],
-    },
-  };
+  steps = [
+    { num: 1, label: 'Articles',      icon: 'fas fa-box-open' },
+    { num: 2, label: 'Récapitulatif', icon: 'fas fa-list-check' },
+    { num: 3, label: 'Emballages',    icon: 'fas fa-recycle' },
+    { num: 4, label: 'Validation',    icon: 'fas fa-check-circle' },
+  ];
 
-  search: string = '';
-
-  constructor(private utilisateurService: UtilisateurResolveService, private activiteService: ActiviteService, private fb: FormBuilder, private ngWizardService: NgWizardService, private route: ActivatedRoute, private _spinner: NgxSpinnerService, private toastr: ToastrService,
-              private articleService: ArticleServiceService, private location: Location) {
+  constructor(
+    private _router: Router,
+    private utilisateurService: UtilisateurResolveService,
+    private activiteService: ActiviteService,
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private _spinner: NgxSpinnerService,
+    private toastr: ToastrService,
+    private articleService: ArticleServiceService,
+    private location: Location
+  ) {
     this.route.queryParams.subscribe(params => {
       this.venteId = params['id'];
       this.GetListVenteChineById(this.venteId)
@@ -78,8 +68,10 @@ export class VentemanuelleComponent {
       articles: this.fb.array([]),
       articlesGratuit: this.fb.array([]),
     });
-  }
 
+    const today = new Date();
+    this.rdvDate = today.toISOString().split('T')[0];
+  }
 
   goBack() {
     this.location.back()
@@ -102,6 +94,89 @@ export class VentemanuelleComponent {
     return this.VenteForm.get('articles') as FormArray;
   }
 
+  get articlesGratuit(): FormArray {
+    return this.VenteForm.get('articlesGratuit') as FormArray;
+  }
+
+  // ===== TOTAUX =====
+  get totalLivraison(): number {
+    return (this.updateData?.articles || []).reduce((sum: number, a: any) => {
+      return sum + Number(a.prixUnitaireLiquide) * (a.liquide?.quantite || 0);
+    }, 0);
+  }
+
+  get totalLivraisonGratuit(): number {
+    return (this.updateData?.articlesGratuit || []).reduce((sum: number, a: any) => {
+      return sum + Number(a.prixUnitaireLiquide) * (a.liquide?.quantite || 0);
+    }, 0);
+  }
+
+  get totalEmballageRecup(): number {
+    return this.emballageRecup.reduce((sum: number, a: any) => {
+      return sum + Number(a.prixUnitaireEmballage) * (a.emballage?.quantite || 0);
+    }, 0);
+  }
+
+  // ===== VALIDATION ETAPES =====
+  get step1Valid(): boolean {
+    if (!this.client) return false;
+    const hasPayant = (this.updateData?.articles || []).some((a: any) => (a.liquide?.quantite || 0) > 0);
+    const hasGratuit = (this.updateData?.articlesGratuit || []).some((a: any) => (a.liquide?.quantite || 0) > 0);
+    return hasPayant || hasGratuit;
+  }
+
+  get step2Valid(): boolean {
+    return this.articlesVendus.length > 0 || this.articlesGratuits.length > 0;
+  }
+
+  get step3Valid(): boolean {
+    if (this.mode === 'APPOINTMENT') return !!this.rdvDate;
+    return true;
+  }
+
+  get currentStepValid(): boolean {
+    if (this.currentStep === 1) return this.step1Valid;
+    if (this.currentStep === 2) return this.step2Valid;
+    if (this.currentStep === 3) return this.step3Valid;
+    return true;
+  }
+
+  // ===== NAVIGATION =====
+  nextStep() {
+    if (!this.currentStepValid) {
+      if (this.currentStep === 1) {
+        if (!this.client) this.toastr.warning('Veuillez sélectionner un point de vente.');
+        else this.toastr.warning('Saisissez au moins une quantité pour continuer.');
+      }
+      if (this.currentStep === 2) this.toastr.warning('Aucun article à livrer.');
+      if (this.currentStep === 3) this.toastr.warning('Veuillez saisir la date du RDV.');
+      return;
+    }
+    if (this.currentStep === 1) {
+      this.validate(null);
+    }
+    if (this.currentStep < this.totalSteps) {
+      this.currentStep++;
+    }
+  }
+
+  prevStep() {
+    if (this.currentStep > 1) {
+      this.currentStep--;
+    }
+  }
+
+  goToStep(step: number) {
+    if (step < this.currentStep) {
+      this.currentStep = step;
+    }
+  }
+
+  setMode(m: string) {
+    this.mode = m;
+  }
+
+  // ===== LOGIQUE METIER (inchangée) =====
   validate(data: any) {
     this.articlesVendus = (this.updateData.articles || []).filter(
       (article: any) => article.liquide?.quantite > 0
@@ -114,18 +189,37 @@ export class VentemanuelleComponent {
       }
     });
 
-    this.emballageRecup = (this.updateData.articles || [])
-      .filter((article: any) => article.liquide?.quantite > 0) // garder uniquement ceux dont le liquide a une quantité > 0
-      .map((article: any) => article)                 // extraire l’emballage
-      .filter((emballage: any) => !!emballage);                 // sécurité pour éviter null/undefined
+    this.articlesGratuits = (this.updateData.articlesGratuit || []).filter(
+      (article: any) => article.liquide?.quantite > 0
+    );
 
+    this.articlesGratuits.forEach((article: any) => {
+      if (article.emballage) {
+        article.emballage.quantite = null
+        article.emballage.quantite = article.liquide.quantite;
+      }
+    });
+
+    this.emballageRecup = [
+      ...(this.updateData.articles || []),
+      ...(this.updateData.articlesGratuit || [])
+    ]
+      .filter((article: any) => article.liquide?.quantite > 0)
+      .filter((emballage: any) => !!emballage);
 
     console.log(this.emballageRecup)
   }
 
   emballageCalcul(article: any) {
-    article.prixEmballage = article.emballage.quantite ? article.prixUnitaireEmballage * article.emballage.quantite :  article.prixUnitaireEmballage * article.liquide.quantite || 0
- }
+    article.prixEmballage = article.emballage.quantite ? article.prixUnitaireEmballage * article.emballage.quantite : article.prixUnitaireEmballage * article.liquide.quantite || 0
+
+    if (article.emballage.quantite !== article.liquide.quantite &&
+      (this.mode === 'COMPTANT' || this.mode === 'APPOINTMENT')){
+      this.isRdv = true
+    }else{
+      this.isRdv = false
+    }
+  }
 
   decrement(article: any) {
     if (article.quantite > 0) {
@@ -152,138 +246,195 @@ export class VentemanuelleComponent {
   }
 
   valider() {
-    const articles = this.articlesVendus.map((article: any) => {
-      const quantite = article.liquide.quantite;
-      const prixUnitaire = Number(article.prixUnitaireLiquide);
+    if (this.client) {
+      console.log(this.articlesVendus)
+      const articles = this.articlesVendus.map((article: any) => {
+        const quantite = article.liquide.quantite;
+        const prixUnitaire = Number(article.prixUnitaireLiquide);
+        return {
+          venteChineArticleId: article.id,
+          liquideId: article.liquide.id,
+          emballageId: article.emballage.id,
+          quantite: quantite,
+          prixUnitaire: prixUnitaire,
+          montantTotal: prixUnitaire * quantite
+        };
+      });
 
-      return {
-        venteChineArticleId: article.id,
-        liquideId: article.liquide.id,
-        emballageId: article.emballage.id,
-        quantite: quantite,
-        prixUnitaire: prixUnitaire,
-        montantTotal: prixUnitaire * quantite
-      };
-    });
-    const montantTotal = articles.reduce((sum: any, a: any) => sum + a.montantTotal, 0);
-    const emballage = this.emballageRecup.map((a: any) => a.emballage);
+      const articlesGratuit = this.articlesGratuits.map((article: any) => {
+        const quantite = article.liquide.quantite;
+        const prixUnitaire = Number(article.prixUnitaireLiquide);
+        return {
+          venteChineArticleGratuitId: article.id,
+          liquideId: article.liquide.id,
+          emballageId: article.emballage.id,
+          quantite: quantite,
+          prixUnitaire: prixUnitaire,
+          montantTotal: prixUnitaire * quantite
+        };
+      });
 
-    const data = {
-      "venteChineId": Number(this.venteId),
-      "clientId": this.client.id,
-      "montantTotal": montantTotal,
-      "articles": articles,
-      "articlesGratuit": [],
-      "signatureBase64": "xxxx"
-    }
-    // const articlesObject = this.emballageRecup.map((article: any) => ({
-    //   codeArticle: article.emballage.code,
-    //   quantite: article.emballage.quantite,
-    //   prixUnitaireEmballage: Number(article.prixUnitaireEmballage)
-    // }));
+      const montantTotal = articles.reduce((sum: any, a: any) => sum + a.montantTotal, 0);
+      const emballage = this.emballageRecup.map((a: any) => a.emballage);
 
-    let articlesVente: any[] = [];
-    let articlesObject: any[] = [];
+      const vente = {
+        "venteChineId": Number(this.venteId),
+        "clientId": this.client.id,
+        "montantTotal": montantTotal,
+        "articles": articles,
+        "commercialId": this.updateData.commercial.id,
+        "articlesGratuit": articlesGratuit,
+        "signatureBase64": "xxxx"
+      }
+      console.log(this.emballageRecup)
 
-    if (this.mode === 'COMPTANT') {
-      this.emballageRecup.forEach((article: any) => {
-        const quantite = Number(article.emballage.quantite);
-
-        if (quantite > 0) {
-          // Article avec quantité spécifiée → vente
-          articlesVente.push({
+      let articlesVente: any[] = [];
+      let articlesObject: any[] = [];
+      console.log(this.mode)
+      if (this.mode === 'COMPTANT') {
+        this.emballageRecup.forEach((article: any) => {
+          const quantite = Number(article.emballage.quantite);
+          console.log(article)
+          if (quantite > 0) {
+            console.log(1);
+            articlesVente.push({
+              venteChineArticleId: article.id,
+              libelle: article.emballage.libelle,
+              liquideId: article.liquide.id,
+              emballageId: article.emballage.id,
+              prixUnitaire: Number(article.prixUnitaireEmballage),
+              codeArticle: article.emballage.code,
+              quantite: article.emballage.quantite ?? 0,
+              prixUnitaireEmballage: Number(article.prixUnitaireEmballage)
+            });
+            if(quantite < article.liquide.quantite) {
+              articlesObject.push({
+                venteChineArticleId: article.id,
+                libelle: article.emballage.libelle,
+                liquideId: article.liquide.id,
+                emballageId: article.emballage.id,
+                prixUnitaire: Number(article.prixUnitaireEmballage),
+                codeArticle: article.emballage.code,
+                quantite: article.liquide.quantite - article.emballage.quantite ?? 0,
+                prixUnitaireEmballage: Number(article.prixUnitaireEmballage)
+              });
+            }
+            console.log(articlesVente)
+          } else {
+            console.log(2);
+            articlesObject.push({
+              venteChineArticleId: article.id,
+              libelle: article.emballage.libelle,
+              liquideId: article.liquide.id,
+              emballageId: article.emballage.id,
+              prixUnitaire: Number(article.prixUnitaireEmballage),
+              codeArticle: article.emballage.code,
+              quantite: article.liquide.quantite - article.emballage.quantite ?? 0,
+              prixUnitaireEmballage: Number(article.prixUnitaireEmballage)
+            });
+            console.log(articlesObject)
+          }
+        });
+      } else if (this.mode === 'IMMEDIATE'){
+        console.log(2);
+        this.emballageRecup.forEach((article: any) => {
+          articlesObject.push({
+            venteChineArticleId: article.id,
+            libelle: article.emballage.libelle,
+            liquideId: article.liquide.id,
+            emballageId: article.emballage.id,
+            prixUnitaire: Number(article.prixUnitaireEmballage),
             codeArticle: article.emballage.code,
-            quantite,
+            quantite: article.emballage.quantite ?? 0,
             prixUnitaireEmballage: Number(article.prixUnitaireEmballage)
           });
-        } else {
-          // Sinon, il reste dans le panier
-          articlesObject.push(article);
-        }
-      });
-    } else {
-      // Si ce n’est pas COMPTANT, on garde tout dans le panier d'origine
-      articlesObject = [...this.emballageRecup];
-    }
-
-// 🔄 On remplace le panier original par la version mise à jour
-    this.emballageRecup = articlesObject;
-
-    const returnObject = {
-      "depotId": this.updateData.commercial.depot.id,
-      "commandeCliOrGratuitCode": this.updateData.numVenteChine,
-      "venteChineId": Number(this.venteId),
-      "returnType": this.mode,
-      ...((this.mode === 'APPOINTMENT' || this.mode === 'COMPTANT') && { "appointmentDate": "2023-10-15T10:00:00Z" }),
-      "montantAPercevoir": this.mode === 'COMPTANT' ? articlesObject.map((a:any)=>{ return ++a.prixUnitaireEmballage;}) : 0,
-      "clientId": this.client.id,
-      "clientType": "POINT DE VENTE",
-      "articles": articlesObject,
-      "signatureBase64": "",
-      "articlesVente": articlesVente
-    }
-    console.log(returnObject)
-    console.log(this.emballageRecup)
-    this.activiteService.CreateVenteGlobal(data).then(
-      (response: any) => {
-        console.log(response);
-        if (response.statusCode == 201) {
-          this.toastr.success('Succès', response.message);
-          this.activiteService.RetourEmballageManual(returnObject).then(
-            (res: any) => {
-              if (res.statusCode == 201) {
-                this.toastr.success('Succès', response.message);
-              } else {
-                this.toastr.error('Erreur!', response.message);
-              }
-            },
-            (error: any) => {
-              this.toastr.error('Erreur!', error.message);
+        })
+      } else if (this.mode === 'APPOINTMENT') {
+        this.emballageRecup.forEach((article: any) => {
+          const quantite = Number(article.emballage.quantite);
+          console.log(article)
+          if (quantite > 0) {
+            console.log(1);
+            articlesVente.push({
+              venteChineArticleId: article.id,
+              libelle: article.emballage.libelle,
+              liquideId: article.liquide.id,
+              emballageId: article.emballage.id,
+              prixUnitaire: Number(article.prixUnitaireEmballage),
+              codeArticle: article.emballage.code,
+              quantite: article.emballage.quantite ?? 0,
+              prixUnitaireEmballage: Number(article.prixUnitaireEmballage)
+            });
+            if(quantite < article.liquide.quantite) {
+              articlesObject.push({
+                venteChineArticleId: article.id,
+                libelle: article.emballage.libelle,
+                liquideId: article.liquide.id,
+                emballageId: article.emballage.id,
+                prixUnitaire: Number(article.prixUnitaireEmballage),
+                codeArticle: article.emballage.code,
+                quantite: article.liquide.quantite - article.emballage.quantite ?? 0,
+                prixUnitaireEmballage: Number(article.prixUnitaireEmballage)
+              });
             }
-          );
-        } else {
-          this.toastr.error('Erreur!', response.message);
-        }
-      },
-      (error: any) => {
-        this.toastr.error('Erreur!', error.message);
+            console.log(articlesVente)
+          } else {
+            console.log(2);
+            articlesObject.push({
+              venteChineArticleId: article.id,
+              libelle: article.emballage.libelle,
+              liquideId: article.liquide.id,
+              emballageId: article.emballage.id,
+              prixUnitaire: Number(article.prixUnitaireEmballage),
+              codeArticle: article.emballage.code,
+              quantite: article.liquide.quantite - article.emballage.quantite ?? 0,
+              prixUnitaireEmballage: Number(article.prixUnitaireEmballage)
+            });
+            console.log(articlesObject)
+          }
+        });
       }
-    );
-  }
 
-  retour() {
-    console.log('Retour en arrière');
-  }
+      const returnObject = {
+        "depotId": this.updateData.commercial.depot.id,
+        "commandeCliOrGratuitCode": this.updateData.numVenteChine,
+        "venteChineId": Number(this.venteId),
+        "returnType": this.mode,
+        ...((this.mode === 'APPOINTMENT' || this.mode === 'COMPTANT') && {"appointmentDate": this.isRdv ? this.rdvDate : null }),
+        "montantAPercevoir": this.mode === 'COMPTANT'
+          ? articlesObject.reduce((total: number, a: any) => total + Number(a.prixUnitaireEmballage || 0), 0)
+          : 0,
+        "clientId": this.client.id,
+        "clientType": "POINT DE VENTE",
+        "articles": articlesObject,
+        "signatureBase64": "",
+        "articlesVente": articlesVente
+      }
 
-
-  showPreviousStep(event?: Event) {
-    this.ngWizardService.previous();
-  }
-
-  showNextStep(event?: Event) {
-    this.ngWizardService.next();
-  }
-
-  resetWizard(event?: Event) {
-    this.ngWizardService.reset();
-  }
-
-  setTheme(theme: THEME) {
-    this.ngWizardService.theme(theme);
-  }
-
-  stepChanged(args: StepChangedArgs) {
-    console.log(args.step);
-  }
-
-  isValidTypeBoolean: boolean = true;
-
-  isValidFunctionReturnsBoolean(args: StepValidationArgs) {
-    return true;
-  }
-
-  isValidFunctionReturnsObservable(args: StepValidationArgs) {
-    return of(true);
+      const data = {
+        vente: vente,
+        retour: returnObject
+      }
+      console.log(data)
+      console.log(this.isRdv)
+      this.activiteService.CreateVenteGlobal(data).then(
+        (response: any) => {
+          console.log(response);
+          console.log(this.emballageRecup)
+          if (response.statusCode == 201) {
+            this.toastr.success('Succès', response.message);
+            this._router.navigate(['feature/activites/ventechine'])
+          } else {
+            this.toastr.error('', response.message);
+          }
+        },
+        (error: any) => {
+          this.toastr.error('Erreur!', error.message);
+        }
+      );
+    } else {
+      this.toastr.error('Veuillez selectionner le client !', 'Erreur!');
+    }
   }
 
   protected readonly console = console;

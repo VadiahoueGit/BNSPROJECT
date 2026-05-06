@@ -1,155 +1,111 @@
-<div class="card">
-  <div class="d-flex justify-content-end py-3">
-    <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
-      Saisir une commande
+<div class="cc-list-card">
+
+  <!-- Top bar -->
+  <div class="cc-list-topbar mb-3">
+    <span class="cc-list-count">{{ totalPages }} commande(s)</span>
+    <button class="cc-btn-primary" type="button" (click)="OnCreate()">
+      <i class="fas fa-plus me-2"></i>Saisir une commande
     </button>
   </div>
-  <div class="row">
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Numéro commande :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.numeroCommande"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
+
+  <!-- Filters -->
+  <div class="cc-filters mb-4">
+    <div class="cc-filter-item">
+      <span class="cc-filter-label">Numéro commande</span>
+      <div class="cc-filter-input-wrap">
+        <i class="fas fa-search cc-filter-icon"></i>
+        <input class="cc-filter-input" type="text" [(ngModel)]="filters.numeroCommande" (keydown.enter)="filterGlobal()" placeholder="Recherche…">
+      </div>
     </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Date :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.date"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
+    <div class="cc-filter-item">
+      <span class="cc-filter-label">Date</span>
+      <div class="cc-filter-input-wrap">
+        <i class="fas fa-calendar cc-filter-icon"></i>
+        <input class="cc-filter-input" type="text" [(ngModel)]="filters.date" (keydown.enter)="filterGlobal()" placeholder="Recherche…">
+      </div>
     </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Etablissement :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.etablissement"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
+    <div class="cc-filter-item">
+      <span class="cc-filter-label">Établissement</span>
+      <div class="cc-filter-input-wrap">
+        <i class="fas fa-building cc-filter-icon"></i>
+        <input class="cc-filter-input" type="text" [(ngModel)]="filters.etablissement" (keydown.enter)="filterGlobal()" placeholder="Recherche…">
+      </div>
     </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Statut :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.statut"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
+    <div class="cc-filter-item">
+      <span class="cc-filter-label">Statut</span>
+      <div class="cc-filter-input-wrap">
+        <i class="fas fa-filter cc-filter-icon"></i>
+        <input class="cc-filter-input" type="text" [(ngModel)]="filters.statut" (keydown.enter)="filterGlobal()" placeholder="Recherche…">
+      </div>
     </div>
   </div>
+
+  <!-- Table -->
   <p-table
-    [styleClass]="'p-datatable-sm'"
+    [styleClass]="'cc-ptable p-datatable-sm'"
     #dt2
     [value]="dataList"
     dataKey="id"
     [rows]="8"
-    [totalRecords]="totalPages" [lazy]="true"
+    [totalRecords]="totalPages"
+    [lazy]="true"
     [rowsPerPageOptions]="[10, 25, 50]"
     [paginator]="true"
     (onPage)="onPage($event)"
   >
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color)">Source</th>
-        <th style="color: var(--secondary-color)">Date</th>
-        <th style="color: var(--secondary-color)">Numéro de commande</th>
-        <th style="color: var(--secondary-color)">Etablissements</th>
-        <th style="color: var(--secondary-color)">Entrepôt</th>
-        <th style="color: var(--secondary-color)">Statut</th>
-        <th style="color: var(--secondary-color)">Action(s)</th>
+        <th>Source</th>
+        <th>Date</th>
+        <th>N° Commande</th>
+        <th>Établissement</th>
+        <th>Entrepôt</th>
+        <th>Statut</th>
+        <th>Actions</th>
       </tr>
     </ng-template>
+
     <ng-template pTemplate="body" let-dataList>
       <tr>
         <td>
-          <i
-            *ngIf="dataList.source == 'APPMOB'"
-            class="fa-solid text-secondary fa-mobile-notch"
-          ></i>
-          <i
-            *ngIf="dataList.source == 'BO'"
-            class="fa-regular text-secondary fa-desktop"
-          ></i>
+          <i *ngIf="dataList.source == 'APPMOB'" class="fa-solid fa-mobile-notch text-muted"></i>
+          <i *ngIf="dataList.source == 'BO'"     class="fa-regular fa-desktop text-muted"></i>
         </td>
+        <td>{{ dataList.dateCreation | date:'dd/MM/yyyy' }}</td>
+        <td class="fw-semibold">{{ dataList.NumCommande }}</td>
+        <td>{{ dataList.client.nomEtablissement || dataList.client.raisonSocial }}</td>
+        <td>{{ dataList.client.depot.nomDepot }}</td>
         <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.dateCreation | date }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.NumCommande }}
-          </span>
-        </td>
-        <td>
-          {{
-            dataList.client.nomEtablissement
-              ? dataList.client.nomEtablissement
-              : dataList.client.raisonSocial
-          }}
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.client.depot.nomDepot }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
+          <span class="cc-statut-badge"
+            [class.green]="dataList.statut === 'Approuvée' || dataList.statut === 'Commande Livrée' || dataList.statut === 'Validée'"
+            [class.orange]="dataList.statut === 'Attente de Validation' || dataList.statut === 'Planification de Livraison' || dataList.statut === 'Attente Livraison'"
+            [class.red]="dataList.statut === 'Non approuvée'"
+            [class.gray]="dataList.statut === 'Non regroupé'">
             {{ dataList.statut }}
           </span>
         </td>
         <td>
-      <tr class="d-flex justify-content-center gap-3">
-        <td>
-          <i
-            (click)="OnView(dataList)"
-            style="cursor: pointer"
-            class="fas fa-eye text-secondary"
-          ></i>
+          <div class="d-flex align-items-center gap-2">
+            <button class="cc-action-btn" type="button" (click)="OnView(dataList)" title="Voir le détail">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button *ngIf="dataList.statut !== 'Non regroupé' && dataList.statut !== 'Attente de Validation' && dataList.statut !== 'Livrée' && dataList.statut !== 'Commande Livrée'"
+              class="cc-vd-btn" type="button" (click)="goToVenteAuDepot(dataList)" title="Vente au dépôt">
+              <i class="fas fa-store me-1"></i>Vente dépôt
+            </button>
+          </div>
         </td>
-<!--        <td>-->
-<!--          <i-->
-<!--            (click)="OnDelete(dataList.id)"-->
-<!--            style="cursor: pointer"-->
-<!--            class="fas fa-trash-alt text-danger"-->
-<!--          ></i>-->
-<!--        </td>-->
-      </tr>
-      </td>
       </tr>
     </ng-template>
+
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">Aucune commande trouvé.</td>
+        <td colspan="7">
+          <div class="cc-empty">
+            <i class="fas fa-inbox"></i>
+            <span>Aucune commande trouvée.</span>
+          </div>
+        </td>
       </tr>
     </ng-template>
   </p-table>
@@ -398,79 +354,62 @@
           </div>
         </form>
         <div *ngIf="operation == 'edit' || operation == 'update' || operation == 'createNew'">
-          <fieldset class="row border my-1" *ngIf="operation == 'edit'">
-            <div class="d-flex justify-content-around">
-              <legend style="font-size: 14px" class="text-secondary">
-                Numero Commande : {{ updateData.NumCommande }} du
-                {{ updateData.dateCreation | date }}
-              </legend>
-              <button type="button" class="btn btn-warning px-4" (click)="PrintDoc(updateData)" *ngIf="operation == 'edit'">
-                Imprimer
+
+          <!-- ── Bandeau commande (edit only) ── -->
+          <div *ngIf="operation == 'edit'" class="cc-detail-topbar mb-3">
+            <div>
+              <div class="cc-detail-num">{{ updateData.NumCommande }}</div>
+              <div class="cc-detail-date">{{ updateData.dateCreation | date:'dd/MM/yyyy' }}</div>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="button" class="cc-modal-btn-outline" (click)="PrintDoc(updateData)">
+                <i class="fas fa-print me-1"></i>Imprimer
+              </button>
+              <button *ngIf="updateData?.statut !== 'Non regroupé' && updateData?.statut !== 'Attente de Validation' && updateData?.statut !== 'Non approuvée' && updateData?.statut !== 'Livrée' && updateData?.statut !== 'Commande Livrée'"
+                type="button" class="cc-modal-btn-vd" (click)="goToVenteAuDepot(updateData)">
+                <i class="fas fa-store me-1"></i>Vente au dépôt
               </button>
             </div>
-          </fieldset>
-          <fieldset class="row border my-2">
-            <legend style="font-size: 14px" class="text-secondary">
-              Informations du client
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Groupe de client :</strong>
-                <span>{{
-                    updateData.client?.groupeClient?.nomGroupe ||
-                    updateData.client?.GroupeClient?.nomGroupe
-                  }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Type de client :</strong>
-                <span>{{ updateData.client.role }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Propriétaire :</strong>
-                <span>{{ updateData.client.nomProprietaire }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Gérant :</strong>
-                <span>{{ updateData.client.nomGerant }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Établissement :</strong>
-                <span>{{
-                    updateData.client.nomEtablissement
-                      ? updateData.client.nomEtablissement
-                      : updateData.client.raisonSocial
-                  }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Numero de registre :</strong>
-                <span>{{ updateData.client.numeroRegistre }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Numero contribuable :</strong>
-                <span>{{ updateData.client.numeroCompteContribuable }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Contact Gérant :</strong>
-                <span>{{ updateData.client.telephoneGerant }}</span>
-              </div>
-              <div class="col-md-4 mb-4">
-                <strong>Téléphone :</strong>
-                <span>{{ updateData.client.telephoneProprietaire }}</span>
-              </div>
-              <div class="col-md-4 mb-4">
-                <strong>Numero SAP : </strong>
-                <span>{{ updateData.client.numeroSAP?.numeroSAP || "N/A" }}</span>
-              </div>
-              <div class="col-md-4 mb-4">
-                <strong>Solde liquide :</strong>
-                <span>{{ updateData.soldeLiquide | currency : "XOF" }}</span>
-              </div>
-              <div class="col-md-4 mb-4">
-                <strong>Solde Emballage :</strong>
-                <span>{{ updateData.soldeEmballage | currency : "XOF" }}</span>
-              </div>
+          </div>
+
+          <!-- ── Infos client (edit only) ── -->
+          <div *ngIf="operation == 'edit'" class="cc-section-title mb-2">
+            <i class="fas fa-user me-2"></i>Informations client
+          </div>
+          <div *ngIf="operation == 'edit'" class="cc-info-grid mb-4">
+            <div class="cc-info-block">
+              <span class="cc-info-label">Établissement</span>
+              <span class="cc-info-value">{{ updateData.client.nomEtablissement || updateData.client.raisonSocial }}</span>
             </div>
-          </fieldset>
+            <div class="cc-info-block">
+              <span class="cc-info-label">Groupe client</span>
+              <span class="cc-info-value">{{ updateData.client?.groupeClient?.nomGroupe || updateData.client?.GroupeClient?.nomGroupe || '—' }}</span>
+            </div>
+            <div class="cc-info-block">
+              <span class="cc-info-label">Type</span>
+              <span class="cc-info-value">{{ updateData.client.role }}</span>
+            </div>
+            <div class="cc-info-block">
+              <span class="cc-info-label">Gérant</span>
+              <span class="cc-info-value">{{ updateData.client.nomGerant }}</span>
+            </div>
+            <div class="cc-info-block">
+              <span class="cc-info-label">Contact</span>
+              <span class="cc-info-value">{{ updateData.client.telephoneGerant }}</span>
+            </div>
+            <div class="cc-info-block">
+              <span class="cc-info-label">N° SAP</span>
+              <span class="cc-info-value">{{ updateData.client.numeroSAP?.numeroSAP || '—' }}</span>
+            </div>
+            <div class="cc-info-block">
+              <span class="cc-info-label">Solde liquide</span>
+              <span class="cc-info-value">{{ updateData.soldeLiquide | number:'1.0-0' }} XOF</span>
+            </div>
+            <div class="cc-info-block">
+              <span class="cc-info-label">Solde emballage</span>
+              <span class="cc-info-value">{{ updateData.soldeEmballage | number:'1.0-0' }} XOF</span>
+            </div>
+          </div>
         </div>
 
         <div class="p-2 mt-3">
@@ -625,76 +564,75 @@
               </tr>
               </tbody>
             </table>
-            <table *ngIf="operation == 'edit'" class="table table-bordered">
-              <thead class="table-success">
-              <!-- Première ligne d'en-tête -->
-              <tr>
-                <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
-                <th scope="col" colspan="3">MONTANT TTC(FCFA)</th>
-              </tr>
-              <!-- Deuxième ligne d'en-tête -->
-              <tr>
-                <th scope="col">Liquide</th>
-                <th scope="col">Liquide (FCFA)</th>
-                <th scope="col">Emballage (FCFA)</th>
-                <th scope="col">Total (FCFA)</th>
-                <th scope="col">Qte</th>
-                <th scope="col">Liquide (FCFA)</th>
-                <th scope="col">Emballage (FCFA)</th>
-                <th scope="col">Total (FCFA)</th>
-              </tr>
-              </thead>
-
-              <tbody>
-              <tr *ngFor="let item of updateData?.articles">
-                <td>{{ item.liquide.libelle }}1</td>
-                <td>{{ item.prixUnitaireLiquide | number}}</td>
-                <td>{{ item.prixUnitaireEmballage | number}}</td>
-                <td>{{ Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) | number}}</td>
-                <td>{{ item.quantite }}</td>
-                <td>{{ item.montantLiquide | number}}</td>
-                <td>{{ item.montantEmballage | number}}</td>
-                <td>{{ Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) | number}}</td>
-
-              </tr>
-              <tr class="table-dark">
-                <th scope="col" colspan="4">Total :</th>
-                <td>{{ totalQte| number }}</td>
-                <td>{{ totalLiquide | number}}</td>
-                <td>{{ totalEmballage | number}}</td>
-                <td>{{ totalGlobal | number}}</td>
-              </tr>
-              </tbody>
-            </table>
+            <ng-container *ngIf="operation == 'edit'">
+              <div class="cc-section-title mb-2"><i class="fas fa-boxes me-2"></i>Articles</div>
+              <table class="cc-modal-table">
+                <thead>
+                <tr>
+                  <th>Produit</th>
+                  <th class="text-end">Prix liquide</th>
+                  <th class="text-end">Prix emballage</th>
+                  <th class="text-center">Qté</th>
+                  <th class="text-end">Montant liquide</th>
+                  <th class="text-end">Montant emballage</th>
+                  <th class="text-end">Sous-total</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of updateData?.articles">
+                  <td class="fw-semibold">{{ item.liquide.libelle }}</td>
+                  <td class="text-end">{{ item.prixUnitaireLiquide | number:'1.0-0' }}</td>
+                  <td class="text-end">{{ item.prixUnitaireEmballage | number:'1.0-0' }}</td>
+                  <td class="text-center"><span class="cc-qty-chip">{{ item.quantite }}</span></td>
+                  <td class="text-end">{{ item.montantLiquide | number:'1.0-0' }}</td>
+                  <td class="text-end">{{ item.montantEmballage | number:'1.0-0' }}</td>
+                  <td class="text-end fw-semibold" style="color:var(--primary-color)">
+                    {{ (Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0)) | number:'1.0-0' }}
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+              <!-- KPIs totaux -->
+              <div class="cc-modal-kpi-row mt-3">
+                <div class="cc-modal-kpi">
+                  <span class="cc-modal-kpi-label">Quantité totale</span>
+                  <span class="cc-modal-kpi-value">{{ totalQte | number }}</span>
+                </div>
+                <div class="cc-modal-kpi">
+                  <span class="cc-modal-kpi-label">Montant liquide</span>
+                  <span class="cc-modal-kpi-value">{{ totalLiquide | number:'1.0-0' }} <small>XOF</small></span>
+                </div>
+                <div class="cc-modal-kpi">
+                  <span class="cc-modal-kpi-label">Montant emballage</span>
+                  <span class="cc-modal-kpi-value">{{ totalEmballage | number:'1.0-0' }} <small>XOF</small></span>
+                </div>
+                <div class="cc-modal-kpi green">
+                  <span class="cc-modal-kpi-label">Total général</span>
+                  <span class="cc-modal-kpi-value">{{ totalGlobal | number:'1.0-0' }} <small>XOF</small></span>
+                </div>
+              </div>
+            </ng-container>
           </div>
         </div>
       </div>
 
       <!-- Modal Footer -->
-      <div class="modal-footer gap-3 px-4">
-        <button
-          *ngIf="operation == 'createNew' || operation == 'update' "
-          (click)="saveGoods(operation)"
-          type="button"
-          class="btn btn-primary"
-        >
-          Enregistrer
+      <div class="modal-footer gap-2 px-4">
+        <button type="button" class="cc-modal-btn-outline" (click)="OnCloseModal()">
+          Fermer
         </button>
-        <button
-          type="button"
-          class="btn btn-secondary"
-          (click)="OnCloseModal()"
-        >
-          Annuler
+        <button *ngIf="operation == 'createNew' || operation == 'update'"
+          type="button" class="cc-modal-btn-primary" (click)="saveGoods(operation)">
+          <i class="fas fa-save me-1"></i>Enregistrer
         </button>
-        <button
-          type="submit"
-          *ngIf="operation == 'create'"
-          class="btn btn-primary"
-          (click)="onSubmit()"
-          [disabled]="totalQte === 0 || detailPointDevente.encours <= 0"
-        >
-          Valider
+        <button *ngIf="operation == 'create'"
+          type="submit" class="cc-modal-btn-primary" (click)="onSubmit()"
+          [disabled]="totalQte === 0 || detailPointDevente.encours <= 0">
+          <i class="fas fa-check me-1"></i>Valider
+        </button>
+        <button *ngIf="operation == 'edit' && updateData?.statut !== 'Non regroupé' && updateData?.statut !== 'Attente de Validation' && updateData?.statut !== 'Non approuvée' && updateData?.statut !== 'Livrée' && updateData?.statut !== 'Commande Livrée'"
+          type="button" class="cc-modal-btn-vd" (click)="goToVenteAuDepot(updateData)">
+          <i class="fas fa-store me-1"></i>Vente au dépôt
         </button>
       </div>
     </div>

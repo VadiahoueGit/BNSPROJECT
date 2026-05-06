@@ -249,179 +249,182 @@
 </div>
 
 <!-- Modal détail -->
-<!-- Modal -->
 <div *ngIf="isModalOpenDetail" class="custom-modal">
-  <div
-    class="modal-dialog modal-dialog-centered"
-    style="width: 90%; max-width: 1200px"
-  >
-    <div class="modal-content">
+  <div class="lv-modal-dialog">
+    <div class="lv-modal-content">
+
       <!-- Header -->
-      <div class="modal-header">
-        <h5 class="modal-title text-success">Regroupement</h5>
-        <button type="button" class="btn-close" aria-label="Close"></button>
+      <div class="lv-modal-header">
+        <div class="lv-modal-header-left">
+          <div class="lv-header-icon"><i class="fas fa-route"></i></div>
+          <div>
+            <div class="lv-header-title">Détail regroupement</div>
+            <div class="lv-header-sub">N° {{ updateData?.numRegroupement }}</div>
+          </div>
+        </div>
+        <div class="lv-modal-header-right">
+          <button type="button" class="lv-btn-retour" (click)="UploadDoc(updateData)">
+            <i class="fas fa-print me-2"></i>Imprimer
+          </button>
+          <button class="lv-close-btn" (click)="closeDetailModal()"><i class="fas fa-times"></i></button>
+        </div>
       </div>
 
       <!-- Body -->
-      <div
-        class="modal-body"
-        style="padding: 20px; max-height: 70vh; overflow-y: auto"
-      >
-        <div class="row">
-          <!-- Regroupement et Zone -->
-          <div class="col-md-12 d-flex mb-3 align-items-end">
-            <div class="me-3">
-              <label for="numRegroupement" class="form-label"
-                >N° Regroupement</label
-              >
-              <input
-                type="text"
-                id="numRegroupement"
-                class="form-control"
-                [value]=updateData.numRegroupement
-                readonly
-              />
-            </div>
-            <div class="me-3">
-              <label for="camion" class="form-label">Camion</label>
-              <input
-                type="text"
-                id="camion"
-                class="form-control"
-                [attr.value]="updateData?.vehicule?.marque"
-                readonly
-              />
-            </div>
-            <div class="me-3">
-              <label for="chauffeur" class="form-label">Chauffeur</label>
-              <input
-                type="text"
-                id="chauffeur"
-                class="form-control"
-                [attr.value]="updateData?.transporteur?.nom + ' ' + updateData?.transporteur?.prenoms"
-                readonly
-              />
-            </div>
-            <div>
-              <button
-                type="button"
-                class="btn btn-secondary px-4"
-                (click)="UploadDoc(updateData)"
-              >
-                Imprimer
-              </button>
-            </div>
+      <div class="lv-modal-body">
+
+        <!-- Info grid -->
+        <div class="vd-info-grid lv-info-grid">
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-hashtag me-1"></i>N° Regroupement</div>
+            <div class="vd-info-value">{{ updateData?.numRegroupement }}</div>
           </div>
-
-          <div class="col-md-12 d-flex">
-
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-truck me-1"></i>Camion</div>
+            <div class="vd-info-value">{{ updateData?.vehicule?.marque ?? '—' }}</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-user me-1"></i>Chauffeur</div>
+            <div class="vd-info-value">{{ updateData?.transporteur?.nom }} {{ updateData?.transporteur?.prenoms }}</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-circle me-1"></i>Statut</div>
+            <div class="vd-info-value">
+              <span class="lv-statut-chip" [ngClass]="{
+                'green':  updateData?.statut === 'Livré',
+                'orange': updateData?.statut === 'En cours',
+                'gray':   updateData?.statut !== 'Livré' && updateData?.statut !== 'En cours'
+              }">{{ updateData?.statut ?? '—' }}</span>
+            </div>
           </div>
         </div>
-        <div class="col-md-12">
 
-          <div class="row">
-            <div class="container">
-              <table class="table table-bordered">
-                <thead>
+        <!-- Distribution articles -->
+        <div class="vd-card lv-section">
+          <div class="vd-card-header">
+            <div class="vd-card-icon green"><i class="fas fa-boxes"></i></div>
+            <span class="lv-section-label">Distribution des articles</span>
+          </div>
+          <div class="lv-table-wrap">
+            <table class="vd-table">
+              <thead>
                 <tr>
-                  <th>Raison Sociale</th>
+                  <th>Raison sociale</th>
                   <th class="text-center" *ngFor="let article of allArticles">{{ article.libelle }}</th>
                 </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let retour of updateData.commandes; let i = index">
-                  <td>{{ retour.clientInfo.raisonSocial || retour.clientInfo.nomEtablissement }}</td>
+              </thead>
+              <tbody>
+                <tr *ngFor="let retour of updateData?.commandes">
+                  <td class="lv-raison-cell">{{ retour?.clientInfo?.raisonSocial || retour?.clientInfo?.nomEtablissement }}</td>
                   <td class="text-center" *ngFor="let article of allArticles">
-                    {{ getQuantity(retour, article.libelle) }}
+                    {{ getQuantity(retour, article.libelle) || '—' }}
                   </td>
                 </tr>
-                <tr class="font-weight-bold">
-                  <td class="fw-bold">Total</td>
-                  <td class="text-center" *ngFor="let article of allArticles">
+                <tr class="lv-total-row">
+                  <td class="fw-600">Total</td>
+                  <td class="text-center fw-600" *ngFor="let article of allArticles">
                     {{ article.expectedQuantity }}
                   </td>
-                </tbody>
-              </table>
+                </tr>
+                <tr *ngIf="!updateData?.commandes?.length">
+                  <td [attr.colspan]="1 + allArticles.length">
+                    <div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucune commande</span></div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-              <table class="table table-bordered table-hover">
-                <thead class="table-success">
+        <!-- Résumé chargement -->
+        <div class="vd-card lv-section">
+          <div class="vd-card-header">
+            <div class="vd-card-icon blue"><i class="fas fa-pallet"></i></div>
+            <span class="lv-section-label">Résumé de chargement</span>
+          </div>
+          <div class="lv-table-wrap">
+            <table class="vd-table">
+              <thead>
                 <tr>
                   <th>Format</th>
                   <th>Type</th>
-                  <th>Palette</th>
-                  <th>Casier</th>
+                  <th class="text-center">Palettes</th>
+                  <th class="text-center">Casiers</th>
                 </tr>
-                </thead>
-                <tbody>
-                <!-- Boucle sur chaque format -->
+              </thead>
+              <tbody>
                 <ng-container *ngFor="let item of regroupementFinal | keyvalue">
-                  <!-- Boucle sur chaque type d'article pour ce format -->
                   <tr *ngFor="let subItem of item.value">
                     <td>{{ item.key }}</td>
                     <td>{{ subItem.type }}</td>
-                    <td>{{ subItem.palettes }}</td>
-                    <td>{{ subItem.casier }}</td>
+                    <td class="text-center">{{ subItem.palettes }}</td>
+                    <td class="text-center fw-bold">{{ subItem.casier }}</td>
                   </tr>
                 </ng-container>
-                </tbody>
-              </table>
-
-              <fieldset class="row border my-2">
-                <legend>Evolutions</legend>
-                <table class="table table-bordered">
-                  <thead>
-                  <tr>
-                    <th>Commande</th>
-                    <th>Raison Sociale</th>
-                    <th>Debut</th>
-                    <th>Fin</th>
-                    <th>Statut</th>
-                    <th>Signature</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr *ngFor="let retour of updateData.livraisons; let i = index">
-                    <td>
-                      {{ retour.commande?.NumCommande}}
-                    </td>
-                    <td>
-                      {{ retour.commande?.clientInfo.raisonSocial || retour.commande.clientInfo.nomEtablissement }}
-                    </td>
-                    <td>
-                      {{ retour?.dateLivraisonDebut | date: 'dd/MM/yyyy HH:mm' || ''}}
-                    </td>
-                    <td>
-                      {{ retour.dateLivraisonFin | date: 'dd/MM/yyyy HH:mm' || '' }}
-                    </td>
-                    <td>
-                      {{ retour.commande.statut || '' }}
-                    </td>
-                    <td *ngIf="retour.signatureClient">
-                      <i
-                        (click)="OnViewSign(retour.signatureClient)"
-                        style="cursor: pointer"
-                        class="fas fa-eye text-secondary"
-                      ></i>
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </fieldset>
-            </div>
+              </tbody>
+            </table>
           </div>
         </div>
+
+        <!-- Évolutions de livraison -->
+        <div class="vd-card lv-section">
+          <div class="vd-card-header">
+            <div class="vd-card-icon orange"><i class="fas fa-map-marker-alt"></i></div>
+            <span class="lv-section-label">Évolutions de livraison</span>
+          </div>
+          <div class="lv-table-wrap">
+            <table class="vd-table">
+              <thead>
+                <tr>
+                  <th>N° Commande</th>
+                  <th>Raison sociale</th>
+                  <th>Début</th>
+                  <th>Fin</th>
+                  <th>Statut</th>
+                  <th class="text-center">Signature</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let retour of updateData?.livraisons">
+                  <td class="fw-600">{{ retour?.commande?.NumCommande }}</td>
+                  <td>{{ retour?.commande?.clientInfo?.raisonSocial || retour?.commande?.clientInfo?.nomEtablissement }}</td>
+                  <td>{{ retour?.dateLivraisonDebut | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td>{{ retour?.dateLivraisonFin | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td>
+                    <span class="lv-badge" [ngClass]="{
+                      'green':  retour?.commande?.statut === 'Livré',
+                      'orange': retour?.commande?.statut === 'En cours',
+                      'gray':   retour?.commande?.statut !== 'Livré' && retour?.commande?.statut !== 'En cours'
+                    }">{{ retour?.commande?.statut }}</span>
+                  </td>
+                  <td class="text-center">
+                    <span *ngIf="retour?.signatureClient" class="bui-icon-btn view"
+                      (click)="OnViewSign(retour.signatureClient)">
+                      <i class="fas fa-eye"></i>
+                    </span>
+                    <span *ngIf="!retour?.signatureClient" class="text-muted" style="font-size:12px">—</span>
+                  </td>
+                </tr>
+                <tr *ngIf="!updateData?.livraisons?.length">
+                  <td colspan="6">
+                    <div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucune livraison</span></div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
 
-          <!-- Table des commandes -->
-      <div class="modal-footer gap-3 px-4">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          (click)="closeDetailModal()"
-        >
-          Fermer
+      <!-- Footer -->
+      <div class="lv-modal-footer">
+        <span></span>
+        <button type="button" class="vd-btn-outline" (click)="closeDetailModal()">
+          <i class="fas fa-times me-1"></i>Fermer
         </button>
       </div>
+
     </div>
   </div>
 </div>

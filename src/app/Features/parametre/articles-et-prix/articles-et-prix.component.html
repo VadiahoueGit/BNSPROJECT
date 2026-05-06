@@ -1,52 +1,37 @@
-
-<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
-  <i style="font-size: 18px; " class="fas fw-bold fa-chevron-left me-2 "></i>
+<div class="bui-back mb-4" (click)="goBack()">
+  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
   <h4 class="fw-bold mb-0">Article & prix</h4>
 </div>
-<nav class="nav nav-pills flex-column flex-sm-row gap-1 border-bottom">
 
-  <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'groupeProduits'"
-    (click)="activeElement('groupeProduits')">Groupe d'articles</a>
+<div class="cc-tabs mb-3">
+  <button class="cc-tab-btn" [class.active]="activeTab === 'groupeProduits'" (click)="activeElement('groupeProduits')">Groupe d'articles</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'typeArticle'" (click)="activeElement('typeArticle')">Types d'articles</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'liquide'" (click)="activeElement('liquide')">Liquides</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'emballage'" (click)="activeElement('emballage')">Emballages</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'articles'" (click)="activeElement('articles')">Articles</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'creatPrix'" (click)="activeElement('creatPrix')">Liste des prix</button>
+</div>
 
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'typeArticle'"
-    (click)="activeElement('typeArticle')">Types d'articles</a>
+<div *ngIf="activeTab === 'groupeProduits'">
+  <app-groupe-produit></app-groupe-produit>
+</div>
 
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'liquide'"
-    (click)="activeElement('liquide')">Liquides</a>
+<div *ngIf="activeTab === 'typeArticle'">
+  <app-type-article></app-type-article>
+</div>
 
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'emballage'"
-    (click)="activeElement('emballage')">Emballages</a>
+<div *ngIf="activeTab === 'liquide'">
+  <app-liquide></app-liquide>
+</div>
 
-  <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'articles'"
-    (click)="activeElement('articles')">Articles</a>
+<div *ngIf="activeTab === 'emballage'">
+  <app-emballage></app-emballage>
+</div>
 
-  <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'creatPrix'"
-    (click)="activeElement('creatPrix')">Liste des prix</a>
-</nav>
+<div *ngIf="activeTab === 'articles'">
+  <app-article></app-article>
+</div>
 
-<div class="tab-content mt-3">
-  <div *ngIf="activeTab === 'typeArticle'" class="tab-pane fade show active">
-    <app-type-article></app-type-article>
-  </div>
-
-  <div *ngIf="activeTab === 'groupeProduits'" class="tab-pane fade show active">
-    <app-groupe-produit></app-groupe-produit>
-  </div>
-
-  <div *ngIf="activeTab === 'liquide'" class="tab-pane fade show active">
-    <app-liquide></app-liquide>
-   </div> 
-
-   
-  <div *ngIf="activeTab === 'emballage'" class="tab-pane fade show active">
-    <app-emballage></app-emballage>
-  </div> 
-
-  <div *ngIf="activeTab === 'articles'" class="tab-pane fade show active">
-    <app-article></app-article>
-  </div>
-
-  <div *ngIf="activeTab === 'creatPrix'" class="tab-pane fade show active">
-    <app-creation-prix></app-creation-prix>
-  </div>
+<div *ngIf="activeTab === 'creatPrix'">
+  <app-creation-prix></app-creation-prix>
 </div>

@@ -82,7 +82,7 @@
         </td>
         <td>
             <span class="ml-1 vertical-align-middle">
-             {{ ListCommandeFournisseurs?.depot?.nomDepot || ListCommandeFournisseurs.revendeur.raisonSocial }}
+             {{ ListCommandeFournisseurs.revendeur?.raisonSocial ? ListCommandeFournisseurs.revendeur.raisonSocial : ListCommandeFournisseurs?.depot?.nomDepot }}
             </span>
         </td>
         <td>

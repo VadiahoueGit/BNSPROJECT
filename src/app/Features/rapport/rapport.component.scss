@@ -1,0 +1,337 @@
+// ===== VARIABLES =====
+$primary: #8dae56;
+$blue: #0071c2;
+$orange: #f59e0b;
+$red: #ef4444;
+$purple: #7c3aed;
+$teal: #0891b2;
+$gray-light: #f7fcff;
+$gray-border: #e5e7eb;
+$text-muted: #9ca3af;
+$radius: 14px;
+$radius-sm: 10px;
+
+// ===== COULEURS DYNAMIQUES =====
+@mixin couleur-theme($color) {
+  background: rgba($color, 0.1);
+  color: $color;
+}
+
+// ===== PAGE HEADER =====
+.rp-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  border-radius: $radius;
+  padding: 20px 28px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.rp-page-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.rp-page-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: $radius-sm;
+  background: linear-gradient(135deg, $blue, lighten($blue, 15%));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: white;
+  box-shadow: 0 4px 14px rgba($blue, 0.3);
+}
+
+.rp-page-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.rp-page-sub {
+  font-size: 12px;
+  color: $text-muted;
+}
+
+// ===== SEARCH =====
+.rp-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.rp-search-icon {
+  position: absolute;
+  left: 14px;
+  color: $text-muted;
+  font-size: 13px;
+}
+
+.rp-search-input {
+  height: 40px;
+  width: 280px;
+  border: 1.5px solid $gray-border;
+  border-radius: 20px;
+  padding: 0 16px 0 38px;
+  font-size: 13px;
+  color: #374151;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    border-color: $blue;
+    box-shadow: 0 0 0 3px rgba($blue, 0.1);
+  }
+}
+
+// ===== SECTION =====
+.rp-section {
+  margin-bottom: 28px;
+}
+
+.rp-section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.rp-section-badge {
+  width: 42px;
+  height: 42px;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+
+  &.blue   { background: rgba($blue, 0.1);   color: $blue;   }
+  &.green  { background: rgba($primary, 0.1); color: $primary; }
+  &.orange { background: rgba($orange, 0.1); color: $orange; }
+  &.red    { background: rgba($red, 0.1);    color: $red;    }
+  &.purple { background: rgba($purple, 0.1); color: $purple; }
+  &.teal   { background: rgba($teal, 0.1);   color: $teal;   }
+}
+
+.rp-section-info {
+  flex: 1;
+}
+
+.rp-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.rp-section-desc {
+  font-size: 12px;
+  color: $text-muted;
+}
+
+.rp-section-count {
+  height: 26px;
+  min-width: 26px;
+  border-radius: 13px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+
+  &.blue   { background: rgba($blue, 0.12);   color: $blue;   }
+  &.green  { background: rgba($primary, 0.12); color: darken($primary, 5%); }
+  &.orange { background: rgba($orange, 0.12); color: darken($orange, 10%); }
+  &.red    { background: rgba($red, 0.12);    color: $red;    }
+  &.purple { background: rgba($purple, 0.12); color: $purple; }
+  &.teal   { background: rgba($teal, 0.12);   color: $teal;   }
+}
+
+// ===== CARDS GRID =====
+.rp-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 14px;
+}
+
+.rp-card {
+  background: white;
+  border-radius: $radius;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $blue;
+    box-shadow: 0 6px 20px rgba($blue, 0.12);
+    transform: translateY(-2px);
+
+    .rp-arrow { color: $blue; transform: translateX(3px); }
+  }
+}
+
+.rp-card-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+
+  &.blue   { background: rgba($blue, 0.1);   color: $blue;   }
+  &.green  { background: rgba($primary, 0.1); color: $primary; }
+  &.orange { background: rgba($orange, 0.1); color: $orange; }
+  &.red    { background: rgba($red, 0.1);    color: $red;    }
+  &.purple { background: rgba($purple, 0.1); color: $purple; }
+  &.teal   { background: rgba($teal, 0.1);   color: $teal;   }
+}
+
+.rp-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.rp-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rp-card-sub {
+  font-size: 12px;
+  color: $text-muted;
+}
+
+.rp-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.rp-export-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+
+  &.excel {
+    background: rgba(#16a34a, 0.1);
+    color: #16a34a;
+  }
+
+  &.pdf {
+    background: rgba($red, 0.1);
+    color: $red;
+  }
+}
+
+.rp-arrow {
+  color: $gray-border;
+  font-size: 13px;
+  margin-left: 4px;
+  transition: all 0.2s;
+}
+
+// ===== EMPTY STATE =====
+.rp-empty {
+  background: $gray-light;
+  border: 1.5px dashed $gray-border;
+  border-radius: $radius;
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.rp-empty-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 4px;
+  opacity: 0.5;
+
+  &.blue   { background: rgba($blue, 0.1);   color: $blue;   }
+  &.green  { background: rgba($primary, 0.1); color: $primary; }
+  &.orange { background: rgba($orange, 0.1); color: $orange; }
+  &.red    { background: rgba($red, 0.1);    color: $red;    }
+  &.purple { background: rgba($purple, 0.1); color: $purple; }
+  &.teal   { background: rgba($teal, 0.1);   color: $teal;   }
+}
+
+.rp-empty-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.rp-empty-hint {
+  font-size: 12px;
+  color: $text-muted;
+}
+
+// ===== NO RESULT =====
+.rp-no-result {
+  text-align: center;
+  padding: 60px 20px;
+  color: $text-muted;
+
+  i {
+    font-size: 40px;
+    margin-bottom: 16px;
+    display: block;
+    opacity: 0.4;
+  }
+
+  div {
+    font-size: 14px;
+    margin-bottom: 16px;
+    color: #6b7280;
+  }
+}
+
+.rp-btn-clear {
+  height: 36px;
+  padding: 0 20px;
+  border: 1.5px solid $gray-border;
+  border-radius: 20px;
+  background: white;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: $blue;
+    color: $blue;
+  }
+}

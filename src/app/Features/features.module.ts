@@ -10,7 +10,6 @@ import {ParametreModule} from './parametre/parametre.module';
 import {CustomerService} from 'src/service/customerservice';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import {CartographieComponent} from './cartographie/cartographie.component';
-import {RapportComponent} from './rapport/rapport.component';
 import {PartenairesComponent} from './partenaires/partenaires.component';
 import {PartenairesModule} from './partenaires/partenaires.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -25,7 +24,6 @@ import {TableModule} from "primeng/table";
 @NgModule({
   declarations: [
     CartographieComponent,
-    RapportComponent,
     FeaturesComponent,
     AnnonceComponent,
     PermissionComponent,

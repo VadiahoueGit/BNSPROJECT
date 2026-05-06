@@ -6,12 +6,12 @@
 
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color);">N° commandes</th>
-        <th style="color: var(--secondary-color);">Clients</th>
-        <th style="color: var(--secondary-color);">Chauffeurs</th>
-        <th style="color: var(--secondary-color);">Date</th>
+        <th>N° commandes</th>
+        <th>Clients</th>
+        <th>Chauffeurs</th>
+        <th>Date</th>
         <th scope="col">Depot</th>
-        <th style="color: var(--secondary-color);">Actions</th>
+        <th>Actions</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList>
@@ -50,7 +50,7 @@
         </td>
         <td>
       <tr class=" gap-3">
-        <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>
+        <td><span class="bui-icon-btn view" (click)="OnEdit(dataList)"><i class="fas fa-eye"></i></span></td>
       </tr>
 
       </td>
@@ -65,158 +65,98 @@
 </div>
 
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div
-    class="modal-dialog modal-dialog-centered"
-
-  >
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Détails récuperation</h5>
-        <button type="button" class="btn-close" aria-label="Close"></button>
+  <div class="vd-modal-dialog">
+    <div class="vd-modal-header">
+      <div class="vd-mh-left">
+        <div class="vd-mh-icon blue"><i class="fas fa-box-open"></i></div>
+        <div>
+          <div class="vd-mh-title">Détails récupération</div>
+          <div class="vd-mh-sub" *ngIf="operation == 'edit'">
+            {{ updateData.commandeClient?.NumCommande || updateData.commandeGratuite?.NumCommande || updateData.venteChine?.NumCommande }} — {{ updateData.createdAt | date:'dd/MM/yyyy' }}
+          </div>
+        </div>
       </div>
+      <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
 
-      <div
-        class="modal-body"
-        style="padding: 20px; max-height: 70vh; overflow-y: auto"
-      >
-        <div class="row">
-          <fieldset class="row border my-1" *ngIf="operation == 'edit'">
-            <legend style="font-size: 13px" class="text-secondary">
-              Numero Commande
-              :  {{ updateData.commandeClient?.NumCommande || updateData.commandeGratuite?.NumCommande || updateData.venteChine?.NumCommande }}
-              du
-              {{ updateData.createdAt | date }}
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Dépot : </strong>
-                <span>
-                  {{ updateData.depot?.nomDepot }}
-                </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Motif : </strong>
-                <span>
-                 {{
-                    updateData?.returnType
-                  }}
-                </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Statut : </strong>
-                <span>
-                  {{
-                    updateData?.commandeClient?.statut ||
-                    updateData?.commandeGratuite?.statut ||
-                    updateData?.venteChine?.statut ||
-                    ''
-                  }}
-                </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Vente : </strong>
-                <span>
-                 {{
-                    updateData?.fromTo
-                  }}
-                </span>
-              </div>
-              <!--              <div class="col-md-4 text-bg-primary">-->
-              <!--                <strong>Montant à perçevoir: </strong>-->
-              <!--                <span>{{ updateData.transaction?.montantAPercevoir |currency:'XOF'}}</span>-->
-              <!--              </div>-->
-              <!--              <div class="col-md-4 text-bg-primary">-->
-              <!--                <strong>Montant perçu : </strong>-->
-              <!--                <span>{{ updateData.transaction?.montantPercu |currency:'XOF'}}</span>-->
-              <!--              </div>-->
+    <div class="vd-modal-body">
+      <ng-container *ngIf="operation == 'edit'">
+        <div class="vd-info-grid">
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-warehouse me-1"></i>Dépôt</div>
+            <div class="vd-info-value">{{ updateData.depot?.nomDepot || '—' }}</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-tag me-1"></i>Motif</div>
+            <div class="vd-info-value">{{ updateData?.returnType || '—' }}</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-exchange-alt me-1"></i>Vente</div>
+            <div class="vd-info-value">{{ updateData?.fromTo || '—' }}</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-circle me-1"></i>Statut commande</div>
+            <div class="vd-info-value">{{ updateData?.commandeClient?.statut || updateData?.commandeGratuite?.statut || updateData?.venteChine?.statut || '—' }}</div>
+          </div>
+        </div>
 
+        <div class="vd-card">
+          <div class="vd-card-header">
+            <div class="vd-card-icon blue"><i class="fas fa-store"></i></div>
+            <div class="vd-section-label">Informations du client</div>
+          </div>
+          <div class="vd-info-grid">
+            <div class="vd-info-block">
+              <div class="vd-info-label">Groupe</div>
+              <div class="vd-info-value">{{ updateData.client?.groupeClient?.nomGroupe || updateData.client?.GroupeClient?.nomGroupe || '—' }}</div>
             </div>
-          </fieldset>
-
-          <fieldset class="row border my-2" *ngIf="operation == 'edit'">
-            <legend style="font-size: 13px" class="text-secondary">
-              Informations du client
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Groupe de client : </strong>
-                <span>{{ updateData.client ? updateData.client?.groupeClient?.nomGroupe || updateData.client?.GroupeClient?.nomGroupe : '' }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Type de client : </strong>
-                <span>{{ updateData.clientALivrer.role }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Établissement : </strong>
-                <span>{{
-                    updateData.clientALivrer?.raisonSocial
-                      ? updateData.clientALivrer?.raisonSocial
-                      : updateData.clientALivrer?.nomEtablissement
-                  }}</span>
-              </div>
+            <div class="vd-info-block">
+              <div class="vd-info-label">Type</div>
+              <div class="vd-info-value">{{ updateData.clientALivrer?.role || '—' }}</div>
             </div>
-          </fieldset>
-          <fieldset class="row border my-2">
-            <legend style="font-size: 13px" class="text-secondary">
-              Emballages retournés
-            </legend>
-            <table class="table table-bordered">
-              <thead class="table-success">
+            <div class="vd-info-block">
+              <div class="vd-info-label">Établissement</div>
+              <div class="vd-info-value">{{ updateData.clientALivrer?.raisonSocial || updateData.clientALivrer?.nomEtablissement || '—' }}</div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="vd-card">
+        <div class="vd-card-header">
+          <div class="vd-card-icon orange"><i class="fas fa-recycle"></i></div>
+          <div class="vd-section-label">Emballages retournés</div>
+        </div>
+        <div class="vd-table-wrap">
+          <table class="vd-table">
+            <thead>
               <tr>
-                <th scope="col">Code</th>
-                <th scope="col">Type</th>
-                <th scope="col">Désignation</th>
-                <th scope="col">Conditionnement</th>
-                <th scope="col">Quantité</th>
+                <th>Code</th>
+                <th>Type</th>
+                <th>Désignation</th>
+                <th>Conditionnement</th>
+                <th class="text-center">Quantité</th>
               </tr>
-              </thead>
-              <tbody>
+            </thead>
+            <tbody>
               <tr *ngFor="let item of filteredArticles">
-                <td>{{ item.produit.code }}</td>
+                <td><span class="vd-badge gray">{{ item.produit.code }}</span></td>
                 <td>{{ item.typeArticle }}</td>
                 <td>{{ item.produit.libelle }}</td>
                 <td>{{ item.produit.condition }}</td>
-                <td>{{ item.quantity }}</td>
+                <td class="text-center fw-bold">{{ item.quantity }}</td>
               </tr>
-              </tbody>
-            </table>
-          </fieldset>
-          <!--          <fieldset class="row border my-2">-->
-          <!--            <legend style="font-size: 13px" class="text-secondary">-->
-          <!--              Articles Chargés-->
-          <!--            </legend>-->
-          <!--            <table class="table table-bordered">-->
-          <!--              <thead class="table-success">-->
-          <!--              <tr>-->
-          <!--                <th scope="col">Code</th>-->
-          <!--                <th scope="col">Désignation</th>-->
-          <!--                <th scope="col">Conditionnement</th>-->
-          <!--                <th scope="col">Quantité</th>-->
-          <!--              </tr>-->
-          <!--              </thead>-->
-          <!--              <tbody>-->
-          <!--              <tr *ngFor="let item of (updateData?.paiementsCommandeClient?.articles || updateData?.paiementsCommandeGratuit?.articles ||  updateData?.paiementsVente?.articles) || []">-->
-          <!--                <td>{{ item.liquide.code }}</td>-->
-          <!--                <td>{{ item.liquide.libelle }}</td>-->
-          <!--                <td>{{ item.liquide.condition }}</td>-->
-          <!--                <td>{{ item.quantite }}</td>-->
-          <!--              </tr>-->
-          <!--              </tbody>-->
-          <!--            </table>-->
-          <!--          </fieldset>-->
+              <tr *ngIf="!filteredArticles?.length">
+                <td colspan="5"><div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucun article</span></div></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
+    </div>
 
-      <!-- Footer -->
-      <div class="modal-footer gap-3 px-4">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          (click)="OnCloseModal()"
-        >
-          Fermer
-        </button>
-      </div>
+    <div class="vd-modal-footer">
+      <button type="button" class="vd-btn-outline" (click)="OnCloseModal()">Fermer</button>
     </div>
   </div>
 </div>

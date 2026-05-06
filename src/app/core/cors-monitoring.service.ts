@@ -23,7 +23,7 @@ export class CorsMonitorService {
   }
   startMonitoring() {
     // this.playSound()
-    interval(2000)
+    interval(60000)
       .pipe(
         switchMap(() =>
           this.http.get(`${this.apiUrl}/v1/prix?paginate=${true}&page=${1}&limit=${1}`).pipe(

@@ -1908,4 +1908,16 @@ export class ArticleServiceService {
         );
     });
   }
+
+  ApprouverCommandeClientDepot(id: number) {
+    return new Promise((resolve, reject) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http
+        .patch(`${this.apiUrl}/v1/commandes-client/approuver/commandeclient/${id}`, {}, { headers })
+        .subscribe(
+          (res: any) => resolve(res),
+          (err) => reject(err)
+        );
+    });
+  }
 }

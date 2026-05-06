@@ -5,6 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { CoreServiceService } from 'src/app/core/core-service.service';
 import { LocalStorageService } from 'src/app/core/local-storage.service';
 import { storage_keys } from 'src/app/Features/shared-component/utils';
+import {SplashService} from "../../../core/splash.service";
 
 @Component({
   selector: 'app-login',
@@ -17,6 +18,7 @@ export class LoginComponent implements OnInit {
   submitError:Boolean = false;
   testVersion:boolean = false;
   constructor(private _router: Router,
+    public splashService: SplashService,
     private localstorage:LocalStorageService,
     private _auth : CoreServiceService,
     private _spinner :NgxSpinnerService
@@ -55,6 +57,7 @@ export class LoginComponent implements OnInit {
           if (res.access_token) {
             this.localstorage.setItem(storage_keys.STOREToken,res.access_token)
             this.localstorage.setItem(storage_keys.STOREUser,res.user)
+            this.splashService.show = true;
             this._router.navigate(['feature']);
           }
         });

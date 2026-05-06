@@ -12,6 +12,7 @@ import { CommercialComponent } from './commercial/commercial.component';
 import { ListPrixComponent } from './list-prix/list-prix.component';
 import { MoyenDePaiementComponent } from './moyen-de-paiement/moyen-de-paiement.component';
 import { DevisesComponent } from './devises/devises.component';
+import { ReglePaletteComponent } from './regle-palette/regle-palette.component';
 const routes: Routes = [
   { path: '', component: ParametreComponent },
   {
@@ -27,6 +28,7 @@ const routes: Routes = [
   { path: 'typeprix', component: ListPrixComponent, resolve:{ArticleServiceService} },
   { path: 'moyen-paiement', component: MoyenDePaiementComponent, resolve:{ArticleServiceService} },
 
+  { path: 'regle-palette', component: ReglePaletteComponent },
   { path: 'questionnairevisite', component: QuestionnaireVisiteComponent },
   {
     path: 'users',

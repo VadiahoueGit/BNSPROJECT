@@ -1,102 +1,128 @@
-<div class="d-flex">
-    <!-- Sidebar -->
-    <nav id="sidebar" class="border-end px-2">
-        <div class="sidebar-header py-3  d-flex justify-content-center">
-            <img src="assets/image/armonyssansfond.png" >
-        </div>
-      <div class="p-1 mt-2  d-flex justify-content-center">
-        <label class="fw-bold">Best Negoce Services</label>
+<div class="layout">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-brand">
+      <img src="assets/image/armonyssansfond.png" class="sidebar-logo" />
+      <div class="sidebar-brand-name">Best Negoce Services</div>
+      <div class="sidebar-depot">
+        <i class="fas fa-map-marker-alt"></i>
+        <span>{{ UserInfo.depot.nomDepot }}</span>
       </div>
-      <div class="p-1 mb-2 d-flex justify-content-center">
-        <span class="text-bg-light text-primary fw-bold" style="font-size: 11px">{{UserInfo.depot.nomDepot}}</span>
-      </div>
-      <ul class="list-unstyled pb-4 scrollable-menu">
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul class="sidebar-menu">
         <ng-container *ngFor="let item of items; let i = index">
-          <li class="mb-1 d-flex justify-content-center"  *ngIf="hasPermission(item.perm)"
+          <li class="sidebar-item" *ngIf="hasPermission(item.perm)"
+              [class.active]="selectedItem === i"
               (click)="navigate(item.url, i)">
-            <a class="btn btn-toggle gap-4 d-flex align-items-center w-100 rounded my-1"
-               [ngClass]="{'active': selectedItem === i}">
-              <i [class]="item.icon" [ngClass]="{'active': selectedItem === i}"></i>
-              <label>{{ item.label }}</label>
-            </a>
+            <i [class]="item.icon"></i>
+            <span class="sidebar-label">{{ item.label }}</span>
           </li>
         </ng-container>
       </ul>
-
     </nav>
 
+  </aside>
+
+  <!-- ===== MAIN AREA ===== -->
+  <div class="main-area">
+
+    <!-- Top Navbar -->
+    <header class="top-nav">
+
+      <div class="top-nav-left">
+        <div class="top-nav-depot">
+          <i class="fas fa-warehouse"></i>
+          <span>{{ UserInfo.depot.nomDepot }}</span>
+        </div>
+      </div>
+
+      <div class="top-nav-right">
+
+        <!-- Bell -->
+        <div class="top-nav-icon-btn" #bellIcon (click)="toggleNotifications()">
+          <i class="fa-solid fa-bell"></i>
+          <span *ngIf="hasNotif" class="notif-badge"></span>
+        </div>
+
+        <!-- Divider -->
+        <div class="top-nav-divider"></div>
+
+        <!-- User dropdown -->
+        <div class="dropdown">
+          <div class="top-nav-user" id="navbarDropdown" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="assets/icon/avatar.png" class="top-nav-avatar" alt="Avatar" />
+            <div class="top-nav-user-info">
+              <span class="top-nav-user-name">{{ UserInfo.prenom }} {{ UserInfo.nom }}</span>
+              <span class="top-nav-user-role">{{ UserInfo.role.name }}</span>
+            </div>
+            <i class="fas fa-chevron-down top-nav-chevron"></i>
+          </div>
+          <ul class="dropdown-menu dropdown-menu-end top-nav-dropdown" aria-labelledby="navbarDropdown">
+            <li>
+              <a class="dropdown-item" href="#" (click)="updateProfile()">
+                <i class="fas fa-user-edit"></i>Mettre à jour le profil
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item danger" href="#" (click)="logout()">
+                <i class="fas fa-sign-out-alt"></i>Déconnexion
+              </a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </header>
+
     <!-- Page Content -->
-    <div class="flex-grow-1">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-            <div class="container-fluid d-flex justify-content-end px-4 gap-4">
-              <div #bellIcon class="position-relative" (click)="toggleNotifications()">
-                <i class="fa-solid fa-bell text-secondary fs-3"></i>
-                <span *ngIf="hasNotif" class="notif-badge"></span>
-              </div>
-              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="assets/icon/avatar.png" style="width: 2.5rem;" class="rounded-circle me-2" alt="Avatar" />
-                    <div class="col">
-                        <div class="row">
-                            <span>{{UserInfo.prenom}} {{UserInfo.nom}}</span>
-                        </div>
-                        <div class="row">
-                            <span style="font-size: 11px; color: gray;">{{UserInfo.role.name}}</span>
-                        </div>
+    <main class="main-content">
+      <router-outlet></router-outlet>
+    </main>
 
-                    </div>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li>
-                        <a class="dropdown-item" href="#" (click)="updateProfile()">Mettre à jour le profil</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#" (click)="logout()">Déconnexion</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-
-        <!-- Main Content -->
-        <div class="container-fluid p-3">
-            <router-outlet></router-outlet>
-        </div>
-    </div>
+  </div>
 </div>
 
-<!-- Modal -->
+
+<!-- ===== MODAL MOT DE PASSE ===== -->
 <div *ngIf="isModalOpen" class="custom-modal">
-    <div class="modal-dialog  modal-dialog-centered  px-5">
-        <div class="modal-content">
-            <div class="modal-header d-flex align-items-center">
-                <div class="d-flex justify-content-center align-items-center"
-                    style="background-color: rgb(219, 230, 255); border-radius: 3rem; width: 3rem; height: 3rem;">
-                    <i class="far fa-key text-secondary fs-3"></i>
-                </div>
-                <Label class="fw-bold fs-6 text-secondary mx-2">Modifiez votre mot de passe</Label>
-            </div>
-            <div class="modal-body">
-              <form [formGroup]="passwordForm">
-                <div class="mb-3">
-                  <label for="password" class="form-label">Ancien mot de passe</label>
-                  <input type="password" formControlName="password" class="form-control" id="password"
-                         placeholder="Mot de passe 6 caractères minimum!">
-                </div>
-                <div class="mb-3">
-                  <label for="newPassword" class="form-label">Nouveau mot de passe</label>
-                  <input type="password" formControlName="newPassword" class="form-control" id="newPassword"
-                         placeholder="Mot de passe 6 caractères minimum!">
-                  <label class="error my-3" *ngIf="submitError">Mot de passe incorrect</label>
-                </div>
-              </form>
-
-            </div>
-            <div class="modal-footer gap-3 px-3 d-flex justify-content-center">
-                <button [disabled]="passwordForm.invalid" type="submit" (click)="onSubmit()" class="btn btn-secondary w-100">Modifier</button>
-            </div>
+  <div class="modal-dialog modal-dialog-centered px-5">
+    <div class="modal-content">
+      <div class="modal-header d-flex align-items-center">
+        <div class="bui-modal-icon">
+          <i class="far fa-key text-secondary fs-3"></i>
         </div>
+        <label class="fw-bold fs-6 text-secondary mx-2">Modifiez votre mot de passe</label>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="passwordForm">
+          <div class="mb-3">
+            <label for="password" class="form-label">Ancien mot de passe</label>
+            <input type="password" formControlName="password" class="form-control" id="password"
+                   placeholder="Mot de passe 6 caractères minimum!">
+          </div>
+          <div class="mb-3">
+            <label for="newPassword" class="form-label">Nouveau mot de passe</label>
+            <input type="password" formControlName="newPassword" class="form-control" id="newPassword"
+                   placeholder="Mot de passe 6 caractères minimum!">
+            <label class="error my-3" *ngIf="submitError">Mot de passe incorrect</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer gap-3 px-3 d-flex justify-content-center">
+        <button [disabled]="passwordForm.invalid" type="submit" (click)="onSubmit()" class="btn btn-secondary w-100">Modifier</button>
+      </div>
     </div>
+  </div>
 </div>
+
+
+<!-- ===== NOTIFICATIONS POPUP ===== -->
 <div *ngIf="showNotifications" #popupNotif class="notif-popup shadow">
   <h6 class="fw-bold px-3 pt-3">Notifications</h6>
   <div class="d-flex px-3 gap-2 pb-2">
@@ -107,13 +133,15 @@
     <span class="tab" [class.active]="activeTab === 'COMMERCIALE'" (click)="setTab('COMMERCIALE')">Commercial <b>{{ countByType.commercial }}</b></span>
     <span class="tab" [class.active]="activeTab === 'SYSTEME'" (click)="setTab('SYSTEME')">Systeme <b>{{ countByType.system }}</b></span>
   </div>
-
   <div class="notif-list px-3">
     <div *ngFor="let notif of filteredNotifications" class="notif-item mb-3">
       <div class="d-flex align-items-center py-2 gap-2 border-bottom">
         <i [ngClass]="getIconClass(notif.type) + ' ' + getColorClass(notif.type)"></i>
         <div>
-          <div class="row"> <div style="font-size:13px" class="fw-semibold col">{{ notif.titre }}</div> <div style="font-size:10px" class="col-3">{{ notif.createdAt |  date:'dd/MM/yyyy HH:mm' }}</div></div>
+          <div class="row">
+            <div style="font-size:13px" class="fw-semibold col">{{ notif.titre }}</div>
+            <div style="font-size:10px" class="col-3">{{ notif.createdAt | date:'dd/MM/yyyy HH:mm' }}</div>
+          </div>
           <div style="font-size:11px" class="text-muted">{{ notif.message }}</div>
         </div>
       </div>

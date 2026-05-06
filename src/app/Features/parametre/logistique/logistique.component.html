@@ -1,23 +1,17 @@
-<!-- Navigation -->
-<div class="gap-2 d-flex align-items-center mb-3"style="cursor: pointer;" (click)="goBack()">
-    <i style="font-size: 18px;" class="fas fw-bold fa-chevron-left me-2" ></i>
-    <h4 class="fw-bold mb-0">Logistique</h4>
+<div class="bui-back mb-4" (click)="goBack()">
+  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="fw-bold mb-0">Logistique</h4>
 </div>
 
-<nav class="nav nav-pills flex-column flex-sm-row gap-1 border-bottom">
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'transporteurs'"
-        (click)="activeElement('transporteurs')">Transporteurs</a>
+<div class="cc-tabs mb-3">
+  <button class="cc-tab-btn" [class.active]="activeTab === 'transporteurs'" (click)="activeElement('transporteurs')">Transporteurs</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'vehicules'" (click)="activeElement('vehicules')">Véhicules</button>
+</div>
 
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'vehicules'"
-        (click)="activeElement('vehicules')">Véhicules</a>
-</nav>
+<div *ngIf="activeTab === 'transporteurs'">
+  <app-transporteur></app-transporteur>
+</div>
 
-<div class="tab-content mt-3">
-    <div *ngIf="activeTab === 'transporteurs'" class="tab-pane fade show active">
-        <app-transporteur></app-transporteur>
-    </div>
-
-    <div *ngIf="activeTab === 'vehicules'" class="tab-pane fade show active">
-        <app-vehicules></app-vehicules>
-    </div>
+<div *ngIf="activeTab === 'vehicules'">
+  <app-vehicules></app-vehicules>
 </div>

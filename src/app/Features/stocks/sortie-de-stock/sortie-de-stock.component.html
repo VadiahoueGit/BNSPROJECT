@@ -1,170 +1,136 @@
-<!-- Navigation -->
-<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
-  <i style="font-size: 18px;" class="fas fw-bold fa-chevron-left me-2"></i>
+<div class="bui-back mb-4" (click)="goBack()">
+  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
   <h4 class="fw-bold mb-0">Sortie de stock</h4>
 </div>
+
 <div class="card">
-  <div class="container mt-4">
-    <form [formGroup]="stockForm">
-      <div class="row g-3">
-        <!-- Colonne gauche -->
-        <div class="col-md-6">
-          <!-- Numéro -->
-          <div class="mb-3">
-            <label for="numero" class="form-label">Numéro</label>
-            <input [disabled]="true" type="text" id="numero" class="form-control" formControlName="numero" readonly/>
-          </div>
-
-          <!-- Date d'enregistrement -->
-          <div class="mb-3">
-            <label for="dateEnregistrement" class="form-label">Date d'enregistrement</label> <span
-            class="text-danger">*</span>
-            <input type="date" id="dateEnregistrement" class="form-control"
-                   formControlName="dateEnregistrement"/>
-          </div>
-          <!-- Code Article -->
-          <label for="" class="form-label"></label>
-          <div class="mb-3">
-            <button type="button" class="btn btn-secondary mb-3" [disabled]="stockForm.controls['depotId'].invalid"
-                    (click)="OnCreate()">Ajouter des articles
-            </button>
-
-          </div>
-        </div>
-
-        <!-- Colonne droite -->
-        <div class="col-md-6">
-          <!-- Date de document -->
-          <div class="mb-3">
-            <label for="dateDocument" class="form-label">Date de document</label> <span
-            class="text-danger">*</span>
-            <input type="date" id="dateDocument" class="form-control" formControlName="dateDocument"/>
-          </div>
-          <!-- Magasin -->
-          <div class="mb-3">
-            <label for="" class="form-label">Dépot</label> <span
-            class="text-danger">*</span>
-            <ng-select class="form-control" (change)="deselectAllItems()" [items]="depotList" bindLabel="nomDepot"
-                       bindValue="id"
-                       formControlName="depotId" [searchable]="true">
-            </ng-select>
-
-          </div>
-
-          <!-- Commentaire -->
-          <div class="mb-3">
-            <label for="commentaire" class="form-label">Commentaire</label>
-            <textarea style="width: 95% !important;" id="commentaire" class="form-control"
-                      formControlName="commentaire" rows="3"></textarea>
-          </div>
-        </div>
+  <form [formGroup]="stockForm">
+    <div class="sk-form-grid">
+      <div class="sk-field">
+        <label class="sk-label">Numéro</label>
+        <input type="text" class="sk-input" formControlName="numero" [attr.disabled]="true" readonly>
       </div>
-    </form>
-    <table class="table table-bordered">
-      <thead class="table-light">
-      <tr>
-        <th scope="col">Code</th>
-        <th scope="col">Description</th>
-        <th scope="col">Quantité</th>
-        <th scope="col">Qte disponible</th>
-        <th scope="col">Actions</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let data of selectedArticles; let i = index">
-        <td class=""><p>{{ data.code || data.reference  }}</p></td>
-        <td class=""><p>{{ data.libelle }}</p></td>
-        <td>
-          <input
-            type="number"
-            class="form-control-custom"
-            [(ngModel)]="data.quantite"
-            [min]="0"
-            [max]="stocksDisponibles[data.id]"
-            [disabled]="stocksDisponibles[data.id] === 0"
-            [ngClass]="{ 'invalid': data.quantite > stocksDisponibles[data.id] }"
-            (ngModelChange)="validateQuantite(data)"
-          >
-        </td>
+      <div class="sk-field">
+        <label class="sk-label">Dépôt <span class="text-danger">*</span></label>
+        <ng-select [items]="depotList" bindLabel="nomDepot" bindValue="id"
+                   formControlName="depotId" [searchable]="true"
+                   (change)="deselectAllItems()">
+        </ng-select>
+      </div>
+      <div class="sk-field">
+        <label class="sk-label">Date d'enregistrement <span class="text-danger">*</span></label>
+        <input type="date" class="sk-input" formControlName="dateEnregistrement">
+      </div>
+      <div class="sk-field">
+        <label class="sk-label">Date de document <span class="text-danger">*</span></label>
+        <input type="date" class="sk-input" formControlName="dateDocument">
+      </div>
+      <div class="sk-field sk-full">
+        <label class="sk-label">Commentaire</label>
+        <textarea class="sk-input sk-textarea" formControlName="commentaire" rows="3"
+                  placeholder="Commentaire optionnel..."></textarea>
+      </div>
+    </div>
+  </form>
 
-        <td>{{ stocksDisponibles[data.id] }}</td>
-        <td class="d-flex justify-content-center">
-          <button type="button" class="btn btn-danger btn-sm" (click)="removeArticle(data)">
-            <i class="fas fa-trash"></i>
-          </button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-
-    <!-- Bouton -->
-    <div class="text-end">
-      <button (click)="onSubmit()" type="submit" class="btn btn-primary">
-        Enregistrer
+  <div class="sk-articles-section">
+    <div class="sk-articles-header">
+      <span class="sk-articles-title"><i class="fas fa-boxes me-2"></i>Articles</span>
+      <button type="button" class="sk-btn-add"
+              [disabled]="stockForm.controls['depotId'].invalid"
+              (click)="OnCreate()">
+        <i class="fas fa-plus me-1"></i> Ajouter des articles
       </button>
+    </div>
+    <div class="sk-table-wrap">
+      <table class="sk-table">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Description</th>
+            <th>Quantité</th>
+            <th>Qté disponible</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of selectedArticles">
+            <td>{{ data.code || data.reference }}</td>
+            <td>{{ data.libelle }}</td>
+            <td>
+              <input type="number" class="sk-qty-input"
+                     [(ngModel)]="data.quantite"
+                     [min]="0"
+                     [max]="stocksDisponibles[data.id]"
+                     [disabled]="stocksDisponibles[data.id] === 0"
+                     [ngClass]="{ 'invalid': data.quantite > stocksDisponibles[data.id] }"
+                     (ngModelChange)="validateQuantite(data)">
+            </td>
+            <td>{{ stocksDisponibles[data.id] }}</td>
+            <td class="text-center">
+              <button type="button" class="sk-btn-danger" (click)="removeArticle(data)">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="selectedArticles.length === 0">
+            <td colspan="5" class="sk-empty-row">
+              <i class="fas fa-box-open me-2"></i>Aucun article ajouté
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
+  <div class="sk-form-actions">
+    <button type="button" class="sk-btn-primary" (click)="onSubmit()">
+      <i class="fas fa-save me-2"></i>Enregistrer
+    </button>
+  </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal sélection articles -->
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div class="modal-dialog  modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div class="d-flex justify-content-center align-items-center"
-             style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
-          <i class="fas fa-box-check text-primary fs-3"></i>
-        </div>
-        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">Selection des articles</h1>
+  <div class="sk-modal">
+    <div class="sk-modal-header">
+      <div class="sk-modal-icon"><i class="fas fa-boxes"></i></div>
+      <h5 class="sk-modal-title">Sélection des articles</h5>
+      <button class="sk-modal-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="sk-modal-body">
+      <div class="sk-search-wrap">
+        <i class="fas fa-search"></i>
+        <input type="text" class="sk-search-input" [(ngModel)]="searchTerm"
+               (input)="filterArticles()" placeholder="Rechercher un article...">
       </div>
-
-      <div class="modal-body">
-        <form>
-          <div class="row">
-            <fieldset class="row border my-2">
-              <div class="p-3">
-                <!-- Champ de recherche -->
-                <input type="text" name="search" (input)="filterArticles()" [(ngModel)]="searchTerm"
-                       placeholder="Rechercher un produit" class="form-control mb-3">
-              </div>
-              <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
-
-                <table class="table">
-                  <thead>
-                  <tr style="font-size: small;">
-                    <th scope="col" class="text-secondary">Code</th>
-                    <th scope="col" class="text-secondary">Produits</th>
-                    <th scope="col" class="text-secondary text-center">Choix</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr *ngFor="let article of filteredArticleList; let i = index" style="font-size: small;">
-                    <th scope="row">{{ article.code || article.reference  }}</th>
-                    <th scope="row">{{ article.libelle }}</th>
-                    <td class="">
-                      <input
-                        type="checkbox"
-                        class="form-control-custom"
-                        [name]="'checkbox_' + i"
-                        [(ngModel)]="article.isChecked"
-                        (change)="onCheckboxChange(article)"
-                      >
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-
-              </div>
-            </fieldset>
-          </div>
-        </form>
+      <div class="sk-table-wrap">
+        <table class="sk-modal-table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Produit</th>
+              <th class="text-center">Choix</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let article of filteredArticleList; let i = index">
+              <td>{{ article.code || article.reference }}</td>
+              <td>{{ article.libelle }}</td>
+              <td class="text-center">
+                <input type="checkbox" [name]="'checkbox_' + i"
+                       [(ngModel)]="article.isChecked" (change)="onCheckboxChange(article)">
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <div class="modal-footer gap-3 px-4y">
-        <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-        <button type="submit" (click)="onSubmitSelection()" class="btn btn-primary px-2">Valider</button>
-
-      </div>
+    </div>
+    <div class="sk-modal-footer">
+      <button class="sk-btn-secondary" (click)="OnCloseModal()">Annuler</button>
+      <button class="sk-btn-primary" (click)="onSubmitSelection()">
+        <i class="fas fa-check me-1"></i> Valider
+      </button>
     </div>
   </div>
 </div>

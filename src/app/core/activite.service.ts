@@ -341,7 +341,7 @@ export class ActiviteService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/regroupements?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+          `${this.apiUrl}/v1/regroupements?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&_t=${Date.now()}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -355,13 +355,33 @@ export class ActiviteService {
         );
     });
   }
+  GetRegroupementByCommandeId(commandeId: number) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.get(`${this.apiUrl}/v1/regroupements/by-commande/${commandeId}`, { headers }).subscribe(
+        (res: any) => resolve(res),
+        (err) => reject(err)
+      );
+    });
+  }
+
+  GetRegroupementById(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.get(`${this.apiUrl}/v1/regroupements/${id}`, { headers }).subscribe(
+        (res: any) => resolve(res),
+        (err) => reject(err)
+      );
+    });
+  }
+
   //FACTURES
   CreateVenteGlobal(data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
-      this._http.post(`${this.apiUrl}/v1/ventes_global`, data,{headers}).subscribe(
+      this._http.post(`${this.apiUrl}/v1/ventes_global/vente-avec-retour`, data,{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -477,6 +497,45 @@ export class ActiviteService {
         );
     });
   }
+  //VENTE AU DEPOT
+  CreateLivraison(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.post(`${this.apiUrl}/v1/livraisons`, data, { headers }).subscribe({
+        next: (res: any) => resolve(res),
+        error: (err) => reject(err)
+      });
+    });
+  }
+
+  LivrerAvecRetour(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/livraisons/livrer-avec-retour`, data, {headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  LivrerCommande(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.post(`${this.apiUrl}/v1/livraisons/livrer`, data, { headers }).subscribe({
+        next: (res: any) => resolve(res),
+        error: (err) => reject(err)
+      });
+    });
+  }
+
   GetDetailGlobalFacturesById(id: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -824,6 +883,22 @@ export class ActiviteService {
             reject(err);
           }
         );
+    });
+  }
+
+  CreateRetourPlein(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/retours-pleins`, data, { headers }).subscribe(
+        (res: any) => {
+          resolve(res);
+        },
+        (err) => {
+          reject(err);
+        }
+      );
     });
   }
 

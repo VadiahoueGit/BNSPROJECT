@@ -146,7 +146,7 @@ export class GroupeProduitComponent {
     this._spinner.show()
     this.articleService.GetGroupeArticleList(data).then((res:any)=>{
       console.log('DATA:::>',res)
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages);
 
       this.dataList = res.data

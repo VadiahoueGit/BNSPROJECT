@@ -36,7 +36,7 @@ export class TypeArticleComponent {
 
   ngOnInit() {
     this.articleForm = this.fb.group({
-      code: [null, Validators.required],
+      Code: [null, Validators.required],
       libelle: ['', Validators.required],
     });
     this.GetTypesArticlesList(1);
@@ -140,7 +140,7 @@ export class TypeArticleComponent {
     this._spinner.show();
     this.articleService.GetTypesArticlesList(data).then((res: any) => {
       console.log('DATA:::>', res);
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages); // nombre total d’enregistrements
 
       this.dataList = res.data;

@@ -92,6 +92,12 @@ export class ParametreComponent implements OnInit {
       title: 'Devises',
       url:'feature/parametre/devise',
       perm:'param_devises'
+    },
+    {
+      image: 'assets/icon/casier.png',
+      title: 'Règles palette',
+      url:'feature/parametre/regle-palette',
+      perm:'param_devises'
     }
   ]
   constructor(private _router: Router) { }

@@ -1,133 +1,74 @@
-<div
-  class="gap-2 d-flex align-items-center mb-3"
-  style="cursor: pointer"
-  (click)="goBack()"
->
-  <i style="font-size: 18px" class="fas fw-bold fa-chevron-left me-2"></i>
-  <h4 class="fw-bold mb-0">Historiques mouvement de stock</h4>
+<div class="bui-back mb-4" (click)="goBack()">
+  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="fw-bold mb-0">Historique des mouvements de stock</h4>
 </div>
+
 <div class="card">
-  <p-table
-    [styleClass]="'p-datatable-sm'"
-    #dt2
-    [value]="dataList"
-    dataKey="id"
-    [rows]="8"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [paginator]="true"
-    (onPage)="onPage($event)"
-  >
+  <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id"
+           [rows]="8" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true"
+           (onPage)="onPage($event)">
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color)">Dépot</th>
-        <th style="color: var(--secondary-color)">Liquide</th>
-        <th style="color: var(--secondary-color)">Emballage</th>
-        <th style="color: var(--secondary-color)">Mouvement</th>
-        <th style="color: var(--secondary-color)">Qte avant</th>
-        <th style="color: var(--secondary-color)">Qte après</th>
-        <th style="color: var(--secondary-color)">Quantité</th>
-        <th style="color: var(--secondary-color)">Temps</th>
-        <th style="color: var(--secondary-color)">Actions</th>
+        <th>Dépôt</th>
+        <th>Liquide</th>
+        <th>Emballage</th>
+        <th>Mouvement</th>
+        <th>Qté avant</th>
+        <th>Qté après</th>
+        <th>Quantité</th>
+        <th>Date</th>
+        <th class="text-center">Actions</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList>
       <tr>
+        <td>{{ dataList.depot.nomDepot }}</td>
+        <td>{{ dataList.stock.liquide ? dataList.stock.liquide.libelle : '—' }}</td>
+        <td>{{ dataList.stock.emballage ? dataList.stock.emballage.libelle : '—' }}</td>
         <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.depot.nomDepot }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.stock.liquide ? dataList.stock.liquide.libelle : 'N/A' }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.stock.emballage ?  dataList.stock.emballage.libelle : 'N/A' }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
+          <span class="sk-mv-badge" [class.in]="dataList.mouvement.type === 'ENTREE'"
+                [class.out]="dataList.mouvement.type === 'SORTIE'"
+                [class.tr]="dataList.mouvement.type === 'TRANSFERT'">
             {{ dataList.mouvement.type }}
           </span>
         </td>
-        <td>
-          {{ dataList.stockAvantMouvement }}
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.stockApresMouvement }}
+        <td>{{ dataList.stockAvantMouvement }}</td>
+        <td>{{ dataList.stockApresMouvement }}</td>
+        <td><strong>{{ dataList.quantite }}</strong></td>
+        <td>{{ dataList.stock?.updatedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td class="text-center">
+          <span class="bui-icon-btn view" (click)="OnEdit(dataList.mouvement)" title="Voir détails">
+            <i class="fas fa-eye"></i>
           </span>
-        </td>
-        <td>
-          {{ dataList.quantite }}
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.stock?.updatedAt | date : "dd/MM/yyyy HH:mm:ss" }}
-          </span>
-        </td>
-
-        <td>
-          <i
-            (click)="OnEdit(dataList.mouvement)"
-            style="cursor: pointer"
-            class="fas fa-eye text-secondary"
-          ></i>
         </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">Aucun élement trouvé.</td>
+        <td colspan="9" style="text-align:center;padding:24px;color:#9ca3af">
+          <i class="fas fa-history me-2"></i>Aucun mouvement trouvé
+        </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
-<!-- Modal creation -->
-<!-- Modal -->
+<!-- Modal détail mouvement -->
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div
-          class="d-flex justify-content-center align-items-center"
-          style="
-            background-color: rgb(219, 255, 232);
-            border-radius: 3rem;
-            width: 3rem;
-            height: 3rem;
-          "
-        >
-          <i class="fas fa-box-check text-primary fs-3"></i>
-        </div>
-        <h1
-          *ngIf="operation == 'edit'"
-          class="modal-title fs-5 ms-3"
-          id="staticBackdropLabel"
-        >
-          Details du mouvement
-        </h1>
+  <div class="sk-modal" style="width:400px">
+    <div class="sk-modal-header">
+      <div class="sk-modal-icon"><i class="fas fa-info-circle"></i></div>
+      <h5 class="sk-modal-title">Détail du mouvement</h5>
+      <button class="sk-modal-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="sk-modal-body">
+      <div class="sk-info-row">
+        <span class="sk-info-label">Commentaire</span>
+        <span class="sk-info-value" style="white-space:pre-wrap">{{ updateData.commentaire || '—' }}</span>
       </div>
-      <div class="modal-body">
-        <div class="d-flex justify-content-center mt-3">
-          <p style="font-size: larger; color: darkseagreen;">{{ updateData.commentaire }}</p>
-        </div>
-      </div>
-
-      <div class="modal-footer gap-3 px-4">
-        <button
-          (click)="OnCloseModal()"
-          type="button"
-          class="btn btn-secondary px-2"
-        >
-          Fermer
-        </button>
-      </div>
+    </div>
+    <div class="sk-modal-footer">
+      <button class="sk-btn-secondary" (click)="OnCloseModal()">Fermer</button>
     </div>
   </div>
 </div>
-
-<!-- Modal -->

@@ -397,19 +397,35 @@ export class ValidationCommandeClientComponent {
         'Voulez-vous approuver cette commande?'
       ).then((res) => {
         if (res.isConfirmed == true) {
-          this._spinner.show();
-          this._financeService.ApprouverCommandeClient(data.id).then((res: any) => {
-            console.log('VALIDEEEEEEEEEE:::>', res);
-            if(res.statusCode ==200)
-            {
-              this.toastr.success(res.message);
-              this.GetListCommandeClient(1);
-              this.OnCloseModal();
-            }else{
-              this.toastr.error(res.message);
-            }
-            this._spinner.hide();
-          });
+          const totalSousSolde = parseFloat(data.sousCompte?.totalSousSolde || 0);
+          const doApprouver = () => {
+            this._spinner.show();
+            this._financeService.ApprouverCommandeClient(data.id).then((res: any) => {
+              if (res.statusCode == 200) {
+                this.toastr.success(res.message);
+                this.GetListCommandeClient(1);
+                this.OnCloseModal();
+              } else {
+                this.toastr.error(res.message);
+              }
+              this._spinner.hide();
+            });
+          };
+
+          if (totalSousSolde > 0) {
+            const montantAPayer = this.totalLiquide - totalSousSolde;
+            ALERT_QUESTION(
+              'warning',
+              'Attention !',
+              `Le client a un sous solde de ${totalSousSolde.toLocaleString('fr-FR')} FCFA. Ce montant sera déduit de la facture, il payera ${montantAPayer.toLocaleString('fr-FR')} FCFA.`
+            ).then((result) => {
+              if (result.isConfirmed == true) {
+                doApprouver();
+              }
+            });
+          } else {
+            doApprouver();
+          }
         } else {
           this.isModalOpen = false;
         }

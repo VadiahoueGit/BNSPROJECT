@@ -8,6 +8,7 @@ import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.servic
 import {ALERT_QUESTION} from '../../shared-component/utils';
 import {Location} from '@angular/common';
 import {CoreServiceService} from '../../../core/core-service.service';
+
 import {LogistiqueService} from '../../../core/logistique.service';
 import {ActiviteService} from '../../../core/activite.service';
 import {StatutCommande} from '../../../utils/utils';
@@ -80,6 +81,7 @@ export class LivraisonComponent {
   truckCapacity: number = 0;
   isModalOpenDetail: boolean = false;
   isModalOpenSign: boolean = false;
+  isModalOpenRetourPlein: boolean = false;
   totalCasiers: number = 0;
   canContinue: boolean = false;
   cargaison: number = 0;
@@ -92,21 +94,7 @@ export class LivraisonComponent {
     [key: string]: Array<{ type: string; palettes: number; casier: number; totalQuantite: number }>
   } = {};
   result: { palettes: number; casier: number } | null = null;
-  casiersPerPalette: Record<number, { casiers: number; type: string }[]> = {
-    30: [{casiers: 60, type: 'SUCRERIE'}],
-    33: [
-      {casiers: 63, type: 'BIERE'},
-      {casiers: 126, type: 'EAU'}
-    ],
-    25: [{casiers: 63, type: 'BIERE'}],
-    50: [{casiers: 66, type: 'BIERE'}],
-    60: [
-      {casiers: 60, type: 'SUCRERIE'},
-      {casiers: 66, type: 'BIERE'}
-    ],
-    100: [{casiers: 64, type: 'EAU'}],
-    150: [{casiers: 64, type: 'EAU'}],
-  };
+  casiersPerPalette: Record<number, { casiers: number; type: string }[]> = {};
 
 
   constructor(
@@ -136,6 +124,7 @@ export class LivraisonComponent {
 
     // this.selectedArticle = this.articles[0];
     this.GetRegroupementList(this.currentPage);
+    this.LoadCasiersPerPalette();
     this.GetRegroupementRules();
     this.GetTransporteurList();
     this.GetVehiculeList();
@@ -422,6 +411,76 @@ export class LivraisonComponent {
   closeDetailSign(){
     this.isModalOpenSign = false;
   }
+
+  getCommandesNonLivrees(): any[] {
+    return (this.updateData.commandes || []).filter(
+      (c: any) =>
+        c.statutCommande !== 'Livrée' &&
+        c.statutCommande !== 'Commande Livrée' &&
+        c.statutCommande !== 'Retournée' &&
+        c.statutLivraison !== 'Annulée'
+    );
+  }
+
+  isDateDepasse(date: string | Date): boolean {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d < today;
+  }
+
+  openRetourPleinModal() {
+    this.isModalOpenRetourPlein = true;
+  }
+
+  closeRetourPleinModal() {
+    this.isModalOpenRetourPlein = false;
+  }
+
+  onSubmitRetourPlein() {
+    const commandesNonLivrees = (this.updateData.commandes || []).filter(
+      (c: any) => c.statutCommande !== 'Livrée' && c.statutCommande !== 'Commande Livrée'
+    );
+    const vehiculeId = this.updateData.vehicule?.id;
+
+    if (commandesNonLivrees.length === 0) {
+      this.toastr.info('Toutes les commandes ont déjà été livrées.');
+      return;
+    }
+
+    const requests = commandesNonLivrees.map((commande: any) => {
+      const depotId = commande.clientInfo?.depot?.id;
+      const articles = (commande.articles || []).map((a: any) => ({
+        idArticle: a.id,
+        quantite: a.quantite,
+        prixUnitaireLiquide: a.prixUnitaireLiquide || 0,
+        prixUnitaireEmballage: a.prixUnitaireEmballage || 0,
+        ...(a.liquide?.code && { codeArticleLiquide: a.liquide.code }),
+        ...(a.emballage?.code && { codeArticleEmballage: a.emballage.code }),
+      }));
+      return this.activiteService.CreateRetourPlein({
+        numCommande: commande.numCommande,
+        vehiculeId,
+        depotId,
+        transporteurId: this.updateData.transporteur?.id,
+        articles,
+      });
+    });
+
+    this._spinner.show();
+    Promise.all(requests).then(() => {
+      this._spinner.hide();
+      this.toastr.success('Retours pleins créés avec succès.');
+      this.closeRetourPleinModal();
+      this.isModalOpenDetail = false;
+      this.regroupementFinal = {};
+      this.GetRegroupementList(this.currentPage);
+    }).catch((err: any) => {
+      this._spinner.hide();
+      this.toastr.error(err?.error?.message || 'Erreur lors de la création des retours pleins.');
+    });
+  }
   OnEdit(data: any) {
     this.isEditMode = true;
     console.log(data);
@@ -432,50 +491,47 @@ export class LivraisonComponent {
     this.operation = 'edit';
 
   }
-
   UploadDoc(item: any) {
-    console.log(item, 'item')
-    this.regroupementTable = []
+    console.log('CLICK UploadDoc');
+
+    this.regroupementTable = [];
+    this.regroupementFinal = {}; // 🔥 IMPORTANT reset
+
     const numRegroupement = item.numRegroupement;
-    let regroup = this.regrouperArticles(item.commandes)
-    console.log(regroup, 'XXX')
+
+    let regroup = this.regrouperArticles(item.commandes);
+
     this.calculate(regroup);
 
     this._spinner.show();
+
     if (this.regroupementFinal) {
       this.results = Object.entries(this.regroupementFinal).flatMap(([key, value]) => {
-        // Vérifie que value est bien un tableau
         if (!Array.isArray(value)) return [];
 
-        // Regroupement par type
         const regroupementParType = value.reduce((acc, item) => {
-          const type = item.type ?? "Inconnu"; // Sécurité si le type est absent
+          const type = item.type ?? "Inconnu";
+
           if (!acc[type]) {
-            acc[type] = {casier: 0, palette: 0};
+            acc[type] = { casier: 0, palette: 0 };
           }
-          console.log(item.casier)
+
           acc[type].casier += item.casier ?? 0;
           acc[type].palette += item.palettes ?? 0;
+
           return acc;
         }, {} as Record<string, { casier: number, palette: number }>);
 
-        // Convertir l'objet en tableau
         return Object.entries(regroupementParType).map(([type, data]) => ({
           format: Number(key),
           type,
           casier: data.casier,
           palette: data.palette
         }));
-
       });
-
-      console.log(this.result);
-
 
       this.activiteService.GetRegroupementPdf(numRegroupement, this.results).then(
         (res: any) => {
-          console.log('DownloadGlobalFacturesById:::>', res);
-          this.regroupementFinal = {}
           this._spinner.hide();
         },
         (error: any) => {
@@ -484,8 +540,6 @@ export class LivraisonComponent {
         }
       );
     }
-
-
   }
 
   regrouperArticles(commandes: any[]): any {
@@ -797,6 +851,18 @@ export class LivraisonComponent {
         }
       }
     );
+  }
+
+  LoadCasiersPerPalette() {
+    this.coreService.GetReglePaletteList({ paginate: false, page: 1, limit: 0 }).then((res: any) => {
+      this.casiersPerPalette = {};
+      (res.data as any[]).forEach(regle => {
+        if (!this.casiersPerPalette[regle.format]) {
+          this.casiersPerPalette[regle.format] = [];
+        }
+        this.casiersPerPalette[regle.format].push({ casiers: regle.casiers, type: regle.type });
+      });
+    });
   }
 
   GetRegroupementRules() {

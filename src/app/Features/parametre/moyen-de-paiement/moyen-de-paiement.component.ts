@@ -52,7 +52,7 @@ export class MoyenDePaiementComponent {
     this._spinner.show();
     this._financeService.GetMoyenPaiementList(data).then((res: any) => {
       console.log('MOYEN PAIEMENT LIST:::>', res);
-      this.totalPages = res.total * data.limit; // nombre total d’enregistrements
+      this.totalPages = res.total ; // nombre total d’enregistrements
       console.log('totalPages:::>', this.totalPages);
 
       this.dataList = res.data;
@@ -93,13 +93,13 @@ export class MoyenDePaiementComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  
+
   onSubmit(): void {
     console.log(this.moyenPaiementForm.value);
     if (this.moyenPaiementForm.valid) {
       const formValues = this.moyenPaiementForm.value;
-  
-    
+
+
       if (this.isEditMode) {
         this._financeService.UpdateMoyenPaiement(this.prixId, formValues).then(
           (response: any) => {

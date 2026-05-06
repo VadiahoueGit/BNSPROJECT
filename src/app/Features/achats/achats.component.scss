@@ -1,3 +1,87 @@
-.onglet{
+$blue:        #0071c2;
+$green:       #8dae56;
+$gray-border: #e5e7eb;
+$gray-light:  #f7fcff;
+$text-muted:  #9ca3af;
+$radius:      14px;
+$radius-sm:   8px;
+
+.sk-hub {
+  padding: 28px 32px;
+  max-width: 1000px;
+}
+
+.sk-hub-header {
+  margin-bottom: 24px;
+}
+.sk-hub-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 3px;
+}
+.sk-hub-subtitle {
+  font-size: 13px;
+  color: $text-muted;
+  margin: 0;
+}
+
+.sk-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.sk-hub-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  background: white;
+  border-radius: $radius;
+  border: 1.5px solid $gray-border;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: $blue;
+    box-shadow: 0 4px 16px rgba($blue, 0.12);
+    transform: translateY(-2px);
+
+    .sk-hub-card-arrow { color: $blue; transform: translateX(3px); }
+    .sk-hub-card-label { color: $blue; }
+  }
+}
+
+.sk-hub-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: $radius-sm;
+  background: $gray-light;
+  border: 1.5px solid $gray-border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  img { width: 28px; height: 28px; object-fit: contain; }
+}
+
+.sk-hub-card-body {
+  flex: 1;
+  min-width: 0;
+}
+.sk-hub-card-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  transition: color 0.2s;
+}
+
+.sk-hub-card-arrow {
+  font-size: 11px;
+  color: $text-muted;
+  transition: all 0.2s;
+  flex-shrink: 0;
 }

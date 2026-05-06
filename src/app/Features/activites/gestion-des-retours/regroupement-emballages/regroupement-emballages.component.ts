@@ -5,6 +5,7 @@ import {ToastrService} from 'ngx-toastr';
 import {Table} from 'primeng/table';
 import {ActiviteService} from 'src/app/core/activite.service';
 import {ArticleServiceService} from 'src/app/core/article-service.service';
+import {CoreServiceService} from 'src/app/core/core-service.service';
 import {ALERT_QUESTION} from 'src/app/Features/shared-component/utils';
 
 interface RegroupementItem {
@@ -35,26 +36,13 @@ export class RegroupementEmballagesComponent {
   regroupementTable: any[] = [];
   regroupementFinal: { [key: string]: Array<{ type: string; palettes: number; casier: number; totalQuantite:number }> } = {};
   result: { palettes: number; casier: number } | null = null;
-  casiersPerPalette: Record<number, { casiers: number; type: string }[]> = {
-    30: [{casiers: 60, type: 'SUCRERIE'}],
-    33: [
-      {casiers: 63, type: 'BIERE'},
-      {casiers: 126, type: 'EAU'}
-    ],
-    25: [{casiers: 63, type: 'BIERE'}],
-    50: [{casiers: 66, type: 'BIERE'}],
-    60: [
-      {casiers: 60, type: 'SUCRERIE'},
-      {casiers: 66, type: 'BIERE'}
-    ],
-    100: [{casiers: 64, type: 'EAU'}],
-    150: [{casiers: 64, type: 'EAU'}],
-  };
+  casiersPerPalette: Record<number, { casiers: number; type: string }[]> = {};
   currentPage: number;
   rowsPerPage: any;
 
   constructor(
     private _activite: ActiviteService,
+    private _coreService: CoreServiceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
@@ -63,6 +51,19 @@ export class RegroupementEmballagesComponent {
 
   ngOnInit() {
     this.GetRetourList(1);
+    this.LoadCasiersPerPalette();
+  }
+
+  LoadCasiersPerPalette() {
+    this._coreService.GetReglePaletteList({ paginate: false, page: 1, limit: 0 }).then((res: any) => {
+      this.casiersPerPalette = {};
+      (res.data as any[]).forEach(regle => {
+        if (!this.casiersPerPalette[regle.format]) {
+          this.casiersPerPalette[regle.format] = [];
+        }
+        this.casiersPerPalette[regle.format].push({ casiers: regle.casiers, type: regle.type });
+      });
+    });
   }
 
   get filteredArticles() {

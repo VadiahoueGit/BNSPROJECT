@@ -11,6 +11,7 @@ import {LivraisonComponent} from './livraison/livraison.component';
 import {FacturationComponent} from './facturation/facturation.component';
 import {ProformatComponent} from "./proformat/proformat.component";
 import {VentemanuelleComponent} from "./ventemanuelle/ventemanuelle.component";
+import {VenteAuDepotComponent} from "./commandes-clients/vente-au-depot/vente-au-depot.component";
 
 const routes: Routes = [
   {path: '', component: ActivitesComponent},
@@ -23,6 +24,7 @@ const routes: Routes = [
   {path: 'gestion-retour', component: GestionDesRetoursComponent},
   {path: 'facturation', component: FacturationComponent},
   {path: 'proformat', component: ProformatComponent},
+  {path: 'venteaudepot', component: VenteAuDepotComponent},
 
 ];
 

@@ -118,6 +118,7 @@ import {ComptesComponent} from "./comptes/comptes.component";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {PaiementGroupeComponent} from "./paiement-groupe/paiement-groupe.component";
 import { EcartComponent } from './ecart/ecart.component';
+import { SousCompteComponent } from './sous-compte/sous-compte.component';
 
 
 @NgModule({
@@ -137,7 +138,8 @@ import { EcartComponent } from './ecart/ecart.component';
     BrouillardComponent,
     ComptesComponent,
     CaisseComponent,
-    EcartComponent
+    EcartComponent,
+    SousCompteComponent
   ],
   imports: [
     CommonModule,

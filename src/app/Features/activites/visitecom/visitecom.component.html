@@ -1,31 +1,22 @@
-<!-- Navigation -->
-<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;"  (click)="goBack()">
-  <i style="font-size: 18px;" class="fas fw-bold fa-chevron-left me-2" ></i>
+<div class="bui-back mb-4" (click)="goBack()">
+  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
   <h4 class="fw-bold mb-0">Visites commerciales</h4>
 </div>
-<nav class="nav nav-pills flex-column flex-sm-row gap-1 border-bottom">
 
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'gestvisit'"
-      (click)="activeElement('gestvisit')">Gestion des visites</a>
+<div class="cc-tabs mb-3">
+  <button class="cc-tab-btn" [class.active]="activeTab === 'gestvisit'" (click)="activeElement('gestvisit')">Gestion des visites</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'progvisite'" (click)="activeElement('progvisite')">Visites programmées</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'svisite'" (click)="activeElement('svisite')">Suivi des visites</button>
+</div>
 
-  <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'progvisite'"
-     (click)="activeElement('progvisite')"> Visites programmées</a>
+<div *ngIf="activeTab === 'gestvisit'">
+  <app-gestionvisite></app-gestionvisite>
+</div>
 
-      <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'svisite'"
-      (click)="activeElement('svisite')">Suivi des visites</a>
+<div *ngIf="activeTab === 'progvisite'">
+  <app-programmation></app-programmation>
+</div>
 
-  </nav>
-
-  <div class="tab-content mt-3">
-    <div *ngIf="activeTab === 'gestvisit'" class="tab-pane fade show active">
-      <app-gestionvisite></app-gestionvisite>
-    </div>
-    <div *ngIf="activeTab === 'progvisite'" class="tab-pane fade show active">
-      <app-programmation></app-programmation>
-    </div>
-    <div *ngIf="activeTab === 'svisite'" class="tab-pane fade show active">
-      <app-suivivisite></app-suivivisite>
-    </div>
-
-
-  </div>
+<div *ngIf="activeTab === 'svisite'">
+  <app-suivivisite></app-suivivisite>
+</div>

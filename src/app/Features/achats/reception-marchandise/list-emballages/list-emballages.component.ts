@@ -500,17 +500,27 @@ export class ListEmballagesComponent {
   //   console.log(this.isModalOpen);
   // }
   onSubmit(): void {
+    const articles = this.emballagesrecues
+      .map((article: any) => {
+        const isNewAdd = article.isNewAdd === true;
+        return {
+          emballageId: isNewAdd
+            ? article.id
+            : (article.articleCommande ? article?.articleCommande?.emballage?.id : article.emballage?.id),
+          quantite: article?.quantiteRecue ?? article?.quantite,
+          prixUnitaireEmballage: parseInt(
+            article?.prixUnitaireEmballage ??
+            article?.articleCommande?.prixUnitaireEmballage ??
+            article?.articleEntree?.prixUnitaireEmballage ??
+            article?.PrixSousDepot
+          )
+        };
+      })
+      .filter((a: any) => a.emballageId != null && a.quantite != null);
+
     const payload = {
       receptionId: this.updateData.id,
-      articles: this.emballagesrecues.map((article: any) => {
-        console.log(article, 'article');
-        return {
-          emballageId: article.articleCommande ? article?.articleCommande?.emballage.id : article.emballage?.id,
-          quantite: article?.quantite,
-          prixUnitaireEmballage: parseInt(article?.prixUnitaireEmballage ?? article?.articleCommande?.prixUnitaireEmballage ?? article?.articleEntree?.prixUnitaireEmballage ?? article?.PrixSousDepot)
-        };
-      }),
-
+      articles,
     };
     console.log(payload, 'payload');
     console.log(this.emballagesrecues, 'emballagesrecues');

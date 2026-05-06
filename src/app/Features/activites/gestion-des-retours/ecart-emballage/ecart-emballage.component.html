@@ -1,9 +1,7 @@
 <div class="card">
   <!-- <div class="d-flex justify-content-end py-3">
-    <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
-        Saisir une commande
-      </button>
-    </div> -->
+  <button type="button" class="bui-btn-add" (click)="OnCreate()">Saisir une commande</button>
+</div> -->
   <div class="row">
     <div class="col-12 col-sm-6 col-md-3 mb-3">
       <span>Nom :</span>
@@ -18,10 +16,10 @@
 
       <ng-template pTemplate="header">
         <tr>
-          <th style="color: var(--secondary-color);">Poste</th>
-          <th style="color: var(--secondary-color);">Nom</th>
-          <th style="color: var(--secondary-color);">Dépot</th>
-          <th style="color: var(--secondary-color);" class="text-center">Actions</th>
+          <th>Poste</th>
+          <th>Nom</th>
+          <th>Dépot</th>
+          <th class="text-center">Actions</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-dataList>
@@ -43,12 +41,11 @@
               }}
             </span>
           </td>
-          <td>
-        <tr class="d-flex justify-content-center gap-3">
-          <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>
-        </tr>
-
-        </td>
+          <td class="text-center">
+      <div class="d-flex justify-content-center gap-2">
+        <span class="bui-icon-btn view" (click)="OnEdit(dataList)"><i class="fas fa-eye"></i></span>
+      </div>
+    </td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
@@ -60,109 +57,93 @@
   </div>
 
   <div *ngIf="isModalOpen" class="custom-modal">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Détails ecart emballage</h5>
-          <button type="button" class="btn-close" aria-label="Close" (click)="OnCloseModal()"></button>
+    <div class="vd-modal-dialog wide">
+      <div class="vd-modal-header">
+        <div class="vd-mh-left">
+          <div class="vd-mh-icon red"><i class="fas fa-balance-scale"></i></div>
+          <div>
+            <div class="vd-mh-title">Détails écart emballage</div>
+            <div class="vd-mh-sub">{{ updateData?.type || '' }} — {{ updateData?.nom || '' }}</div>
+          </div>
         </div>
+        <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+      </div>
 
-        <div class="modal-body" style="padding: 20px; max-height: 70vh; overflow-y: auto">
-          <div class="row">
-            <fieldset class="row border my-1">
-              <div class="row">
-                <div class="col-md-4">
-                  <strong>Type : </strong>
-                  <span>{{ updateData?.type || 'NEANT' }}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Nom : </strong>
-                  <span>{{ updateData.nom || 'NEANT' }}</span>
-                </div>
-              </div>
-            </fieldset>
-
-            <div class="col-md-12">
-              <div class="row">
-                <div class="container" >
-                    <div class="table-responsive"style="min-height: 400px;">
-                      <table class="table table-bordered table-striped">
-                        <thead class="table-light">
-                        <tr>
-                          <th>Code</th>
-                          <th>Libellé</th>
-                          <th>Montant</th>
-                          <th>Qte attendu</th>
-                          <th>Qte reçu</th>
-                          <th>Ecart</th>
-                          <th>Date</th>
-                          <th>Statut</th>
-                          <th>Paiement</th>
-                          <th>Mode</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr *ngFor="let ecart of listeEcarts; let i = index">
-                          <td><span>{{ ecart.codeEmballage }}</span></td>
-                          <td><span>{{ ecart.libelleEmballage }}</span></td>
-                          <td>
-                            <span>{{ (ecart.montantRestant != null ? ecart.montantRestant : ecart.prixUnitaire * ecart.ecart) | number }}</span>
-                          </td>
-                          <td><span>{{ ecart.totalAttendu | number }}</span></td>
-                          <td><span>{{ ecart.totalRecu | number }}</span></td>
-                          <td><span>{{ ecart.ecart }}</span></td>
-                          <td><span>{{ ecart.dateCreation | date: 'dd/MM/yyyy à HH:mm' }}</span></td>
-                          <td>
-                              <span class="badge text-black" [ngClass]="{
-  'bg-success': ecart.status == 'Payé',
-  'bg-danger': ecart.status == 'En attente'
-}">
-                                {{ ecart.status }}
-                              </span>
-                          </td>
-                          <td>
-                            <input
-                              [disabled]="ecart.status == 'Payé'"
-                              type="number"
-                              class="form-control-custom"
-                              [(ngModel)]="ecart.paiement"
-                              [min]="0"
-                              (keydown)="validateAmount(ecart)"
-                              [max]="ecart.prixUnitaire * ecart.quantite"
-                              [ngClass]="{
-                          invalid: ecart.paiement > ecart.prixUnitaire * ecart.quantite
-                        }"
-                            />
-                          </td>
-                          <td>
-                            <ng-select  [disabled]="ecart.status == 'Payé'" class="form-control" style="width: 150px!important" [items]="dataListMoyenPaiement" bindLabel="libelle"
-                                       bindValue="id" id="moyenPaiement" name="moyenPaiementId"
-                                       [(ngModel)]="ecart.moyenPaiementId" [searchable]="true" required>
-                            </ng-select>
-
-                          </td>
-                        </tr>
-                        <tr *ngIf="!listeEcarts || listeEcarts.length === 0">
-                          <td colspan="8" class="text-center">Aucun écart disponible</td>
-                        </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                </div>
-              </div>
-            </div>
+      <div class="vd-modal-body">
+        <div class="vd-info-grid">
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-tag me-1"></i>Type</div>
+            <div class="vd-info-value">{{ updateData?.type || 'NÉANT' }}</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-user me-1"></i>Nom</div>
+            <div class="vd-info-value">{{ updateData?.nom || 'NÉANT' }}</div>
           </div>
         </div>
 
-        <div class="modal-footer gap-3 px-4 d-flex justify-content-end">
-          <button type="button" class="btn btn-primary"
-                  (click)="onSubmitSelected()">
-            <i class="fas fa-save me-1"></i> Solder l'écart
-          </button>
-          <button type="button" class="btn btn-secondary" (click)="OnCloseModal()">
-            <i class="fas fa-times me-1"></i> Fermer
-          </button>
+        <div class="vd-card">
+          <div class="vd-card-header">
+            <div class="vd-card-icon red"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="vd-section-label">Liste des écarts</div>
+          </div>
+          <div class="vd-table-wrap">
+            <table class="vd-table">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Libellé</th>
+                  <th class="text-right">Montant</th>
+                  <th class="text-center">Qté attendue</th>
+                  <th class="text-center">Qté reçue</th>
+                  <th class="text-center">Écart</th>
+                  <th>Date</th>
+                  <th>Statut</th>
+                  <th>Paiement</th>
+                  <th>Mode</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let ecart of listeEcarts">
+                  <td><span class="vd-badge gray">{{ ecart.codeEmballage }}</span></td>
+                  <td>{{ ecart.libelleEmballage }}</td>
+                  <td class="text-right fw-bold">{{ (ecart.montantRestant != null ? ecart.montantRestant : ecart.prixUnitaire * ecart.ecart) | number }}</td>
+                  <td class="text-center">{{ ecart.totalAttendu | number }}</td>
+                  <td class="text-center">{{ ecart.totalRecu | number }}</td>
+                  <td class="text-center">
+                    <span [ngClass]="{'vd-badge green': ecart.ecart >= 0, 'vd-badge red': ecart.ecart < 0}">{{ ecart.ecart }}</span>
+                  </td>
+                  <td>{{ ecart.dateCreation | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td>
+                    <span [ngClass]="{'vd-badge green': ecart.status == 'Payé', 'vd-badge orange': ecart.status == 'En attente'}">{{ ecart.status }}</span>
+                  </td>
+                  <td>
+                    <input [disabled]="ecart.status == 'Payé'" type="number" class="form-control-custom"
+                      [(ngModel)]="ecart.paiement" [min]="0" (keydown)="validateAmount(ecart)"
+                      [max]="ecart.prixUnitaire * ecart.quantite"
+                      [ngClass]="{ invalid: ecart.paiement > ecart.prixUnitaire * ecart.quantite }"
+                      style="width:90px" />
+                  </td>
+                  <td>
+                    <ng-select [disabled]="ecart.status == 'Payé'" class="form-control" style="width:150px!important"
+                      [items]="dataListMoyenPaiement" bindLabel="libelle" bindValue="id"
+                      [(ngModel)]="ecart.moyenPaiementId" [searchable]="true" required>
+                    </ng-select>
+                  </td>
+                </tr>
+                <tr *ngIf="!listeEcarts || listeEcarts.length === 0">
+                  <td colspan="10"><div class="vd-empty"><i class="fas fa-check-circle"></i><span>Aucun écart disponible</span></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
+
+      <div class="vd-modal-footer">
+        <button type="button" class="vd-btn-outline" (click)="OnCloseModal()">Fermer</button>
+        <button type="button" class="vd-btn-warning" (click)="onSubmitSelected()">
+          <i class="fas fa-save"></i>Solder l'écart
+        </button>
       </div>
     </div>
   </div>

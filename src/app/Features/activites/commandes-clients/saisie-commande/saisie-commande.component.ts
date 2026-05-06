@@ -8,6 +8,7 @@ import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.servic
 import {ALERT_QUESTION} from 'src/app/Features/shared-component/utils';
 import {ConfigService} from "../../../../core/config-service.service";
 import {StatutCommande} from "../../../../utils/utils";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-saisie-commande',
@@ -78,8 +79,39 @@ export class SaisieCommandeComponent {
     private fb: FormBuilder,
     private _config: ConfigService,
     private toastr: ToastrService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private _router: Router
   ) {
+  }
+
+  goToVenteAuDepot(data: any) {
+    if (data.statut === StatutCommande.APPROUVEE) {
+      this._router.navigate(['/feature/activites/venteaudepot'], { queryParams: { id: data.id } });
+      return;
+    }
+    ALERT_QUESTION(
+      'warning',
+      'Commande non approuvée',
+      'Cette commande n\'est pas encore approuvée. Voulez-vous l\'approuver maintenant ?'
+    ).then((res: any) => {
+      if (!res.isConfirmed) return;
+      this._spinner.show();
+      this.articleService.ApprouverCommandeClientDepot(data.id).then(
+        (response: any) => {
+          this._spinner.hide();
+          if (response.statusCode === 200 || response.statusCode === 201) {
+            this.toastr.success(response.message || 'Commande approuvée');
+            this._router.navigate(['/feature/activites/venteaudepot'], { queryParams: { id: data.id } });
+          } else {
+            this.toastr.error(response.message || 'Erreur lors de l\'approbation');
+          }
+        },
+        (error: any) => {
+          this._spinner.hide();
+          this.toastr.error(error?.error?.message || 'Erreur lors de l\'approbation');
+        }
+      );
+    });
   }
 
   ngOnInit() {

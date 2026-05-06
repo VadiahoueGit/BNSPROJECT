@@ -75,6 +75,9 @@ export class ListeCommandesMarchandisesComponent {
   }
 
   ngOnInit() {
+    this.receptionCommandForm = this.fb.group({
+      articles: this.fb.array([])
+    });
     this.GetArticleList(1);
     this.LoadPdv();
     this.GetRevendeurList(1);
@@ -278,34 +281,13 @@ export class ListeCommandesMarchandisesComponent {
   }
 
   removeArticle(item: any): void {
-    // Créer une copie de l'article avec la quantité définie à 0
-    const data = {
-      ...item,
-      quantite: 0,
-      groupearticle: {id: item.groupearticle.id},
-      id: item.groupearticle.id, // Assurez-vous que l'ID correspond
-    };
-
-    // Mettre à jour l'état de l'article à 'non sélectionné'
-    item.isChecked = false;
-
-    // Calculer les prix en passant l'article avec quantité 0 (pour gestion des totaux)
-    this.calculatePrix(data);
-
-    // Gérer le changement de la case à cocher
-    this.onCheckboxChange(item);
-
-    // Supprimer l'article de la liste `selectedArticles`
-    const index = this.selectedArticles.findIndex((i: any) => i.id === item.id);
-
+    const index = this.articlesRecues.findIndex((i: any) => i === item);
     if (index !== -1) {
-      // Suppression de l'article de la liste
-      this.selectedArticles = this.selectedArticles
-        .slice(0, index)
-        .concat(this.selectedArticles.slice(index + 1));
+      this.articlesRecues.splice(index, 1);
     }
-
-    // Optionnel : si tu as d'autres actions liées à la suppression, ajoute-les ici
+    if (item.new) {
+      item.isChecked = false;
+    }
   }
 
   onSubmitSelection() {

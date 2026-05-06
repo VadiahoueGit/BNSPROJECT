@@ -12,10 +12,10 @@
   >
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color)">Agent</th>
-        <th style="color: var(--secondary-color)">Dépot</th>
-        <th style="color: var(--secondary-color)">Montant</th>
-        <th style="color: var(--secondary-color)">Nbre de transactions</th>
+        <th>Agent</th>
+        <th>Dépot</th>
+        <th>Montant</th>
+        <th>Nbre de transactions</th>
         <th class="d-flex justify-content-center" style="color: var(--secondary-color)">Actions</th>
       </tr>
     </ng-template>
@@ -45,19 +45,11 @@
             {{dataList?.transactions.length}}
           </span>
         </td>
-        <td>
-      <tr class="d-flex justify-content-center gap-3">
-        <td>
-          <i
-            (click)="OnEdit(dataList)"
-            style="cursor: pointer"
-            class="fas fa-eye text-secondary"
-          ></i>
-        </td>
-        <!-- <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
-                    class="fas fa-trash-alt text-danger"></i></td> -->
-      </tr>
-      </td>
+        <td class="text-center">
+      <div class="d-flex justify-content-center gap-2">
+        <span class="bui-icon-btn view" (click)="OnEdit(dataList)"><i class="fas fa-eye"></i></span>
+      </div>
+    </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
@@ -69,119 +61,94 @@
 </div>
 
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center p-3">
-        <div
-          class="d-flex justify-content-center align-items-center"
-          style="
-            background-color: rgb(219, 255, 232);
-            border-radius: 3rem;
-            width: 3rem;
-            height: 3rem;
-          "
-        >
-          <i class="fas fa-box-check text-primary fs-3"></i>
+  <div class="vd-modal-dialog wide">
+    <div class="vd-modal-header">
+      <div class="vd-mh-left">
+        <div class="vd-mh-icon purple"><i class="fas fa-users"></i></div>
+        <div>
+          <div class="vd-mh-title">Détails paiement groupé</div>
+          <div class="vd-mh-sub">{{ updateData?.agentNomComplet }}</div>
         </div>
-
-        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">Détails</h1>
       </div>
-      <div
-        class="modal-body"
-        *ngIf="operation == 'edit'"
-        style="max-height: 70vh; overflow-y: auto"
-      >
-        <ng-container>
-          <fieldset class="row border my-1">
-            <legend style="font-size: 14px" class="text-secondary">
-              Information de l'agent' :
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Agent: </strong>
-                <span> {{ updateData.agentNomComplet}} </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Email agent: </strong>
-                <span> {{ updateData.agentMail}} </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Email agent: </strong>
-                <span> {{ updateData.agentRole}} </span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-2">
-            <legend class="fs-6 text-primary">Historique de paiements</legend>
-            <div
-              class="table-responsive"
-              style="max-height: 300px; overflow-y: auto"
-            >
-              <table>
-                <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Encaissé par</th>
-                  <th>Motif</th>
-                  <th>Moyen de paiement</th>
-                  <th>Montant</th>
-                  <th>Date</th>
-                  <th>Statut</th>
+      <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="vd-modal-body" *ngIf="operation == 'edit'">
+      <div class="vd-info-grid">
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-user me-1"></i>Agent</div>
+          <div class="vd-info-value">{{ updateData.agentNomComplet }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-envelope me-1"></i>Email</div>
+          <div class="vd-info-value">{{ updateData.agentMail }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-briefcase me-1"></i>Rôle</div>
+          <div class="vd-info-value">{{ updateData.agentRole }}</div>
+        </div>
+      </div>
+
+      <div class="vd-card">
+        <div class="vd-card-header">
+          <div class="vd-card-icon purple"><i class="fas fa-history"></i></div>
+          <div class="vd-section-label">Historique de paiements</div>
+        </div>
+        <div class="vd-table-wrap">
+          <table class="vd-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Encaissé par</th>
+                <th>Motif</th>
+                <th>Moyen de paiement</th>
+                <th class="text-right">Montant</th>
+                <th>Date</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let transaction of updateData.transactions">
+                <tr style="background:rgba(141,174,86,0.06); font-weight:700; font-size:12px">
+                  <td colspan="7" style="color:#5a7a2a; padding:8px 14px">
+                    <i class="fas fa-receipt me-2"></i>Transaction #{{ transaction.numTransaction }} — {{ transaction.motif }} chez : {{ transaction.clientAssocie }}
+                  </td>
                 </tr>
-                </thead>
-                <tbody>
-                <ng-container *ngFor="let transaction of updateData.transactions; let i = index">
-                  <!-- Ligne de titre -->
-                  <tr style="font-weight: bold; background-color: #f2f2f2;">
-                    <td colspan="5">
-                      Transaction #{{ transaction.numTransaction }} - {{ transaction.motif }} chez : {{transaction.clientAssocie}}
-                    </td>
-                  </tr>
-
-                  <!-- Paiements -->
-                  <tr *ngFor="let paiement of transaction.paiements">
-                    <td>{{paiement.numPaiement}}</td>
-                    <td>{{paiement.encaisseurCommercial?.nom+' '+paiement.encaisseurCommercial?.prenoms || paiement.encaisseurTransporteur?.nom+' '+paiement.encaisseurTransporteur?.prenoms }}</td>
-                    <td>{{ transaction.motif }}</td>
-                    <td>{{ paiement.moyenPaiement?.libelle || 'N/A' }}</td>
-                    <td>{{ paiement.montant | number }}</td>
-                    <td>{{ paiement.datePaiement | date: 'dd/MM/yyyy HH:mm' }}</td>
-                    <td>{{ paiement.statut }}</td>
-                  </tr>
-                  <tr *ngIf="transaction.paiements.length == 0"><td colspan="6"  class="text-center text-danger"><span>Aucun paiement.</span></td></tr>
-                </ng-container>
-                </tbody>
-              </table>
-
-            </div>
-          </fieldset>
-        </ng-container>
+                <tr *ngFor="let paiement of transaction.paiements">
+                  <td><span class="vd-badge gray">{{ paiement.numPaiement }}</span></td>
+                  <td>
+                    <span *ngIf="paiement.encaisseurCommercial">{{ paiement.encaisseurCommercial?.nom + ' ' + paiement.encaisseurCommercial?.prenoms }}</span>
+                    <span *ngIf="paiement.encaisseurTransporteur">{{ paiement.encaisseurTransporteur?.nom + ' ' + paiement.encaisseurTransporteur?.prenoms }}</span>
+                  </td>
+                  <td>{{ transaction.motif }}</td>
+                  <td>{{ paiement.moyenPaiement?.libelle || 'N/A' }}</td>
+                  <td class="text-right fw-bold">{{ paiement.montant | number }}</td>
+                  <td>{{ paiement.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td>
+                    <span [ngClass]="{'vd-badge green': paiement.statut == 'Payé', 'vd-badge orange': paiement.statut != 'Payé'}">{{ paiement.statut }}</span>
+                  </td>
+                </tr>
+                <tr *ngIf="transaction.paiements?.length == 0">
+                  <td colspan="7"><div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucun paiement</span></div></td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
       </div>
+    </div>
 
-      <div class="modal-footer gap-3 d-flex align-items-center">
-        <input
-          style="width:120px !important;"
-          type="text"
-          name="search"
-          [(ngModel)]="amountReal"
-          class="form-control"
-        />FCFA
-        <button
-          (click)="ValiderPaiementGroup(updateData?.transactions)"
-          type="button"
-          class="btn btn-warning px-5"
-          [disabled]="calculerTotalPaiements(updateData?.transactions) <= 0"
-        >
-          Solder
-        </button>
-        <button
-          (click)="OnCloseModal()"
-          type="button"
-          class="btn btn-secondary px-2"
-        >
-          Annuler
-        </button>
+    <div class="vd-modal-footer">
+      <div class="d-flex align-items-center gap-2 me-auto">
+        <input style="width:120px !important; height:40px" type="text" name="search"
+          [(ngModel)]="amountReal" class="form-control" placeholder="Montant" />
+        <span style="font-size:13px; font-weight:600; color:#6b7280">FCFA</span>
       </div>
+      <button (click)="OnCloseModal()" type="button" class="vd-btn-outline">Annuler</button>
+      <button (click)="ValiderPaiementGroup(updateData?.transactions)" type="button" class="vd-btn-warning"
+        [disabled]="calculerTotalPaiements(updateData?.transactions) <= 0">
+        <i class="fas fa-check-double"></i>Solder
+      </button>
     </div>
   </div>
 </div>

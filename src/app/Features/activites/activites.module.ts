@@ -129,6 +129,7 @@ import { ProgrammationComponent } from './programmation/programmation.component'
 import { EcartEmballageComponent } from './gestion-des-retours/ecart-emballage/ecart-emballage.component';
 import {ProformatComponent} from "./proformat/proformat.component";
 import {VentemanuelleComponent} from "./ventemanuelle/ventemanuelle.component";
+import {VenteAuDepotComponent} from "./commandes-clients/vente-au-depot/vente-au-depot.component";
 import {NgWizardModule} from "ng-wizard";
 import { ConsigneComponent } from './gestion-des-retours/consigne/consigne.component';
 import {InterchangeTooltipPipe} from "../../core/interchange-tooltip.pipe";
@@ -136,6 +137,7 @@ registerLocaleData(localeFr, 'fr');
 @NgModule({
   declarations: [
     VentemanuelleComponent,
+    VenteAuDepotComponent,
     InterchangeTooltipPipe,
     ProformatComponent,
     ProgrammationComponent,

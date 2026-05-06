@@ -1,0 +1,130 @@
+<!-- HEADER -->
+<div class="d-flex align-items-center gap-3 mb-4" style="cursor:pointer" (click)="goBack()">
+  <div class="vd-back-btn"><i class="fas fa-chevron-left"></i></div>
+  <div>
+    <h4 class="fw-bold mb-0">Règles palette</h4>
+    <span class="text-muted" style="font-size:12px">Paramétrage casiers par palette par format et type</span>
+  </div>
+</div>
+
+<!-- TABLE CARD -->
+<div class="vd-card">
+  <div class="vd-card-header">
+    <div class="vd-card-icon green"><i class="fas fa-layer-group"></i></div>
+    <div>
+      <h6 class="fw-bold mb-0">Règles de rangement</h6>
+      <span class="text-muted" style="font-size:12px">{{ regleList.length }} règle(s) configurée(s)</span>
+    </div>
+    <button type="button" class="btn btn-secondary btn-sm ms-auto px-3" (click)="OnCreate()">
+      <i class="fas fa-plus me-1"></i> Créer une règle
+    </button>
+  </div>
+
+  <div class="vd-table-wrap mt-3">
+    <p-table [styleClass]="'p-datatable-sm'" #dt [value]="regleList" dataKey="id"
+      [totalRecords]="totalPages" [lazy]="true" [rows]="8"
+      [rowsPerPageOptions]="[8, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Format</th>
+          <th>Casiers / palette</th>
+          <th>Type</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td><span class="vd-badge">{{ row.format }} cl</span></td>
+          <td><strong>{{ row.casiers }}</strong> casiers</td>
+          <td>
+            <span class="vd-statut-chip"
+              [class.green]="row.type === 'BIERE'"
+              [class.blue]="row.type === 'EAU'"
+              [class.orange]="row.type === 'SUCRERIE'">
+              {{ row.type }}
+            </span>
+          </td>
+          <td class="text-center">
+            <div class="d-flex justify-content-center gap-3">
+              <i (click)="OnEdit(row)" style="cursor:pointer" class="fas fa-edit text-secondary"></i>
+              <i (click)="OnDelete(row.id)" style="cursor:pointer" class="fas fa-trash-alt text-danger"></i>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4">
+            <div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucune règle trouvée</span></div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div class="vd-modal-dialog">
+
+    <div class="vd-modal-header">
+      <div class="vd-mh-left">
+        <div class="vd-mh-icon green"><i class="fas fa-layer-group"></i></div>
+        <div>
+          <div class="vd-mh-title">
+            {{ operation === 'create' ? 'Nouvelle règle palette' : 'Modifier la règle' }}
+          </div>
+          <div class="vd-mh-sub" *ngIf="operation === 'edit'">
+            Format {{ updateData?.format }} cl — {{ updateData?.type }}
+          </div>
+        </div>
+      </div>
+      <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="vd-modal-body">
+      <form [formGroup]="regleForm">
+        <div class="rp-form-grid">
+
+          <div class="rp-field">
+            <label>Format <small>(cl)</small> <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" formControlName="format" placeholder="Ex: 33">
+            <span class="rp-hint">Capacité de la bouteille en centilitres</span>
+          </div>
+
+          <div class="rp-field">
+            <label>Casiers / palette <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" formControlName="casiers" placeholder="Ex: 63">
+            <span class="rp-hint">Nombre de casiers qui tiennent sur une palette</span>
+          </div>
+
+          <div class="rp-field">
+            <label>Type de produit <span class="text-danger">*</span></label>
+            <ng-select
+              [items]="groupeList"
+              bindLabel="libelle"
+              bindValue="libelle"
+              placeholder="Sélectionner un groupe..."
+              formControlName="type"
+              [searchable]="true">
+            </ng-select>
+            <span class="rp-hint">Groupe d'articles (BIERE, EAU, SUCRERIE…)</span>
+          </div>
+
+        </div>
+      </form>
+    </div>
+
+    <div class="vd-modal-footer">
+      <button (click)="OnCloseModal()" type="button" class="btn btn-light px-4">Annuler</button>
+      <button (click)="onSubmit()" type="button" class="btn btn-primary px-4"
+        [disabled]="regleForm.invalid">
+        <i class="fas fa-check me-1"></i> Valider
+      </button>
+    </div>
+
+  </div>
+</div>

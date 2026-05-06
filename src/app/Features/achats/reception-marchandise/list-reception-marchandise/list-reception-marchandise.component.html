@@ -163,175 +163,121 @@
 <!-- Modal -->
 
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <!-- Modal Header -->
-      <div class="modal-header d-flex align-items-center">
-        <div
-          class="d-flex justify-content-center align-items-center"
-          style="
-            background-color: #dbffe8;
-            border-radius: 50%;
-            width: 3rem;
-            height: 3rem;
-          "
-        >
-          <i class="fas fa-box-check text-success fs-4"></i>
+  <div class="vd-modal-dialog wide">
+    <div class="vd-modal-header">
+      <div class="vd-mh-left">
+        <div class="vd-mh-icon green"><i class="fas fa-truck-loading"></i></div>
+        <div>
+          <div class="vd-mh-title">Détail réception marchandise</div>
+          <div class="vd-mh-sub">N° {{ updateData?.numeroReceptionCommande }} — {{ updateData?.createdAt | date:'dd/MM/yyyy' }}</div>
         </div>
-        <h1 class="modal-title fs-5 ms-3">Détail réception marchandise</h1>
-        <button
-          type="button"
-          class="btn-close"
-          aria-label="Close"
-          (click)="OnCloseModal()"
-        ></button>
+      </div>
+      <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="vd-modal-body">
+      <!-- Info commande -->
+      <div class="vd-info-grid">
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-hashtag me-1"></i>N° Commande</div>
+          <div class="vd-info-value">{{ updateData?.commande?.NumCommande ?? updateData?.entreeGratuite?.NumEntreeGratuite }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-calendar me-1"></i>Date commande</div>
+          <div class="vd-info-value">{{ (updateData?.commande?.dateCommande ?? updateData?.entreeGratuite?.dateReception) | date:'dd/MM/yyyy' }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-calendar-check me-1"></i>Livraison estimée</div>
+          <div class="vd-info-value">{{ updateData?.commande?.dateLivraisonEstimee ? (updateData?.commande?.dateLivraisonEstimee | date:'dd/MM/yyyy') : '—' }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-tag me-1"></i>Type commande</div>
+          <div class="vd-info-value">{{ updateData?.commande?.typeCommande ?? 'Entrée gratuite' }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-circle me-1"></i>Statut</div>
+          <div class="vd-info-value">{{ updateData?.commande?.statut ?? 'Reçue' }}</div>
+        </div>
       </div>
 
-      <div class="modal-body" style="max-height: 500px; overflow-y: auto">
-        <fieldset class="row border my-1">
-          <legend style="font-size: 14px" class="text-secondary">
-            Numero reception : {{ updateData?.numeroReceptionCommande }} du
-            {{ updateData?.createdAt | date : "dd/MM/yyyy" }}
-          </legend>
-        </fieldset>
-
-        <fieldset class="row border my-2">
-          <legend style="font-size: 14px" class="text-secondary">
-            Informations de la commande
-          </legend>
-          <div class="row">
-            <div class="col-md-4">
-              <strong>Numéro commande : </strong>
-              <span>{{ updateData?.commande?.NumCommande ?? updateData?.entreeGratuite?.NumEntreeGratuite }}</span>
-            </div>
-            <div class="col-md-4">
-              <strong>Date commande :</strong>
-              <span>{{ updateData?.commande?.dateCommande ?? updateData?.entreeGratuite?.dateReception }}</span>
-            </div>
-            <div class="col-md-4">
-              <strong>Date livraison estimée : </strong>
-              <span>{{ updateData?.commande?.dateLivraisonEstimee ?? '' }}</span>
-            </div>
-            <div class="col-md-4">
-              <strong>Type commande : </strong>
-              <span>{{ updateData?.commande?.typeCommande ?? 'Entree gratuite'}}</span>
-            </div>
-            <div class="col-md-4">
-              <strong>Statut : </strong>
-              <span>{{ updateData?.commande?.statut ?? 'Reçu'}}</span>
-            </div>
-          </div>
-        </fieldset>
-        <fieldset class="row border my-2">
-          <legend style="font-size: 14px" class="text-secondary">
-            Articles recues
-          </legend>
-          <div class="p-2 mt-3">
-            <div style="max-height: 350px; overflow-y: auto">
-              <table class="table table-bordered">
-                <thead class="table-success">
-                  <tr>
-                    <th scope="col">Emballage</th>
-                    <th scope="col">Liquide</th>
-                    <th scope="col">Quantité commandée</th>
-                    <th scope="col">Quantité reçue</th>
-                    <th scope="col">Ecart</th>
-                    <th scope="col">Commentaire</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr *ngFor="let item of updateData?.articlesRecus">
-                    <td>
-                      {{
-                        item?.articleCommande ? item?.articleCommande?.emballage?.libelle :
-                        item?.articleEntree?.emballage?.libelle
-
-                      }}
-                    </td>
-                    <td>
-                      {{
-                        item?.articleCommande ?
-                        item?.articleCommande?.liquide?.libelle :
-                        item?.articleEntree?.liquide?.libelle
-
-                      }}
-                    </td>
-                    <td>
-                      {{
-                        item?.articleCommande
-                          ? item?.articleCommande?.quantiteAffectee
-                          : item?.quantiteRecue
-                      }}
-                    </td>
-                    <td>
-                      {{
-                       item?.quantiteRecue
-                      }}
-                    </td>
-                    <td
-                      [ngClass]="{
-                        'text-success':
-                          (item?.ecart ?? item?.articleCommande?.ecart) >= 0,
-                        'text-danger':
-                          (item?.ecart ?? item?.articleCommande?.ecart) < 0
-                      }"
-                    >
-                      {{ item?.ecart ?? item?.articleCommande?.ecart }}
-                    </td>
-                    <td>
-                      {{
-                        item?.commentaireEcart ??
-                          item?.articleCommande?.commentaireEcart
-                      }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </fieldset>
-        <fieldset class="row border my-2">
-          <legend style="font-size: 14px" class="text-secondary">
-            Emballage rendus
-          </legend>
-          <div class="p-2 mt-3">
-            <div style="max-height: 350px; overflow-y: auto">
-              <table class="table table-bordered">
-                <thead class="table-success">
-                  <tr>
-                    <th scope="col">Emballage</th>
-                    <th scope="col">Prix unitaire</th>
-                    <th scope="col">Quantité</th>
-                    <th scope="col">Ecart</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr
-                    *ngFor="let item of updateData?.emballagesRendus?.[0]?.articles"
-                  >
-                    <td>{{ item?.emballage?.libelle }}</td>
-                    <td>{{ item?.prixUnitaireEmballage | number}}</td>
-                    <td>{{ item?.quantite | number}}</td>
-                    <td>{{ item?.ecart}}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </fieldset>
+      <!-- Articles reçus -->
+      <div class="vd-card">
+        <div class="vd-card-header">
+          <div class="vd-card-icon green"><i class="fas fa-box"></i></div>
+          <div class="vd-section-label">Articles reçus</div>
+        </div>
+        <div class="vd-table-wrap">
+          <table class="vd-table">
+            <thead>
+              <tr>
+                <th>Emballage</th>
+                <th>Liquide</th>
+                <th class="text-center">Qté commandée</th>
+                <th class="text-center">Qté reçue</th>
+                <th class="text-center">Écart</th>
+                <th>Commentaire</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of updateData?.articlesRecus">
+                <td>{{ item?.articleCommande?.emballage?.libelle ?? item?.articleEntree?.emballage?.libelle ?? item?.emballage?.libelle }}</td>
+                <td>{{ item?.articleCommande?.liquide?.libelle ?? item?.articleEntree?.liquide?.libelle ?? item?.liquide?.libelle }}</td>
+                <td class="text-center">{{ item?.articleCommande ? item?.articleCommande?.quantiteAffectee : (item?.articleNonCommande ? '—' : item?.quantiteRecue) }}</td>
+                <td class="text-center fw-bold">{{ item?.quantiteRecue }}</td>
+                <td class="text-center">
+                  <span [ngClass]="{
+                    'vd-badge green': (item?.ecart ?? item?.articleCommande?.ecart) >= 0,
+                    'vd-badge red':   (item?.ecart ?? item?.articleCommande?.ecart) < 0
+                  }">{{ item?.ecart ?? item?.articleCommande?.ecart }}</span>
+                </td>
+                <td>{{ item?.commentaireEcart ?? item?.articleCommande?.commentaireEcart }}</td>
+              </tr>
+              <tr *ngIf="!updateData?.articlesRecus?.length">
+                <td colspan="6"><div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucun article</span></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <div class="modal-footer gap-3 px-4">
-        <button
-          (click)="OnCloseModal()"
-          type="button"
-          class="btn btn-secondary px-2"
-        >
-          Fermer
-        </button>
+      <!-- Emballages rendus -->
+      <div class="vd-card">
+        <div class="vd-card-header">
+          <div class="vd-card-icon orange"><i class="fas fa-recycle"></i></div>
+          <div class="vd-section-label">Emballages rendus</div>
+        </div>
+        <div class="vd-table-wrap">
+          <table class="vd-table">
+            <thead>
+              <tr>
+                <th>Emballage</th>
+                <th class="text-right">Prix unitaire</th>
+                <th class="text-center">Quantité</th>
+                <th class="text-center">Écart</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let item of updateData?.emballagesRendus?.[0]?.articles">
+                <tr *ngIf="(item?.prixUnitaireEmballage > 0)">
+                  <td>{{ item?.emballage?.libelle }}</td>
+                  <td class="text-right">{{ item?.prixUnitaireEmballage | number }}</td>
+                  <td class="text-center fw-bold">{{ item?.quantite | number }}</td>
+                  <td class="text-center">
+                    <span [ngClass]="{'vd-badge green': item?.ecart >= 0, 'vd-badge red': item?.ecart < 0}">{{ item?.ecart }}</span>
+                  </td>
+                </tr>
+              </ng-container>
+              <tr *ngIf="!updateData?.emballagesRendus?.[0]?.articles?.length">
+                <td colspan="4"><div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucun emballage rendu</span></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
+    </div>
+
+    <div class="vd-modal-footer">
+      <button (click)="OnCloseModal()" type="button" class="vd-btn-outline">Fermer</button>
     </div>
   </div>
 

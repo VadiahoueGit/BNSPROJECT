@@ -1,54 +1,41 @@
-<!-- Navigation -->
-<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
-    <i style="font-size: 18px;" class="fas fw-bold fa-chevron-left me-2"></i>
-    <h4 class="fw-bold mb-0">Gestion des retours</h4>
+<div class="bui-back mb-4" (click)="goBack()">
+  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="fw-bold mb-0">Gestion des retours</h4>
 </div>
-<nav class="nav nav-pills flex-column flex-sm-row gap-1 border-bottom">
 
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'suiviRdv'"
-        (click)="activeElement('suiviRdv')">Suivi des Rdv</a>
+<div class="cc-tabs mb-3">
+  <button class="cc-tab-btn" [class.active]="activeTab === 'suiviRdv'" (click)="activeElement('suiviRdv')">Suivi des Rdv</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'consigne'" (click)="activeElement('consigne')">Consignes</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'receptionEmallage'" (click)="activeElement('receptionEmallage')">Réceptions emballages</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'retourPlein'" (click)="activeElement('retourPlein')">Retour plein</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'listReceptionEmallage'" (click)="activeElement('listReceptionEmallage')">Regroupement/agents</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'ecartEmballage'" (click)="activeElement('ecartEmballage')">Ecart</button>
+</div>
 
-     <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'consigne'"
-     (click)="activeElement('consigne')">Consignes</a>
+<div *ngIf="activeTab === 'suiviRdv'">
+  <app-suivi-des-rdv></app-suivi-des-rdv>
+</div>
 
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'receptionEmallage'"
-        (click)="activeElement('receptionEmallage')">Réceptions emballages</a>
+<div *ngIf="activeTab === 'consigne'">
+  <app-consigne></app-consigne>
+</div>
 
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'retourPlein'"
-        (click)="activeElement('retourPlein')">Retour plein</a>
+<div *ngIf="activeTab === 'receptionEmallage'">
+  <app-receptions-emballages></app-receptions-emballages>
+</div>
 
-<!--   <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'regroupementEmballages'"-->
-<!--     (click)="activeElement('regroupementEmballages')">Regroupement emballages</a>-->
+<div *ngIf="activeTab === 'retourPlein'">
+  <app-retour-plein></app-retour-plein>
+</div>
 
-  <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'listReceptionEmallage'"
-     (click)="activeElement('listReceptionEmallage')">Regroupement/agents</a>
+<div *ngIf="activeTab === 'listReceptionEmallage'">
+  <app-list-des-receptions-emballages></app-list-des-receptions-emballages>
+</div>
 
-  <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'ecartEmballage'"
-     (click)="activeElement('ecartEmballage')">Ecart</a>
+<div *ngIf="activeTab === 'regroupementEmballages'">
+  <app-regroupement-emballages></app-regroupement-emballages>
+</div>
 
-</nav>
-
-<div class="tab-content mt-3">
-    <div *ngIf="activeTab === 'suiviRdv'" class="tab-pane fade show active">
-        <app-suivi-des-rdv></app-suivi-des-rdv>
-    </div>
-  <div *ngIf="activeTab === 'consigne'" class="tab-pane fade show active">
-    <app-consigne></app-consigne>
-  </div>
-    <div *ngIf="activeTab === 'listReceptionEmallage'" class="tab-pane fade show active">
-        <app-list-des-receptions-emballages></app-list-des-receptions-emballages>
-    </div>
-    <div *ngIf="activeTab === 'receptionEmallage'" class="tab-pane fade show active">
-        <app-receptions-emballages></app-receptions-emballages>
-    </div>
-    <div *ngIf="activeTab === 'retourPlein'" class="tab-pane fade show active">
-        <app-retour-plein></app-retour-plein>
-    </div>
-    <div *ngIf="activeTab === 'regroupementEmballages'" class="tab-pane fade show active">
-        <app-regroupement-emballages></app-regroupement-emballages>
-    </div>
-    <div *ngIf="activeTab === 'ecartEmballage'" class="tab-pane fade show active">
-        <app-ecart-emballage></app-ecart-emballage>
-    </div>
-
+<div *ngIf="activeTab === 'ecartEmballage'">
+  <app-ecart-emballage></app-ecart-emballage>
 </div>

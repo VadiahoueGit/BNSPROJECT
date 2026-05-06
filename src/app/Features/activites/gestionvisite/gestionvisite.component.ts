@@ -13,6 +13,7 @@ import {ToastrService} from 'ngx-toastr';
 import {ActiviteService} from 'src/app/core/activite.service';
 import {LogistiqueService} from 'src/app/core/logistique.service';
 import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
+import {ArticleServiceService} from "../../../core/article-service.service";
 
 @Component({
   selector: 'app-gestionvisite',
@@ -50,7 +51,9 @@ export class GestionvisiteComponent {
   visiteId: number
   typeVisite = [];
   pointDeVente: any = []
+  revendeur:any = []
   filteredPointDeVente: any[] = [];
+  filteredRevendeur: any[] = [];
   searchQuery: string = '';
   commerciaux = []
   vehicules = []
@@ -62,6 +65,7 @@ export class GestionvisiteComponent {
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService,
+    private articleService: ArticleServiceService,
     private activiteService: ActiviteService,
     private utilisateurService: UtilisateurResolveService,
     private logistiqueService: LogistiqueService
@@ -91,16 +95,29 @@ export class GestionvisiteComponent {
 
   }
 
+  loadClient(data: any) {
+    console.log(data);
+    this.visiteId = data.id;
+
+    if(data.id == 1){
+      this.LoadRevendeur()
+    }
+  }
   filterData(): void {
     const query = this.searchForm.get('searchQuery')?.value;
 
     if (!query) {
       // Si la recherche est vide, on réinitialise la liste filtrée à l'ensemble des points de vente
       this.filteredPointDeVente = this.pointDeVente;
+      this.filteredRevendeur = this.revendeur;
     } else {
       // Sinon, on filtre les points de vente en fonction de la recherche (case insensitive)
       this.filteredPointDeVente = this.pointDeVente.filter((item: any) =>
         item.nomEtablissement.toLowerCase().includes(query.toLowerCase())
+      );
+
+      this.filteredRevendeur = this.revendeur.filter((item: any) =>
+        item.raisonSocial.toLowerCase().includes(query.toLowerCase())
       );
     }
   }
@@ -260,6 +277,23 @@ export class GestionvisiteComponent {
       })
   }
 
+  LoadRevendeur() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+      proprietaire: '',
+      groupeClient: '',
+      raisonSociale: '',
+    };
+    this.articleService.GetListRevendeur(data).then((res: any) => {
+      this.revendeur = res.data
+      this.filteredRevendeur = this.revendeur;
+      console.log('revendeur', res)
+    }, (error: any) => {
+      this._spinner.hide()
+    })
+  }
 
   LoadPdv(item:any) {
     let data = {
@@ -278,7 +312,24 @@ export class GestionvisiteComponent {
   }
 
   // Ajouter l'élément sélectionné au tableau des éléments sélectionnés
-  toggleSelection(item: any): void {
+  toggleSelectionRevendeur(item: any): void {
+    console.log('item', item);
+
+    if (item.isChecked) {
+      this.selectedItems.push(item);
+      this.selectedItemsIds.push(item.id);
+    } else {
+      const indexToRemove = this.selectedItems.findIndex(
+        (selectedArticle:any) => selectedArticle.id === item.id
+      );
+      if (indexToRemove !== -1) {
+        this.selectedItems.splice(indexToRemove, 1);
+        this.selectedItemsIds.splice(indexToRemove, 1);
+      }
+    }
+    this.VisiteForm.controls['pointsDeVenteIds'].setValue(this.selectedItemsIds)
+  }
+  toggleSelectionPdv(item: any): void {
     console.log('item', item);
 
     if (item.isChecked) {
@@ -304,7 +355,8 @@ export class GestionvisiteComponent {
       this.selectedItems.splice(index, 1);
     }
     item.isChecked = false;
-    this.toggleSelection(item);
+    this.toggleSelectionPdv(item);
+    this.toggleSelectionRevendeur(item);
   }
 
   // Méthode pour décocher tous les éléments

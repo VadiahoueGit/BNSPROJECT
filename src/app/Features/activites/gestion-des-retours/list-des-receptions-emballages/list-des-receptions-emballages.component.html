@@ -6,13 +6,13 @@
 
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color);">Numero de regroupement</th>
-        <th style="color: var(--secondary-color);">Agent</th>
-        <th style="color: var(--secondary-color);">Contact</th>
-        <th style="color: var(--secondary-color);">Fonction</th>
-        <th style="color: var(--secondary-color);">Depot</th>
-        <th style="color: var(--secondary-color);">Statut</th>
-        <th style="color: var(--secondary-color);">Actions</th>
+        <th>Numero de regroupement</th>
+        <th>Agent</th>
+        <th>Contact</th>
+        <th>Fonction</th>
+        <th>Depot</th>
+        <th>Statut</th>
+        <th>Actions</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList>
@@ -47,12 +47,11 @@
           ">
           {{ dataList?.regroupementStatut }}
         </td>
-        <td>
-      <tr class="d-flex justify-content-center gap-3">
-        <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>
-      </tr>
-
-      </td>
+        <td class="text-center">
+      <div class="d-flex justify-content-center gap-2">
+        <span class="bui-icon-btn view" (click)="OnEdit(dataList)"><i class="fas fa-eye"></i></span>
+      </div>
+    </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
@@ -65,145 +64,93 @@
 
 
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div
-    class="modal-dialog modal-dialog-centered"
-
-  >
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Détails regroupement emballage</h5>
-        <button type="button" class="btn-close" aria-label="Close"></button>
-      </div>
-
-      <div
-        class="modal-body"
-        style="padding: 20px; max-height: 70vh; overflow-y: auto"
-      >
-        <div class="row">
-          <div class="d-flex justify-content-between py-3">
-            <div>
-              <span>Début: {{ dates.firstDate | date:'dd/MM/yyyy HH:mm' }}</span>&nbsp;&nbsp;&nbsp;&nbsp;
-              <span>Fin: {{ dates.lastDate | date:'dd/MM/yyyy HH:mm' }}</span>
-            </div>
-            <button
-              type="button"
-              class="btn btn-secondary px-4"
-              (click)="PrintDoc(updateData)"
-            >
-              Imprimer
-            </button>
-          </div>
-          <fieldset class="row border my-1">
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Transporteur : </strong>
-                <span>
-                   {{ updateData?.transporteur?.nom || updateData.commercial.nom }} {{ updateData?.transporteur?.prenoms || updateData.commercial.prenoms }}
-                  </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Dépot : </strong>
-                <span>
-                    {{ updateData.depot?.nomDepot || 'NEANT' }}
-                  </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Gérant: </strong>
-                <span>
-                    {{ updateData.depot?.gerant || 'NEANT' }}
-                  </span>
-              </div>
-
-            </div>
-          </fieldset>
-          <div class="col-md-12">
-
-            <div class="row">
-              <div class="container">
-                <table class="table table-bordered">
-                  <thead>
-                  <tr>
-                    <th>Raison Sociale</th>
-                    <th class="text-center" *ngFor="let article of allArticles">
-                      <span>
-                          {{ article.libelle }}
-                      </span>
-                    </th>
-
-
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr *ngFor="let retour of updateData.retours; let i = index">
-                    <td>{{ retour?.clientALivrer?.raisonSocial || retour?.clientALivrer?.nomEtablissement }}</td>
-                    <td class="text-center"
-                        *ngFor="let article of allArticles"
-                        [title]="interchangeTooltip(retour, article)">
-
-                      {{ getQuantity(retour, article.libelle) }}
-
-                      <span *ngIf="interchangeTooltip(retour, article)">
-                        🔁
-                      </span>
-
-                    </td>
-
-                  </tr>
-                  <tr class="font-weight-bold">
-                    <td class="fw-bold">Total théorique</td>
-                    <td class="text-center fw-bold" *ngFor="let article of allArticles">
-                      {{ article.expectedQuantity }}
-                    </td>
-                  <tr class="font-weight-bold">
-                    <td class="fw-bold">Total physique</td>
-                    <td class="text-center" *ngFor="let article of allArticles">
-                      <input
-                        [disabled]="updateData.inventaires.length > 0 || updateData.regroupementStatut !='TERMINE'"
-                        type="number"
-                        [ngStyle]="{ 'color': article.receivedQuantity != article.expectedQuantity ? 'red' : 'green' }"
-                        class="form-control-custom text-center fw-bold"
-                        [(ngModel)]="article.receivedQuantity"
-                        min="0"
-                      />
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+  <div class="vd-modal-dialog wide">
+    <div class="vd-modal-header">
+      <div class="vd-mh-left">
+        <div class="vd-mh-icon green"><i class="fas fa-layer-group"></i></div>
+        <div>
+          <div class="vd-mh-title">Détails regroupement emballage</div>
+          <div class="vd-mh-sub">
+            <span *ngIf="dates?.firstDate">Début : {{ dates.firstDate | date:'dd/MM/yyyy HH:mm' }}</span>
+            <span *ngIf="dates?.lastDate"> &nbsp;·&nbsp; Fin : {{ dates.lastDate | date:'dd/MM/yyyy HH:mm' }}</span>
           </div>
         </div>
       </div>
+      <div class="vd-mh-right">
+        <button type="button" class="vd-btn-outline" (click)="PrintDoc(updateData)">
+          <i class="fas fa-print"></i>Imprimer
+        </button>
+        <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
 
-      <!-- Footer -->
-      <div class="modal-footer gap-3 px-4">
-        <div class="modal-footer gap-3 px-4">
-          <button
-            *ngIf="updateData?.inventaires.length == 0"
-            [disabled]="updateData?.regroupementStatut !=  Status.TERMINE"
-            type="button"
-            class="btn btn-primary"
-            (click)="TerminerInventaire(updateData,allArticles)"
-          >
-            Enregistrer l'inventaire
-          </button>
-          <button
-            type="button"
-            class="btn btn-secondary"
-            (click)="OnCloseModal()"
-          >
-            Fermer
-          </button>
-          <button
-            *ngIf="updateData?.regroupementStatut !=  Status.TERMINE"
-            type="submit"
-            class="btn btn-danger px-2"
-            (click)="TerminerRegroupement(updateData)"
-          >
-            Terminer le ramassage
-          </button>
+    <div class="vd-modal-body">
+      <div class="vd-info-grid">
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-truck me-1"></i>Transporteur</div>
+          <div class="vd-info-value">
+            {{ updateData?.transporteur?.nom || updateData?.commercial?.nom }} {{ updateData?.transporteur?.prenoms || updateData?.commercial?.prenoms }}
+          </div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-warehouse me-1"></i>Dépôt</div>
+          <div class="vd-info-value">{{ updateData?.depot?.nomDepot || 'NÉANT' }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-user-tie me-1"></i>Gérant</div>
+          <div class="vd-info-value">{{ updateData?.depot?.gerant || 'NÉANT' }}</div>
         </div>
       </div>
+
+      <div class="vd-card">
+        <div class="vd-card-header">
+          <div class="vd-card-icon orange"><i class="fas fa-clipboard-list"></i></div>
+          <div class="vd-section-label">Inventaire des retours</div>
+        </div>
+        <div class="vd-table-wrap">
+          <table class="vd-table">
+            <thead>
+              <tr>
+                <th>Raison Sociale</th>
+                <th class="text-center" *ngFor="let article of allArticles">{{ article.libelle }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let retour of updateData.retours">
+                <td>{{ retour?.clientALivrer?.raisonSocial || retour?.clientALivrer?.nomEtablissement }}</td>
+                <td class="text-center" *ngFor="let article of allArticles" [title]="interchangeTooltip(retour, article)">
+                  {{ getQuantity(retour, article.libelle) }}
+                  <span *ngIf="interchangeTooltip(retour, article)" title="Échange">🔁</span>
+                </td>
+              </tr>
+              <tr class="vd-total-row">
+                <td>Total théorique</td>
+                <td class="text-center" *ngFor="let article of allArticles">{{ article.expectedQuantity }}</td>
+              </tr>
+              <tr style="background: rgba(0,113,194,0.04)">
+                <td class="fw-bold" style="color:#0071c2">Total physique</td>
+                <td class="text-center" *ngFor="let article of allArticles">
+                  <input [disabled]="updateData.inventaires.length > 0 || updateData.regroupementStatut != 'TERMINE'"
+                    type="number"
+                    [ngStyle]="{ 'color': article.receivedQuantity != article.expectedQuantity ? '#ef4444' : '#8dae56' }"
+                    class="form-control-custom text-center fw-bold"
+                    [(ngModel)]="article.receivedQuantity" min="0" style="width:70px" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="vd-modal-footer">
+      <button *ngIf="updateData?.regroupementStatut != Status.TERMINE" type="button" class="vd-btn-danger" (click)="TerminerRegroupement(updateData)">
+        <i class="fas fa-flag-checkered"></i>Terminer le ramassage
+      </button>
+      <button type="button" class="vd-btn-outline" (click)="OnCloseModal()">Fermer</button>
+      <button *ngIf="updateData?.inventaires?.length == 0" [disabled]="updateData?.regroupementStatut != Status.TERMINE" type="button" class="vd-btn-primary" (click)="TerminerInventaire(updateData, allArticles)">
+        <i class="fas fa-save"></i>Enregistrer l'inventaire
+      </button>
     </div>
   </div>
 </div>

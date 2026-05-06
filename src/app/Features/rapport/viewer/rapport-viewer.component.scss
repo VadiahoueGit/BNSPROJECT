@@ -1,0 +1,435 @@
+// ===== VARIABLES =====
+$primary: #8dae56;
+$blue: #0071c2;
+$orange: #f59e0b;
+$red: #ef4444;
+$purple: #7c3aed;
+$teal: #0891b2;
+$green-excel: #16a34a;
+$gray-light: #f7fcff;
+$gray-border: #e5e7eb;
+$text-muted: #9ca3af;
+$radius: 14px;
+$radius-sm: 10px;
+
+// ===== HEADER =====
+.rv-back-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  color: $blue;
+  transition: all 0.2s;
+
+  &:hover {
+    background: $blue;
+    color: white;
+    transform: translateX(-2px);
+  }
+}
+
+// ===== EXPORT BUTTONS (header) =====
+.rv-btn-excel {
+  height: 40px;
+  padding: 0 20px;
+  border: 1.5px solid rgba($green-excel, 0.4);
+  border-radius: $radius-sm;
+  background: rgba($green-excel, 0.06);
+  color: $green-excel;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: $green-excel;
+    color: white;
+    box-shadow: 0 4px 12px rgba($green-excel, 0.3);
+  }
+}
+
+.rv-btn-pdf {
+  height: 40px;
+  padding: 0 20px;
+  border: 1.5px solid rgba($red, 0.4);
+  border-radius: $radius-sm;
+  background: rgba($red, 0.06);
+  color: $red;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: $red;
+    color: white;
+    box-shadow: 0 4px 12px rgba($red, 0.3);
+  }
+}
+
+// ===== CARD =====
+.rv-card {
+  background: white;
+  border-radius: $radius;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.rv-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid $gray-border;
+}
+
+.rv-card-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+
+  &.blue   { background: rgba($blue, 0.1);   color: $blue;   }
+  &.green  { background: rgba($primary, 0.1); color: $primary; }
+  &.orange { background: rgba($orange, 0.1); color: $orange; }
+}
+
+// ===== FILTRES =====
+.rv-filtres-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.rv-filtre-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rv-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.rv-input {
+  height: 40px;
+  border: 1.5px solid $gray-border;
+  border-radius: $radius-sm;
+  padding: 0 12px;
+  font-size: 13px;
+  color: #374151;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+
+  &:focus {
+    border-color: $blue;
+    box-shadow: 0 0 0 3px rgba($blue, 0.1);
+  }
+}
+
+.rv-ng-select {
+  ::ng-deep .ng-select-container {
+    height: 40px;
+    border: 1.5px solid $gray-border;
+    border-radius: $radius-sm;
+    font-size: 13px;
+  }
+
+  ::ng-deep .ng-select-container:focus-within {
+    border-color: $blue;
+    box-shadow: 0 0 0 3px rgba($blue, 0.1);
+  }
+}
+
+// ===== BOUTON GÉNÉRER =====
+.rv-btn-generer {
+  height: 44px;
+  padding: 0 32px;
+  border: none;
+  border-radius: $radius-sm;
+  background: linear-gradient(135deg, $blue, lighten($blue, 10%));
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 3px 12px rgba($blue, 0.35);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba($blue, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+// ===== ERREUR =====
+.rv-alert-error {
+  background: rgba($red, 0.07);
+  border: 1px solid rgba($red, 0.3);
+  border-left: 4px solid $red;
+  border-radius: $radius-sm;
+  padding: 12px 18px;
+  font-size: 13px;
+  color: darken($red, 10%);
+  font-weight: 500;
+}
+
+// ===== SKELETON =====
+.rv-skeleton-header {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.rv-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: $radius-sm;
+}
+
+.rv-sk-kpi { height: 80px; }
+.rv-sk-row {
+  height: 44px;
+  margin-bottom: 8px;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// ===== KPI ROW =====
+.rv-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.rv-kpi {
+  border-radius: $radius-sm;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  &.blue   { background: rgba($blue, 0.07);   border-left: 3px solid $blue;   .rv-kpi-icon { color: $blue;   } .rv-kpi-value { color: $blue; } }
+  &.green  { background: rgba($primary, 0.07); border-left: 3px solid $primary; .rv-kpi-icon { color: $primary; } .rv-kpi-value { color: darken($primary, 5%); } }
+  &.orange { background: rgba($orange, 0.07); border-left: 3px solid $orange; .rv-kpi-icon { color: $orange; } .rv-kpi-value { color: darken($orange, 10%); } }
+  &.red    { background: rgba($red, 0.07);    border-left: 3px solid $red;    .rv-kpi-icon { color: $red;   } .rv-kpi-value { color: $red; } }
+  &.purple { background: rgba($purple, 0.07); border-left: 3px solid $purple; .rv-kpi-icon { color: $purple; } .rv-kpi-value { color: $purple; } }
+  &.teal   { background: rgba($teal, 0.07);   border-left: 3px solid $teal;   .rv-kpi-icon { color: $teal;  } .rv-kpi-value { color: $teal; } }
+}
+
+.rv-kpi-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.rv-kpi-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 3px;
+}
+
+.rv-kpi-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+// ===== INFO BAR =====
+.rv-info-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: $gray-light;
+  border-radius: $radius-sm;
+  border: 1px solid $gray-border;
+}
+
+.rv-data-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.rv-btn-excel-sm {
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid rgba($green-excel, 0.3);
+  border-radius: 6px;
+  background: rgba($green-excel, 0.06);
+  color: $green-excel;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover { background: $green-excel; color: white; }
+}
+
+.rv-btn-pdf-sm {
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid rgba($red, 0.3);
+  border-radius: 6px;
+  background: rgba($red, 0.06);
+  color: $red;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover { background: $red; color: white; }
+}
+
+// ===== TABLE =====
+.rv-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+
+  thead tr { background: $gray-light; }
+
+  thead th {
+    padding: 10px 14px;
+    font-weight: 600;
+    color: #6b7280;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid $gray-border;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    background: $gray-light;
+    z-index: 1;
+  }
+
+  tbody tr {
+    transition: background 0.15s;
+
+    &:hover { background: rgba($blue, 0.03); }
+    &:not(:last-child) td { border-bottom: 1px solid $gray-border; }
+  }
+
+  tbody td {
+    padding: 11px 14px;
+    color: #374151;
+    vertical-align: middle;
+  }
+
+  tfoot .rv-totaux-row td {
+    padding: 11px 14px;
+    background: linear-gradient(135deg, rgba($primary, 0.09), rgba($primary, 0.05));
+    border-top: 2px solid rgba($primary, 0.3);
+    font-size: 13px;
+    color: darken($primary, 10%);
+    vertical-align: middle;
+    position: sticky;
+    bottom: 0;
+  }
+}
+
+// ===== TABLE WRAP (scroll horizontal pour colonnes dynamiques) =====
+.rv-table-wrap {
+  max-height: 540px;
+  overflow: auto;
+  border-radius: $radius-sm;
+  border: 1px solid $gray-border;
+}
+
+// ===== BADGE =====
+.rv-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+
+  &.success { background: rgba($primary, 0.12); color: darken($primary, 10%); }
+  &.danger  { background: rgba($red, 0.1);    color: $red; }
+  &.warning { background: rgba($orange, 0.1); color: darken($orange, 15%); }
+  &.info    { background: rgba($blue, 0.1);   color: $blue; }
+}
+
+// ===== EMPTY RESULT =====
+.rv-empty-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+  gap: 12px;
+  text-align: center;
+
+  i {
+    font-size: 44px;
+    color: $gray-border;
+  }
+}
+
+// ===== NOT FOUND =====
+.rv-not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 12px;
+  text-align: center;
+  background: white;
+  border-radius: $radius;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+
+  i {
+    font-size: 52px;
+    color: $gray-border;
+    margin-bottom: 8px;
+  }
+}
+
+.rv-empty-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.rv-empty-sub {
+  font-size: 13px;
+  color: $text-muted;
+}
+
+.rv-empty-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.rv-empty-sub {
+  font-size: 13px;
+  color: $text-muted;
+}

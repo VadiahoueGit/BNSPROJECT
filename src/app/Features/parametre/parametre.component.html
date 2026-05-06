@@ -1,23 +1,19 @@
-<div class="card p-4">
-  <div class="d-flex flex-row flex-wrap gap-4">
-
+<div class="sk-hub">
+  <div class="sk-hub-header">
+    <h2 class="sk-hub-title">Paramètres</h2>
+    <p class="sk-hub-subtitle">Configuration de l'application</p>
+  </div>
+  <div class="sk-hub-grid">
     <ng-container *ngFor="let item of ListItems">
-      <div
-        *ngIf="hasPermission(item.perm)"
-        class="d-flex flex-column align-items-center onglet m-2 hover-scale"
-        style="min-width: 15%;"
-        (click)="displayItem(item)"
-      >
-        <img
-          [src]="item.image"
-          alt="{{ item.title }}"
-          style="width: 60px; height: 60px; border-radius: 10px;"
-        />
-        <p class="text-center mt-3 fw-bold" style="font-size: 14px;">
-          {{ item.title }}
-        </p>
+      <div *ngIf="hasPermission(item.perm)" class="sk-hub-card" (click)="displayItem(item)">
+        <div class="sk-hub-card-icon">
+          <img [src]="item.image" [alt]="item.title">
+        </div>
+        <div class="sk-hub-card-body">
+          <span class="sk-hub-card-label">{{ item.title }}</span>
+        </div>
+        <i class="fas fa-chevron-right sk-hub-card-arrow"></i>
       </div>
     </ng-container>
-
   </div>
 </div>

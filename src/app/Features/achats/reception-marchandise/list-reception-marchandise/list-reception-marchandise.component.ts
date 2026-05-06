@@ -111,9 +111,6 @@ export class ListReceptionMarchandiseComponent {
     this.GetArticleList(1);
   }
 
-  onDelete(item: any) {
-    console.log(item);
-  }
 
   clear(table: Table) {
     table.clear();

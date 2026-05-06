@@ -6,13 +6,13 @@
 
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color);">Numero de commande</th>
-        <th style="color: var(--secondary-color);">Agent</th>
-        <th style="color: var(--secondary-color);">Date Rdv</th>
-        <th style="color: var(--secondary-color);">Client</th>
-        <th style="color: var(--secondary-color);">Dépot</th>
+        <th>Numero de commande</th>
+        <th>Agent</th>
+        <th>Date Rdv</th>
+        <th>Client</th>
+        <th>Dépot</th>
         <!--                <th style="color: var(&#45;&#45;secondary-color);">Statut Rdv</th>-->
-        <th style="color: var(--secondary-color);">Actions</th>
+        <th>Actions</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList>
@@ -53,7 +53,7 @@
         </td>
         <td>
       <tr class="gap-3">
-        <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>
+        <td><span class="bui-icon-btn view" (click)="OnEdit(dataList)"><i class="fas fa-eye"></i></span></td>
       </tr>
 
       </td>
@@ -69,20 +69,18 @@
 
 
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div
-    class="modal-dialog modal-dialog-centered"
-
-  >
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">RDV des emballages restant à recupérer</h5>
-        <button type="button" class="btn-close" aria-label="Close"></button>
+  <div class="vd-modal-dialog wide">
+    <div class="vd-modal-header">
+      <div class="vd-mh-left">
+        <div class="vd-mh-icon blue"><i class="fas fa-calendar-check"></i></div>
+        <div>
+          <div class="vd-mh-title">RDV emballages</div>
+          <div class="vd-mh-sub">Emballages restant à récupérer</div>
+        </div>
       </div>
-
-      <div
-        class="modal-body"
-        style="padding: 20px; max-height: 70vh; overflow-y: auto"
-      >
+      <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="vd-modal-body">
         <div class="row">
           <fieldset class="row border my-1" *ngIf="operation == 'edit'">
             <legend style="font-size: 14px" class="text-secondary">
@@ -211,17 +209,9 @@
         </div>
       </div>
 
-      <!-- Footer -->
-      <div class="modal-footer gap-3 px-4">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          (click)="OnCloseModal()"
-        >
-          Fermer
-        </button>
+      <div class="vd-modal-footer">
+        <button (click)="OnCloseModal()" type="button" class="vd-btn-outline">Fermer</button>
       </div>
-    </div>
   </div>
 </div>
 

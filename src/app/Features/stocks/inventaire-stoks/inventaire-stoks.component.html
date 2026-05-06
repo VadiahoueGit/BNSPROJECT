@@ -1,455 +1,261 @@
-<div
-  class="gap-2 d-flex align-items-center mb-3"
-  style="cursor: pointer"
-  (click)="goBack()"
->
-  <i style="font-size: 18px" class="fas fw-bold fa-chevron-left me-2"></i>
+<div class="bui-back mb-4" (click)="goBack()">
+  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
   <h4 class="fw-bold mb-0">Suivi inventaire</h4>
 </div>
+
 <div class="card">
-  <div class="d-flex justify-content-end py-3">
-    <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
-      Nouvel inventaire
-    </button>
-  </div>
-  <p-table
-    [styleClass]="'p-datatable-sm'"
-    #dt2
-    [value]="dataList"
-    dataKey="id"
-    [rows]="8"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [paginator]="true"
-    (onPage)="onPage($event)"
-  >
+  <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id"
+           [rows]="8" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true"
+           (onPage)="onPage($event)">
+    <ng-template pTemplate="caption">
+      <div class="bui-caption">
+        <div></div>
+        <button type="button" class="bui-btn-add" (click)="OnCreate()">
+          <i class="fas fa-plus me-2"></i>Nouvel inventaire
+        </button>
+      </div>
+    </ng-template>
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color)">Dépot</th>
-        <th style="color: var(--secondary-color)">Date de comptage</th>
-        <th style="color: var(--secondary-color)">Code inventaire</th>
-        <th style="color: var(--secondary-color)">Inventeur</th>
-        <!-- <th style="color: var(--secondary-color)">Qte théorique</th>
-        <th style="color: var(--secondary-color)">Qte physique</th>
-        <th style="color: var(--secondary-color)">Ecart</th>
-        <th style="color: var(--secondary-color)">Ecart %</th> -->
-        <th style="color: var(--secondary-color)">Date d'enregistrement</th>
-                       <th style="color: var(--secondary-color);">Actions</th>
+        <th>Dépôt</th>
+        <th>Date de comptage</th>
+        <th>Code inventaire</th>
+        <th>Inventeur</th>
+        <th>Date d'enregistrement</th>
+        <th class="text-center">Actions</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList>
       <tr>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.depot.nomDepot }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.dateComptage | date }}
-          </span>
-        </td>
-        <td>
-          {{ dataList.code }}
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.inventeur }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.createdAt | date }}
-          </span>
-        </td>
-
-        <td>
-                    <tr class="d-flex justify-content-center gap-3">
-                         <td><i (click)="OnViewInventaire(dataList)" style="cursor: pointer;" class="fas fa-eye text-secondary"></i></td>
-          <!--                <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>-->
-                         <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
-                                class="fas fa-trash-alt text-danger"></i></td>
-                  </tr>
+        <td>{{ dataList.depot.nomDepot }}</td>
+        <td>{{ dataList.dateComptage | date:'dd/MM/yyyy' }}</td>
+        <td>{{ dataList.code }}</td>
+        <td>{{ dataList.inventeur }}</td>
+        <td>{{ dataList.createdAt | date:'dd/MM/yyyy' }}</td>
+        <td class="text-center">
+          <div style="display:flex;justify-content:center;gap:6px">
+            <span class="bui-icon-btn view" (click)="OnViewInventaire(dataList)" title="Voir">
+              <i class="fas fa-eye"></i>
+            </span>
+            <span class="bui-icon-btn delete" (click)="OnDelete(dataList.id)" title="Supprimer">
+              <i class="fas fa-trash-alt"></i>
+            </span>
+          </div>
         </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">Aucun élement trouvé.</td>
+        <td colspan="6" style="text-align:center;padding:24px;color:#9ca3af">
+          <i class="fas fa-clipboard-list me-2"></i>Aucun inventaire trouvé
+        </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
-<!-- Modal creation -->
-<!-- Modal -->
+<!-- Modal création/édition inventaire -->
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div
-          class="d-flex justify-content-center align-items-center"
-          style="
-            background-color: rgb(219, 255, 232);
-            border-radius: 3rem;
-            width: 3rem;
-            height: 3rem;
-          "
-        >
-          <i class="fas fa-box-check text-primary fs-3"></i>
-        </div>
-        <h1
-          *ngIf="operation == 'create'"
-          class="modal-title fs-5 ms-3"
-          id="staticBackdropLabel"
-        >
-          Création d'inventaire
-        </h1>
-        <h1
-          *ngIf="operation == 'edit'"
-          class="modal-title fs-5 ms-3"
-          id="staticBackdropLabel"
-        >
-          Modification d'inventaire
-        </h1>
-      </div>
-      <div class="modal-body">
-        <form [formGroup]="InventaireForm">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="mb-3">
-                <label for="dateComptage" class="form-label"
-                  >Date comptage <span class="text-danger">*</span></label
-                >
-                <input
-                  type="date"
-                  class="form-control"
-                  id="dateComptage"
-                  formControlName="dateComptage"
-                  placeholder="Entrez la date "
-                />
-              </div>
-              <div class="mb-3">
-                <label for="inventoriste" class="form-label"
-                  >Inventoriste <span class="text-danger">*</span></label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="inventoriste"
-                  formControlName="inventeur"
-                  placeholder="Nom et prénoms "
-                />
-              </div>
-              <div class="mb-3">
-                <button
-                  type="button"
-                  class="btn btn-secondary mb-3"
-                  [disabled]="InventaireForm.controls['depotId'].invalid"
-                  (click)="ArticleModal()"
-                >
-                  Ajouter des articles
-                </button>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="mb-3">
-                <label for="magasin" class="form-label"
-                  >Dépot <span class="text-danger">*</span></label
-                >
-                <ng-select
-                  class="form-control"
-                  [items]="depotList"
-                  bindLabel="nomDepot"
-                  bindValue="id"
-                  (change)="onDepotChange()"
-                  formControlName="depotId"
-                  [searchable]="true"
-                >
-                </ng-select>
-              </div>
-              <!--                            <div class="mb-3">-->
-              <!--                                <label for="description" class="form-label">Description</label>-->
-              <!--                                <textarea style="width: 95% !important;" id="description" class="form-control"-->
-              <!--                                    formControlName="description" rows="3"></textarea>-->
-              <!--                            </div>-->
-            </div>
+  <div class="sk-modal sk-modal-lg">
+    <div class="sk-modal-header">
+      <div class="sk-modal-icon"><i class="fas fa-clipboard-list"></i></div>
+      <h5 class="sk-modal-title">
+        {{ operation === 'create' ? 'Création d\'inventaire' : 'Modification d\'inventaire' }}
+      </h5>
+      <button class="sk-modal-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="sk-modal-body">
+      <form [formGroup]="InventaireForm">
+        <div class="sk-form-grid">
+          <div class="sk-field">
+            <label class="sk-label">Date de comptage <span class="text-danger">*</span></label>
+            <input type="date" class="sk-input" formControlName="dateComptage">
           </div>
-        </form>
-        <div
-          style="max-height: 300px; overflow-y: auto; border: 1px solid #dee2e6"
-        >
-          <table class="table table-bordered">
-            <thead class="table-light">
-              <tr>
-                <th scope="col">Code</th>
-                <th scope="col">Description</th>
-                <th scope="col">stock physique</th>
-                <th scope="col">Stock théorique</th>
-                <th scope="col">Écart</th>
-                <th scope="col">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let data of selectedArticles; let i = index">
-                <td>
-                  <p>{{ data.articleCode }}</p>
-                </td>
-                <td>
-                  <p>{{ data.articleName }}</p>
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    class="form-control-custom"
-                    [(ngModel)]="data.quantite"
-                    [min]="0"
-                    value="0"
-                    (input)="validateQuantite(data, stocksDisponibles[data.articleCode],i)"
-                  />
-                </td>
-                <td>{{ stocksDisponibles[data.articleCode] }}</td>
-                <td>
+          <div class="sk-field">
+            <label class="sk-label">Dépôt <span class="text-danger">*</span></label>
+            <ng-select [items]="depotList" bindLabel="nomDepot" bindValue="id"
+                       formControlName="depotId" [searchable]="true"
+                       (change)="onDepotChange()">
+            </ng-select>
+          </div>
+          <div class="sk-field">
+            <label class="sk-label">Inventoriste <span class="text-danger">*</span></label>
+            <input type="text" class="sk-input" formControlName="inventeur" placeholder="Nom et prénoms">
+          </div>
+          <div class="sk-field" style="align-self:end">
+            <button type="button" class="sk-btn-add"
+                    [disabled]="InventaireForm.controls['depotId'].invalid"
+                    (click)="ArticleModal()">
+              <i class="fas fa-plus me-1"></i> Ajouter des articles
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div class="sk-table-wrap" style="max-height:260px">
+        <table class="sk-table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Description</th>
+              <th>Stock physique</th>
+              <th>Stock théorique</th>
+              <th>Écart</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of selectedArticles; let i = index">
+              <td>{{ data.articleCode }}</td>
+              <td>{{ data.articleName }}</td>
+              <td>
+                <input type="number" class="sk-qty-input" [(ngModel)]="data.quantite" [min]="0"
+                       (input)="validateQuantite(data, stocksDisponibles[data.articleCode], i)">
+              </td>
+              <td>{{ stocksDisponibles[data.articleCode] }}</td>
+              <td>
+                <span [class]="ecart[i] < 0 ? 'sk-badge out' : ecart[i] > 0 ? 'sk-badge in' : 'sk-badge gray'">
                   {{ ecart[i] }}
-                  <input
-                    hidden="true"
-                    type="text"
-                    class="form-control-custom"
-                    [(ngModel)]="ecartPercent[i]"
-                    [min]="0"
-                    value="0"
-                  />
-                </td>
-                <td class="d-flex justify-content-center">
-                  <button
-                    type="button"
-                    class="btn btn-danger btn-sm"
-                    (click)="removeArticle(data)"
-                  >
-                    <i class="fas fa-trash fs-6"></i>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                </span>
+              </td>
+              <td class="text-center">
+                <button type="button" class="sk-btn-danger" (click)="removeArticle(data)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="selectedArticles.length === 0">
+              <td colspan="6" class="sk-empty-row">
+                <i class="fas fa-boxes me-2"></i>Aucun article ajouté
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-
-      <div class="modal-footer gap-3 px-4">
-        <button
-          (click)="OnCloseModal()"
-          type="button"
-          class="btn btn-secondary px-2"
-        >
-          Annuler
-        </button>
-        <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">
-          Valider
-        </button>
-      </div>
+    </div>
+    <div class="sk-modal-footer">
+      <button class="sk-btn-secondary" (click)="OnCloseModal()">Annuler</button>
+      <button class="sk-btn-primary" (click)="onSubmit()">
+        <i class="fas fa-check me-1"></i> Valider
+      </button>
     </div>
   </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal sélection articles -->
 <div *ngIf="isArticleModalOpen" class="custom-modal">
-  <div class="modal-dialog2 modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div
-          class="d-flex justify-content-center align-items-center"
-          style="
-            background-color: rgb(219, 255, 232);
-            border-radius: 3rem;
-            width: 3rem;
-            height: 3rem;
-          "
-        >
-          <i class="fas fa-box-check text-primary fs-3"></i>
-        </div>
-        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
-          Selection des articles
-        </h1>
+  <div class="sk-modal">
+    <div class="sk-modal-header">
+      <div class="sk-modal-icon"><i class="fas fa-boxes"></i></div>
+      <h5 class="sk-modal-title">Sélection des articles</h5>
+      <button class="sk-modal-close" (click)="CloseArticleModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="sk-modal-body">
+      <div class="sk-search-wrap">
+        <i class="fas fa-search"></i>
+        <input type="text" class="sk-search-input" [(ngModel)]="searchTerm"
+               (input)="filterArticles()" placeholder="Rechercher un article...">
       </div>
-
-      <div class="modal-body">
-        <form>
-          <div class="row">
-            <fieldset class="row border my-2">
-              <div class="p-3">
-                <!-- Champ de recherche -->
-                <input
-                  type="text"
-                  name="search"
-                  (input)="filterArticles()"
-                  [(ngModel)]="searchTerm"
-                  placeholder="Rechercher un produit"
-                  class="form-control mb-3"
-                />
-              </div>
-              <div class="d-flex gap-2 justify-content-end">
-                <span class="fw-bold text-primary">Tout choisir</span>
-                <input
-                  type="checkbox"
-                  (change)="toggleAllSelection($event)"
-                  [checked]="isAllSelected"
-                />
-              </div>
-              <div
-                class="table-responsive"
-                style="max-height: 200px; overflow-y: auto"
-              >
-                <table class="table">
-                  <thead>
-                    <tr style="font-size: small">
-                      <th scope="col" class="text-secondary">Code</th>
-                      <th scope="col" class="text-secondary">Produits</th>
-                      <th scope="col" class="text-secondary text-center">
-                        Choix
-                      </th>
-                      <th scope="col" class="text-secondary text-center"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      *ngFor="let article of filteredArticleList; let i = index"
-                      style="font-size: small"
-                    >
-                      <th scope="row">{{ article.articleCode }}</th>
-                      <th scope="row">{{ article.articleName }}</th>
-                      <td class="">
-                        <input
-                          type="checkbox"
-                          class="form-control-custom"
-                          [name]="'checkbox_' + i"
-                          [(ngModel)]="article.isChecked"
-                          (change)="onCheckboxChange(article)"
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </fieldset>
-          </div>
-        </form>
+      <div class="d-flex justify-content-end align-items-center gap-2 mb-3">
+        <span style="font-size:12px;font-weight:600;color:#0071c2">Tout sélectionner</span>
+        <input type="checkbox" (change)="toggleAllSelection($event)" [checked]="isAllSelected">
       </div>
-      <div class="modal-footer gap-3 px-4y">
-        <button
-          (click)="CloseArticleModal()"
-          type="button"
-          class="btn btn-secondary px-2"
-        >
-          Annuler
-        </button>
-        <button
-          type="submit"
-          (click)="onSubmitSelection()"
-          class="btn btn-primary px-2"
-        >
-          Valider
-        </button>
+      <div class="sk-table-wrap">
+        <table class="sk-modal-table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Produit</th>
+              <th class="text-center">Choix</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let article of filteredArticleList; let i = index">
+              <td>{{ article.articleCode }}</td>
+              <td>{{ article.articleName }}</td>
+              <td class="text-center">
+                <input type="checkbox" [name]="'checkbox_' + i"
+                       [(ngModel)]="article.isChecked" (change)="onCheckboxChange(article)">
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+    </div>
+    <div class="sk-modal-footer">
+      <button class="sk-btn-secondary" (click)="CloseArticleModal()">Annuler</button>
+      <button class="sk-btn-primary" (click)="onSubmitSelection()">
+        <i class="fas fa-check me-1"></i> Valider
+      </button>
     </div>
   </div>
 </div>
 
-<!-- Modal detail -->
-<div  *ngIf="detailModalOpen"  class="custom-modal2">
-  <div
-    class="modal-dialog3 modal-dialog-centered"
-
-  >
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Détails inventaire</h5>
-      </div>
-
-      <div
-        class="modal-body"
-        style="padding: 20px; max-height: 70vh; overflow-y: auto"
-      >
-        <div class="row">
-          <fieldset class="row border my-1">
-            <legend style="font-size: 13px" class="text-secondary">
-              Numero inventaire
-              :  {{ updateData?.code || 'NA' }}
-              du
-              {{ updateData.createdAt | date }}
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Dépot : </strong>
-                <span>
-                    {{ updateData.depot?.nomDepot || 'NEANT' }}
-                  </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Gérant: </strong>
-                <span>
-                    {{ updateData.depot?.gerant || 'NEANT' }}
-                  </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Inventeur : </strong>
-                <span>
-                   {{ updateData?.inventeur || 'NEANT' }}
-                  </span>
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset class="row border my-2">
-            <legend style="font-size: 13px" class="text-secondary">
-              Articles
-            </legend>
-            <table class="table table-bordered">
-              <thead class="table-success">
-              <tr>
-                <th scope="col">Code</th>
-                <th scope="col">Description</th>
-                <th scope="col">Stock physique</th>
-                <th scope="col">Stock théorique</th>
-                <th scope="col">Ecart</th>
-                <th scope="col">Pourcentage écart</th>
-                <th scope="col">Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr *ngFor="let item of updateData.articles">
-                <td>{{ item.codeArticle }}</td>
-                <td>{{ item.emballage?.libelle || item.liquide?.libelle || 'NA' }}</td>
-                <td>{{ item.stockPhysique }}</td>
-                <td>{{ item.stockTheorique }}</td>
-                <td>{{ item.ecart }}</td>
-                <td>{{ item.pourcentageEcart }} %</td>
-                <td class="d-flex justify-content-center">
-                  <button
-                    type="button"
-                    class="btn btn-danger btn-sm"
-                    (click)="removeInventaireArticle(item)"
-                  >
-                    <i class="fas fa-trash fs-6"></i>
-                  </button>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </fieldset>
+<!-- Modal détail inventaire -->
+<div *ngIf="detailModalOpen" class="custom-modal2">
+  <div class="sk-modal sk-modal-xl">
+    <div class="sk-modal-header">
+      <div class="sk-modal-icon"><i class="fas fa-clipboard-check"></i></div>
+      <h5 class="sk-modal-title">
+        Inventaire {{ updateData?.code }} — {{ updateData.createdAt | date:'dd/MM/yyyy' }}
+      </h5>
+      <button class="sk-modal-close" (click)="OnCloseDetailModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="sk-modal-body">
+      <div class="sk-info-grid">
+        <div class="sk-info-row">
+          <span class="sk-info-label">Dépôt</span>
+          <span class="sk-info-value">{{ updateData.depot?.nomDepot || 'NÉANT' }}</span>
+        </div>
+        <div class="sk-info-row">
+          <span class="sk-info-label">Gérant</span>
+          <span class="sk-info-value">{{ updateData.depot?.gerant || 'NÉANT' }}</span>
+        </div>
+        <div class="sk-info-row">
+          <span class="sk-info-label">Inventeur</span>
+          <span class="sk-info-value">{{ updateData?.inventeur || 'NÉANT' }}</span>
         </div>
       </div>
 
-      <!-- Footer -->
-      <div class="modal-footer gap-3 px-4">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          (click)="OnCloseDetailModal()"
-        >
-          Fermer
-        </button>
-
+      <div class="sk-table-wrap">
+        <table class="sk-table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Description</th>
+              <th>Stock physique</th>
+              <th>Stock théorique</th>
+              <th>Écart</th>
+              <th>Écart %</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of updateData.articles">
+              <td>{{ item.codeArticle }}</td>
+              <td>{{ item.emballage?.libelle || item.liquide?.libelle || 'N/A' }}</td>
+              <td>{{ item.stockPhysique }}</td>
+              <td>{{ item.stockTheorique }}</td>
+              <td>
+                <span [class]="item.ecart < 0 ? 'sk-badge out' : item.ecart > 0 ? 'sk-badge in' : 'sk-badge gray'">
+                  {{ item.ecart }}
+                </span>
+              </td>
+              <td>{{ item.pourcentageEcart }} %</td>
+              <td class="text-center">
+                <button type="button" class="sk-btn-danger" (click)="removeInventaireArticle(item)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+    </div>
+    <div class="sk-modal-footer">
+      <button class="sk-btn-secondary" (click)="OnCloseDetailModal()">
+        <i class="fas fa-times me-1"></i> Fermer
+      </button>
     </div>
   </div>
 </div>

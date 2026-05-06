@@ -731,4 +731,60 @@ export class CoreServiceService {
         );
     });
   }
+
+  async GetTopClients(data: any) {
+    await this.initializeApiUrl();
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http
+        .get(`${this.apiUrl}/v1/kpi-commande/top-clients?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`, { headers })
+        .subscribe({ next: (res: any) => resolve(res), error: (err) => reject(err) });
+    });
+  }
+
+  async GetTopCommerciaux(data: any) {
+    await this.initializeApiUrl();
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http
+        .get(`${this.apiUrl}/v1/kpi-commande/top-commerciaux?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`, { headers })
+        .subscribe({ next: (res: any) => resolve(res), error: (err) => reject(err) });
+    });
+  }
+
+  async CreateReglePalette(data: any) {
+    await this.initializeApiUrl();
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.post(`${this.apiUrl}/v1/regle-palette`, data, { headers })
+        .subscribe({ next: (res: any) => resolve(res), error: (err) => reject(err) });
+    });
+  }
+
+  async GetReglePaletteList(data: any) {
+    await this.initializeApiUrl();
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.get(`${this.apiUrl}/v1/regle-palette?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`, { headers })
+        .subscribe({ next: (res: any) => resolve(res), error: (err) => reject(err) });
+    });
+  }
+
+  async UpdateReglePalette(id: number, data: any) {
+    await this.initializeApiUrl();
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.put(`${this.apiUrl}/v1/regle-palette/${id}`, data, { headers })
+        .subscribe({ next: (res: any) => resolve(res), error: (err) => reject(err) });
+    });
+  }
+
+  async DeleteReglePalette(id: number) {
+    await this.initializeApiUrl();
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.delete(`${this.apiUrl}/v1/regle-palette/${id}`, { headers })
+        .subscribe({ next: (res: any) => resolve(res), error: (err) => reject(err) });
+    });
+  }
 }

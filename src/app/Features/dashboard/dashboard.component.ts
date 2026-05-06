@@ -3,6 +3,7 @@ import {LegendPosition} from '@swimlane/ngx-charts';
 import {Color, ScaleType} from '@swimlane/ngx-charts';
 import {Router} from '@angular/router';
 import {CoreServiceService} from "../../core/core-service.service";
+import {SplashService} from "../../core/splash.service";
 
 @Component({
   selector: 'app-dashboard',
@@ -43,14 +44,29 @@ export class DashboardComponent implements OnInit {
   vente: any = {}
   clients: any = {}
   bestSellers: any = []
+  topClients: any = []
+  topCommerciaux: any = []
+  today = new Date()
 
-  constructor(private coreServices: CoreServiceService) {
+  constructor(public splashService: SplashService,private coreServices: CoreServiceService) {
     Object.assign(this, this.articles );
   }
 
   ngOnInit(): void {
+    if (this.splashService.show) {
+
+      setTimeout(() => {
+        this.splashService.show = false; // lance le fade
+      }, 4000);
+
+      setTimeout(() => {
+        // ici tu peux carrément retirer le composant si tu veux
+      }, 4600); // durée = 4000 + 600 (transition)
+    }
     this.GetKpiCommande()
     this.GetBestSeller()
+    this.GetTopClients()
+    this.GetTopCommerciaux()
   }
 
 
@@ -92,6 +108,20 @@ export class DashboardComponent implements OnInit {
       this.vente = response.data.vente;
       this.clients = response.data.clients;
     })
+  }
+
+  GetTopClients() {
+    const data = { paginate: false, page: 1, limit: 8 };
+    this.coreServices.GetTopClients(data).then((response: any) => {
+      this.topClients = response.data || [];
+    }).catch(() => { this.topClients = []; });
+  }
+
+  GetTopCommerciaux() {
+    const data = { paginate: false, page: 1, limit: 8 };
+    this.coreServices.GetTopCommerciaux(data).then((response: any) => {
+      this.topCommerciaux = response.data || [];
+    }).catch(() => { this.topCommerciaux = []; });
   }
 
   onSelect(data: any): void {

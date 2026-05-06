@@ -1,38 +1,27 @@
-<!-- Navigation -->
-<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
-    <i style="font-size: 18px;" class="fas fw-bold fa-chevron-left me-2"></i>
-    <h4 class="fw-bold mb-0">Réception marchandises</h4>
+<div class="bui-back mb-4" (click)="goBack()">
+  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="fw-bold mb-0">Réception marchandises</h4>
 </div>
-<nav class="nav nav-pills flex-column flex-sm-row gap-1 border-bottom">
 
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'saisiecommande'"
-        (click)="activeElement('saisiecommande')">Commandes</a>
+<div class="cc-tabs mb-3">
+  <button class="cc-tab-btn" [class.active]="activeTab === 'saisiecommande'" (click)="activeElement('saisiecommande')">Commandes</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'emballages'" (click)="activeElement('emballages')">Emballages</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'receptionmarchandise'" (click)="activeElement('receptionmarchandise')">Réception marchandises</button>
+  <button class="cc-tab-btn" [class.active]="activeTab === 'entreegratuite'" (click)="activeElement('entreegratuite')">Entrée gratuite</button>
+</div>
 
+<div *ngIf="activeTab === 'saisiecommande'">
+  <app-liste-commandes-marchandises></app-liste-commandes-marchandises>
+</div>
 
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'emballages'"
-        (click)="activeElement('emballages')">Emballages</a>
+<div *ngIf="activeTab === 'emballages'">
+  <app-list-emballages></app-list-emballages>
+</div>
 
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'receptionmarchandise'"
-        (click)="activeElement('receptionmarchandise')">Reception marchandises</a>
+<div *ngIf="activeTab === 'receptionmarchandise'">
+  <app-list-reception-marchandise></app-list-reception-marchandise>
+</div>
 
-    <a class="flex-sm text-sm-center nav-link" [class.active]="activeTab === 'entreegratuite'"
-        (click)="activeElement('entreegratuite')">Entrée gratuite</a>
-
-</nav>
-
-<div class="tab-content mt-3">
-    <div *ngIf="activeTab === 'saisiecommande'" class="tab-pane fade show active">
-        <app-liste-commandes-marchandises></app-liste-commandes-marchandises>
-    </div>
-
-    <div *ngIf="activeTab === 'emballages'" class="tab-pane fade show active">
-        <app-list-emballages></app-list-emballages>
-    </div>
-    <div *ngIf="activeTab === 'receptionmarchandise'" class="tab-pane fade show active">
-        <app-list-reception-marchandise></app-list-reception-marchandise>
-    </div>
-    <div *ngIf="activeTab === 'entreegratuite'" class="tab-pane fade show active">
-        <app-saisie-entree-gratuites [ListenMode]="true"></app-saisie-entree-gratuites>
-    </div>
-
+<div *ngIf="activeTab === 'entreegratuite'">
+  <app-saisie-entree-gratuites [ListenMode]="true"></app-saisie-entree-gratuites>
 </div>
