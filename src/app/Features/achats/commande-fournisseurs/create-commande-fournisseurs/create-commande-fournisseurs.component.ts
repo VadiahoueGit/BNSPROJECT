@@ -6,6 +6,7 @@ import {Table} from 'primeng/table';
 import {ArticleServiceService} from 'src/app/core/article-service.service';
 import {CoreServiceService} from 'src/app/core/core-service.service';
 import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
+import {ParametreService} from 'src/app/core/parametre.service';
 import {ALERT_QUESTION} from 'src/app/Features/shared-component/utils';
 import {StatutCommande, TypeCommandeFournisseur} from "../../../../utils/utils";
 
@@ -65,6 +66,10 @@ export class CreateCommandeFournisseursComponent {
     statut: '',
 
   };
+  // Délai de règlement fournisseur (Paramètres > Infos entreprise) servant au calcul de l'échéance.
+  delaiEcheanceJours = 14;
+  echeanceModifieeManuellement = false;
+
   constructor(
     private cdr: ChangeDetectorRef,
     private _coreService: CoreServiceService,
@@ -72,21 +77,47 @@ export class CreateCommandeFournisseursComponent {
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService,
-    private utilisateurService: UtilisateurResolveService
+    private utilisateurService: UtilisateurResolveService,
+    private parametreService: ParametreService
   ) {
+  }
+
+  loadDelaiEcheance() {
+    this.parametreService.getEntrepriseConfig().then((config: any) => {
+      this.delaiEcheanceJours = config?.delaiEcheanceFournisseurJours ?? 14;
+      if (!this.echeanceModifieeManuellement) this.recalculerDateEcheance();
+    }).catch(() => this.recalculerDateEcheance());
+  }
+
+  recalculerDateEcheance() {
+    const dateCommande = this.CommandeForm?.controls['dateCommande']?.value;
+    if (!dateCommande) return;
+
+    const echeance = new Date(dateCommande);
+    echeance.setDate(echeance.getDate() + this.delaiEcheanceJours);
+    this.CommandeForm.controls['dateEcheance'].setValue(echeance.toISOString().split('T')[0], { emitEvent: false });
+  }
+
+  onDateEcheanceChange() {
+    this.echeanceModifieeManuellement = true;
   }
 
   ngOnInit() {
     this.CommandeForm = this.fb.group({
       fournisseurId: [null, Validators.required],
       dateCommande: [this.now, Validators.required],
-      dateLivraisonEstimee: [this.minDate, Validators.required],
+      dateEcheance: [this.now, Validators.required],
       depotId: [null, Validators.required],
       articles: this.fb.array([]),
     });
 
     this.CommandeForm.controls['dateCommande'].setValue(this.now)
-    this.CommandeForm.controls['dateLivraisonEstimee'].setValue(this.now)
+    this.loadDelaiEcheance()
+
+    // L'échéance suit la date de commande tant que l'utilisateur ne l'a pas modifiée lui-même.
+    this.CommandeForm.controls['dateCommande'].valueChanges.subscribe(() => {
+      if (!this.echeanceModifieeManuellement) this.recalculerDateEcheance()
+    })
     // this.CommandeForm.get('datecommande')?.disable();
     this.GetArticleList(1)
     this.GetFournisseursList()
@@ -211,7 +242,7 @@ export class CreateCommandeFournisseursComponent {
           typeCommande: 'BNS_VERS_REVENDEUR',
           fournisseurId: this.CommandeForm.controls['fournisseurId'].value,
           dateCommande: this.CommandeForm.controls['dateCommande'].value,
-          dateLivraisonEstimee: this.CommandeForm.controls['dateLivraisonEstimee'].value,
+          dateEcheance: this.CommandeForm.controls['dateEcheance'].value,
           revendeurId: this.CommandeForm.controls['depotId'].value,
           articles: this.CommandeForm.controls['articles'].value,
         }
@@ -220,7 +251,7 @@ export class CreateCommandeFournisseursComponent {
           typeCommande: 'BNS_VERS_FOURNISSEUR',
           fournisseurId: this.CommandeForm.controls['fournisseurId'].value,
           dateCommande: this.CommandeForm.controls['dateCommande'].value,
-          dateLivraisonEstimee: this.CommandeForm.controls['dateLivraisonEstimee'].value,
+          dateEcheance: this.CommandeForm.controls['dateEcheance'].value,
           depotId: this.CommandeForm.controls['depotId'].value,
           articles: this.CommandeForm.controls['articles'].value,
         }
@@ -429,7 +460,9 @@ export class CreateCommandeFournisseursComponent {
 
         // Mise à jour de la quantité de l'article dans le formulaire
         this.articles.at(existingArticleIndex).patchValue({
-          quantite: quantite,
+          prixUnitaireLiquide: Number(prixLiquide),
+          prixUnitaireEmballage: Number(prixEmballage),
+          quantite: Number(quantite),
         });
       }
     } else {
@@ -446,9 +479,9 @@ export class CreateCommandeFournisseursComponent {
           groupeArticleId: data.groupearticle.id,
           codeArticleLiquide: data.liquide.code,
           codeArticleEmballage: data.liquide.emballage ? data.liquide.emballage.code : data.emballage.code,
-          prixUnitaireLiquide: prixLiquide,
-          prixUnitaireEmballage: prixEmballage,
-          quantite: quantite,
+          prixUnitaireLiquide: Number(prixLiquide),
+          prixUnitaireEmballage: Number(prixEmballage),
+          quantite: Number(quantite),
         })
       );
     }
@@ -674,8 +707,8 @@ export class CreateCommandeFournisseursComponent {
       console.log(prixDetail);
       // Vérifier si le statusCode est 200
       if (prixDetail.prix.length > 0) {
-        this.prixLiquide[item.id] = prixDetail.prix[0].PrixLiquide;
-        this.prixEmballage[item.id] = prixDetail.prix[0].PrixConsigne;
+        this.prixLiquide[item.id] = Number(prixDetail.prix[0].PrixLiquide);
+        this.prixEmballage[item.id] = Number(prixDetail.prix[0].PrixConsigne);
         console.log('prixByArticle', this.prixLiquide[item.id]);
       } else {
         this.toastr.error("Ce article n'a pas de prix détail, veuillez le renseigner avant de continuer");

@@ -19,7 +19,54 @@ label {
 .form-control-custom{
   border: 0.1px solid gray;
   border-radius: 3px;
-  width: 100px;
+  width: 70px;
+}
+
+tr.vd-total-row {
+  display: table-row;
+  background: rgba(245, 158, 11, 0.06);
+
+  td {
+    font-weight: 600;
+    color: #92400e;
+    white-space: nowrap;
+    border-bottom: 1px solid #e5e7eb;
+  }
+}
+
+// En-tête et colonne "Raison Sociale" fixes sur le tableau "Inventaire des retours" : tableau
+// large (une colonne par article, scroll horizontal) et pouvant compter beaucoup de retours
+// (scroll vertical) — sans repère fixe on perd de vue le nom du client / les libellés d'article
+// en scrollant. Chaque cellule fixe reçoit un fond opaque explicite (le CSS `background` n'est
+// pas hérité par défaut) pour ne pas laisser transparaître les cellules qui défilent en dessous.
+// Scopé à ce composant, comme le reste de ce fichier, pour ne pas affecter les autres tableaux
+// .vd-table de l'app.
+.vd-table-wrap .vd-table {
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #f7fcff; // $vd-gray-light (design-system.scss), non importable ici
+  }
+  th:first-child, td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: #fff;
+    box-shadow: 4px 0 6px -4px rgba(0, 0, 0, 0.12);
+  }
+  thead th:first-child {
+    z-index: 3;
+    background: #f7fcff;
+  }
+  tr.vd-total-row td:first-child {
+    background: rgba(245, 158, 11, 0.06);
+  }
+  // "Total physique" est toujours la dernière ligne du tableau (voir le template) : sa colonne
+  // fixe doit reprendre le même fond que le reste de la ligne.
+  tbody tr:last-child td:first-child {
+    background: rgba(0, 113, 194, 0.04);
+  }
 }
 .modal-dialog {
   background-color: white;

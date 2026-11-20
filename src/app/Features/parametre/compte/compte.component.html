@@ -1,0 +1,103 @@
+<div class="cpt-header">
+  <div class="cpt-title">
+    <button class="cpt-back-btn" (click)="goBack()"><i class="fas fa-chevron-left"></i></button>
+    <h4>Comptes</h4>
+  </div>
+  <button class="cpt-btn-primary" (click)="OnCreate()">
+    <i class="fas fa-plus"></i> Nouveau compte
+  </button>
+</div>
+
+<div class="cpt-card">
+  <div class="cpt-topbar">
+    <div>
+      <div class="cpt-card-title"><i class="fas fa-wallet"></i> Liste des comptes</div>
+      <div class="cpt-count">{{ totalPages }} résultat(s)</div>
+    </div>
+    <div class="cpt-search-wrap">
+      <i class="fas fa-search cpt-search-icon"></i>
+      <input class="cpt-search-input" type="text" (keyup.enter)="filterGlobal($event)" placeholder="Compte, libellé…">
+    </div>
+  </div>
+
+  <p-table [styleClass]="'cpt-ptable p-datatable-sm'" [value]="dataList" dataKey="id"
+           [totalRecords]="totalPages" [lazy]="true" [rows]="8"
+           [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Compte</th>
+        <th>Libellé</th>
+        <th>Type de compte</th>
+        <th>Logistique</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td><span class="cpt-badge">{{ row.compte }}</span></td>
+        <td><span class="cpt-name">{{ row.libelle }}</span></td>
+        <td>{{ row.typeCompte?.libelle || '—' }}</td>
+        <td>
+          <span *ngIf="row.estLogistique" class="cpt-badge" style="background:#fff3cd;color:#856404">Oui</span>
+          <span *ngIf="!row.estLogistique">—</span>
+        </td>
+        <td class="text-center">
+          <div style="display:flex;gap:6px;justify-content:center">
+            <button class="cpt-action-btn edit" (click)="OnEdit(row)" title="Modifier"><i class="fas fa-edit"></i></button>
+            <button class="cpt-action-btn del" (click)="OnDelete(row.id)" title="Supprimer"><i class="fas fa-trash"></i></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">
+          <i class="fas fa-wallet" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i>
+          Aucun compte trouvé.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div class="cpt-modal">
+    <div class="cpt-modal-header">
+      <div class="cpt-modal-icon"><i class="fas fa-wallet"></i></div>
+      <h5 class="cpt-modal-title">
+        {{ operation === 'create' ? 'Nouveau compte' : 'Modifier le compte' }}
+      </h5>
+      <button class="cpt-modal-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="cpt-modal-body">
+      <form [formGroup]="compteForm">
+        <div class="cpt-field">
+          <label class="cpt-field-label">Compte *</label>
+          <input class="cpt-field-input" formControlName="compte" placeholder="Ex: 411000" />
+        </div>
+        <div class="cpt-field">
+          <label class="cpt-field-label">Libellé *</label>
+          <input class="cpt-field-input" formControlName="libelle" placeholder="Ex: Clients" />
+        </div>
+        <div class="cpt-field">
+          <label class="cpt-field-label">Type de compte *</label>
+          <ng-select [items]="typesCompte" bindLabel="libelle" bindValue="id"
+            formControlName="typeCompteId" [searchable]="true" placeholder="Sélectionner un type de compte">
+          </ng-select>
+        </div>
+        <div class="cpt-field">
+          <label class="cpt-field-label">
+            <input type="checkbox" formControlName="estLogistique" />
+            Motif logistique (véhicule obligatoire sur la dépense)
+          </label>
+        </div>
+      </form>
+    </div>
+    <div class="cpt-modal-footer">
+      <button class="cpt-btn-secondary" (click)="OnCloseModal()">Annuler</button>
+      <button class="cpt-btn-submit" [disabled]="compteForm.invalid" (click)="onSubmit()">
+        <i class="fas fa-check"></i> {{ operation === 'create' ? 'Créer' : 'Enregistrer' }}
+      </button>
+    </div>
+  </div>
+</div>

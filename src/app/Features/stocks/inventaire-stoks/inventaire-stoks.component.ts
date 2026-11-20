@@ -50,6 +50,14 @@ export class InventaireStoksComponent {
   isAllSelected: boolean = false;
   now = new Date().toISOString().split('T')[0];
   UserInfo: any;
+  totalRecords: number = 0;
+  filters: any = {
+    depotId: null,
+    code: '',
+    inventeur: '',
+    dateDebut: '',
+    dateFin: '',
+  };
 
   formatCode(code: string): string {
     if (!code) return code;
@@ -115,7 +123,18 @@ export class InventaireStoksComponent {
   }
 
   OnViewInventaire(data: any) {
-    this.updateData = data
+    // Classer les articles dans l'ordre liquide (préfixe CCAS_), emballage (préfixe VEMB_) puis
+    // plastique (préfixe PLA_) — codeArticle est la seule information de type disponible sur
+    // InventaireArticle (pas de relation liquide/emballage/plastiqueNu sur cette entité).
+    const ordrePrefixe: [string, number][] = [['CCAS_', 0], ['VEMB_', 1], ['PLA_', 2]];
+    const getOrdre = (codeArticle: string) => {
+      const match = ordrePrefixe.find(([prefix]) => (codeArticle || '').startsWith(prefix));
+      return match ? match[1] : 99;
+    };
+    const articlesTries = [...(data.articles || [])].sort((a: any, b: any) =>
+      getOrdre(a.codeArticle) - getOrdre(b.codeArticle)
+    );
+    this.updateData = { ...data, articles: articlesTries };
     this.detailModalOpen = true;
     console.log(this.updateData);
   }
@@ -163,10 +182,15 @@ export class InventaireStoksComponent {
           articleCode: this.formatCode(article.articleCode)
         }));
 
-        // Trier la liste filtrée par nom d'article
-        this.filteredArticleList = this.articleList.sort((a, b) =>
-          a.articleName.toLowerCase().localeCompare(b.articleName.toLowerCase())
-        );
+        // Trier d'abord par type (Liquide, puis Emballage, puis PlastiqueNu), puis par nom
+        // d'article au sein de chaque type.
+        const ordreType: Record<string, number> = { Liquide: 0, Emballage: 1, PlastiqueNu: 2 };
+        this.filteredArticleList = this.articleList.sort((a, b) => {
+          const ordreA = ordreType[a.articleType] ?? 99;
+          const ordreB = ordreType[b.articleType] ?? 99;
+          if (ordreA !== ordreB) return ordreA - ordreB;
+          return a.articleName.toLowerCase().localeCompare(b.articleName.toLowerCase());
+        });
       }
 
       console.log('DATATYPEPRIX:::>', this.articleList);
@@ -179,10 +203,16 @@ export class InventaireStoksComponent {
       paginate: true,
       page: page,
       limit: 8,
+      depotId: this.filters.depotId,
+      code: this.filters.code,
+      inventeur: this.filters.inventeur,
+      dateDebut: this.filters.dateDebut,
+      dateFin: this.filters.dateFin,
     };
     this._spinner.show();
     this.articleService.GetInventaire(data).then((res: any) => {
       console.log('inventaire:::>', res);
+      this.totalRecords = res.total || 0;
       if (res.statusCode === 200) {
         this.dataList = res.data.map((item: any) => {
           // reformater les codes des articles de cette ligne
@@ -217,6 +247,20 @@ export class InventaireStoksComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
+    this.GetInventaireList(this.currentPage);
+  }
+
+  filterGlobal() {
+    this.GetInventaireList(1);
+  }
+
+  resetFilters() {
+    this.filters = { depotId: null, code: '', inventeur: '', dateDebut: '', dateFin: '' };
+    this.GetInventaireList(1);
+  }
+
+  get hasActiveFilters(): boolean {
+    return !!(this.filters.depotId || this.filters.code || this.filters.inventeur || this.filters.dateDebut || this.filters.dateFin);
   }
 
   goBack() {
@@ -381,6 +425,7 @@ export class InventaireStoksComponent {
     let data = {
       productCode: item.articleCode,
       depotId: this.InventaireForm.controls['depotId'].value,
+      dateInventaire: this.InventaireForm.controls['dateComptage'].value,
     };
     console.log(data, 'les donnees');
     console.log(item, 'les items');

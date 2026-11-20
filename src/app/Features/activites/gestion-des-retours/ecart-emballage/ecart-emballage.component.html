@@ -1,150 +1,145 @@
-<div class="card">
-  <!-- <div class="d-flex justify-content-end py-3">
-  <button type="button" class="bui-btn-add" (click)="OnCreate()">Saisir une commande</button>
-</div> -->
-  <div class="row">
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Nom :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input class="w-100" style="border-radius: 7px" pInputText type="text" [(ngModel)]="filters.nom"
-               (keydown.enter)="filterGlobal()" placeholder="Recherche"/>
-      </span>
+<!-- List -->
+<div class="fn-card">
+  <div class="fn-topbar">
+    <div class="fn-topbar-left">
+      <div class="fn-title"><i class="fas fa-balance-scale"></i> Écarts emballage</div>
+      <div class="fn-count">{{ totalPages }} résultat(s)</div>
     </div>
-    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8" [totalRecords]="totalPages"
-             [lazy]="true" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
-
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Poste</th>
-          <th>Nom</th>
-          <th>Dépot</th>
-          <th class="text-center">Actions</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-dataList>
-        <tr>
-          <td>
-            {{ dataList?.type || 'N/A' }}
-          </td>
-          <td>
-            <span class="ml-1 vertical-align-middle">
-              {{
-                dataList.nom || 'N/A'
-              }}
-            </span>
-          </td>
-          <td>
-            <span class="ml-1 vertical-align-middle">
-              {{
-                dataList.depot
-              }}
-            </span>
-          </td>
-          <td class="text-center">
-      <div class="d-flex justify-content-center gap-2">
-        <span class="bui-icon-btn view" (click)="OnEdit(dataList)"><i class="fas fa-eye"></i></span>
-      </div>
-    </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="3">Aucun élément trouvé.</td>
-        </tr>
-      </ng-template>
-    </p-table>
   </div>
 
-  <div *ngIf="isModalOpen" class="custom-modal">
-    <div class="vd-modal-dialog wide">
-      <div class="vd-modal-header">
-        <div class="vd-mh-left">
-          <div class="vd-mh-icon red"><i class="fas fa-balance-scale"></i></div>
-          <div>
-            <div class="vd-mh-title">Détails écart emballage</div>
-            <div class="vd-mh-sub">{{ updateData?.type || '' }} — {{ updateData?.nom || '' }}</div>
-          </div>
-        </div>
-        <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+  <div class="fn-filters">
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Nom</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-search fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.nom" (keydown.enter)="filterGlobal()" placeholder="Nom agent / transporteur..." />
       </div>
+    </div>
+  </div>
 
-      <div class="vd-modal-body">
-        <div class="vd-info-grid">
-          <div class="vd-info-block">
-            <div class="vd-info-label"><i class="fas fa-tag me-1"></i>Type</div>
-            <div class="vd-info-value">{{ updateData?.type || 'NÉANT' }}</div>
-          </div>
-          <div class="vd-info-block">
-            <div class="vd-info-label"><i class="fas fa-user me-1"></i>Nom</div>
-            <div class="vd-info-value">{{ updateData?.nom || 'NÉANT' }}</div>
-          </div>
-        </div>
+  <p-table
+    [styleClass]="'fn-ptable p-datatable-sm'"
+    #dt2
+    [value]="dataList"
+    dataKey="id"
+    [rows]="8"
+    [totalRecords]="totalPages"
+    [lazy]="true"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [paginator]="true"
+    (onPage)="onPage($event)"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Poste</th>
+        <th>Nom</th>
+        <th>Dépôt</th>
+        <th class="text-center">Action</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>
+          <span class="fn-badge blue">{{ row?.type || 'N/A' }}</span>
+        </td>
+        <td style="font-weight:600; color:#111827">{{ row?.nom || 'N/A' }}</td>
+        <td style="color:#6b7280">{{ row?.depot || '—' }}</td>
+        <td class="text-center">
+          <button class="fn-action-btn view" (click)="OnEdit(row)" title="Voir"><i class="fas fa-eye"></i></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="4" style="text-align:center; padding:32px; color:#9ca3af; font-size:13px;">
+          <i class="fas fa-inbox me-2"></i>Aucun écart trouvé.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
 
-        <div class="vd-card">
-          <div class="vd-card-header">
-            <div class="vd-card-icon red"><i class="fas fa-exclamation-triangle"></i></div>
-            <div class="vd-section-label">Liste des écarts</div>
-          </div>
-          <div class="vd-table-wrap">
-            <table class="vd-table">
-              <thead>
-                <tr>
-                  <th>Code</th>
-                  <th>Libellé</th>
-                  <th class="text-right">Montant</th>
-                  <th class="text-center">Qté attendue</th>
-                  <th class="text-center">Qté reçue</th>
-                  <th class="text-center">Écart</th>
-                  <th>Date</th>
-                  <th>Statut</th>
-                  <th>Paiement</th>
-                  <th>Mode</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let ecart of listeEcarts">
-                  <td><span class="vd-badge gray">{{ ecart.codeEmballage }}</span></td>
-                  <td>{{ ecart.libelleEmballage }}</td>
-                  <td class="text-right fw-bold">{{ (ecart.montantRestant != null ? ecart.montantRestant : ecart.prixUnitaire * ecart.ecart) | number }}</td>
-                  <td class="text-center">{{ ecart.totalAttendu | number }}</td>
-                  <td class="text-center">{{ ecart.totalRecu | number }}</td>
-                  <td class="text-center">
-                    <span [ngClass]="{'vd-badge green': ecart.ecart >= 0, 'vd-badge red': ecart.ecart < 0}">{{ ecart.ecart }}</span>
-                  </td>
-                  <td>{{ ecart.dateCreation | date:'dd/MM/yyyy HH:mm' }}</td>
-                  <td>
-                    <span [ngClass]="{'vd-badge green': ecart.status == 'Payé', 'vd-badge orange': ecart.status == 'En attente'}">{{ ecart.status }}</span>
-                  </td>
-                  <td>
-                    <input [disabled]="ecart.status == 'Payé'" type="number" class="form-control-custom"
-                      [(ngModel)]="ecart.paiement" [min]="0" (keydown)="validateAmount(ecart)"
-                      [max]="ecart.prixUnitaire * ecart.quantite"
-                      [ngClass]="{ invalid: ecart.paiement > ecart.prixUnitaire * ecart.quantite }"
-                      style="width:90px" />
-                  </td>
-                  <td>
-                    <ng-select [disabled]="ecart.status == 'Payé'" class="form-control" style="width:150px!important"
-                      [items]="dataListMoyenPaiement" bindLabel="libelle" bindValue="id"
-                      [(ngModel)]="ecart.moyenPaiementId" [searchable]="true" required>
-                    </ng-select>
-                  </td>
-                </tr>
-                <tr *ngIf="!listeEcarts || listeEcarts.length === 0">
-                  <td colspan="10"><div class="vd-empty"><i class="fas fa-check-circle"></i><span>Aucun écart disponible</span></div></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+<!-- Modal détail -->
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div class="vd-modal-dialog wide">
+    <div class="vd-modal-header">
+      <div class="vd-mh-left">
+        <div class="vd-mh-icon red"><i class="fas fa-balance-scale"></i></div>
+        <div>
+          <div class="vd-mh-title">Détails écart emballage</div>
+          <div class="vd-mh-sub">{{ updateData?.type || '' }} — {{ updateData?.nom || '' }}</div>
         </div>
       </div>
+      <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
 
-      <div class="vd-modal-footer">
-        <button type="button" class="vd-btn-outline" (click)="OnCloseModal()">Fermer</button>
-        <button type="button" class="vd-btn-warning" (click)="onSubmitSelected()">
-          <i class="fas fa-save"></i>Solder l'écart
-        </button>
+    <div class="vd-modal-body">
+      <div class="vd-info-grid">
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-tag me-1"></i>Type</div>
+          <div class="vd-info-value">{{ updateData?.type || 'NÉANT' }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-user me-1"></i>Nom</div>
+          <div class="vd-info-value">{{ updateData?.nom || 'NÉANT' }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-warehouse me-1"></i>Dépôt</div>
+          <div class="vd-info-value">{{ updateData?.depot || '—' }}</div>
+        </div>
       </div>
+
+      <div class="vd-card">
+        <div class="vd-card-header">
+          <div class="vd-card-icon red"><i class="fas fa-exclamation-triangle"></i></div>
+          <div class="vd-section-label">Liste des écarts</div>
+        </div>
+        <div class="vd-table-wrap">
+          <table class="vd-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Libellé</th>
+                <th>N° Référence</th>
+                <th class="text-right">Montant dû</th>
+                <th class="text-center">Qté attendue</th>
+                <th class="text-center">Qté reçue</th>
+                <th class="text-center">Écart</th>
+                <th>Date</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ecart of listeEcarts">
+                <td><span class="vd-badge gray">{{ ecart.codeEmballage || ecart.articleCode || '—' }}</span></td>
+                <td>{{ ecart.libelleEmballage || ecart.articleLibelle || '—' }}</td>
+                <td style="font-size:11px; color:#6b7280">{{ ecart.numRetour || ecart.numRegroupement || '—' }}</td>
+                <td class="text-right fw-bold">
+                  {{ (ecart.montantRestant != null ? ecart.montantRestant : ecart.prixUnitaire * ecart.ecart) | number }}
+                </td>
+                <td class="text-center">{{ ecart.totalAttendu | number }}</td>
+                <td class="text-center">{{ ecart.totalRecu | number }}</td>
+                <td class="text-center">
+                  <span [ngClass]="ecart.ecart >= 0 ? 'vd-badge green' : 'vd-badge red'">{{ ecart.ecart }}</span>
+                </td>
+                <td style="font-size:11px; color:#6b7280">{{ ecart.dateCreation | date:'dd/MM/yyyy' }}</td>
+                <td>
+                  <span [ngClass]="ecart.statut === 'Payé' ? 'vd-badge green' : 'vd-badge orange'">{{ ecart.statut }}</span>
+                </td>
+              </tr>
+              <tr *ngIf="!listeEcarts || listeEcarts.length === 0">
+                <td colspan="9">
+                  <div class="vd-empty"><i class="fas fa-check-circle"></i><span>Aucun écart disponible</span></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="vd-modal-footer">
+      <button type="button" class="vd-btn-outline" (click)="OnCloseModal()">Fermer</button>
     </div>
   </div>
 </div>

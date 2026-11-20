@@ -1,195 +1,143 @@
-<div class="card">
-
-    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataListEmballage" dataKey="id" [rows]="8" [totalRecords]="totalPages" [lazy]="true"
-        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
-        <ng-template pTemplate="caption">
-            <div class=" d-flex justify-content-between py-3">
-                <span class="p-input-icon-left ml-auto d-flex align-items-center">
-                    <i class="fas fa-search"></i>
-                    <input pInputText type="text" (input)="filterGlobal($event)" placeholder="Recherche" />
-                </span>
-                <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer un emballage</button>
-            </div>
-        </ng-template>
-        <ng-template pTemplate="header">
-            <tr>
-                <th style="color: var(--secondary-color);">Nom</th>
-                <th style="color: var(--secondary-color);">Format</th>
-                <th style="color: var(--secondary-color);">Condition</th>
-                <th style="color: var(--secondary-color);">Plastique Nu</th>
-                <th style="color: var(--secondary-color);">Bouteille vide</th>
-                <th style="color: var(--secondary-color);">Catégorie</th>
-                <th style="color: var(--secondary-color);">Groupe article</th>
-                <th style="color: var(--secondary-color);">Actions</th>
-            </tr>
-
-        </ng-template>
-        <ng-template pTemplate="body" let-dataListEmballage>
-            <tr>
-                <td class="">
-                    {{ dataListEmballage.libelle }}
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataListEmballage.format }}
-                    </span>
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataListEmballage.condition }}
-                    </span>
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataListEmballage.plastiquenu.libelle }}
-                    </span>
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataListEmballage.bouteillevide.libelle }}
-                    </span>
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataListEmballage.categorieproduit.libelle }}
-                    </span>
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataListEmballage.groupearticle.libelle }}
-                    </span>
-                </td>
-                <td>
-                    <tr class="d-flex justify-content-center gap-3">
-                        <td><i (click)="OnEdit(dataListEmballage)" style="cursor: pointer;"
-                                class="fas fa-edit text-secondary"></i></td>
-                        <td><i (click)="OnDelete(dataListEmballage.id)" style="cursor: pointer;"
-                                class="fas fa-trash-alt text-danger"></i>
-                        </td>
-                    </tr>
-                </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="5">Aucun emballage trouvé!</td>
-            </tr>
-        </ng-template>
-    </p-table>
+<div class="cc-list-card">
+  <div class="cc-list-topbar">
+    <span class="cc-list-count">{{ totalPages }} emballage(s)</span>
+    <button class="cc-btn-primary" type="button" (click)="OnCreate()">
+      <i class="fas fa-plus me-2"></i>Créer un emballage
+    </button>
+  </div>
+  <div class="cc-filters">
+    <div class="cc-filter-item">
+      <span class="cc-filter-label">Libellé</span>
+      <div class="cc-filter-input-wrap">
+        <i class="fas fa-search cc-filter-icon"></i>
+        <input class="cc-filter-input" type="text" [(ngModel)]="filters.libelle" (keydown.enter)="filterGlobal()" placeholder="Recherche…">
+      </div>
+    </div>
+    <div class="cc-filter-item">
+      <span class="cc-filter-label">Code</span>
+      <div class="cc-filter-input-wrap">
+        <i class="fas fa-barcode cc-filter-icon"></i>
+        <input class="cc-filter-input" type="text" [(ngModel)]="filters.code" (keydown.enter)="filterGlobal()" placeholder="Recherche…">
+      </div>
+    </div>
+    <div>
+      <button class="cc-btn-search" type="button" (click)="filterGlobal()">
+        <i class="fas fa-search me-1"></i> Rechercher
+      </button>
+    </div>
+  </div>
+  <p-table [styleClass]="'cc-ptable p-datatable-sm'" #dt2 [value]="dataListEmballage" dataKey="id" [rows]="8" [totalRecords]="totalPages" [lazy]="true"
+      [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Nom</th>
+        <th>Format</th>
+        <th>Condition</th>
+        <th>Plastique Nu</th>
+        <th>Bouteille vide</th>
+        <th>Catégorie</th>
+        <th>Groupe article</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>{{ row.libelle }}</td>
+        <td>{{ row.format }}</td>
+        <td>{{ row.condition }}</td>
+        <td>{{ row.plastiquenu.libelle }}</td>
+        <td>{{ row.bouteillevide.libelle }}</td>
+        <td>{{ row.categorieproduit.libelle }}</td>
+        <td>{{ row.groupearticle.libelle }}</td>
+        <td class="text-center">
+          <div style="display:flex;gap:6px;justify-content:center">
+            <button class="cc-action-btn edit" (click)="OnEdit(row)" title="Modifier"><i class="fas fa-edit"></i></button>
+            <button class="cc-action-btn del" (click)="OnDelete(row.id)" title="Supprimer"><i class="fas fa-trash"></i></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="8" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">
+          <i class="fas fa-box" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i>
+          Aucun emballage trouvé.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>
 
-<!-- Modal creation -->
-<!-- Modal -->
 <div *ngIf="isModalOpen" class="custom-modal">
-    <div class="modal-dialog  modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header d-flex align-items-center">
-                <div class="d-flex justify-content-center align-items-center"
-                    style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
-                    <i class="fas fa-box-check text-primary fs-3"></i>
-                </div>
-                <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création d'un
-                    emballage</h1>
-                <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification de
-                    l'emballage</h1>
-            </div>
-
-            <div class="modal-body">
-              <form [formGroup]="emballageForm">
-                <div class="row">
-                  <!-- Première colonne -->
-                  <div class="col-md-6">
-                    <!-- Code -->
-                    <div class="mb-3">
-                      <label for="code" class="form-label">Code <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" id="code" formControlName="code" placeholder="Entrez le code">
-                    </div>
-
-                    <!-- Libelle -->
-                    <div class="mb-3">
-                      <label for="libelle" class="form-label d-flex align-items-center">
-                        Libelle <span class="text-danger">*</span>
-                      </label>
-                      <input type="text" class="form-control" formControlName="libelle" id="libelle" placeholder="Entrez le libelle">
-                    </div>
-
-                    <!-- Format -->
-                    <div class="mb-3">
-                      <label for="format" class="form-label d-flex align-items-center">
-                        Format <span class="text-danger">*</span>
-                      </label>
-                      <select class="form-control form-select form-select-sm" formControlName="format" aria-label="format">
-                        <option value="" disabled selected>Choisir le format</option>
-                        <option [value]="item" *ngFor="let item of dataListFormats">{{item}}</option>
-                      </select>
-                    </div>
-
-                    <!-- Condition -->
-                    <div class="mb-3">
-                      <label for="condition" class="form-label d-flex align-items-center">
-                        Condition <span class="text-danger">*</span>
-                      </label>
-                      <select class="form-control form-select form-select-sm" formControlName="condition" aria-label="conditionnement">
-                        <option value="" disabled selected>Choisir le conditionnement</option>
-                        <option [value]="item" *ngFor="let item of dataListConditionnements">{{item}}</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <!-- Deuxième colonne -->
-                  <div class="col-md-6">
-                    <!-- Plastique Nu -->
-                    <div class="mb-3">
-                      <label for="plastiquenuId" class="form-label d-flex align-items-center">
-                        Plastique nu <span class="text-danger">*</span>
-                      </label>
-                      <select class="form-control form-select form-select-sm" formControlName="plastiquenuId" aria-label="plastique nu">
-                        <option value="" disabled selected>Choisir le plastique nu</option>
-                        <option [value]="item.id" *ngFor="let item of dataListPlastiqueNu">{{item.libelle}}</option>
-                      </select>
-                    </div>
-
-                    <!-- Bouteille Vide -->
-                    <div class="mb-3">
-                      <label for="bouteillevideId" class="form-label d-flex align-items-center">
-                        Bouteille vide <span class="text-danger">*</span>
-                      </label>
-                      <select class="form-control form-select form-select-sm" formControlName="bouteillevideId" aria-label="bouteille vide">
-                        <option value="" disabled selected>Choisir la bouteille</option>
-                        <option [value]="item.id" *ngFor="let item of dataListBouteilleVide">{{item.libelle}}</option>
-                      </select>
-                    </div>
-
-                    <!-- Catégorie produit -->
-                    <div class="mb-3">
-                      <label for="categorieProduitId" class="form-label d-flex align-items-center">
-                        Catégorie produit <span class="text-danger">*</span>
-                      </label>
-                      <select class="form-control form-select form-select-sm" formControlName="categorieProduitId" aria-label="produit">
-                        <option value="" disabled selected>Choisir le produit</option>
-                        <option [value]="item.id" *ngFor="let item of dataListProduits">{{item.libelle}}</option>
-                      </select>
-                    </div>
-
-                    <!-- Groupe article -->
-                    <div class="mb-3">
-                      <label for="groupeArticleId" class="form-label d-flex align-items-center">
-                        Groupe article <span class="text-danger">*</span>
-                      </label>
-                      <select class="form-control form-select form-select-sm" formControlName="groupeArticleId" aria-label="groupe article">
-                        <option value="" disabled selected>Choisir l'article</option>
-                        <option [value]="item.id" *ngFor="let item of dataListGroupeArticles">{{item.libelle}}</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </form>
-
-            </div>
-            <div class="modal-footer gap-3 px-4">
-                <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-                <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
-            </div>
-        </div>
+  <div class="cc-modal" style="width:660px">
+    <div class="cc-modal-header">
+      <div class="cc-modal-icon"><i class="fas fa-box"></i></div>
+      <h5 class="cc-modal-title">
+        {{ operation === 'create' ? 'Création d\'un emballage' : 'Modification de l\'emballage' }}
+      </h5>
+      <button class="cc-modal-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
     </div>
+    <div class="cc-modal-body">
+      <form [formGroup]="emballageForm">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px">
+          <div class="cc-field">
+            <label class="cc-field-label">Code *</label>
+            <input class="cc-field-input" formControlName="code" placeholder="Entrez le code" />
+          </div>
+          <div class="cc-field">
+            <label class="cc-field-label">Libellé *</label>
+            <input class="cc-field-input" formControlName="libelle" placeholder="Entrez le libellé" />
+          </div>
+          <div class="cc-field">
+            <label class="cc-field-label">Format *</label>
+            <select class="cc-field-select" formControlName="format">
+              <option value="" disabled selected>Choisir le format</option>
+              <option [value]="item" *ngFor="let item of dataListFormats">{{ item }}</option>
+            </select>
+          </div>
+          <div class="cc-field">
+            <label class="cc-field-label">Condition *</label>
+            <select class="cc-field-select" formControlName="condition">
+              <option value="" disabled selected>Choisir le conditionnement</option>
+              <option [value]="item" *ngFor="let item of dataListConditionnements">{{ item }}</option>
+            </select>
+          </div>
+          <div class="cc-field">
+            <label class="cc-field-label">Plastique nu *</label>
+            <select class="cc-field-select" formControlName="plastiquenuId">
+              <option value="" disabled selected>Choisir le plastique nu</option>
+              <option [value]="item.id" *ngFor="let item of dataListPlastiqueNu">{{ item.libelle }}</option>
+            </select>
+          </div>
+          <div class="cc-field">
+            <label class="cc-field-label">Bouteille vide *</label>
+            <select class="cc-field-select" formControlName="bouteillevideId">
+              <option value="" disabled selected>Choisir la bouteille</option>
+              <option [value]="item.id" *ngFor="let item of dataListBouteilleVide">{{ item.libelle }}</option>
+            </select>
+          </div>
+          <div class="cc-field">
+            <label class="cc-field-label">Catégorie produit *</label>
+            <select class="cc-field-select" formControlName="categorieProduitId">
+              <option value="" disabled selected>Choisir le produit</option>
+              <option [value]="item.id" *ngFor="let item of dataListProduits">{{ item.libelle }}</option>
+            </select>
+          </div>
+          <div class="cc-field">
+            <label class="cc-field-label">Groupe article *</label>
+            <select class="cc-field-select" formControlName="groupeArticleId">
+              <option value="" disabled selected>Choisir l'article</option>
+              <option [value]="item.id" *ngFor="let item of dataListGroupeArticles">{{ item.libelle }}</option>
+            </select>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="cc-modal-footer">
+      <button class="cc-btn-secondary" (click)="OnCloseModal()">Annuler</button>
+      <button class="cc-btn-submit" (click)="onSubmit()">
+        <i class="fas fa-check"></i> {{ operation === 'create' ? 'Créer' : 'Enregistrer' }}
+      </button>
+    </div>
+  </div>
 </div>

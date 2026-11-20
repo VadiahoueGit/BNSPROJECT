@@ -6,6 +6,7 @@ import { EntreeGratuiteComponent } from './entree-gratuite/entree-gratuite.compo
 import { HistoiqueGestionRetoursComponent } from './histoique-gestion-retours/histoique-gestion-retours.component';
 import { ReceptionMarchandiseComponent } from './reception-marchandise/reception-marchandise.component';
 import { ValidationCommandeComponent } from './validation-commande/validation-commande.component';
+import { SortieEmballageFournisseurComponent } from './sortie-emballage-fournisseur/sortie-emballage-fournisseur.component';
 
 const routes: Routes = [
     { path: '', component:AchatsComponent },
@@ -14,6 +15,7 @@ const routes: Routes = [
     { path: 'historique-de-gestion-retour', component:HistoiqueGestionRetoursComponent },
     { path: 'reception-marchandise', component:ReceptionMarchandiseComponent },
     { path: 'validation-commande', component:ValidationCommandeComponent },
+    { path: 'sortie-emballage-fournisseur', component: SortieEmballageFournisseurComponent },
 ];
 
 @NgModule({

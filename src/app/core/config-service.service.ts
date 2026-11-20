@@ -15,12 +15,16 @@ export class ConfigService {
     const hostname = window.location.hostname.toLowerCase();
     let configPath = '/assets/Config/BnsConfig.json'; // par défaut PROD
 
-    if (
+    // Dev local (ng serve sur localhost/127.x) : cible l'API tournant sur cette même machine
+    // (localhost:4000), à distinguer du domaine de test HÉBERGÉ (testarmonys.bnsgroupe.net) qui
+    // doit lui pointer vers l'API distante testarmonysapi.bnsgroupe.net — sinon un `ng serve`
+    // local se met à appeler l'API distante et le backend local "ne répond plus".
+    if (hostname === 'localhost' || hostname.startsWith('127.')) {
+      configPath = '/assets/Config/BnsConfigLocal.json';
+    } else if (
       hostname.includes('test') ||
       hostname.includes('staging') ||
-      hostname.includes('local') ||
-      hostname === 'localhost' ||
-      hostname.startsWith('127.')
+      hostname.includes('local')
     ) {
       configPath = '/assets/Config/BnsConfigTest.json';
     }

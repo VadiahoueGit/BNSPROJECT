@@ -1,12 +1,12 @@
-<div class="bui-back mb-4" (click)="goBack()">
-  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
-  <h4 class="fw-bold mb-0">Validation</h4>
+<div class="val-back-row" (click)="goBack()">
+  <div class="val-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="val-back-title">Validation</h4>
 </div>
 
-<div class="cc-tabs mb-3">
-  <button class="cc-tab-btn" [class.active]="activeTab === 'validationVenteChine'" (click)="activeElement('validationVenteChine')">Ventes chine</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'validationCommandeGratuite'" (click)="activeElement('validationCommandeGratuite')">Commandes gratuite</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'validationCommandeClient'" (click)="activeElement('validationCommandeClient')">Commandes client</button>
+<div class="val-tabs mb-3">
+  <button class="val-tab-btn" [class.active]="activeTab === 'validationVenteChine'" (click)="activeElement('validationVenteChine')">Ventes chine</button>
+  <button class="val-tab-btn" [class.active]="activeTab === 'validationCommandeGratuite'" (click)="activeElement('validationCommandeGratuite')">Commandes gratuite</button>
+  <button class="val-tab-btn" [class.active]="activeTab === 'validationCommandeClient'" (click)="activeElement('validationCommandeClient')">Commandes client</button>
 </div>
 
 <div *ngIf="activeTab === 'validationVenteChine'">

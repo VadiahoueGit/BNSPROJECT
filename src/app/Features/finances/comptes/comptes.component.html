@@ -1,65 +1,88 @@
-<div class="card">
-  <p-table
-    [styleClass]="'p-datatable-sm'"
-    #dt2
-    [value]="dataList"
-    dataKey="id"
-    [rows]="8"
-    [totalRecords]="totalPages" [lazy]="true"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [paginator]="true"
-    (onPage)="onPage($event)"
-  >
-    <ng-template pTemplate="header">
-      <tr>
-        <th></th>
-        <th>Nom du compte</th>
-        <th>Valeur des ventes</th>
-        <th>Soldes</th>
-        <th>Créances</th>
-        <th>Actions</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-dataList>
-      <tr>
-        <td>
-          <div class="d-flex align-items-center justify-content-center bg-simple">
-            <i style="font-size: 14px;" class="fad fa-cash-register"></i>
-          </div>
-        </td>
-        <td>
-                <span class="ml-1 vertical-align-middle fw-bold">
-                  {{ dataList.nomDepot }}
-                </span>
-        </td>
-        <td>
-                <span class="ml-1 vertical-align-middle bg-simple fw-bold">
-                 {{ +dataList.montantPercuTotal + +dataList.montantAPercevoirTotal | currency:'XOF' }}
-                </span>
-        </td>
-        <td>
-                <span class="ml-1 vertical-align-middle bg-entry">
-                  {{ dataList.montantPercuTotal | currency:'XOF' }}
-                </span>
-        </td>
-        <td>
-                <span class="ml-1 vertical-align-middle bg-out">
-                  {{ dataList.montantAPercevoirTotal | currency:'XOF' }}
-                </span>
-        </td>
-        <td class="text-center">
-          <span class="bui-icon-btn view" (click)="OnViewDetail(dataList)"><i class="fas fa-eye"></i></span>
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="5">Aucun élément trouvé.</td>
-      </tr>
-    </ng-template>
-  </p-table>
+<!-- KPI globaux -->
+<div class="cpt-kpi-row">
+  <div class="cpt-kpi blue">
+    <div class="cpt-kpi-icon blue"><i class="fas fa-chart-bar"></i></div>
+    <div class="cpt-kpi-body">
+      <div class="cpt-kpi-label">Total Ventes</div>
+      <div class="cpt-kpi-value blue">{{ totalVentes | currency:'XOF':'symbol':'1.0-0' }}</div>
+    </div>
+  </div>
+  <div class="cpt-kpi green">
+    <div class="cpt-kpi-icon green"><i class="fas fa-check-circle"></i></div>
+    <div class="cpt-kpi-body">
+      <div class="cpt-kpi-label">Total Encaissé</div>
+      <div class="cpt-kpi-value green">{{ totalEncaisse | currency:'XOF':'symbol':'1.0-0' }}</div>
+    </div>
+  </div>
+  <div class="cpt-kpi orange">
+    <div class="cpt-kpi-icon orange"><i class="fas fa-hourglass-half"></i></div>
+    <div class="cpt-kpi-body">
+      <div class="cpt-kpi-label">Total Créances</div>
+      <div class="cpt-kpi-value orange">{{ totalCreances | currency:'XOF':'symbol':'1.0-0' }}</div>
+    </div>
+  </div>
 </div>
 
+<!-- Card principale -->
+<div class="cpt-card">
+  <div class="cpt-topbar">
+    <div>
+      <div class="cpt-card-title"><i class="fas fa-landmark me-2"></i>Comptes par dépôt</div>
+      <div class="cpt-count">{{ dataList.length }} dépôt(s)</div>
+    </div>
+    <div class="cpt-filter-wrap">
+      <i class="fas fa-warehouse cpt-filter-icon"></i>
+      <ng-select [items]="depotList" bindLabel="nomDepot" bindValue="id" [(ngModel)]="filterDepotId"
+                 (change)="onDepotFilterChange()" [searchable]="true" [clearable]="true"
+                 placeholder="Tous les dépôts (villes)"></ng-select>
+    </div>
+  </div>
+
+  <!-- Grille de cartes dépôts -->
+  <div class="cpt-depot-grid">
+    <div class="cpt-depot-card" *ngFor="let depot of dataList">
+      <div class="cpt-depot-header">
+        <div class="cpt-depot-icon"><i class="fas fa-warehouse"></i></div>
+        <div class="cpt-depot-name">{{ depot.nomDepot }}</div>
+        <button class="cpt-depot-eye" (click)="OnViewDetail(depot)" title="Voir historique">
+          <i class="fas fa-history"></i>
+        </button>
+      </div>
+
+      <div class="cpt-depot-stats">
+        <div class="cpt-stat">
+          <div class="cpt-stat-label">Ventes</div>
+          <div class="cpt-stat-value blue">
+            {{ (+depot.montantPercuTotal + +depot.montantAPercevoirTotal) | currency:'XOF':'symbol':'1.0-0' }}
+          </div>
+        </div>
+        <div class="cpt-stat">
+          <div class="cpt-stat-label">Encaissé</div>
+          <div class="cpt-stat-value green">{{ depot.montantPercuTotal | currency:'XOF':'symbol':'1.0-0' }}</div>
+        </div>
+        <div class="cpt-stat">
+          <div class="cpt-stat-label">Créances</div>
+          <div class="cpt-stat-value orange">{{ depot.montantAPercevoirTotal | currency:'XOF':'symbol':'1.0-0' }}</div>
+        </div>
+      </div>
+
+      <div class="cpt-progress-track">
+        <div class="cpt-progress-fill" [style.width.%]="getProgressPct(depot)"></div>
+      </div>
+      <div class="cpt-progress-label">
+        <span class="text-green">{{ getProgressPct(depot) }}% encaissé</span>
+        <span>{{ 100 - getProgressPct(depot) }}% restant</span>
+      </div>
+    </div>
+
+    <div class="cpt-empty" *ngIf="dataList.length === 0">
+      <i class="fas fa-inbox"></i>
+      <span>Aucun dépôt trouvé</span>
+    </div>
+  </div>
+</div>
+
+<!-- Modal historique -->
 <div *ngIf="isModalOpen" class="custom-modal">
   <div class="vd-modal-dialog wide">
     <div class="vd-modal-header">
@@ -71,102 +94,98 @@
       </div>
       <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
     </div>
+
     <div class="vd-modal-body">
-        <p-table
-          [styleClass]="'p-datatable-sm'"
-          #dt2
-          [value]="updateData"
-          dataKey="id"
+      <p-table
+        [styleClass]="'p-datatable-sm'"
+        #dt2
+        [value]="updateData"
+        dataKey="id"
+        [lazy]="true"
+        [paginator]="true"
+        [rows]="50"
+        [totalRecords]="modalTotal"
+        (onPage)="onModalPage($event)"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th></th>
+            <th>Paiement de</th>
+            <th>Type opérations</th>
+            <th>Mode de paiement</th>
+            <th>Date paiement</th>
+            <th>Origine</th>
+            <th>Statut</th>
+            <th class="ml-1 text-center" style="color: var(--secondary-color)">Montant</th>
+          </tr>
+        </ng-template>
 
-        >
-          <ng-template pTemplate="header">
-            <tr>
-              <th></th>
-              <th>Paiement de</th>
-              <th>Type opérations</th>
-              <th>Mode de paiement</th>
-              <th>Date paiement</th>
-              <th>Origine</th>
-              <th>Statut</th>
-              <th class="ml-1 text-center" style="color: var(--secondary-color)">Montant</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-dataList>
-            <tr>
-              <td>
-                <div class="d-flex align-items-center justify-content-center"
-                     *ngIf="dataList.transaction.sens == 'ENTREE'"
-                     style="background-color: #bdffd3; padding: 5px; border-radius: 6px;">
-                  <i class="fad fa-chevron-double-down text-success"></i>
-                </div>
-                <div class="d-flex align-items-center justify-content-center"
-                     *ngIf="dataList.transaction.sens == 'SORTIE'"
-                     style="background-color: #ffbdbd; padding: 5px; border-radius: 6px;">
-                  <i class="fad fa-chevron-double-up text-danger"></i>
-                </div>
-              </td>
-              <td>
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            <td>
+              <div class="d-flex align-items-center justify-content-center"
+                   *ngIf="row.transaction?.sens == 'ENTREE'"
+                   style="background-color: #bdffd3; padding: 5px; border-radius: 6px;">
+                <i class="fad fa-chevron-double-down text-success"></i>
+              </div>
+              <div class="d-flex align-items-center justify-content-center"
+                   *ngIf="row.transaction?.sens == 'SORTIE'"
+                   style="background-color: #ffbdbd; padding: 5px; border-radius: 6px;">
+                <i class="fad fa-chevron-double-up text-danger"></i>
+              </div>
+            </td>
+            <td>
               <span class="ml-1 vertical-align-middle fw-bold" style="font-size: 11px">
-   {{
-                  dataList.client?.nomEtablissement
-                    ? dataList.client?.nomEtablissement
-                    : dataList.client?.nom
-                      ? dataList.client?.nom + ' ' + dataList.client?.prenoms
-                      : dataList.client?.raisonSocial
-                }}
-</span>
+                {{ row.client?.nomEtablissement || (row.client?.nom ? row.client?.nom + ' ' + row.client?.prenoms : row.client?.raisonSocial) || '—' }}
+              </span>
+            </td>
+            <td>
+              <span class="ml-1 vertical-align-middle" style="font-size: 11px">
+                {{ row.transaction?.motif }}
+              </span>
+            </td>
+            <td>
+              <span class="ml-1 vertical-align-middle" style="font-size: 11px">
+                {{ row.moyenPaiement }}
+              </span>
+            </td>
+            <td>
+              <span class="ml-1 vertical-align-middle" style="font-size: 11px">
+                {{ (row.datePaiement || row.createdAt) | date: 'dd/MM/yyyy à HH:mm' }}
+              </span>
+            </td>
+            <td>
+              <span class="ml-1 vertical-align-middle" style="font-size: 11px"
+                    [ngClass]="row.transaction?.sens == 'ENTREE' ? 'text-success' : 'text-danger'">
+                {{ row.transaction?.sens }}
+              </span>
+            </td>
+            <td>
+              <span class="ml-1 vertical-align-middle" style="font-size: 11px"
+                    [ngClass]="row.transaction?.sens == 'ENTREE' ? 'text-success' : 'text-danger'">
+                {{ row.statut || 'N/A' }}
+              </span>
+            </td>
+            <td>
+              <div class="text-center" [ngClass]="row.transaction?.sens == 'ENTREE' ? 'bg-entry' : 'bg-out'">
+                <span class="ml-1 vertical-align-middle w-100 fw-bold" style="font-size: 12px">
+                  {{ row.transaction?.sens == 'ENTREE' ? '+' : '' }}{{ row.montant | currency:'XOF' }}
+                </span>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
 
-              </td>
-              <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-            {{ dataList.transaction.motif }}
-          </span>
-              </td>
-              <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-             {{ dataList.moyenPaiement }}
-          </span>
-              </td>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="8">Aucun élément trouvé.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
 
-              <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-           {{ dataList.dateValidation | date: 'dd/MM/yyyy à HH:mm' }}
-          </span>
-              </td>
-              <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px"
-                [ngClass]="dataList.transaction.sens == 'ENTREE' ? 'text-success' : 'text-danger'">
-             {{ dataList.transaction.sens }}
-          </span>
-              </td>
-              <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px"
-                [ngClass]="dataList.transaction.sens == 'ENTREE' ? 'text-success' : 'text-danger'">
-             {{ dataList.statut || 'N/A' }}
-          </span>
-              </td>
-              <td>
-                <div class="text-center" [ngClass]="dataList.transaction.sens == 'ENTREE' ? 'bg-entry' : 'bg-out'">
-             <span class="ml-1 vertical-align-middle w-100 fw-bold " style="font-size: 12px">
-             {{ dataList.transaction.sens == 'ENTREE' ? '+' : '' }}{{ dataList.montant | currency:'XOF' }}
-          </span>
-                </div>
-              </td>
-            </tr>
-
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="5">Aucun élément trouvé.</td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
-
-
-      <div class="vd-modal-footer">
-        <button (click)="OnCloseModal()" type="button" class="vd-btn-outline">Fermer</button>
-      </div>
+    <div class="vd-modal-footer">
+      <button (click)="OnCloseModal()" type="button" class="vd-btn-outline">Fermer</button>
+    </div>
   </div>
 </div>
-

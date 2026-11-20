@@ -34,9 +34,9 @@ export class RegroupementEmballagesComponent {
   isEditMode: boolean = false;
   regroupementList: any[] = [];
   regroupementTable: any[] = [];
-  regroupementFinal: { [key: string]: Array<{ type: string; palettes: number; casier: number; totalQuantite:number }> } = {};
+  regroupementFinal: { [key: string]: Array<{ type: string; palettes: number; casier: number; totalQuantite: number; fournisseurNom?: string | null }> } = {};
   result: { palettes: number; casier: number } | null = null;
-  casiersPerPalette: Record<number, { casiers: number; type: string }[]> = {};
+  casiersPerPalette: Record<number, { casiers: number; type: string; fournisseurId: number | null }[]> = {};
   currentPage: number;
   rowsPerPage: any;
 
@@ -61,9 +61,18 @@ export class RegroupementEmballagesComponent {
         if (!this.casiersPerPalette[regle.format]) {
           this.casiersPerPalette[regle.format] = [];
         }
-        this.casiersPerPalette[regle.format].push({ casiers: regle.casiers, type: regle.type });
+        this.casiersPerPalette[regle.format].push({ casiers: regle.casiers, type: regle.type, fournisseurId: regle.fournisseur?.id ?? null });
       });
     });
+  }
+
+  findRegle(format: number, type: string, fournisseurId?: number): { casiers: number; fournisseurNom: string | null } {
+    const rules = this.casiersPerPalette[format] ?? [];
+    let rule: any = null;
+    if (fournisseurId) rule = rules.find((r: any) => r.type === type && r.fournisseurId === fournisseurId);
+    if (!rule) rule = rules.find((r: any) => r.type === type && !r.fournisseurId);
+    if (!rule) rule = rules.find((r: any) => r.type === type);
+    return { casiers: rule?.casiers ?? 0, fournisseurNom: rule?.fournisseurNom ?? null };
   }
 
   get filteredArticles() {
@@ -93,10 +102,7 @@ export class RegroupementEmballagesComponent {
   calculate(commande: any): void {
     console.log('Commande:', commande);
 
-    // ✅ Ne réinitialise pas `regroupementFinal` complètement pour ne pas écraser les données existantes
-    if (!this.regroupementFinal) {
-      this.regroupementFinal = {};
-    }
+    this.regroupementFinal = {};
     console.log('fois:');
     this.result = { palettes: 0, casier: 0 };
 
@@ -135,33 +141,27 @@ export class RegroupementEmballagesComponent {
           0
         );
 
-        const paletteInfos = this.casiersPerPalette[format];
-        if (!paletteInfos || paletteInfos.length === 0) {
-          console.warn(`Format invalide ou non trouvé : ${format}`);
+        const fournisseurId = articles[0]?.produit?.fournisseur?.id ?? undefined;
+        const regle = this.findRegle(format, type, fournisseurId);
+        if (!regle.casiers) {
+          console.warn(`Aucune règle palette pour format ${format} / type ${type}`);
           return;
         }
 
-        paletteInfos.forEach(({casiers, type: paletteType}) => {
-          if (paletteType === type) {
-            const palettes = Math.floor(totalCasiers / casiers);
-            const casier = totalCasiers % casiers;
+        const palettes = Math.floor(totalCasiers / regle.casiers);
+        const casier = totalCasiers % regle.casiers;
 
-            // ✅ Vérifie si ce format et type existent déjà dans regroupementFinal
-            if (!this.regroupementFinal[format]) {
-              this.regroupementFinal[format] = [];
-            }
+        if (!this.regroupementFinal[format]) {
+          this.regroupementFinal[format] = [];
+        }
 
-            const existingEntry = this.regroupementFinal[format].find((entry: any) => entry.type === type);
-            if (existingEntry) {
-              // 🔄 Additionne les nouvelles valeurs sans écraser l'existant
-              existingEntry.palettes += palettes;
-              existingEntry.casier += casier;
-            } else {
-              // ➕ Ajoute un nouvel article s'il n'existe pas encore
-              this.regroupementFinal[format].push({ type, palettes, casier, totalQuantite: 0 });
-            }
-          }
-        });
+        const existingEntry = this.regroupementFinal[format].find((entry: any) => entry.type === type);
+        if (existingEntry) {
+          existingEntry.palettes += palettes;
+          existingEntry.casier += casier;
+        } else {
+          this.regroupementFinal[format].push({ type, palettes, casier, totalQuantite: 0, fournisseurNom: regle.fournisseurNom });
+        }
       });
     });
 // Recalcul de la cargaison après modification de regroupementFinal

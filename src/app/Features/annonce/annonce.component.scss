@@ -469,3 +469,8 @@ form {
   display: flex;
   justify-content: flex-end;
 }
+
+.an-action-btn{width:28px;height:28px;border-radius:7px;border:1.5px solid #e5e7eb;background:white;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:all .15s;
+  &.view{color:#0071c2;&:hover{background:rgba(0,113,194,.1);border-color:#0071c2;}}
+  &.delete{color:#dc2626;&:hover{background:rgba(220,38,38,.1);border-color:#dc2626;}}
+}

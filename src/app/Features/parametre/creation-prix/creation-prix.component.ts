@@ -25,6 +25,7 @@ export class CreationPrixComponent {
   currentPage: number;
   rowsPerPage: any;
   totalPages: number;
+  filters: any = { libelle: '', categorie: '', quantite: '', prixLiquide: '', prixConsigne: '', statut: '' };
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -55,6 +56,12 @@ export class CreationPrixComponent {
       paginate: true,
       page: page,
       limit: 8,
+      libelle: this.filters.libelle || '',
+      categorie: this.filters.categorie || '',
+      quantite: this.filters.quantite || '',
+      prixLiquide: this.filters.prixLiquide || '',
+      prixConsigne: this.filters.prixConsigne || '',
+      statut: this.filters.statut || '',
     };
     this._spinner.show();
     this.articleService.GetListPrix(data).then((res: any) => {
@@ -66,10 +73,24 @@ export class CreationPrixComponent {
       this._spinner.hide();
     });
   }
-  filterGlobal(event: any) {
-    const inputElement = event.target as HTMLInputElement;
-    const value = inputElement?.value || '';
-    this.dt2.filterGlobal(value, 'contains');
+  filterGlobal() {
+    this.resetPaginator();
+    this.GetListPrix(1);
+  }
+
+  resetFilters() {
+    this.filters = { libelle: '', categorie: '', quantite: '', prixLiquide: '', prixConsigne: '', statut: '' };
+    this.resetPaginator();
+    this.GetListPrix(1);
+  }
+
+  get hasActiveFilters(): boolean {
+    return !!(this.filters.libelle || this.filters.categorie || this.filters.quantite
+      || this.filters.prixLiquide || this.filters.prixConsigne || this.filters.statut);
+  }
+
+  resetPaginator() {
+    if (this.dt2) this.dt2.first = 0;
   }
   OnCloseModal() {
     this.isModalOpen = false;
@@ -94,32 +115,41 @@ export class CreationPrixComponent {
       if (this.isEditMode) {
         this.articleService.UpdatePrix(this.prixId, formValues).then(
           (response: any) => {
+            // Le contrôleur renvoie toujours un 200 HTTP (même en cas d'erreur métier, ex.
+            // doublon) : le succès/échec réel se lit dans response.statusCode, pas dans le fait
+            // que la promesse se résolve.
+            if (response.statusCode >= 400) {
+              this.toastr.error(response.message || 'Erreur lors de la mise à jour.');
+              return;
+            }
             this.prixForm.reset()
             this.OnCloseModal();
             this.GetListPrix(1);
             this.toastr.success(response.message);
-            // this.toastr.success('Succès!', 'Prix mis à jour avec succès.');
             console.log('prix mis à jour avec succès', response);
 
           },
           (error: any) => {
-            this.toastr.error('Erreur!', 'Erreur lors de la mise à jour.');
+            this.toastr.error(error?.error?.message || 'Erreur lors de la mise à jour.');
             console.error('Erreur lors de la création', error);
           }
         );
       } else {
         this.articleService.CreatePrix(formValues).then(
           (response: any) => {
+            if (response.statusCode >= 400) {
+              this.toastr.error(response.message || 'Erreur lors de la création.');
+              return;
+            }
             this.OnCloseModal();
             this.GetListPrix(1);
             this.prixForm.reset()
             this.toastr.success(response.message);
-            // this.toastr.success('Succès!', 'Prix créé avec succès.');
             console.log('prix crée avec succès', response);
 
           },
           (error: any) => {
-            this.toastr.error('Erreur!', 'Erreur lors de la création.');
+            this.toastr.error(error?.error?.message || 'Erreur lors de la création.');
             console.error('Erreur lors de la création', error);
           }
         );

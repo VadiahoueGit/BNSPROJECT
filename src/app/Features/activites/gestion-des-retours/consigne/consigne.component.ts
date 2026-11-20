@@ -6,6 +6,7 @@ import {ArticleServiceService} from "../../../../core/article-service.service";
 import {FinanceService} from "../../../../core/finance.service";
 import {NgxSpinnerService} from "ngx-spinner";
 import {ToastrService} from "ngx-toastr";
+import {ALERT_QUESTION} from "../../../shared-component/utils";
 
 @Component({
   selector: 'app-consigne',
@@ -74,6 +75,33 @@ export class ConsigneComponent {
     this.isModalOpen = true;
     this.operation = 'edit';
     console.log(this.isModalOpen);
+  }
+
+  AnnulerConsigne(row: any) {
+    ALERT_QUESTION(
+      'warning',
+      'Attention !',
+      'Voulez-vous annuler cette consigne ? La ligne et son paiement seront supprimés et les emballages replacés en RDV à la date du jour.'
+    ).then((res: any) => {
+      if (res.isConfirmed) {
+        this._spinner.show();
+        this.financeService.AnnulerConsigne(row.id).then(
+          (response: any) => {
+            this._spinner.hide();
+            if (response.statusCode === 200) {
+              this.toastr.success(response.message);
+              this.GetPaiementList(this.currentPage || 1);
+            } else {
+              this.toastr.error(response.message);
+            }
+          },
+          (error: any) => {
+            this._spinner.hide();
+            this.toastr.error(error?.error?.message || "Erreur lors de l'annulation de la consigne.");
+          }
+        );
+      }
+    });
   }
 
   filterGlobal() {

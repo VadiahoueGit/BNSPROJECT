@@ -15,9 +15,11 @@ import {Status} from "../../../utils/utils";
 })
 export class CommandePayesPartiellementComponent {
   @ViewChild('dt2') dt2!: Table;
+  Status = Status;
   statuses!: any[];
   dataList!: any[];
-  hstoriquePayment:any []
+  hstoriquePayment: any[] = [];
+  filteredArticles: any[] = [];
   ArticleForm!: FormGroup;
   loading: boolean = true;
   isModalOpen = false;
@@ -99,12 +101,34 @@ export class CommandePayesPartiellementComponent {
 
   }
 
-  GetHistoriquePayment(id: number)
-  {
+  GetHistoriquePayment(id: number) {
     this._spinner.show();
     this.financeService.GetHistoriquePayment(id).then((res: any) => {
-      this.hstoriquePayment = res.data
-      console.log('data:::>', res);
+      this.hstoriquePayment = res.data;
+      this._spinner.hide();
+    });
+  }
+
+  isDateEchue(dateStr: string): boolean {
+    if (!dateStr) return false;
+    return new Date(dateStr) < new Date();
+  }
+
+  getEcartEnJours(dateStr: string): string {
+    if (!dateStr) return '—';
+    const diff = Math.round((new Date(dateStr).getTime() - Date.now()) / 86400000);
+    if (diff > 0) return `+${diff} j`;
+    if (diff < 0) return `${diff} j`;
+    return 'Auj.';
+  }
+
+  ValidatePaiement(item: any) {
+    this._spinner.show();
+    this.financeService.ValidatePaiement(item.id).then(() => {
+      this.toastr.success('Paiement validé');
+      this.GetHistoriquePayment(this.articleId);
+    }).catch(() => {
+      this.toastr.error('Erreur lors de la validation');
       this._spinner.hide();
     });
   }

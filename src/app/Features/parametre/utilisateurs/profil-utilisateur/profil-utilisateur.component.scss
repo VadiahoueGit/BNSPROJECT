@@ -1,53 +1,20 @@
-.modal-dialog{
-    max-width: 60em;
-    min-width: auto;
+$blue:#0071c2;$green:#16a34a;$red:#dc2626;$border:#e5e7eb;
+
+.pu-card{background:white;border-radius:14px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid $border;}
+.pu-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.pu-title{font-size:15px;font-weight:700;color:#111827;}
+.pu-btn-add{height:34px;padding:0 14px;background:$blue;color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:opacity .15s;&:hover{opacity:.88;}}
+
+::ng-deep .pu-ptable thead th{font-size:12px;font-weight:600;color:#6b7280;background:#f8fafc;padding:10px 12px;}
+::ng-deep .pu-ptable tbody td{font-size:13px;color:#374151;padding:10px 12px;vertical-align:middle;}
+
+.pu-actions{display:flex;gap:6px;}
+.pu-action-btn{width:28px;height:28px;border-radius:7px;border:1.5px solid $border;background:white;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:all .15s;
+  &.edit{color:$green;&:hover{background:rgba($green,.1);border-color:$green;}}
+  &.del{color:$red;&:hover{background:rgba($red,.1);border-color:$red;}}
 }
 
-.custom-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1050;
-  }
-span{
-  font-size: 11px;
-}
-  .modal-dialog {
-    background-color: white;
-    border-radius: 0.3rem;
-    width: 60em;
-    max-width: 60em;
-    padding: 1rem;
-  }
-
-  .modal-header, .modal-body, .modal-footer {
-    padding: 1rem;
-  }
-
-  .btn-close {
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
-  }
-  .p-fluid .p-inputtext {
-    width: 8em !important;
-    height: 2.5rem;
-}
-
-.p-column-filter-menu-button {
-    display: none; /* Masquer l'icône de filtre */
-  }
-
-  /* Ajuster l'espacement si nécessaire après suppression de l'icône */
-  .p-column-filter {
-    padding-right: 0; /* Supprime l'espace réservé à l'icône */
-  }
-  .label-fixed-width {
-    min-width: 10px;
-  }
+.custom-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:flex;justify-content:center;align-items:center;z-index:1050;}
+.modal-dialog{background-color:white;border-radius:.3rem;width:60em;max-width:60em;padding:1rem;}
+.modal-header,.modal-body,.modal-footer{padding:1rem;}
+.btn-close{background:transparent;border:none;font-size:1.5rem;}

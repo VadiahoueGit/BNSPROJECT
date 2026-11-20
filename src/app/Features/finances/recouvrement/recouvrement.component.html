@@ -1,0 +1,257 @@
+<!-- ── KPI Totaux globaux ────────────────────────── -->
+<div class="brl-kpi-row">
+  <div class="brl-kpi green">
+    <div class="brl-kpi-icon green"><i class="fas fa-arrow-trend-up"></i></div>
+    <div class="brl-kpi-body">
+      <div class="brl-kpi-label">Total Entrées</div>
+      <div class="brl-kpi-value green">{{ totalEntrees | number:'1.0-0' }} <small>FCFA</small></div>
+    </div>
+  </div>
+  <div class="brl-kpi red">
+    <div class="brl-kpi-icon red"><i class="fas fa-arrow-trend-down"></i></div>
+    <div class="brl-kpi-body">
+      <div class="brl-kpi-label">Total Sorties</div>
+      <div class="brl-kpi-value red">{{ totalSorties | number:'1.0-0' }} <small>FCFA</small></div>
+    </div>
+  </div>
+  <div class="brl-kpi blue">
+    <div class="brl-kpi-icon blue"><i class="fas fa-landmark"></i></div>
+    <div class="brl-kpi-body">
+      <div class="brl-kpi-label">Solde caisse</div>
+      <div class="brl-kpi-value blue">{{ soldeCaisse | number:'1.0-0' }} <small>FCFA</small></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Totaux par moyen de paiement ──────────────── -->
+<div class="brl-moyen-header" *ngIf="totauxParMoyen.length > 0">
+  <span class="brl-moyen-hint">Espèces seules impactent le solde caisse — les autres moyens sont purement informatifs.</span>
+  <button class="brl-toggle-btn" (click)="showAutresMoyens = !showAutresMoyens">
+    <i class="fas" [ngClass]="showAutresMoyens ? 'fa-eye-slash' : 'fa-eye'"></i>
+    {{ showAutresMoyens ? 'Masquer' : 'Afficher' }} les autres moyens
+  </button>
+</div>
+<div class="brl-moyen-row" *ngIf="totauxParMoyen.length > 0">
+  <div class="brl-moyen-card" *ngFor="let m of totauxParMoyen" [class.espece]="isEspecesMoyen(m.moyen)">
+    <div class="brl-moyen-name"><i class="fas fa-wallet"></i>{{ m.moyen }}</div>
+    <div class="brl-moyen-net positive" *ngIf="isEspecesMoyen(m.moyen) || showAutresMoyens">
+      {{ m.net | number:'1.0-0' }} <span class="brl-moyen-fcfa">F</span>
+    </div>
+    <div class="brl-moyen-masked" *ngIf="!isEspecesMoyen(m.moyen) && !showAutresMoyens" title="Montant masqué (purement informatif)">
+      <i class="fas fa-eye-slash"></i> Masqué
+    </div>
+  </div>
+
+  <!-- Card dépenses cumulées (toujours en espèces, jamais masquée) -->
+  <div class="brl-moyen-card depenses">
+    <div class="brl-moyen-name"><i class="fas fa-file-invoice"></i>Total dépenses</div>
+    <div class="brl-moyen-net negative">
+      {{ totalDepenses | number:'1.0-0' }} <span class="brl-moyen-fcfa">F</span>
+    </div>
+  </div>
+</div>
+
+<div class="fn-card">
+  <div class="fn-topbar">
+    <div class="fn-topbar-left">
+      <div class="fn-title"><i class="fas fa-hand-holding-usd"></i> Recouvrement</div>
+      <div class="fn-count">{{ totalPages || 0 }} validation(s)</div>
+    </div>
+    <div style="display:flex; gap:8px">
+      <button class="brl-btn-primary" style="background:#dc2626" (click)="OnCreateDepense()">
+        <i class="fas fa-minus-circle"></i> Dépense
+      </button>
+      <button class="brl-btn-primary" (click)="OnCreateAjout()">
+        <i class="fas fa-plus-circle"></i> Ajout de caisse
+      </button>
+    </div>
+  </div>
+
+  <!-- Formulaire dépense inline -->
+  <div class="brl-depense-inline" *ngIf="isCreatingDepense" [@fadeInDown]="'in'">
+    <div class="brl-depense-header">
+      <div class="brl-card-icon orange"><i class="fas fa-minus-circle"></i></div>
+      <div>
+        <div class="brl-depense-title">Nouvelle dépense</div>
+        <div class="brl-depense-sub">Sortie de caisse</div>
+      </div>
+      <button class="brl-close-btn" (click)="onCancelDepense()"><i class="fas fa-times"></i></button>
+    </div>
+    <form [formGroup]="depenseForm" class="brl-depense-form">
+      <div class="brl-field">
+        <label class="brl-filter-label">Motif *</label>
+        <ng-select [items]="motifCompteOptions" bindLabel="label" bindValue="id" formControlName="motifCompteId"
+                   [searchable]="true" placeholder="Sélectionner un motif"></ng-select>
+      </div>
+      <div class="brl-field">
+        <label class="brl-filter-label">Compte à prélever *</label>
+        <ng-select [items]="comptePreleverOptions" bindLabel="label" bindValue="id" formControlName="compteAPreleverId"
+                   [searchable]="true" placeholder="Sélectionner un compte"></ng-select>
+      </div>
+      <div class="brl-field">
+        <label class="brl-filter-label">Véhicule {{ motifDepenseEstLogistique ? '*' : '' }}</label>
+        <ng-select [items]="vehiculeOptions" bindLabel="label" bindValue="id" formControlName="vehiculeId"
+                   [searchable]="true" [clearable]="true"
+                   [placeholder]="motifDepenseEstLogistique ? 'Sélectionner un véhicule' : 'Non applicable pour ce motif'"></ng-select>
+      </div>
+      <div class="brl-field">
+        <label class="brl-filter-label">Montant (FCFA) *</label>
+        <input class="brl-field-input" type="number" formControlName="montant" placeholder="0" />
+      </div>
+      <div class="brl-field" *ngIf="isHote">
+        <label class="brl-filter-label">Dépôt</label>
+        <ng-select [items]="depotList" bindLabel="nomDepot" bindValue="id" formControlName="depotId"
+                   [searchable]="true" [clearable]="true" placeholder="Mon dépôt (par défaut)"></ng-select>
+      </div>
+      <div class="brl-field">
+        <label class="brl-filter-label">Description</label>
+        <input class="brl-field-input" formControlName="description" placeholder="Optionnel..." />
+      </div>
+      <div class="brl-depense-actions">
+        <button class="brl-btn-outline" type="button" (click)="onCancelDepense()">Annuler</button>
+        <button class="brl-btn-danger" type="button" [disabled]="depenseForm.invalid" (click)="saveDepense()">
+          <i class="fas fa-check"></i> Enregistrer
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Formulaire ajout de caisse inline -->
+  <div class="brl-depense-inline" *ngIf="isCreatingAjout" [@fadeInDown]="'in'">
+    <div class="brl-depense-header">
+      <div class="brl-card-icon green"><i class="fas fa-plus-circle"></i></div>
+      <div>
+        <div class="brl-depense-title">Nouvel ajout de caisse</div>
+        <div class="brl-depense-sub">Entrée de fonds dans la caisse</div>
+      </div>
+      <button class="brl-close-btn" (click)="onCancelAjout()"><i class="fas fa-times"></i></button>
+    </div>
+    <form [formGroup]="ajoutCaisseForm" class="brl-depense-form">
+      <div class="brl-field">
+        <label class="brl-filter-label">Motif * ({{ motifCompteOptions.length }} options)</label>
+        <ng-select [items]="motifCompteOptions" bindLabel="label" bindValue="id" formControlName="motifCompteId"
+                   [searchable]="true" [clearable]="true" [compareWith]="compareById" placeholder="Sélectionner un motif"></ng-select>
+      </div>
+      <div class="brl-field">
+        <label class="brl-filter-label">Compte à prélever * ({{ comptePreleverOptions.length }} options)</label>
+        <ng-select [items]="comptePreleverOptions" bindLabel="label" bindValue="id" formControlName="compteAPreleverId"
+                   [searchable]="true" [clearable]="true" [compareWith]="compareById" placeholder="Sélectionner un compte"></ng-select>
+      </div>
+      <div class="brl-field">
+        <label class="brl-filter-label">Montant (FCFA) *</label>
+        <input class="brl-field-input" type="number" formControlName="montant" placeholder="0" />
+      </div>
+      <div class="brl-field" *ngIf="isHote">
+        <label class="brl-filter-label">Dépôt</label>
+        <ng-select [items]="depotList" bindLabel="nomDepot" bindValue="id" formControlName="depotId"
+                   [searchable]="true" [clearable]="true" placeholder="Mon dépôt (par défaut)"></ng-select>
+      </div>
+      <div class="brl-field">
+        <label class="brl-filter-label">Description</label>
+        <input class="brl-field-input" formControlName="description" placeholder="Optionnel..." />
+      </div>
+      <div class="brl-depense-actions">
+        <button class="brl-btn-outline" type="button" (click)="onCancelAjout()">Annuler</button>
+        <button class="brl-btn-primary" type="button" [disabled]="ajoutCaisseForm.invalid" (click)="saveAjoutCaisse()">
+          <i class="fas fa-check"></i> Enregistrer
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="fn-filters">
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Sens</div>
+      <select class="fn-filter-input" [(ngModel)]="filters.sens" (change)="filterGlobal()" style="padding-left:8px">
+        <option value="">Tous</option>
+        <option value="ENTREE">↓ Entrées</option>
+        <option value="SORTIE">↑ Sorties</option>
+      </select>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Dépôt</div>
+      <ng-select [items]="depotList" bindLabel="nomDepot" bindValue="id" [(ngModel)]="filters.depotId"
+                 (change)="filterGlobal()" [searchable]="true" [clearable]="true"
+                 placeholder="Mon dépôt"></ng-select>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Moyen de paiement</div>
+      <select class="fn-filter-input" [(ngModel)]="filters.moyen" (change)="filterGlobal()" style="padding-left:8px">
+        <option value="">Tous</option>
+        <option *ngFor="let m of moyensDisponibles" [value]="m">{{ m }}</option>
+      </select>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Agent</div>
+      <div class="fn-filter-wrap"><i class="fas fa-user fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.agent" (keydown.enter)="filterGlobal()" placeholder="Nom agent..." />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Du</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-calendar fn-filter-icon"></i>
+        <input class="fn-filter-input" type="date" [(ngModel)]="filters.dateDebut" (change)="filterGlobal()" />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Au</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-calendar fn-filter-icon"></i>
+        <input class="fn-filter-input" type="date" [(ngModel)]="filters.dateFin" (change)="filterGlobal()" />
+      </div>
+    </div>
+    <button class="fn-filter-btn" (click)="filterGlobal()"><i class="fas fa-search"></i> Rechercher</button>
+    <button class="fn-filter-btn secondary" *ngIf="hasActiveFilters" (click)="resetFilters()"><i class="fas fa-times"></i> Réinitialiser</button>
+  </div>
+
+  <p-table [styleClass]="'fn-ptable p-datatable-sm'" [value]="dataList" dataKey="id"
+    [rows]="8" [totalRecords]="totalPages" [lazy]="true" [rowsPerPageOptions]="[10,25,50]"
+    [paginator]="true" (onPage)="onPage($event)">
+    <ng-template pTemplate="header">
+      <tr>
+        <th></th>
+        <th>Agent</th>
+        <th>Dépôt</th>
+        <th>Moyen / Libellé</th>
+        <th>Statut</th>
+        <th class="text-center">Nb</th>
+        <th class="text-end">Montant</th>
+        <th class="text-end">Solde progressif</th>
+        <th>Date</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>
+          <span class="fn-sens-icon" [ngClass]="row?.sens === 'SORTIE' ? 'red' : 'green'" [title]="row?.sens === 'SORTIE' ? 'Dépense' : 'Recouvrement'">
+            <i class="fas" [ngClass]="row?.sens === 'SORTIE' ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
+          </span>
+        </td>
+        <td style="font-weight:600; font-size:12px">
+          {{ row?.agentNomComplet }}
+          <span *ngIf="row?.agentRole === 'depense'" class="fn-badge orange" style="margin-left:6px">Dépense</span>
+          <span *ngIf="row?.agentRole === 'bo'" class="fn-badge gray" style="margin-left:6px">Paiement BO</span>
+        </td>
+        <td style="font-size:11px">{{ row?.depotNom }}</td>
+        <td style="font-size:11px"><span *ngIf="row?.clientNom">({{ row.clientNom }}) </span>{{ row?.moyenPaiement || 'N/A' }}</td>
+        <td>
+          <span class="fn-badge" [ngClass]="row?.agentRole === 'depense' ? 'orange' : 'green'">
+            {{ row?.agentRole === 'depense' ? 'Dépense' : 'Payé' }}
+          </span>
+        </td>
+        <td class="text-center"><span class="fn-badge blue">{{ row?.nbPaiements }}</span></td>
+        <td class="text-end">
+          <span class="fn-amount" [ngClass]="row?.sens === 'SORTIE' ? 'red' : 'green'">
+            {{ row?.sens === 'SORTIE' ? '−' : '+' }}{{ row?.montantValide | number:'1.0-0' }}
+          </span>
+        </td>
+        <td class="text-end" style="font-size:12px">{{ row?.soldeProgressif != null ? (row.soldeProgressif | number:'1.0-0') : '—' }}</td>
+        <td style="color:#6b7280; font-size:11px">{{ row?.dateValidation | date:'dd/MM/yyyy HH:mm' }}</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="9" style="text-align:center; padding:32px; color:#9ca3af; font-size:13px;"><i class="fas fa-inbox me-2"></i>Aucun paiement recouvré trouvé.</td></tr>
+    </ng-template>
+  </p-table>
+</div>

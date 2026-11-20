@@ -1,0 +1,188 @@
+<!-- Card + Table -->
+<div class="sef-card">
+  <div class="sef-topbar">
+    <div>
+      <div class="sef-card-title"><i class="fas fa-box-open"></i> Sorties d'emballage fournisseur</div>
+      <div class="sef-count">{{ dataList?.length || 0 }} sortie(s)</div>
+    </div>
+    <button class="sef-btn-add" (click)="OnCreate()"><i class="fas fa-plus"></i> Nouvelle sortie</button>
+  </div>
+
+  <p-table [styleClass]="'sef-ptable p-datatable-sm'" [value]="dataList" dataKey="id" [rows]="10"
+           [totalRecords]="totalPages" [lazy]="true" [paginator]="true" (onPage)="onPage($event)">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>N° Sortie</th>
+        <th>Fournisseur</th>
+        <th>Dépôt</th>
+        <th>N° Commande</th>
+        <th>Statut</th>
+        <th>Date</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>{{ row.numeroSortie }}</td>
+        <td>{{ row.fournisseur?.nom }}</td>
+        <td>{{ row.depot?.nomDepot }}</td>
+        <td>{{ row.commande?.NumCommande ?? '—' }}</td>
+        <td><span class="sef-status-badge" [ngClass]="getStatutClass(row.statut)">{{ getStatutLabel(row.statut) }}</span></td>
+        <td>{{ row.createdAt | date:'dd/MM/yyyy' }}</td>
+        <td class="text-center">
+          <button *ngIf="row.statut !== 'RETOURNE'" class="sef-action-btn view" (click)="OnRetour(row)" title="Enregistrer un retour">
+            <i class="fas fa-undo-alt"></i>
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="7" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">
+          <i class="fas fa-box-open" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i>
+          Aucune sortie trouvée.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Modal création sortie -->
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div class="sef-modal wide">
+    <div class="sef-modal-header">
+      <div class="sef-modal-icon orange"><i class="fas fa-box-open"></i></div>
+      <div class="sef-modal-title">Nouvelle sortie d'emballage fournisseur</div>
+      <button class="sef-modal-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="sef-modal-body">
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Fournisseur <span class="text-danger">*</span></label>
+          <ng-select [(ngModel)]="selectedFournisseur" [items]="fournisseurList" bindLabel="nom"
+                     placeholder="Sélectionner un fournisseur" (change)="OnLoadCommandes()"></ng-select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Commande liée (optionnel)</label>
+          <ng-select [(ngModel)]="selectedCommande" [items]="commandeList" bindLabel="_bonLabel"
+                     placeholder="Sélectionner une commande" [disabled]="!selectedFournisseur"></ng-select>
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-semibold">Commentaire</label>
+          <input type="text" class="form-control form-control-sm" [(ngModel)]="commentaire" placeholder="Commentaire optionnel" />
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="fw-semibold">Emballages à sortir</span>
+        <button class="btn btn-outline-primary btn-sm" (click)="OpenChoixEmballage()"><i class="fas fa-plus"></i> Ajouter</button>
+      </div>
+
+      <div style="max-height:300px;overflow-y:auto">
+        <table class="table table-bordered table-sm">
+          <thead class="table-light">
+            <tr>
+              <th>Code</th><th>Emballage</th><th>Quantité</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let art of articlesSelectionnes">
+              <td>{{ art.code }}</td>
+              <td>{{ art.libelle }}</td>
+              <td><input type="number" class="form-control-custom" [(ngModel)]="art.quantiteSortie" [min]="1" /></td>
+              <td class="text-center">
+                <button class="btn btn-danger btn-sm" (click)="removeArticle(art)"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+            <tr *ngIf="articlesSelectionnes.length === 0">
+              <td colspan="4" class="text-center text-muted">Aucun emballage sélectionné</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sef-modal-footer">
+      <button class="sef-btn-secondary" (click)="OnCloseModal()">Annuler</button>
+      <button class="sef-btn-submit" (click)="onSubmit()"><i class="fas fa-check"></i> Valider</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal choix emballage -->
+<div *ngIf="isChoiceModalOpen" class="custom-modal">
+  <div class="sef-modal">
+    <div class="sef-modal-header">
+      <div class="sef-modal-icon blue"><i class="fas fa-boxes"></i></div>
+      <div>
+        <div class="sef-modal-title">Sélection des emballages</div>
+        <div class="sef-modal-sub">{{ articlesSelectionnes.length }} emballage(s) sélectionné(s)</div>
+      </div>
+      <button class="sef-modal-close" (click)="isChoiceModalOpen = false"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="sef-modal-body">
+      <div class="emb-search-wrap">
+        <i class="fas fa-search emb-search-icon"></i>
+        <input type="text" class="emb-search-input" [(ngModel)]="searchTerm" (ngModelChange)="filterEmballages()" placeholder="Rechercher un emballage..." />
+      </div>
+      <div class="emb-list">
+        <div *ngFor="let emb of filteredEmballageList" class="emb-item" [class.selected]="emb.isSelected"
+             (click)="emb.isSelected = !emb.isSelected; onCheckEmballage(emb)">
+          <div class="emb-item-check"><i class="fas" [ngClass]="emb.isSelected ? 'fa-check-square' : 'fa-square'"></i></div>
+          <div class="emb-item-code">{{ emb.code }}</div>
+          <div class="emb-item-label">{{ emb.libelle }}</div>
+        </div>
+        <div *ngIf="filteredEmballageList.length === 0" class="emb-empty">
+          <i class="fas fa-search-minus"></i> Aucun résultat
+        </div>
+      </div>
+    </div>
+
+    <div class="sef-modal-footer">
+      <button class="sef-btn-secondary" (click)="isChoiceModalOpen = false">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal retour -->
+<div *ngIf="isRetourModalOpen" class="custom-modal">
+  <div class="sef-modal">
+    <div class="sef-modal-header">
+      <div class="sef-modal-icon orange"><i class="fas fa-undo-alt"></i></div>
+      <div class="sef-modal-title">Retour emballage — {{ selectedSortie?.numeroSortie }}</div>
+      <button class="sef-modal-close" (click)="OnCloseRetourModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="sef-modal-body">
+      <table class="table table-bordered table-sm">
+        <thead class="table-light">
+          <tr>
+            <th>Emballage</th>
+            <th class="text-center">Sorti</th>
+            <th class="text-center">Déjà retourné</th>
+            <th class="text-center">Restant</th>
+            <th class="text-center">Qté retournée</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let art of articlesRetour">
+            <td>{{ art.emballage?.libelle }}</td>
+            <td class="text-center">{{ art.quantiteSortie }}</td>
+            <td class="text-center">{{ art.quantiteRetournee }}</td>
+            <td class="text-center">{{ art.restant }}</td>
+            <td class="text-center">
+              <input type="number" class="form-control-custom" [(ngModel)]="art.quantiteARetourner"
+                     [min]="0" [max]="art.restant" *ngIf="art.restant > 0" />
+              <span *ngIf="art.restant === 0" class="text-success"><i class="fas fa-check"></i></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sef-modal-footer">
+      <button class="sef-btn-secondary" (click)="OnCloseRetourModal()">Annuler</button>
+      <button class="sef-btn-submit" (click)="onSubmitRetour()"><i class="fas fa-check"></i> Enregistrer le retour</button>
+    </div>
+  </div>
+</div>

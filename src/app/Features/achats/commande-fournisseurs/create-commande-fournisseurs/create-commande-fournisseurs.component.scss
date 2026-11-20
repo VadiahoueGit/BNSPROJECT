@@ -1,84 +1,80 @@
-input[type="radio"] {
-    accent-color: green; /* Sets the color of the selected radio button */
+$blue:#0071c2;$green:#16a34a;$red:#dc2626;$border:#e5e7eb;$muted:#9ca3af;$light:#f8fafc;$orange:#f59e0b;
+input[type="radio"]{accent-color:$green;}
+.cf-card{background:white;border-radius:14px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid $border;}
+.cf-topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid $border;}
+.cf-card-title{font-size:15px;font-weight:700;color:#111827;i{color:$blue;margin-right:6px;}}
+.cf-count{font-size:12px;color:$muted;margin-top:2px;}
+.cf-btn-primary{height:36px;padding:0 18px;background:$blue;color:white;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;&:hover{background:#005fa3;}}
+.cf-filters{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px;}
+.cf-filter-item{display:flex;flex-direction:column;gap:4px;}
+.cf-filter-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:$muted;}
+.cf-filter-wrap{position:relative;display:flex;align-items:center;}
+.cf-filter-icon{position:absolute;left:10px;color:$muted;font-size:11px;}
+.cf-filter-input{height:34px;border:1.5px solid $border;border-radius:8px;padding:0 10px 0 28px;font-size:13px;outline:none;&:focus{border-color:$blue;}}
+.cf-btn-search{height:34px;padding:0 14px;background:$light;border:1.5px solid $border;border-radius:8px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;display:flex;align-items:center;gap:6px;&:hover{border-color:$blue;color:$blue;}}
+::ng-deep .cf-ptable{
+  .p-datatable-thead>tr>th{background:$light;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:$muted;padding:10px 14px;border:none;border-bottom:2px solid $border;}
+  .p-datatable-tbody>tr>td{font-size:13px;color:#374151;padding:11px 14px;border-bottom:1px solid #f3f4f6;}
+  .p-datatable-tbody>tr:hover>td{background:#f0f7ff;}
+  .p-datatable-tbody>tr:nth-child(even)>td{background:#fafafa;}
+}
+.cf-status-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;
+  &.attente{background:rgba($orange,.1);color:$orange;}
+  &.valide{background:rgba($blue,.1);color:$blue;}
+  &.info{background:rgba(14,165,233,.1);color:#0ea5e9;}
+  &.success{background:rgba($green,.1);color:$green;}
+  &.annule{background:rgba($red,.1);color:$red;}
+}
+.cf-action-btn{width:28px;height:28px;border-radius:7px;border:1.5px solid $border;background:white;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:all .15s;
+  &.view{color:$blue;&:hover{background:rgba($blue,.1);border-color:$blue;}}
+  &.edit{color:$green;&:hover{background:rgba($green,.1);border-color:$green;}}
+  &.del{color:$red;&:hover{background:rgba($red,.1);border-color:$red;}}
+}
+.custom-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:flex;justify-content:center;align-items:center;z-index:1050;}
+.cf-modal{background:white;border-radius:14px;width:90%;max-width:960px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.15);max-height:90vh;display:flex;flex-direction:column;}
+.cf-modal-sm{background:white;border-radius:14px;width:560px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.15);max-height:90vh;display:flex;flex-direction:column;}
+.cf-modal-header{display:flex;align-items:center;gap:12px;padding:20px 24px 16px;border-bottom:1px solid $border;flex-shrink:0;}
+.cf-modal-icon{width:40px;height:40px;border-radius:10px;background:rgba($blue,.1);color:$blue;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.cf-modal-title{font-size:15px;font-weight:700;color:#111827;margin:0;flex:1;}
+.cf-modal-close{width:30px;height:30px;border-radius:50%;border:1.5px solid $border;background:white;display:flex;align-items:center;justify-content:center;cursor:pointer;color:$muted;font-size:13px;&:hover{background:#fee2e2;border-color:$red;color:$red;}}
+.cf-modal-body{padding:20px 24px;overflow-y:auto;flex:1;}
+.cf-modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:16px 24px;border-top:1px solid $border;flex-shrink:0;}
+.cf-btn-secondary{height:36px;padding:0 16px;background:white;border:1.5px solid $border;border-radius:8px;font-size:13px;font-weight:500;color:#374151;cursor:pointer;&:hover{border-color:#d1d5db;}}
+.cf-btn-submit{height:36px;padding:0 20px;background:$blue;color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;&:hover{background:#005fa3;}&:disabled{opacity:.5;cursor:default;}}
+fieldset{border:1px solid #d1d5db;border-radius:10px;padding:1em;}
+.form-control-custom{width:50px;}
+
+// Formulaire création
+.cf-form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 16px;margin-bottom:4px;}
+.cf-field{display:flex;flex-direction:column;gap:5px;}
+.cf-field-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:$muted;}
+.cf-field-input{height:36px;border:1.5px solid $border;border-radius:8px;padding:0 12px;font-size:13px;color:#374151;outline:none;&:focus{border-color:$blue;box-shadow:0 0 0 3px rgba($blue,.1);}&:disabled{background:#f3f4f6;color:$muted;}}
+.cf-field-action{justify-content:flex-end;}
+::ng-deep .cf-form-grid{
+  .ng-select .ng-select-container{height:36px;min-height:36px;border:1.5px solid $border;border-radius:8px;font-size:13px;}
+  .ng-select.ng-select-focused .ng-select-container{border-color:$blue;box-shadow:0 0 0 3px rgba($blue,.1);}
+  .ng-select .ng-placeholder{color:$muted;font-size:13px;}
+}
+
+// Info section (commande details)
+.cf-info-section{background:#f8fafc;border:1px solid $border;border-radius:10px;padding:14px 18px;margin-bottom:16px;}
+.cf-info-section-title{font-size:13px;font-weight:700;color:#374151;margin-bottom:10px;i{color:$blue;}}
+.cf-info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px 16px;}
+.cf-info-item{display:flex;flex-direction:column;gap:2px;}
+.cf-info-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:$muted;}
+.cf-info-value{font-size:13px;color:#111827;font-weight:500;}
+
+// Articles section
+.cf-articles-section{margin-top:16px;}
+.cf-table-actions{display:flex;gap:8px;align-items:center;margin-bottom:12px;}
+.cf-articles-wrap{overflow-x:auto;max-height:340px;overflow-y:auto;}
+.cf-articles-table{width:100%;border-collapse:collapse;font-size:12px;
+  thead tr:first-child th{background:#dbeafe;color:#1d4ed8;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:7px 10px;border:1px solid $border;text-align:center;
+    &.alt{background:#dcfce7;color:#15803d;}
   }
-  
-  /* Optional: Style the labels to add spacing and font customization */
-  label {
-    font-size: 1rem;
-    color: #333;
-    cursor: pointer;
-  }
-  
-  label + label {
-    margin-left: 15px; /* Adds space between the two labels */
-  }
-  
-  
-  .custom-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1050;
-  }
-  
-  .modal-dialog {
-    background-color: white;
-    border-radius: 0.3rem;
-    width: 90%;
-    min-width: 45em;
-    padding: 1rem;
-  }
-  
-  .modal-dialog2 {
-    background-color: white;
-    border-radius: 0.3rem;
-    width: 45em;
-    padding: 1rem;
-  }
-  
-  .modal-header, .modal-body, .modal-footer {
-    padding: 1rem;
-  }
-  
-  .btn-close {
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
-  }
-  strong{
-    font-size: 13px;
-  }
-  span{
-    font-size: 13px;
-  }
-  
-  .p-fluid .p-inputtext {
-    width: 8em !important;
-    height: 2.5rem;
-  }
-  fieldset{
-    border:1px solid gray;
-    border-radius:10px !important;
-    padding: 1em;
-  }
-  .p-column-filter-menu-button {
-    display: none; /* Masquer l'icône de filtre */
-  }
-  
-  /* Ajuster l'espacement si nécessaire après suppression de l'icône */
-  .p-column-filter {
-    padding-right: 0; /* Supprime l'espace réservé à l'icône */
-  }
-  .form-control-custom{
-    width: 50px;
-  }
-  .label-fixed-width {
-    min-width: 10px;
-  }
-  
+  thead tr:last-child th{background:#f8fafc;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:$muted;padding:6px 10px;border:1px solid $border;}
+  tbody tr{&:hover td{background:#f0f7ff;}}
+  tbody td{padding:7px 10px;border:1px solid #f3f4f6;color:#374151;font-size:12px;vertical-align:middle;}
+  tfoot tr.cf-table-total td{background:#1e293b;color:white;font-weight:700;font-size:12px;padding:8px 10px;border:1px solid #334155;}
+}
+.cf-qty-input{width:70px;height:28px;border:1.5px solid $border;border-radius:6px;padding:0 8px;font-size:12px;text-align:center;outline:none;&:focus{border-color:$blue;}&.invalid{border-color:$red;}}

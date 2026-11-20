@@ -60,7 +60,6 @@ export class MouvementStockComponent {
   statuses!: any[];
   dataList: any[] = [];
   articleList: any[] = [];
-  depotList: any[];
   searchTerm: string = '';
   filteredArticleList: any[] = [];
   selectedArticles: any[] = [];
@@ -72,11 +71,49 @@ export class MouvementStockComponent {
   updateData: any = {};
   articleId: any = 0;
   isEditMode: boolean = false;
-  currentPage: number;
-  rowsPerPage: any;
+  currentPage = 1;
+  rowsPerPage = 20;
+  totalItems = 0;
   isAllSelected: boolean = false;
   now = new Date().toISOString().split('T')[0];
   UserInfo: any
+  depotList: any[] = [];
+  selectedDepotId: any = null;
+  liquideList: any[] = [];
+  emballageList: any[] = [];
+  selectedLiquideId: any = null;
+  selectedEmballageId: any = null;
+  selectedType: any = null;
+  filterDateDebut: string = '';
+  filterDateFin: string = '';
+  natureOptions = [
+    { label: 'Entrée', value: 'ENTREE' },
+    { label: 'Sortie', value: 'SORTIE' },
+    { label: 'Retour', value: 'RETOUR' },
+  ];
+  selectedCode: any = null;
+  selectedOperation: any = null;
+  codeOptions = [
+    { label: 'Emb', value: 'Emb' },
+    { label: 'Vemb', value: 'Vemb' },
+  ];
+  // Opérations telles qu'elles sont enregistrées sur le mouvement. Choisir « Regule » ou
+  // « Transfert » ramène aussi leurs lignes affichées « … emballage ».
+  operationOptions = [
+    'Regule',
+    'Transfert',
+    'Retour plein',
+    'Retour stock',
+    'Commande client',
+    'Commande gratuite',
+    'Vente Chine',
+    'Commande fournisseur',
+    'Réception commande fournisseur',
+    'Retour emballage fournisseur',
+    'Sortie emballage fournisseur',
+    'Entrée gratuite',
+    'Inventaire emballage',
+  ];
 
   constructor(
     private localstorage: LocalStorageService,
@@ -92,13 +129,16 @@ export class MouvementStockComponent {
   ngOnInit() {
     this.UserInfo = this.localstorage.getItem(storage_keys.STOREUser);
     this._spinner.show();
-    this.GetMouvementStock(1)
+    this.GetMouvementStock(1);
+    this.GetDepotList();
+    this.GetLiquideList();
+    this.GetEmballageList();
 
-      setInterval(() => {
-        if(this.dataList.length > 0){
-        this.GetMouvementStock(1)
-          }
-      }, 10000);
+      // setInterval(() => {
+      //   if(this.dataList.length > 0){
+      //   this.GetMouvementStock(1)
+      //     }
+      // }, 10000);
     }
     
 
@@ -155,24 +195,75 @@ export class MouvementStockComponent {
 
 
   GetMouvementStock(page: number) {
-    let data = {
+    this.articleService.GetMouvementStock({
       paginate: true,
-      page: page,
-      limit: 8,
-    };
-    // this._spinner.show();
-    this.articleService.GetMouvementStock(data).then((res: any) => {
-      const stockData: StockEntry[] = [res.data];
-      console.log(stockData);
-      this.dataList = this.flattenStockMovements(stockData);
-      console.log(this.dataList);
+      page,
+      limit: this.rowsPerPage,
+      depotId: this.selectedDepotId,
+      liquideId: this.selectedLiquideId,
+      emballageId: this.selectedEmballageId,
+      type: this.selectedType,
+      dateDebut: this.filterDateDebut,
+      dateFin: this.filterDateFin,
+      code: this.selectedCode,
+      nature: this.selectedOperation,
+    }).then((res: any) => {
+      this.dataList = res.data || [];
+      this.totalItems = res.total || 0;
       this._spinner.hide();
     });
   }
 
-  onPage(event: any) {
-    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
-    this.rowsPerPage = event.rows;
+  GetDepotList() {
+    this._coreService.GetDepotList({ paginate: false, page: 1, limit: 100 }).then((res: any) => {
+      this.depotList = res.data || [];
+    });
+  }
+
+  GetLiquideList() {
+    this.articleService.GetLiquideList({ paginate: false, page: 1, limit: 1000 }).then((res: any) => {
+      this.liquideList = res.data || [];
+    });
+  }
+
+  GetEmballageList() {
+    this.articleService.GetEmballageList({ paginate: false, page: 1, limit: 1000 }).then((res: any) => {
+      this.emballageList = res.data || [];
+    });
+  }
+
+  onDepotFilterChange() {
+    this.currentPage = 1;
+    this._spinner.show();
+    this.GetMouvementStock(1);
+  }
+
+  onFilterChange() {
+    this.currentPage = 1;
+    this._spinner.show();
+    this.GetMouvementStock(1);
+  }
+
+  resetFilters() {
+    this.selectedDepotId = null;
+    this.selectedLiquideId = null;
+    this.selectedEmballageId = null;
+    this.selectedType = null;
+    this.selectedCode = null;
+    this.selectedOperation = null;
+    this.filterDateDebut = '';
+    this.filterDateFin = '';
+    this.onFilterChange();
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.totalItems / this.rowsPerPage);
+  }
+
+  goToPage(page: number) {
+    this.currentPage = page;
+    this._spinner.show();
+    this.GetMouvementStock(page);
   }
 
   goBack() {

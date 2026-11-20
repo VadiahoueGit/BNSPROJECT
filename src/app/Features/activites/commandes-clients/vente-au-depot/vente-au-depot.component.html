@@ -11,13 +11,24 @@
   </div>
 
   <!-- Info client rapide -->
-  <div class="vd-client-badge d-flex align-items-center gap-3" *ngIf="updateData?.client">
-    <div class="vd-avatar">
-      <i class="fas fa-user"></i>
+  <div class="d-flex align-items-center gap-3">
+    <div class="vd-client-badge d-flex align-items-center gap-3" *ngIf="updateData?.client">
+      <div class="vd-avatar">
+        <i class="fas fa-user"></i>
+      </div>
+      <div>
+        <div class="fw-semibold" style="font-size:13px">{{ updateData?.client?.raisonSocial }}</div>
+        <div class="text-muted" style="font-size:11px">{{ updateData?.client?.telephoneGerant }} · {{ updateData?.depot?.nomDepot }}</div>
+      </div>
     </div>
-    <div>
-      <div class="fw-semibold" style="font-size:13px">{{ updateData?.client?.raisonSocial }}</div>
-      <div class="text-muted" style="font-size:11px">{{ updateData?.client?.telephoneGerant }} · {{ updateData?.depot?.nomDepot }}</div>
+    <div class="vd-client-badge d-flex align-items-center gap-2" *ngIf="transporteur">
+      <div class="vd-avatar" style="background:rgba(0,113,194,0.1); color:#0071c2">
+        <i class="fas fa-truck"></i>
+      </div>
+      <div>
+        <div class="fw-semibold" style="font-size:13px">{{ transporteur.nom }} {{ transporteur.prenoms }}</div>
+        <div class="text-muted" style="font-size:11px">Transporteur · {{ transporteur.telephone }}</div>
+      </div>
     </div>
   </div>
 </div>
@@ -298,6 +309,10 @@
       <div class="vd-info-label"><i class="fas fa-calendar me-1"></i> Date RDV</div>
       <div class="vd-info-value">{{ rdvDate | date:'dd/MM/yyyy' }}</div>
     </div>
+    <div class="vd-info-block" *ngIf="transporteur">
+      <div class="vd-info-label"><i class="fas fa-truck me-1"></i> Transporteur</div>
+      <div class="vd-info-value">{{ transporteur.nom }} {{ transporteur.prenoms }}</div>
+    </div>
   </div>
 
   <!-- Recap emballages -->
@@ -357,7 +372,8 @@
           [class.disabled]="!currentStepValid">
     Suivant <i class="fas fa-chevron-right ms-2"></i>
   </button>
-  <button class="vd-btn-success" (click)="valider()" *ngIf="currentStep === totalSteps">
+  <button class="vd-btn-success" (click)="valider()" *ngIf="currentStep === totalSteps"
+          [disabled]="isSubmitting" [class.disabled]="isSubmitting">
     <i class="fas fa-check me-2"></i> Confirmer la vente
   </button>
 </div>

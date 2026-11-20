@@ -1,9 +1,9 @@
-<div class="bui-back mb-4" (click)="goBack()">
-  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
-  <h4 class="fw-bold mb-0">Transfert de stock</h4>
+<div class="sk-back-row" (click)="goBack()">
+  <div class="sk-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="sk-back-title">Transfert de stock</h4>
 </div>
 
-<div class="card">
+<div class="sk-card">
   <form>
     <div class="sk-form-grid">
       <div class="sk-field">
@@ -44,6 +44,7 @@
         <thead>
           <tr>
             <th>Code article</th>
+            <th>Libellé</th>
             <th>Description</th>
             <th>Quantité</th>
             <th class="text-center">Action</th>
@@ -52,6 +53,7 @@
         <tbody>
           <tr *ngFor="let data of selectedArticles">
             <td>{{ data.articleCode }}</td>
+            <td>{{ data.articleName }}</td>
             <td>{{ data.description }}</td>
             <td>{{ data.quantite }}</td>
             <td class="text-center">
@@ -61,7 +63,7 @@
             </td>
           </tr>
           <tr *ngIf="selectedArticles.length === 0">
-            <td colspan="4" class="sk-empty-row">
+            <td colspan="5" class="sk-empty-row">
               <i class="fas fa-exchange-alt me-2"></i>Aucun article ajouté
             </td>
           </tr>

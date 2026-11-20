@@ -7,8 +7,9 @@ import {ArticleServiceService} from 'src/app/core/article-service.service';
 import {UtilisateurResolveService} from 'src/app/core/utilisateur-resolve.service';
 import {ALERT_QUESTION} from 'src/app/Features/shared-component/utils';
 import {ConfigService} from "../../../../core/config-service.service";
-import {StatutCommande} from "../../../../utils/utils";
+import {StatutCommande, isAdminRole} from "../../../../utils/utils";
 import {Router} from "@angular/router";
+import {ActiviteService} from "../../../../core/activite.service";
 
 @Component({
   selector: 'app-saisie-commande',
@@ -64,6 +65,7 @@ export class SaisieCommandeComponent {
   docUrl: any;
   listRevendeurs: any[] = [];
   totalGlobalAfterRemise: number = 0;
+  montantRemise: number = 0;
   prixLiquideArticleSelected: any;
   prixEmballageArticleSelected: any;
   filters: any = {
@@ -72,6 +74,7 @@ export class SaisieCommandeComponent {
     etablissement: '',
     statut: '',
   };
+  statutCommandeOptions: string[] = Object.values(StatutCommande);
   constructor(
     private articleService: ArticleServiceService,
     private utilisateurService: UtilisateurResolveService,
@@ -80,7 +83,8 @@ export class SaisieCommandeComponent {
     private _config: ConfigService,
     private toastr: ToastrService,
     private cdr: ChangeDetectorRef,
-    private _router: Router
+    private _router: Router,
+    private activiteService: ActiviteService
   ) {
   }
 
@@ -133,6 +137,9 @@ export class SaisieCommandeComponent {
       contact: [{value: '', disabled: true},],
       soldeLiquide: [{value: '', disabled: true},],
       fraisTransport: [0, Validators.required],
+      transportActif: [false],
+      montantTransportParCasier: [0],
+      nombreCasiersTransport: [0],
       articles: this.fb.array([]),
     });
     this.docUrl = this._config.docUrl;
@@ -159,10 +166,19 @@ export class SaisieCommandeComponent {
   }
 
   PrintDoc(item: any) {
-    const url = item.bonLivraison;
-    const win = window.open(this.docUrl+'/'+url, '_blank');
-    win?.focus();
-    win?.print();
+    const numCommande = item?.NumCommande;
+    if (!numCommande) {
+      this.toastr.warning('Numéro de commande introuvable.');
+      return;
+    }
+    this._spinner.show();
+    this.activiteService.GetBonLivraisonPdf(numCommande).then(
+      () => this._spinner.hide(),
+      (err: any) => {
+        this._spinner.hide();
+        this.toastr.error(err?.error?.message || 'Erreur lors de la génération du bon de livraison.');
+      }
+    );
   }
 
   onFilterGlobal(event: Event) {
@@ -330,7 +346,7 @@ export class SaisieCommandeComponent {
       id: item.id,
       groupeArticleId: item.groupearticle?.id ? item.groupearticle?.id : item.groupeArticle?.id,
       codeArticleLiquide: item.liquide.code,
-      codeArticleEmballage: item.liquide.emballage ? item.liquide.emballage.code : item.emballage.code,
+      codeArticleEmballage: item.emballage?.code || item.liquide?.emballage?.code,
       prixUnitaireLiquide: Number(this.prixLiquide[item.id]),
       prixUnitaireEmballage: Number(this.prixEmballage[item.id]),
       quantite: Number(item.quantite) || 0,
@@ -349,6 +365,9 @@ export class SaisieCommandeComponent {
       statutCompte: this.updateData.statutCompte,
       numeroSAP: this.updateData.numeroSAP,
       fraisTransport: this.updateData.fraisTransport,
+      transportActif: this.updateData.transportActif,
+      montantTransportParCasier: this.updateData.montantTransportParCasier,
+      nombreCasiersTransport: this.updateData.nombreCasiersTransport,
       remise: this.updateData.remise,
       articles: data
     };
@@ -372,7 +391,7 @@ export class SaisieCommandeComponent {
       id: item.id,
       groupeArticleId: item.groupearticle.id,
       codeArticleLiquide: item.liquide.code,
-      codeArticleEmballage: item.liquide.emballage.code,
+      codeArticleEmballage: item.emballage?.code || item.liquide?.emballage?.code,
       prixUnitaireLiquide: this.prixLiquide[item.id],
       prixUnitaireEmballage: this.prixEmballage[item.id],
       quantite: item.quantite,
@@ -429,8 +448,9 @@ export class SaisieCommandeComponent {
     const fraisTransport =
       this.commandClientForm.get('fraisTransport')?.value || 0;
 
+    this.montantRemise = this.totalLiquide * (remise / 100);
     this.totalGlobalAfterRemise =
-      this.totalGlobalBeforeRemise * (1 - remise / 100);
+      this.totalGlobalBeforeRemise - this.montantRemise;
 
     this.totalGlobal = this.totalGlobalAfterRemise + fraisTransport;
 
@@ -449,6 +469,32 @@ export class SaisieCommandeComponent {
     this.totalGlobal = this.totalGlobalAfterRemise + fraisTransport;
 
     console.log('Montant final après frais de transport :', this.totalGlobal);
+  }
+
+  onTransportChange() {
+    const transportActif = this.commandClientForm.get('transportActif')?.value;
+
+    if (!transportActif) {
+      this.commandClientForm.patchValue({
+        montantTransportParCasier: 0,
+        nombreCasiersTransport: 0,
+        fraisTransport: 0,
+      });
+      this.applyFraisTransport();
+      return;
+    }
+
+    const montantParCasier = this.commandClientForm.get('montantTransportParCasier')?.value || 0;
+    let nombreCasiers = this.commandClientForm.get('nombreCasiersTransport')?.value || 0;
+
+    if (nombreCasiers > this.totalQte) {
+      this.toastr.warning('Le nombre de casiers concernés par le transport ne peut pas dépasser le nombre total de casiers de la commande.');
+      nombreCasiers = this.totalQte;
+      this.commandClientForm.patchValue({ nombreCasiersTransport: nombreCasiers });
+    }
+
+    this.commandClientForm.patchValue({ fraisTransport: montantParCasier * nombreCasiers });
+    this.applyFraisTransport();
   }
 
   removeArticle(item: any): void {
@@ -480,6 +526,7 @@ export class SaisieCommandeComponent {
         articlesControl.removeAt(i);
         articlesControl.updateValueAndValidity();
         this.applyRemise();
+        this.onTransportChange();
         this.cdr.detectChanges(); // 🔑 force refresh si OnPush
         break;
       }
@@ -509,6 +556,7 @@ export class SaisieCommandeComponent {
     this.totalQte += data.quantite;
 
     this.applyRemise();
+    this.onTransportChange();
 
     console.log(data, 'data article');
     data.oldQuantite = data.quantite;
@@ -535,7 +583,7 @@ export class SaisieCommandeComponent {
         this.fb.group({
           groupeArticleId: data.groupearticle?.id ? data.groupearticle?.id : data.groupeArticle?.id,
           codeArticleLiquide: data.liquide.code,
-          codeArticleEmballage: data.liquide.emballage ? data.liquide.emballage.code : data.emballage.code,
+          codeArticleEmballage: data.emballage?.code || data.liquide?.emballage?.code,
           prixUnitaireLiquide: this.prixLiquide[data.id],
           prixUnitaireEmballage: this.prixEmballage[data.id],
           quantite: data.quantite,
@@ -593,6 +641,9 @@ export class SaisieCommandeComponent {
       statutCompte: this.detailPointDevente.isValide ? 'ACTIF' : 'INACTIF',
       numeroSAP: this.detailPointDevente.numeroSAP.numeroSAP,
       fraisTransport: formData.fraisTransport,
+      transportActif: formData.transportActif,
+      montantTransportParCasier: formData.montantTransportParCasier,
+      nombreCasiersTransport: formData.nombreCasiersTransport,
       enCours: formData.enCours,
       remise: formData.remise,
       articles: formData.articles,
@@ -664,6 +715,9 @@ export class SaisieCommandeComponent {
     }
     if (!this.commandClientForm.controls['remise'].value) {
       this.commandClientForm.patchValue({remise: 0});
+    }
+    if (!this.commandClientForm.controls['transportActif'].value) {
+      this.commandClientForm.patchValue({transportActif: false, montantTransportParCasier: 0, nombreCasiersTransport: 0});
     }
     this.cdr.detectChanges();
     console.log(this.isChoiceModalOpen);
@@ -773,7 +827,13 @@ export class SaisieCommandeComponent {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
 
-    this.GetListCommandeClient(this.currentPage);
+    this.GetListCommandeClient(
+      this.currentPage,
+      this.filters.numeroCommande,
+      this.filters.date,
+      this.filters.etablissement,
+      this.filters.statut
+    );
   }
 
   filterArticles(): void {
@@ -859,6 +919,58 @@ export class SaisieCommandeComponent {
       // Gestion des erreurs
       console.error('Erreur lors de la récupération des données:', error);
     }
+  }
+
+  OnCancel(data: any) {
+    ALERT_QUESTION(
+      'warning',
+      'Attention !',
+      'Voulez-vous annuler cette commande client ?'
+    ).then((res: any) => {
+      if (!res.isConfirmed) return;
+      this._spinner.show();
+      this.articleService.AnnulerCommandeClient(data.id).then(
+        (response: any) => {
+          this._spinner.hide();
+          this.toastr.success(response.message);
+          this.GetListCommandeClient(1);
+        },
+        (error: any) => {
+          this._spinner.hide();
+          this.toastr.info(error?.error?.message || 'Erreur lors de l\'annulation');
+        }
+      );
+    });
+  }
+
+  OnAnnulerLivraison(data: any) {
+    ALERT_QUESTION(
+      'warning',
+      'Attention !',
+      "Voulez-vous annuler la livraison de cette commande ? Le statut, les quantités livrées, les retours d'emballages et le crédit client seront réinitialisés pour permettre de relivrer la commande."
+    ).then((res: any) => {
+      if (!res.isConfirmed) return;
+      this._spinner.show();
+      this.articleService.AnnulerLivraisonCommandeClient(data.id).then(
+        (response: any) => {
+          this._spinner.hide();
+          if (response.statusCode >= 400) {
+            this.toastr.error(response.message || "Erreur lors de l'annulation de la livraison.");
+            return;
+          }
+          this.toastr.success(response.message);
+          this.GetListCommandeClient(1);
+        },
+        (error: any) => {
+          this._spinner.hide();
+          this.toastr.error(error?.error?.message || "Erreur lors de l'annulation de la livraison.");
+        }
+      );
+    });
+  }
+
+  isAdmin(): boolean {
+    return isAdminRole();
   }
 
   protected readonly Number = Number;

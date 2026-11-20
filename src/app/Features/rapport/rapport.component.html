@@ -1,43 +1,64 @@
 <!-- ===== HEADER ===== -->
 <div class="rp-page-header">
   <div class="rp-page-header-left">
-    <div class="rp-page-icon">
-      <i class="fas fa-file-chart-line"></i>
-    </div>
+    <div class="rp-page-icon"><i class="fas fa-file-chart-line"></i></div>
     <div>
       <h3 class="rp-page-title">Rapports</h3>
       <span class="rp-page-sub">{{ totalRapports }} rapport{{ totalRapports > 1 ? 's' : '' }} disponible{{ totalRapports > 1 ? 's' : '' }}</span>
     </div>
   </div>
-  <div class="rp-search-wrap">
-    <i class="fas fa-search rp-search-icon"></i>
-    <input class="rp-search-input" type="text" placeholder="Rechercher un rapport..." [(ngModel)]="recherche" />
+  <div class="rp-header-right">
+    <div class="rp-search-wrap">
+      <i class="fas fa-search rp-search-icon"></i>
+      <input class="rp-search-input" type="text" placeholder="Rechercher un rapport..." [(ngModel)]="recherche" />
+    </div>
+    <button class="rp-btn-builder" (click)="ouvrirConstructeur()">
+      <i class="fas fa-code me-2"></i>Créer un rapport
+    </button>
   </div>
 </div>
 
-<!-- ===== CATÉGORIES ===== -->
+<!-- ===== RAPPORTS SAUVEGARDÉS ===== -->
+<div class="rp-section" *ngIf="savedRapports.length > 0">
+  <div class="rp-section-header">
+    <div class="rp-section-badge purple"><i class="fas fa-bookmark"></i></div>
+    <div class="rp-section-info">
+      <div class="rp-section-title">Mes rapports personnalisés</div>
+      <div class="rp-section-desc">Requêtes SQL sauvegardées et réutilisables</div>
+    </div>
+    <div class="rp-section-count purple">{{ savedRapports.length }}</div>
+  </div>
+  <div class="rp-cards-grid">
+    <div class="rp-card" *ngFor="let r of savedRapports" (click)="chargerRapport(r)">
+      <div class="rp-card-icon purple"><i class="fas fa-database"></i></div>
+      <div class="rp-card-body">
+        <div class="rp-card-title">{{ r.titre }}</div>
+        <div class="rp-card-sub">Créé le {{ r.createdAt }}</div>
+      </div>
+      <div class="rp-card-actions">
+        <span class="rp-export-tag" style="background:#ede9fe;color:#7c3aed"><i class="fas fa-play me-1"></i>Ouvrir</span>
+        <button class="rp-btn-del" title="Supprimer" (click)="supprimerRapport(r.id); $event.stopPropagation()">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CATÉGORIES STANDARD ===== -->
 <ng-container *ngFor="let cat of categoriesVisibles">
   <div class="rp-section">
-    <!-- Section header -->
     <div class="rp-section-header">
-      <div class="rp-section-badge" [ngClass]="cat.couleur">
-        <i [class]="cat.icone"></i>
-      </div>
+      <div class="rp-section-badge" [ngClass]="cat.couleur"><i [class]="cat.icone"></i></div>
       <div class="rp-section-info">
         <div class="rp-section-title">{{ cat.label }}</div>
         <div class="rp-section-desc">{{ cat.description }}</div>
       </div>
-      <div class="rp-section-count" [ngClass]="cat.couleur">
-        {{ getRapportsParCategorie(cat.id).length }}
-      </div>
+      <div class="rp-section-count" [ngClass]="cat.couleur">{{ getRapportsParCategorie(cat.id).length }}</div>
     </div>
-
-    <!-- Rapport cards -->
     <div class="rp-cards-grid" *ngIf="getRapportsParCategorie(cat.id).length > 0; else emptyState">
       <div class="rp-card" *ngFor="let rapport of getRapportsParCategorie(cat.id)" (click)="ouvrirRapport(rapport)">
-        <div class="rp-card-icon" [ngClass]="rapport.couleur">
-          <i [class]="rapport.icone"></i>
-        </div>
+        <div class="rp-card-icon" [ngClass]="rapport.couleur"><i [class]="rapport.icone"></i></div>
         <div class="rp-card-body">
           <div class="rp-card-title">{{ rapport.titre }}</div>
           <div class="rp-card-sub">{{ rapport.sousTitre }}</div>
@@ -49,12 +70,9 @@
         </div>
       </div>
     </div>
-
     <ng-template #emptyState>
       <div class="rp-empty">
-        <div class="rp-empty-icon" [ngClass]="cat.couleur">
-          <i [class]="cat.icone"></i>
-        </div>
+        <div class="rp-empty-icon" [ngClass]="cat.couleur"><i [class]="cat.icone"></i></div>
         <div class="rp-empty-text">Rapports {{ cat.label | lowercase }} bientôt disponibles</div>
         <div class="rp-empty-hint">Les rapports seront ajoutés prochainement</div>
       </div>
@@ -67,4 +85,175 @@
   <i class="fas fa-search-minus"></i>
   <div>Aucun rapport ne correspond à "<strong>{{ recherche }}</strong>"</div>
   <button class="rp-btn-clear" (click)="recherche = ''">Effacer la recherche</button>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- MODAL CONSTRUCTEUR DE RAPPORT                                  -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div *ngIf="isModalConstructeur" class="custom-modal">
+  <div class="rp-builder-dialog">
+
+    <!-- ── Header ── -->
+    <div class="rp-builder-header">
+      <div class="rp-builder-header-left">
+        <div class="rp-builder-icon"><i class="fas fa-code"></i></div>
+        <div>
+          <div class="rp-builder-title">Constructeur de rapport</div>
+          <div class="rp-builder-sub">Collez votre requête SQL SELECT et générez le rapport</div>
+        </div>
+      </div>
+      <button class="lv-close-btn" (click)="fermerConstructeur()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- ── Body ── -->
+    <div class="rp-builder-body">
+      <div class="rp-builder-grid">
+
+        <!-- Colonne gauche : formulaire -->
+        <div class="rp-builder-form">
+
+          <div class="rp-builder-form-scroll">
+
+            <div class="rp-field mb-3">
+              <label class="rp-field-label"><i class="fas fa-tag me-1"></i>Titre du rapport</label>
+              <input type="text" class="rp-field-input" [(ngModel)]="cq.titre" placeholder="Ex : Ventes par zone…" />
+            </div>
+
+            <div class="rp-field mb-3">
+              <label class="rp-field-label"><i class="fas fa-database me-1"></i>Requête SQL</label>
+              <div class="rp-sql-hint">
+                Utilisez <code>:monParam</code> pour tout paramètre — ex : <code>:dateDebut</code>, <code>:depotId</code>…<br>
+                Les champs de saisie apparaîtront automatiquement en dessous.
+              </div>
+              <textarea
+                class="rp-sql-textarea"
+                [(ngModel)]="cq.sql"
+                rows="12"
+                spellcheck="false"
+                placeholder="SELECT client, SUM(montant) AS total&#10;FROM commandes&#10;WHERE date BETWEEN :dateDebut AND :dateFin&#10;GROUP BY client&#10;ORDER BY total DESC">
+              </textarea>
+            </div>
+
+            <div *ngIf="cqParams.length > 0" class="rp-params-block mb-2">
+              <div class="rp-params-title">
+                <i class="fas fa-sliders-h me-1"></i>Paramètres détectés
+                <span class="rp-params-count">{{ cqParams.length }}</span>
+              </div>
+              <div class="rp-param-row" *ngFor="let p of cqParams">
+                <span class="rp-param-name">:{{ p }}</span>
+                <input type="text" class="rp-field-input" [(ngModel)]="cqParamValues[p]"
+                  [placeholder]="p.toLowerCase().includes('date') ? 'YYYY-MM-DD' : 'Valeur…'" />
+              </div>
+            </div>
+
+            <div class="rp-erreur" *ngIf="cqErreur">
+              <i class="fas fa-exclamation-triangle me-2"></i>{{ cqErreur }}
+            </div>
+
+          </div><!-- /scroll -->
+
+          <!-- Boutons toujours visibles -->
+          <div class="rp-builder-actions">
+            <button class="vd-btn-outline" type="button" (click)="sauvegarderCq()"
+              [disabled]="!cq.titre.trim() || !cq.sql.trim()">
+              <i class="fas fa-bookmark me-1"></i>Sauvegarder
+            </button>
+            <button class="rp-btn-generer" type="button" (click)="genererCq()"
+              [disabled]="!cq.sql.trim() || cqLoading">
+              <ng-container *ngIf="!cqLoading"><i class="fas fa-play me-2"></i>Générer</ng-container>
+              <ng-container *ngIf="cqLoading"><i class="fas fa-spinner fa-spin me-2"></i>En cours…</ng-container>
+            </button>
+          </div>
+
+        </div><!-- /form -->
+
+        <!-- Colonne droite : résultats -->
+        <div class="rp-builder-results">
+
+          <!-- État initial -->
+          <div class="rp-results-placeholder" *ngIf="!cqGenerated && !cqLoading">
+            <i class="fas fa-table"></i>
+            <p>Les résultats s'afficheront ici<br>après avoir cliqué sur <strong>Générer</strong></p>
+          </div>
+
+          <!-- Loading (in-flow, flex: 1) -->
+          <div class="rp-loading-overlay" *ngIf="cqLoading">
+            <div class="rp-loading-spinner"></div>
+            <div class="rp-loading-text">Exécution en cours…</div>
+          </div>
+
+          <!-- Résultats -->
+          <div class="rp-results-content" *ngIf="cqGenerated && !cqLoading">
+
+            <!-- Barre méta + exports -->
+            <div class="rp-results-meta" *ngIf="cqData.length > 0">
+              <span class="rp-results-count">
+                <i class="fas fa-list me-1"></i>{{ cqData.length }} ligne{{ cqData.length > 1 ? 's' : '' }}
+              </span>
+              <span class="rp-results-count">
+                <i class="fas fa-columns me-1"></i>{{ cqColonnes.length }} colonne{{ cqColonnes.length > 1 ? 's' : '' }}
+              </span>
+              <div class="rp-results-exports">
+                <button class="rp-export-btn excel" (click)="exportExcelCq()">
+                  <i class="fas fa-file-excel me-1"></i>Excel
+                </button>
+                <button class="rp-export-btn pdf" (click)="exportPdfCq()">
+                  <i class="fas fa-file-pdf me-1"></i>PDF
+                </button>
+              </div>
+            </div>
+
+            <!-- Aucun résultat -->
+            <div class="rp-results-placeholder" *ngIf="cqData.length === 0 && !cqErreur">
+              <i class="fas fa-inbox"></i>
+              <p>Aucun résultat pour cette requête</p>
+            </div>
+
+            <!-- Erreur -->
+            <div class="rp-results-placeholder" *ngIf="cqErreur">
+              <i class="fas fa-exclamation-triangle" style="color:#ef4444"></i>
+              <p style="color:#ef4444">{{ cqErreur }}</p>
+            </div>
+
+            <!-- Tableau -->
+            <div class="rp-results-table-wrap" *ngIf="cqData.length > 0">
+              <table class="vd-table rp-results-table">
+                <thead>
+                  <tr>
+                    <th *ngFor="let col of cqColonnes">{{ col }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of cqData">
+                    <td *ngFor="let col of cqColonnes">{{ row[col] ?? '—' }}</td>
+                  </tr>
+                  <tr class="vd-total-row" *ngIf="cqTotaux">
+                    <td *ngFor="let col of cqColonnes">
+                      {{ cqTotaux[col] === '' ? '' : (isNumber(cqTotaux[col]) ? (cqTotaux[col] | number:'1.0-2') : cqTotaux[col]) }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div><!-- /results -->
+
+      </div><!-- /grid -->
+    </div><!-- /body -->
+
+    <!-- ── Footer ── -->
+    <div class="rp-builder-footer">
+      <span class="rp-builder-footer-hint" *ngIf="cqGenerated && cqData.length > 0">
+        <i class="fas fa-check-circle me-1" style="color:#8dae56"></i>
+        {{ cqData.length }} résultat{{ cqData.length > 1 ? 's' : '' }}
+      </span>
+      <span *ngIf="!cqGenerated || cqData.length === 0"></span>
+      <button type="button" class="vd-btn-outline" (click)="fermerConstructeur()">
+        <i class="fas fa-times me-1"></i>Fermer
+      </button>
+    </div>
+
+  </div>
 </div>

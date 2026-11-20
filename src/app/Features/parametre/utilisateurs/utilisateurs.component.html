@@ -1,11 +1,11 @@
-<div class="bui-back mb-4" (click)="goBack()">
-  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
-  <h4 class="fw-bold mb-0">Utilisateurs</h4>
+<div class="usr-back-row" (click)="goBack()">
+  <div class="usr-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="usr-back-title">Utilisateurs</h4>
 </div>
 
-<div class="cc-tabs mb-3">
-  <button class="cc-tab-btn" [class.active]="activeTab === 'profilutilisateur'" (click)="activeElement('profilutilisateur')">Profils utilisateurs</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'utilisateur'" (click)="activeElement('utilisateur')">Utilisateurs</button>
+<div class="usr-tabs mb-3">
+  <button class="usr-tab-btn" [class.active]="activeTab === 'profilutilisateur'" (click)="activeElement('profilutilisateur')">Profils utilisateurs</button>
+  <button class="usr-tab-btn" [class.active]="activeTab === 'utilisateur'" (click)="activeElement('utilisateur')">Utilisateurs</button>
 </div>
 
 <div *ngIf="activeTab === 'profilutilisateur'">

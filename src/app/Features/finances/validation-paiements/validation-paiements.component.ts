@@ -4,7 +4,8 @@ import {NgxSpinnerService} from 'ngx-spinner';
 import {ToastrService} from 'ngx-toastr';
 import {Table} from 'primeng/table';
 import {ArticleServiceService} from 'src/app/core/article-service.service';
-import {ALERT_QUESTION} from '../../shared-component/utils';
+import {ALERT_QUESTION, ALERT_INFO} from '../../shared-component/utils';
+import * as Swal from 'sweetalert2';
 import {FinanceService} from '../../../core/finance.service';
 import {calculeDateEcheance, Status} from "../../../utils/utils";
 
@@ -19,7 +20,9 @@ export class ValidationPaiementsComponent {
     commande: '',
     agent: '',
     client: '',
-    statut: ''
+    statut: '',
+    dateDebut: '',
+    dateFin: ''
   };
   statuses!: any[];
   dataList!: any[];
@@ -94,19 +97,23 @@ export class ValidationPaiementsComponent {
       this.filters.commande,
       this.filters.agent,
       this.filters.client,
-      this.filters.statut
+      this.filters.statut,
+      this.filters.dateDebut,
+      this.filters.dateFin
     );
   }
 
-  GetPaiementList(page: number,numeroCommande?: string,agent?: string,clientNom?: string,statut?: string) {
+  GetPaiementList(page: number, numeroCommande?: string, agent?: string, clientNom?: string, statut?: string, dateDebut?: string, dateFin?: string) {
     let data = {
       paginate: true,
       page: page,
       limit: 8,
       numeroCommande: numeroCommande || '',
-      agent:agent || '',
+      agent: agent || '',
       clientNom: clientNom || '',
-      statut:statut || ''
+      statut: statut || '',
+      dateDebut: dateDebut || '',
+      dateFin: dateFin || ''
     };
     this._spinner.show();
     this.financeService.GetPaiementList(data).then((res: any) => {
@@ -169,34 +176,108 @@ export class ValidationPaiementsComponent {
   }
 
   ValidatePaiement(data: any) {
-    ALERT_QUESTION(
-      'warning',
-      'Attention !',
-      'Voulez-vous valider ce paiement?'
-    ).then((res) => {
-      if (res.isConfirmed == true) {
-        this._spinner.show();
-        console.log('validation:::>', data);
-        this.financeService.ValidatePaiement(data.id).then((res: any) => {
-          // console.log('validation:::>', res);
-          if (res.statusCode == 200) {
-            this.GetPaiementList(1);
-            const match = this.dataList.find(item => item.id === this.updateData.id);
-            this.OnEdit(match);
+    const libelleMoyen = data?.moyenPaiement?.libelle;
+    const necessiteBanqueCheque = libelleMoyen === 'Banque' || libelleMoyen === 'Chèque';
+    const montantDeclare = Number(data?.montant || 0);
+    const montantValideInput = `<input id="swal-montant-valide" type="number" class="swal2-input" placeholder="Montant validé" value="${montantDeclare}">`;
 
-
-            this.toastr.success(res.message);
-            // this.OnCloseModal();
-          } else {
-            this.toastr.error(res.message);
+    if (necessiteBanqueCheque) {
+      (Swal as any).default.fire({
+        icon: 'warning',
+        title: `Paiement par ${libelleMoyen}`,
+        html:
+          `<input id="swal-banque" class="swal2-input" placeholder="Nom de la banque">` +
+          `<input id="swal-numero-cheque" class="swal2-input" placeholder="Numéro de chèque (alphanumérique)">` +
+          montantValideInput,
+        showCancelButton: true,
+        confirmButtonText: 'Valider',
+        cancelButtonText: 'Annuler',
+        confirmButtonColor: 'var(--primary-color)',
+        heightAuto: false,
+        preConfirm: () => {
+          const banque = (document.getElementById('swal-banque') as HTMLInputElement)?.value?.trim();
+          const numeroCheque = (document.getElementById('swal-numero-cheque') as HTMLInputElement)?.value?.trim();
+          const montantValideStr = (document.getElementById('swal-montant-valide') as HTMLInputElement)?.value?.trim();
+          if (!banque || !numeroCheque) {
+            (Swal as any).default.showValidationMessage('Le nom de la banque et le numéro de chèque sont obligatoires.');
+            return false;
           }
-          this._spinner.hide();
+          if (!/^[a-zA-Z0-9]+$/.test(numeroCheque)) {
+            (Swal as any).default.showValidationMessage('Le numéro de chèque doit être alphanumérique.');
+            return false;
+          }
+          if (montantValideStr === '' || isNaN(Number(montantValideStr)) || Number(montantValideStr) < 0) {
+            (Swal as any).default.showValidationMessage('Le montant validé est obligatoire et doit être positif.');
+            return false;
+          }
+          return { banque, numeroCheque, montantValide: Number(montantValideStr) };
+        },
+      }).then((res: any) => {
+        if (res.isConfirmed) {
+          this.confirmerEcartPuisValider(data, montantDeclare, res.value);
+        }
+      });
+      return;
+    }
 
-
-        });
-      } else {
-        res.isConfirmed == false;
+    (Swal as any).default.fire({
+      icon: 'warning',
+      title: 'Valider ce paiement ?',
+      html: montantValideInput,
+      showCancelButton: true,
+      confirmButtonText: 'Valider',
+      cancelButtonText: 'Annuler',
+      confirmButtonColor: 'var(--primary-color)',
+      heightAuto: false,
+      preConfirm: () => {
+        const montantValideStr = (document.getElementById('swal-montant-valide') as HTMLInputElement)?.value?.trim();
+        if (montantValideStr === '' || isNaN(Number(montantValideStr)) || Number(montantValideStr) < 0) {
+          (Swal as any).default.showValidationMessage('Le montant validé est obligatoire et doit être positif.');
+          return false;
+        }
+        return { montantValide: Number(montantValideStr) };
+      },
+    }).then((res: any) => {
+      if (res.isConfirmed) {
+        this.confirmerEcartPuisValider(data, montantDeclare, res.value);
       }
+    });
+  }
+
+  // Double facteur de vérification en cas d'écart (même schéma que Retour Plein) : une popup
+  // d'information bloquante suivie d'une confirmation Oui/Non, avant d'envoyer la validation.
+  private confirmerEcartPuisValider(data: any, montantDeclare: number, extra: { banque?: string; numeroCheque?: string; montantValide: number }) {
+    const ecart = montantDeclare - extra.montantValide;
+    const proceed = () => {
+      ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous valider ce paiement?').then((res) => {
+        if (res.isConfirmed == true) {
+          this.doValidatePaiement(data, extra);
+        }
+      });
+    };
+    if (ecart !== 0) {
+      ALERT_INFO(
+        'info',
+        'Écart détecté',
+        `Montant déclaré : ${montantDeclare.toLocaleString()} FCFA. Montant validé : ${extra.montantValide.toLocaleString()} FCFA. Écart : ${Math.abs(ecart).toLocaleString()} FCFA.`
+      ).then(() => proceed());
+    } else {
+      proceed();
+    }
+  }
+
+  private doValidatePaiement(data: any, extra: { banque?: string; numeroCheque?: string; montantValide?: number }) {
+    this._spinner.show();
+    this.financeService.ValidatePaiement(data.id, extra).then((res: any) => {
+      if (res.statusCode == 200) {
+        this.GetPaiementList(1);
+        const match = this.dataList.find(item => item.id === this.updateData.id);
+        this.OnEdit(match);
+        this.toastr.success(res.message);
+      } else {
+        this.toastr.error(res.message);
+      }
+      this._spinner.hide();
     });
   }
 
@@ -207,6 +288,19 @@ export class ValidationPaiementsComponent {
       console.log('data:::>', res);
       this._spinner.hide();
     });
+  }
+
+  downloadRecu(row: any) {
+    this.financeService.getRecuPaiement(row.id).then((blob: Blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `recu-${row.numTransaction || row.id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }).catch(() => this.toastr.error('Erreur lors du téléchargement du reçu'));
   }
 
   protected readonly Status = Status;

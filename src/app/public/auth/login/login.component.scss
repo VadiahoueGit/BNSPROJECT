@@ -21,3 +21,140 @@
     height: 45px;
     border:var(--bs-border-width) solid rgb(187, 187, 187);
  }
+
+.company-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.company-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+
+  &__header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 0.35rem;
+  }
+
+  &__sub {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin: 0;
+  }
+
+  &__cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__loading {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.depot-hote-modal {
+  max-width: 460px;
+
+  .depot-hote-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-control {
+    height: 45px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    &:focus {
+      border-color: var(--primary-color, #0d6efd);
+      box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+    }
+  }
+
+  .btn-primary {
+    height: 48px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+}
+
+.company-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  background: #f8f9fa;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: left;
+
+  &:hover:not(:disabled) {
+    border-color: var(--primary-color, #0d6efd);
+    background: #eef3ff;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &__logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e9ecef;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__logo-placeholder {
+    font-size: 1.6rem;
+  }
+
+  &__label {
+    flex: 1;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #1a1a2e;
+  }
+
+  &__arrow {
+    font-size: 1.4rem;
+    color: #adb5bd;
+    font-weight: 300;
+  }
+}

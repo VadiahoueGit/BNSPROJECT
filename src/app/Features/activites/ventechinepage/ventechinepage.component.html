@@ -1,1083 +1,644 @@
-<div class="card">
-  <div class="d-flex justify-content-end py-3">
-    <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
-      Planifier vente
+<!-- ══ LISTE PRINCIPALE ══════════════════════════════════════════ -->
+<div class="vcp-card">
+  <div class="vcp-topbar">
+    <div class="vcp-topbar-left">
+      <div class="vcp-title"><i class="fas fa-truck-moving"></i> Ventes Chine</div>
+      <div class="vcp-count">{{ totalPages }} vente(s)</div>
+    </div>
+    <button class="vcp-btn-primary" (click)="OnCreate()">
+      <i class="fas fa-plus me-2"></i>Planifier une vente
     </button>
   </div>
-  <p-table
-    [styleClass]="'p-datatable-sm'"
-    #dt2
-    [value]="dataList"
-    dataKey="id"
-    [rows]="8"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [paginator]="true"
-    [totalRecords]="totalPages" [lazy]="true"
-    (onPage)="onPage($event)"
-  >
+
+  <div class="vcp-filters">
+    <div class="vcp-filter-item">
+      <div class="vcp-filter-label">N° Vente Chine</div>
+      <div class="vcp-filter-wrap">
+        <i class="fas fa-truck-moving vcp-filter-icon"></i>
+        <input class="vcp-filter-input" [(ngModel)]="filters.numVenteChine" (keydown.enter)="filterList()" placeholder="Numéro..." />
+      </div>
+    </div>
+    <div class="vcp-filter-item">
+      <div class="vcp-filter-label">Commercial</div>
+      <div class="vcp-filter-wrap">
+        <i class="fas fa-user vcp-filter-icon"></i>
+        <input class="vcp-filter-input" [(ngModel)]="filters.commercial" (keydown.enter)="filterList()" placeholder="Nom commercial..." />
+      </div>
+    </div>
+    <div class="vcp-filter-item">
+      <div class="vcp-filter-label">Localité</div>
+      <div class="vcp-filter-wrap">
+        <i class="fas fa-map-marker-alt vcp-filter-icon"></i>
+        <input class="vcp-filter-input" [(ngModel)]="filters.localite" (keydown.enter)="filterList()" placeholder="Localité..." />
+      </div>
+    </div>
+    <div class="vcp-filter-item">
+      <div class="vcp-filter-label">Statut</div>
+      <div class="vcp-filter-wrap">
+        <i class="fas fa-filter vcp-filter-icon"></i>
+        <input class="vcp-filter-input" [(ngModel)]="filters.statut" (keydown.enter)="filterList()" placeholder="Statut..." />
+      </div>
+    </div>
+    <button class="vcp-filter-btn" (click)="filterList()"><i class="fas fa-search me-1"></i>Rechercher</button>
+  </div>
+
+  <p-table [styleClass]="'vcp-ptable p-datatable-sm'" #dt2 [value]="dataList" dataKey="id"
+    [rows]="8" [totalRecords]="totalPages" [lazy]="true" [rowsPerPageOptions]="[10,25,50]"
+    [paginator]="true" (onPage)="onPage($event)">
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color)">Numero de vente</th>
-        <th style="color: var(--secondary-color)">Commercial</th>
-        <th style="color: var(--secondary-color)">Localité</th>
-        <th style="color: var(--secondary-color)">Date prévue</th>
-        <th style="color: var(--secondary-color)">Statut</th>
-        <th class="d-flex justify-content-center" style="color: var(--secondary-color)">Action</th>
+        <th>N° Vente</th>
+        <th>Commercial</th>
+        <th>Localité</th>
+        <th>Date prévue</th>
+        <th>Statut</th>
+        <th class="text-center">Actions</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-dataList>
+    <ng-template pTemplate="body" let-row>
       <tr>
+        <td><span class="vcp-num">{{ row?.numVenteChine }}</span></td>
         <td>
-          <span class="">
-            {{ dataList?.numVenteChine }}
-          </span>
+          <div class="vcp-agent-cell">
+            <div class="vcp-mini-avatar">{{ (row?.commercial?.nom || '?')[0] }}</div>
+            <span>{{ row?.commercial?.nom }} {{ row?.commercial?.prenoms }}</span>
+          </div>
         </td>
-        <td>
-          <span class="">
-            {{ dataList?.commercial.nom }} {{ dataList?.commercial.prenoms }}
-          </span>
+        <td><i class="fas fa-map-marker-alt me-1 text-muted" style="font-size:10px"></i>{{ row?.localite?.nomLocalite }}</td>
+        <td><span class="vcp-date-cell">{{ row?.dateVente | date:'dd/MM/yyyy' }}</span></td>
+        <td><span class="vcp-statut-badge" [ngClass]="getStatutClass(row?.statut)">{{ row?.statut }}</span></td>
+        <td class="text-center">
+          <div class="vcp-actions-cell">
+            <span class="vcp-icon-btn" title="Voir détail" (click)="OnEdit(row)"><i class="fas fa-eye"></i></span>
+            <span class="vcp-icon-btn print" title="Imprimer BL" (click)="ImprimerBL(row)"><i class="fas fa-print"></i></span>
+          </div>
         </td>
-        <td>
-          {{ dataList?.localite.nomLocalite }}
-        </td>
-        <td>
-          {{ dataList?.dateVente |date }}
-        </td>
-        <td>
-          {{ dataList?.statut }}
-        </td>
-        <td>
-      <tr class="d-flex justify-content-center gap-3">
-        <td>
-          <i
-            (click)="OnEdit(dataList)"
-            style="cursor: pointer"
-            class="fas fa-eye text-secondary"
-          ></i>
-        </td>
-      </tr>
-      </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="5">Aucune vente trouvée.</td>
-      </tr>
+      <tr><td colspan="6" class="vcp-empty"><i class="fas fa-inbox me-2"></i>Aucune vente trouvée.</td></tr>
     </ng-template>
   </p-table>
 </div>
 
-<!-- Modal creation -->
-<!-- Modal -->
+<!-- ══ MODAL PRINCIPAL ══════════════════════════════════════════ -->
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div
-          class="d-flex justify-content-center align-items-center"
-          style="
-            background-color: rgb(219, 255, 232);
-            border-radius: 3rem;
-            width: 3rem;
-            height: 3rem;
-          "
-        >
-          <i class="fas fa-box-check text-primary fs-3"></i>
+  <div class="vd-modal-dialog vcp-modal-wide">
+
+    <!-- Header -->
+    <div class="vd-modal-header">
+      <div class="vd-mh-left">
+        <div class="vd-mh-icon orange"><i class="fas fa-truck-moving"></i></div>
+        <div>
+          <div class="vd-mh-title">{{ operation === 'create' ? 'Planifier une vente' : 'Vente Chine' }}</div>
+          <div class="vd-mh-sub" *ngIf="operation !== 'create'">{{ updateData?.numVenteChine }}</div>
         </div>
-        <h1
-          *ngIf="operation == 'create'"
-          class="modal-title fs-5 ms-3"
-          id="staticBackdropLabel"
-        >
-          Création vente chine
-        </h1>
-        <h1
-          *ngIf="operation == 'edit'"
-          class="modal-title fs-5 ms-3"
-          id="staticBackdropLabel"
-        >
-          Détail vente chine
-        </h1>
       </div>
-      <nav class="nav nav-pills flex-column flex-sm-row gap-1 border-bottom">
-        <a class="flex-sm text-sm-center nav-link" *ngIf="operation == 'edit'" [class.active]="activeTab === 'detail'"
-           (click)="activeElement('detail')">Détails</a>
-        <a class="flex-sm text-sm-center nav-link" *ngIf="operation == 'edit'"
-           [class.active]="activeTab === 'suivivente'"
-           (click)="activeElement('suivivente')">Suivi des ventes</a>
-        <a class="flex-sm text-sm-center nav-link" *ngIf="operation == 'edit'" [class.active]="activeTab === 'retour'"
-           (click)="activeElement('retour')">Retours d'emballage</a>
-      </nav>
-      <div class="modal-body" style="max-height: 70vh;overflow-y: auto;">
-        <!-- DETAIL VENTE-->
-        <div class="row  tab-pane fade show active" *ngIf="activeTab === 'detail'">
-          <div class="d-flex justify-content-end"
-               *ngIf="updateData?.statut == StatutCommande.APPROUVEE && operation == 'edit'">
-            <button
-              type="submit"
-              class="btn btn-warning px-2 mx-2"
-              (click)="goToVenteManuelle(updateData)"
-            >
-              <i class="fa-solid fa-person-to-portal"></i>
-              <span class="ms-2">Recuperation au depot</span>
-            </button>
-          </div>
-          <div class="d-flex justify-content-end" *ngIf="updateData?.statut == StatutCommande.ATTENTE_VALIDATION">
-            <button
-              *ngIf="operation == 'edit' && updateData?.statut == StatutCommande.ATTENTE_VALIDATION"
-              type="submit"
-              class="btn btn-secondary px-2 mx-2"
-              (click)="OnAddGoods(operation,updateData,updateData?.articles)"
-            >
-              <i class="fas fa-plus"></i>
-              <span class="ms-2">Ajouter</span>
-            </button>
-            <button
-              *ngIf="operation == 'edit' && updateData?.statut == StatutCommande.ATTENTE_VALIDATION"
-              type="submit"
-              class="btn btn-secondary px-2"
-              (click)="updateGoods(updateData,operation)"
-            >
-              <i class="fas fa-edit"></i>
-              <span class="ms-2">{{ operation === 'edit' ? 'Modifier' : 'Valider les changements' }}</span>
-            </button>
-          </div>
-          <form [formGroup]="VenteForm" *ngIf="operation == 'create'">
-            <fieldset class="row border my-2">
-              <legend class="fs-6 text-primary">Ressources & chargement</legend>
-              <div class="col-md-4">
-                <div class="mb-3">
-                  <label class="form-label"
-                  >Commercial <span class="text-danger">*</span></label
-                  >
-                  <ng-select
-                    class="form-control"
-                    [items]="dataListCommercial"
-                    bindLabel="fullLabel"
-                    bindValue="id"
-                    formControlName="commercialId"
-                    [searchable]="true"
-                    (change)="onCommercialChange($event)"
-                  >
-                  </ng-select>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label"
-                  >Localité <span class="text-danger">*</span></label
-                  >
-                  <ng-select
-                    class="form-control"
-                    [items]="dataListLocalite"
-                    bindLabel="nomLocalite"
-                    bindValue="id"
-                    formControlName="localiteId"
-                    [searchable]="true"
-                  >
-                  </ng-select>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="mb-3">
-                  <label class="form-label"
-                  >Date <span class="text-danger">*</span></label
-                  >
-                  <input
-                    type="date"
-                    [min]="now"
-                    class="form-control"
-                    formControlName="venteDate"
-                  />
-                </div>
-                <div class="mb-3">
-                  <label class="form-label"
-                  >Camion <span class="text-danger">*</span></label
-                  >
-                  <ng-select
-                    class="form-control"
-                    [items]="dataListCamion"
-                    bindLabel="marque"
-                    bindValue="id"
-                    formControlName="vehiculeId"
-                    [searchable]="true"
-                  >
-                  </ng-select>
-                </div>
-              </div>
+      <div class="vd-mh-right">
+        <span *ngIf="operation !== 'create'" class="vd-statut-chip" [ngClass]="getStatutClass(updateData?.statut)">{{ updateData?.statut }}</span>
+        <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
 
-            </fieldset>
-          </form>
-          <div>
-            <fieldset class="row border my-1"
-                      *ngIf="operation == 'edit' || operation == 'update' || operation == 'createNew'">
-              <legend style="font-size: 14px" class="text-secondary">
-                Information Livraison
-              </legend>
+    <!-- Tabs (edit only) -->
+    <div class="vcp-tabs" *ngIf="operation === 'edit'">
+      <button class="vcp-tab" [ngClass]="{'active': activeTab === 'detail'}" (click)="activeElement('detail')">
+        <i class="fas fa-info-circle me-1"></i>Détails
+      </button>
+      <button class="vcp-tab" [ngClass]="{'active': activeTab === 'suivivente'}" (click)="activeElement('suivivente')">
+        <i class="fas fa-chart-line me-1"></i>Suivi des ventes
+        <span class="vcp-tab-badge" *ngIf="updateData?.ventes?.length">{{ updateData?.ventes?.length }}</span>
+      </button>
+      <button class="vcp-tab" [ngClass]="{'active': activeTab === 'retour'}" (click)="activeElement('retour')">
+        <i class="fas fa-rotate-left me-1"></i>Retours d'emballage
+        <span class="vcp-tab-badge" *ngIf="updateData?.retours?.length">{{ updateData?.retours?.length }}</span>
+      </button>
+    </div>
 
-              <div class="row">
-                <div class="col-md-4">
-                  <strong>Numero vente: </strong>
-                  <span>{{ updateData?.numVenteChine }}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Commercial: </strong>
-                  <span>{{ updateData?.commercial.nom }} {{ updateData?.commercial.nom }}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Localité: </strong>
-                  <span>{{ updateData?.localite.nomLocalite }}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Dépot: </strong>
-                  <span>{{ updateData?.commercial.depot.nomDepot }}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Montant liquide: </strong>
-                  <span>{{ totalLiquide | currency:'XOF' }}</span>
-                </div>
-              </div>
-            </fieldset>
-            <fieldset class="row border my-2"
-                      *ngIf="operation == 'edit' || operation == 'update' || operation == 'createNew'">
-              <legend style="font-size: 14px" class="text-secondary">
-                Informations du véhicule
-              </legend>
-              <div class="row">
-                <div class="col-md-4">
-                  <strong>Marque: </strong>
-                  <span>{{ updateData?.vehicule.marque }}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Immatriculation : </strong>
-                  <span>{{ updateData?.vehicule.immatriculation }}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Energie : </strong>
-                  <span>{{ updateData?.vehicule.energie }}</span>
-                </div>
-                <div class="col-md-4">
-                  <strong>Capacité : </strong>
-                  <span>{{ updateData?.vehicule.capacite }}</span>
-                </div>
-              </div>
-            </fieldset>
-            <fieldset class="row border my-2">
-              <div class="row">
-                <legend class="fs-6 text-primary">Articles payants</legend>
-                <div class="col-md-4">
-                  <button
-                    type="button"
-                    class="btn btn-secondary my-2"
-                    (click)="selectArticle()"
-                    [disabled]="VenteForm.controls['commercialId'].invalid"
-                    *ngIf="operation != 'createNew'"
-                  >
-                    Ajouter des articles
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-secondary my-2"
-                    (click)="selectArticleNew()"
-                    *ngIf="operation == 'createNew'"
-                  >
-                    Ajouter des articles
-                  </button>
-                </div>
-              </div>
-              <table *ngIf="operation == 'create' || operation == 'createNew'" class="table table-bordered">
-                <thead class="table-success">
-                <!-- Première ligne d'en-tête -->
-                <tr>
-                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
-                  <th scope="col" colspan="4">MONTANT TTC(FCFA)</th>
-                </tr>
-                <!-- Deuxième ligne d'en-tête -->
-                <tr>
-                  <th scope="col">Liquide</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Qte</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Actions</th>
-                </tr>
-                </thead>
+    <!-- Body -->
+    <div class="vd-modal-body">
 
-                <tbody>
-                <tr *ngFor="let item of  operation == 'createNew'? newCommande : selectedArticles">
-                  <td>{{ item?.liquide?.libelle }}</td>
-                  <td>{{ prixLiquide[item.id] | number }}</td>
-                  <td>{{ prixEmballage[item.id] | number }}</td>
-                  <td>{{ prixEmballage[item.id] + prixLiquide[item.id]| number }}</td>
-                  <td>
-                    <input
-                      type="number"
-                      class="form-control-custom"
-                      [(ngModel)]="item.quantite"
-                      [min]="0"
-                      [max]="stocksDisponibles[item.liquide.id]"
-                      [disabled]="stocksDisponibles[item.liquide.id] === 0"
-                      [ngClass]="{
-                          invalid: item.quantite > stocksDisponibles[item.liquide.id]
-                        }"
-                      (blur)="validateQuantite(item)"
-                    />
-                    / {{ stocksDisponibles[item.liquide.id] }}
-                  </td>
-                  <td>{{ prixLiquideTotal[item.id] | number }}</td>
-                  <td>{{ prixEmballageTotal[item.id] | number }}</td>
-                  <td>{{ montantTotal[item.id] | number }}</td>
-                  <td class="d-flex justify-content-center">
-                    <button
-                      type="button"
-                      class="btn btn-danger btn-sm"
-                      (click)="removeArticle(item)"
-                    >
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr class="table-dark">
-                  <th scope="col" colspan="4">Total :</th>
-                  <td>{{ totalQte | number }}</td>
-                  <td>{{ totalLiquide | number }}</td>
-                  <td>{{ totalEmballage | number }}</td>
-                  <td>{{ totalGlobal| number }}</td>
-                  <td></td>
-                </tr>
-                </tbody>
-              </table>
-              <table *ngIf="operation == 'update'" class="table table-bordered">
-                <thead class="table-success">
-                <!-- Première ligne d'en-tête -->
-                <tr>
-                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
-                  <th scope="col" colspan="4">MONTANT TTC(FCFA)</th>
-                </tr>
-                <!-- Deuxième ligne d'en-tête -->
-                <tr>
-                  <th scope="col">Liquide</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Qte</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Actions</th>
-                </tr>
-                </thead>
+      <!-- ── ONGLET DÉTAILS ── -->
+      <div *ngIf="activeTab === 'detail'">
 
-                <tbody>
-                <tr *ngFor="let item of newCommande">
-                  <td>{{ item?.liquide?.libelle }}</td>
-                  <td>{{ item.prixUnitaireLiquide | number }}</td>
-                  <td>{{ item.prixUnitaireEmballage | number }}</td>
-                  <td>{{ (item.prixUnitaireLiquide || 0) * 1 + (item.prixUnitaireEmballage || 0) * 1 | number }}</td>
-                  <td>
-                    <input
-                      type="number"
-                      class="form-control-custom"
-                      [(ngModel)]="item.quantite"
-                      [min]="0"
-                      (ngModelChange)="getLocalPrice(item)"
-                    />
-                    / {{ stocksDisponibles[item.liquide.id] }}
-                  </td>
-                  <td>{{ prixLiquideTotal[item.id] | number }}</td>
-                  <td>{{ prixEmballageTotal[item.id] | number }}</td>
-                  <td>{{ montantTotal[item.id]| number }}</td>
-                  <td class="d-flex justify-content-center">
-                    <button
-                      type="button"
-                      class="btn btn-danger btn-sm"
-                      (click)="DeleteArticleCommande(item)"
-                    >
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr class="table-dark">
-                  <th scope="col" colspan="4">Total :</th>
-                  <td>{{ totalQte| number }}</td>
-                  <td>{{ totalLiquide | number }}</td>
-                  <td>{{ totalEmballage | number }}</td>
-                  <td>{{ totalGlobal | number }}</td>
-                  <td></td>
-                </tr>
-                </tbody>
-              </table>
-              <table *ngIf="operation == 'edit'" class="table table-bordered">
-                <thead class="table-success">
-                <!-- Première ligne d'en-tête -->
-                <tr>
-                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
-                  <th scope="col" colspan="3">MONTANT TTC(FCFA)</th>
-                </tr>
-                <!-- Deuxième ligne d'en-tête -->
-                <tr>
-                  <th scope="col">Liquide</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Qte vendu</th>
-                  <th scope="col">Qte restante</th>
-                  <th scope="col">Qte</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                </tr>
-                </thead>
-
-                <tbody>
-                <tr *ngFor="let item of updateData?.articles">
-                  <td>{{ item.liquide.libelle }}1</td>
-                  <td>{{ item.prixUnitaireLiquide | number }}</td>
-                  <td>{{ item.prixUnitaireEmballage | number }}</td>
-                  <td>{{ Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) | number }}</td>
-                  <td>{{ item.quantiteVendue }}</td>
-                  <td>{{ item.quantite }}</td>
-                  <td>{{ item.quantiteAffectee }}</td>
-                  <td>{{ item.montantLiquide | number }}</td>
-                  <td>{{ item.montantEmballage | number }}</td>
-                  <td>{{ Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) | number }}</td>
-
-                </tr>
-                <tr class="table-dark">
-                  <th scope="col" colspan="4">Total :</th>
-                  <td>{{ totalQteVendue | number }}</td>
-                  <td>{{ totalQteRestant | number }}</td>
-                  <td>{{ totalQte| number }}</td>
-                  <td>{{ totalLiquide | number }}</td>
-                  <td>{{ totalEmballage | number }}</td>
-                  <td>{{ totalGlobal | number }}</td>
-                </tr>
-                </tbody>
-              </table>
-            </fieldset>
-            <fieldset class="row border my-2">
-              <div class="row">
-                <legend class="fs-6 text-primary">Articles gratuits</legend>
-                <div class="col-md-4">
-                  <button
-                    type="button"
-                    class="btn btn-secondary my-2"
-                    (click)="selectArticleGratuit()"
-                    [disabled]="VenteForm.controls['commercialId'].invalid "
-                    *ngIf="operation != 'createNew'"
-                  >
-                    Ajouter des gratuités
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-secondary my-2"
-                    (click)="selectArticleGratuitNew()"
-                    *ngIf="operation == 'createNew'"
-                  >
-                    Ajouter des gratuités
-                  </button>
-                </div>
-              </div>
-              <table *ngIf="operation == 'create' || operation == 'createNew'" class="table table-bordered">
-                <thead class="table-success">
-                <!-- Première ligne d'en-tête -->
-                <tr>
-                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
-                  <th scope="col" colspan="4">MONTANT TTC(FCFA)</th>
-                </tr>
-                <!-- Deuxième ligne d'en-tête -->
-                <tr>
-                  <th scope="col">Liquide</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Qte</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Actions</th>
-                </tr>
-                </thead>
-
-                <tbody>
-                <tr *ngFor="let item of  operation == 'createNew'? newCommandeGratuit : selectedArticlesFree">
-                  <td>{{ item?.liquide?.libelle }}</td>
-                  <td>{{ prixLiquideFree[item.id] | number }}</td>
-                  <td>{{ prixEmballageFree[item.id] | number }}</td>
-                  <td>{{ prixEmballageFree[item.id] + prixLiquideFree[item.id]| number }}</td>
-                  <td>
-                    <input
-                      type="number"
-                      class="form-control-custom"
-                      [(ngModel)]="item.quantite"
-                      [min]="0"
-                      [max]="stocksDisponibles[item.liquide.id]"
-                      [disabled]="stocksDisponibles[item.liquide.id] === 0"
-                      [ngClass]="{
-                          invalid: item.quantite > stocksDisponibles[item.liquide.id]
-                        }"
-                      (blur)="validateQuantiteFree(item)"
-                    />
-                    / {{ stocksDisponibles[item.liquide.id] }}
-                  </td>
-
-                  <td>{{ prixLiquideTotalFree[item.id] | number }}</td>
-                  <td>{{ prixEmballageTotalFree[item.id] | number }}</td>
-                  <td>{{ montantTotalFree[item.id] | number }}</td>
-                  <td class="d-flex justify-content-center">
-                    <button
-                      type="button"
-                      class="btn btn-danger btn-sm"
-                      (click)="removeArticleFree(item)"
-                    >
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr class="table-dark">
-                  <th scope="col" colspan="4">Total :</th>
-                  <td></td>
-                  <td>{{ totalQteFree | number }}</td>
-                  <td>{{ totalLiquideFree | number }}</td>
-                  <td>{{ totalEmballageFree | number }}</td>
-                  <td>{{ totalGlobalFree | number }}</td>
-                  <td></td>
-                </tr>
-                </tbody>
-              </table>
-              <table *ngIf="operation == 'update'" class="table table-bordered">
-                <thead class="table-success">
-                <!-- Première ligne d'en-tête -->
-                <tr>
-                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
-                  <th scope="col" colspan="4">MONTANT TTC(FCFA)</th>
-                </tr>
-                <!-- Deuxième ligne d'en-tête -->
-                <tr>
-                  <th scope="col">Liquide</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Qte</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Actions</th>
-                </tr>
-                </thead>
-
-                <tbody>
-                <tr *ngFor="let item of newCommandeGratuit">
-                  <td>{{ item?.liquide?.libelle }}</td>
-                  <td>{{ item.prixUnitaireLiquide | number }}</td>
-                  <td>{{ item.prixUnitaireEmballage | number }}</td>
-                  <td>{{ (item.prixUnitaireLiquide || 0) * 1 + (item.prixUnitaireEmballage || 0) * 1 | number }}</td>
-                  <td>
-                    <input
-                      type="number"
-                      class="form-control-custom"
-                      [(ngModel)]="item.quantite"
-                      [min]="0"
-                      [max]="stocksDisponibles[item.liquide.id]"
-                      [disabled]="stocksDisponibles[item.liquide.id] === 0"
-                      [ngClass]="{
-                        invalid: item.quantite > stocksDisponibles[item.liquide.id]
-                      }"
-                      (blur)="validateQuantiteFree(item)"
-                    />
-                    / {{ stocksDisponibles[item.liquide.id] }}
-                  </td>
-                  <td>{{ prixLiquideTotalFree[item.id] | number }}</td>
-                  <td>{{ prixEmballageTotalFree[item.id] | number }}</td>
-                  <td>{{ montantTotalFree[item.id]| number }}</td>
-                  <td class="d-flex justify-content-center">
-                    <button
-                      type="button"
-                      class="btn btn-danger btn-sm"
-                      (click)="DeleteArticleCommandeFree(item)"
-                    >
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr class="table-dark">
-                  <th scope="col" colspan="4">Total :</th>
-                  <td>{{ totalQteFree | number }}</td>
-                  <td>{{ totalLiquideFree | number }}</td>
-                  <td>{{ totalEmballageFree | number }}</td>
-                  <td>{{ totalGlobalFree | number }}</td>
-                  <td></td>
-                </tr>
-                </tbody>
-              </table>
-              <table *ngIf="operation == 'edit'" class="table table-bordered">
-                <thead class="table-success">
-                <!-- Première ligne d'en-tête -->
-                <tr>
-                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
-                  <th scope="col" colspan="3">MONTANT TTC(FCFA)</th>
-                </tr>
-                <!-- Deuxième ligne d'en-tête -->
-                <tr>
-                  <th scope="col">Liquide</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Qte vendu</th>
-                  <th scope="col">Qte restante</th>
-                  <th scope="col">Qte</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                </tr>
-                </thead>
-
-                <tbody>
-                <tr *ngFor="let item of updateData?.articlesGratuit">
-                  <td>{{ item.liquide.libelle }}1</td>
-                  <td>{{ item.prixUnitaireLiquide | number }}</td>
-                  <td>{{ item.prixUnitaireEmballage | number }}</td>
-                  <td>{{ Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) | number }}</td>
-                  <td>{{ item.quantiteAffectee - item.quantite }}</td>
-                  <td>{{ item.quantite }}</td>
-                  <td>{{ item.quantiteAffectee }}</td>
-                  <td>{{ item.montantLiquide | number }}</td>
-                  <td>{{ item.montantEmballage | number }}</td>
-                  <td>{{ Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) | number }}</td>
-
-                </tr>
-                <tr class="table-dark">
-                  <th scope="col" colspan="4">Total :</th>
-                  <td></td>
-                  <td></td>
-                  <td>{{ totalQteFree | number }}</td>
-                  <td>{{ totalLiquideFree | number }}</td>
-                  <td>{{ totalEmballageFree | number }}</td>
-                  <td>{{ totalGlobalFree | number }}</td>
-                </tr>
-                </tbody>
-              </table>
-            </fieldset>
-          </div>
-
+        <!-- Boutons d'action (edit) -->
+        <div class="vcp-detail-actions" *ngIf="operation === 'edit' || operation === 'update' || operation === 'createNew'">
+          <button class="vcp-action-btn warning" *ngIf="updateData?.statut == StatutCommande.APPROUVEE && operation === 'edit'" (click)="goToVenteManuelle(updateData)">
+            <i class="fas fa-person-to-portal me-1"></i>Récupération au dépôt
+          </button>
+          <button class="vcp-action-btn secondary" *ngIf="operation === 'edit' && updateData?.statut == StatutCommande.ATTENTE_VALIDATION" (click)="OnAddGoods(operation, updateData, updateData?.articles)">
+            <i class="fas fa-plus me-1"></i>Ajouter articles
+          </button>
+          <button class="vcp-action-btn secondary" *ngIf="operation === 'edit' && updateData?.statut == StatutCommande.ATTENTE_VALIDATION" (click)="updateGoods(updateData, operation)">
+            <i class="fas fa-edit me-1"></i>Modifier
+          </button>
         </div>
-        <!--  SUIVI VENTE-->
-        <div class="row tab-pane fade show active" *ngIf="activeTab === 'suivivente' && operation == 'edit'">
-          <fieldset class="row border my-2" *ngFor="let data of updateData.ventes">
-            <div class="row d-flex justify-content-between align-items-center">
-              <legend class="text-primary">Client - {{ data.pointdevente.nomEtablissement }}
-                au {{ data.pointdevente.telephone }} -  {{ data.statut }}
-              </legend>
-              <div class="d-flex justify-content-between align-items-center">
-                <label class="text-secondary"
-                       *ngIf="data.signatureClient"
-                       style="cursor:pointer"
-                       (click)="OnViewSign(data.signatureClient)">
-                  Voir signature
-                </label>
 
-                <div class="d-flex flex-column align-items-end">
-                  <!-- Bouton en dessous -->
-                  <button class="btn btn-danger w-auto"
-                          [disabled]="data.statut == 'Annulée'"
-                          (click)="OnCancel(data)"
-                          style="cursor: pointer">
-                    <i class="fas fa-arrow-rotate-left text-white"></i>
-                    Annuler
-                  </button>
-                </div>
-              </div>
-
+        <!-- Formulaire création -->
+        <form [formGroup]="VenteForm" *ngIf="operation === 'create'">
+          <div class="vcp-section-title"><i class="fas fa-truck me-2"></i>Ressources & chargement</div>
+          <div class="vcp-form-grid">
+            <div class="vcp-form-group">
+              <label class="vcp-form-label">Commercial <span class="text-danger">*</span></label>
+              <ng-select [items]="dataListCommercial" bindLabel="fullLabel" bindValue="id" formControlName="commercialId" [searchable]="true" (change)="onCommercialChange($event)" placeholder="Sélectionner..."></ng-select>
             </div>
-            <div class="d-flex flex-row justify-content-between align-items-center flex-wrap my-2">
-              <div><span>Date - {{ data.dateVente | date:'dd/MM/yyyy HH:mm:ss' }}</span></div>
+            <div class="vcp-form-group">
+              <label class="vcp-form-label">Localité <span class="text-danger">*</span></label>
+              <ng-select [items]="dataListLocalite" bindLabel="nomLocalite" bindValue="id" formControlName="localiteId" [searchable]="true" placeholder="Sélectionner..."></ng-select>
+            </div>
+            <div class="vcp-form-group">
+              <label class="vcp-form-label">Date <span class="text-danger">*</span></label>
+              <input type="date" [min]="now" readonly class="vcp-input" formControlName="venteDate" />
+            </div>
+            <div class="vcp-form-group">
+              <label class="vcp-form-label">Camion <span class="text-danger">*</span></label>
+              <ng-select [items]="dataListCamion" bindLabel="marque" bindValue="id" formControlName="vehiculeId" [searchable]="true" placeholder="Sélectionner..."></ng-select>
+            </div>
+          </div>
+        </form>
+
+        <!-- Infos livraison + véhicule (edit/update) -->
+        <div *ngIf="operation === 'edit' || operation === 'update' || operation === 'createNew'">
+          <div class="vcp-info-row">
+            <div class="vcp-info-block">
+              <div class="vcp-block-header"><i class="fas fa-shipping-fast"></i> Livraison</div>
+              <div class="vcp-block-line"><span class="vcp-lbl">N° vente</span><span class="vcp-val">{{ updateData?.numVenteChine }}</span></div>
+              <div class="vcp-block-line"><span class="vcp-lbl">Commercial</span><span class="vcp-val">{{ updateData?.commercial?.nom }} {{ updateData?.commercial?.prenoms }}</span></div>
+              <div class="vcp-block-line"><span class="vcp-lbl">Localité</span><span class="vcp-val">{{ updateData?.localite?.nomLocalite }}</span></div>
+              <div class="vcp-block-line"><span class="vcp-lbl">Dépôt</span><span class="vcp-val">{{ updateData?.commercial?.depot?.nomDepot }}</span></div>
+              <div class="vcp-block-line"><span class="vcp-lbl">Montant liquide</span><span class="vcp-val green">{{ totalLiquide | number }} FCFA</span></div>
+            </div>
+            <div class="vcp-info-block">
+              <div class="vcp-block-header"><i class="fas fa-truck"></i> Véhicule</div>
+              <div class="vcp-block-line"><span class="vcp-lbl">Marque</span><span class="vcp-val">{{ updateData?.vehicule?.marque }}</span></div>
+              <div class="vcp-block-line"><span class="vcp-lbl">Immatriculation</span><span class="vcp-val mono">{{ updateData?.vehicule?.immatriculation }}</span></div>
+              <div class="vcp-block-line"><span class="vcp-lbl">Énergie</span><span class="vcp-val">{{ updateData?.vehicule?.energie }}</span></div>
+              <div class="vcp-block-line"><span class="vcp-lbl">Capacité</span><span class="vcp-val">{{ updateData?.vehicule?.capacite }}</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section articles payants -->
+        <div class="vcp-section-title mt-2">
+          <span><i class="fas fa-boxes me-2"></i>Articles payants</span>
+          <button class="vcp-add-btn" (click)="selectArticle()" [disabled]="VenteForm.controls['commercialId'].invalid" *ngIf="operation !== 'createNew' && (operation === 'create')">
+            <i class="fas fa-plus me-1"></i>Ajouter
+          </button>
+          <button class="vcp-add-btn" (click)="selectArticleNew()" *ngIf="operation === 'createNew'">
+            <i class="fas fa-plus me-1"></i>Ajouter
+          </button>
+        </div>
+
+        <!-- Table articles payants (create / createNew) -->
+        <div class="vcp-table-wrap" *ngIf="operation === 'create' || operation === 'createNew'">
+          <table class="vcp-table">
+            <thead>
+              <tr>
+                <th colspan="4">Prix unitaire TTC (FCFA)</th>
+                <th colspan="4">Montant TTC (FCFA)</th>
+                <th></th>
+              </tr>
+              <tr>
+                <th>Liquide</th><th>Liq. (FCFA)</th><th>Emb. (FCFA)</th><th>Total</th>
+                <th>Qté</th><th>Liq.</th><th>Emb.</th><th>Total</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of operation === 'createNew' ? newCommande : selectedArticles">
+                <td>{{ item?.liquide?.libelle }}</td>
+                <td>{{ prixLiquide[item.id] | number }}</td>
+                <td>{{ prixEmballage[item.id] | number }}</td>
+                <td>{{ prixEmballage[item.id] + prixLiquide[item.id] | number }}</td>
+                <td>
+                  <input type="number" class="vcp-qty-input" [(ngModel)]="item.quantite" [min]="0" [max]="stocksDisponibles[item.liquide.id]" [disabled]="stocksDisponibles[item.liquide.id] === 0" [ngClass]="{ 'invalid': item.quantite > stocksDisponibles[item.liquide.id] }" (blur)="validateQuantite(item)" />
+                  <span class="vcp-stock-hint">/ {{ stocksDisponibles[item.liquide.id] }}</span>
+                </td>
+                <td>{{ prixLiquideTotal[item.id] | number }}</td>
+                <td>{{ prixEmballageTotal[item.id] | number }}</td>
+                <td class="vcp-amount">{{ montantTotal[item.id] | number }}</td>
+                <td><button type="button" class="vcp-del-btn" (click)="removeArticle(item)"><i class="fas fa-trash"></i></button></td>
+              </tr>
+              <tr class="vcp-total-row">
+                <td colspan="4"><strong>Total</strong></td>
+                <td>{{ totalQte | number }}</td>
+                <td>{{ totalLiquide | number }}</td>
+                <td>{{ totalEmballage | number }}</td>
+                <td>{{ totalGlobal | number }}</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table articles payants (update) -->
+        <div class="vcp-table-wrap" *ngIf="operation === 'update'">
+          <table class="vcp-table">
+            <thead>
+              <tr>
+                <th colspan="4">Prix unitaire TTC (FCFA)</th>
+                <th colspan="4">Montant TTC (FCFA)</th>
+                <th></th>
+              </tr>
+              <tr>
+                <th>Liquide</th><th>Liq.</th><th>Emb.</th><th>Total</th>
+                <th>Qté</th><th>Liq.</th><th>Emb.</th><th>Total</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of newCommande">
+                <td>{{ item?.liquide?.libelle }}</td>
+                <td>{{ item.prixUnitaireLiquide | number }}</td>
+                <td>{{ item.prixUnitaireEmballage | number }}</td>
+                <td>{{ (item.prixUnitaireLiquide || 0) * 1 + (item.prixUnitaireEmballage || 0) * 1 | number }}</td>
+                <td>
+                  <input type="number" class="vcp-qty-input" [(ngModel)]="item.quantite" [min]="0" (ngModelChange)="getLocalPrice(item)" />
+                  <span class="vcp-stock-hint">/ {{ stocksDisponibles[item.liquide.id] }}</span>
+                </td>
+                <td>{{ prixLiquideTotal[item.id] | number }}</td>
+                <td>{{ prixEmballageTotal[item.id] | number }}</td>
+                <td class="vcp-amount">{{ montantTotal[item.id] | number }}</td>
+                <td><button type="button" class="vcp-del-btn" (click)="DeleteArticleCommande(item)"><i class="fas fa-trash"></i></button></td>
+              </tr>
+              <tr class="vcp-total-row">
+                <td colspan="4"><strong>Total</strong></td>
+                <td>{{ totalQte | number }}</td>
+                <td>{{ totalLiquide | number }}</td>
+                <td>{{ totalEmballage | number }}</td>
+                <td>{{ totalGlobal | number }}</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table articles payants (edit view only) -->
+        <div class="vcp-table-wrap" *ngIf="operation === 'edit'">
+          <table class="vcp-table">
+            <thead>
+              <tr>
+                <th colspan="4">Prix unitaire TTC</th>
+                <th colspan="3">Montant TTC</th>
+              </tr>
+              <tr>
+                <th>Liquide</th><th>Liq.</th><th>Emb.</th><th>Total</th>
+                <th>Qté vendue</th><th>Qté restante</th><th>Qté affectée</th>
+                <th>Liq.</th><th>Emb.</th><th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of updateData?.articles">
+                <td>{{ item.liquide.libelle }}</td>
+                <td>{{ item.prixUnitaireLiquide | number }}</td>
+                <td>{{ item.prixUnitaireEmballage | number }}</td>
+                <td>{{ Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) | number }}</td>
+                <td>{{ item.quantiteVendue }}</td>
+                <td>{{ item.quantite }}</td>
+                <td>{{ item.quantiteAffectee }}</td>
+                <td>{{ item.montantLiquide | number }}</td>
+                <td>{{ item.montantEmballage | number }}</td>
+                <td class="vcp-amount">{{ Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) | number }}</td>
+              </tr>
+              <tr class="vcp-total-row">
+                <td colspan="4"><strong>Total</strong></td>
+                <td>{{ totalQteVendue | number }}</td>
+                <td>{{ totalQteRestant | number }}</td>
+                <td>{{ totalQte | number }}</td>
+                <td>{{ totalLiquide | number }}</td>
+                <td>{{ totalEmballage | number }}</td>
+                <td>{{ totalGlobal | number }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Section articles gratuits -->
+        <div class="vcp-section-title mt-3">
+          <span><i class="fas fa-gift me-2"></i>Articles gratuits</span>
+          <button class="vcp-add-btn" (click)="selectArticleGratuit()" [disabled]="VenteForm.controls['commercialId'].invalid" *ngIf="operation !== 'createNew' && operation === 'create'">
+            <i class="fas fa-plus me-1"></i>Ajouter
+          </button>
+          <button class="vcp-add-btn" (click)="selectArticleGratuitNew()" *ngIf="operation === 'createNew'">
+            <i class="fas fa-plus me-1"></i>Ajouter
+          </button>
+        </div>
+
+        <!-- Table gratuits (create / createNew) -->
+        <div class="vcp-table-wrap" *ngIf="operation === 'create' || operation === 'createNew'">
+          <table class="vcp-table">
+            <thead>
+              <tr>
+                <th colspan="4">Prix unitaire TTC</th><th colspan="4">Montant TTC</th><th></th>
+              </tr>
+              <tr>
+                <th>Liquide</th><th>Liq.</th><th>Emb.</th><th>Total</th>
+                <th>Qté</th><th>Liq.</th><th>Emb.</th><th>Total</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of operation === 'createNew' ? newCommandeGratuit : selectedArticlesFree">
+                <td>{{ item?.liquide?.libelle }}</td>
+                <td>{{ prixLiquideFree[item.id] | number }}</td>
+                <td>{{ prixEmballageFree[item.id] | number }}</td>
+                <td>{{ prixEmballageFree[item.id] + prixLiquideFree[item.id] | number }}</td>
+                <td>
+                  <input type="number" class="vcp-qty-input" [(ngModel)]="item.quantite" [min]="0" [max]="stocksDisponibles[item.liquide.id]" [disabled]="stocksDisponibles[item.liquide.id] === 0" [ngClass]="{ 'invalid': item.quantite > stocksDisponibles[item.liquide.id] }" (blur)="validateQuantiteFree(item)" />
+                  <span class="vcp-stock-hint">/ {{ stocksDisponibles[item.liquide.id] }}</span>
+                </td>
+                <td>{{ prixLiquideTotalFree[item.id] | number }}</td>
+                <td>{{ prixEmballageTotalFree[item.id] | number }}</td>
+                <td class="vcp-amount">{{ montantTotalFree[item.id] | number }}</td>
+                <td><button type="button" class="vcp-del-btn" (click)="removeArticleFree(item)"><i class="fas fa-trash"></i></button></td>
+              </tr>
+              <tr class="vcp-total-row">
+                <td colspan="4"><strong>Total</strong></td>
+                <td></td>
+                <td>{{ totalQteFree | number }}</td>
+                <td>{{ totalLiquideFree | number }}</td>
+                <td>{{ totalEmballageFree | number }}</td>
+                <td>{{ totalGlobalFree | number }}</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table gratuits (update) -->
+        <div class="vcp-table-wrap" *ngIf="operation === 'update'">
+          <table class="vcp-table">
+            <thead>
+              <tr>
+                <th colspan="4">Prix unitaire TTC</th><th colspan="4">Montant TTC</th><th></th>
+              </tr>
+              <tr>
+                <th>Liquide</th><th>Liq.</th><th>Emb.</th><th>Total</th>
+                <th>Qté</th><th>Liq.</th><th>Emb.</th><th>Total</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of newCommandeGratuit">
+                <td>{{ item?.liquide?.libelle }}</td>
+                <td>{{ item.prixUnitaireLiquide | number }}</td>
+                <td>{{ item.prixUnitaireEmballage | number }}</td>
+                <td>{{ (item.prixUnitaireLiquide || 0) * 1 + (item.prixUnitaireEmballage || 0) * 1 | number }}</td>
+                <td>
+                  <input type="number" class="vcp-qty-input" [(ngModel)]="item.quantite" [min]="0" [max]="stocksDisponibles[item.liquide.id]" [disabled]="stocksDisponibles[item.liquide.id] === 0" [ngClass]="{ 'invalid': item.quantite > stocksDisponibles[item.liquide.id] }" (blur)="validateQuantiteFree(item)" />
+                  <span class="vcp-stock-hint">/ {{ stocksDisponibles[item.liquide.id] }}</span>
+                </td>
+                <td>{{ prixLiquideTotalFree[item.id] | number }}</td>
+                <td>{{ prixEmballageTotalFree[item.id] | number }}</td>
+                <td class="vcp-amount">{{ montantTotalFree[item.id] | number }}</td>
+                <td><button type="button" class="vcp-del-btn" (click)="DeleteArticleCommandeFree(item)"><i class="fas fa-trash"></i></button></td>
+              </tr>
+              <tr class="vcp-total-row">
+                <td colspan="4"><strong>Total</strong></td>
+                <td>{{ totalQteFree | number }}</td>
+                <td>{{ totalLiquideFree | number }}</td>
+                <td>{{ totalEmballageFree | number }}</td>
+                <td>{{ totalGlobalFree | number }}</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table gratuits (edit) -->
+        <div class="vcp-table-wrap" *ngIf="operation === 'edit'">
+          <table class="vcp-table">
+            <thead>
+              <tr>
+                <th colspan="4">Prix unitaire TTC</th><th colspan="3">Montant TTC</th>
+              </tr>
+              <tr>
+                <th>Liquide</th><th>Liq.</th><th>Emb.</th><th>Total</th>
+                <th>Qté vendue</th><th>Qté restante</th><th>Qté affectée</th>
+                <th>Liq.</th><th>Emb.</th><th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of updateData?.articlesGratuit">
+                <td>{{ item.liquide.libelle }}</td>
+                <td>{{ item.prixUnitaireLiquide | number }}</td>
+                <td>{{ item.prixUnitaireEmballage | number }}</td>
+                <td>{{ Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) | number }}</td>
+                <td>{{ item.quantiteAffectee - item.quantite }}</td>
+                <td>{{ item.quantite }}</td>
+                <td>{{ item.quantiteAffectee }}</td>
+                <td>{{ item.montantLiquide | number }}</td>
+                <td>{{ item.montantEmballage | number }}</td>
+                <td class="vcp-amount">{{ Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) | number }}</td>
+              </tr>
+              <tr class="vcp-total-row">
+                <td colspan="4"><strong>Total</strong></td>
+                <td></td><td></td>
+                <td>{{ totalQteFree | number }}</td>
+                <td>{{ totalLiquideFree | number }}</td>
+                <td>{{ totalEmballageFree | number }}</td>
+                <td>{{ totalGlobalFree | number }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── ONGLET SUIVI VENTES ── -->
+      <div *ngIf="activeTab === 'suivivente' && operation === 'edit'">
+        <div *ngIf="updateData.ventes.length === 0" class="vcp-empty-tab">
+          <i class="fas fa-chart-line"></i>
+          <p>Aucune vente effectuée</p>
+        </div>
+        <div class="vcp-vente-card" *ngFor="let data of updateData.ventes">
+          <div class="vcp-vente-header">
+            <div class="vcp-vente-header-left">
+              <div class="vcp-vente-avatar">{{ (data?.pointdevente?.nomEtablissement || '?')[0] }}</div>
               <div>
-                <span>Montant à perçevoir : </span><span>{{ data.transaction?.montantAPercevoir | currency :'XOF' }}</span>
-              </div>
-              <div><span>Montant perçu : </span><span>{{ data.transaction?.montantPercu | currency :'XOF' }}</span>
-              </div>
-              <div><span>Montant restant : </span><span>{{ data.transaction?.montantRestant | currency :'XOF' }}</span>
+                <div class="vcp-vente-client">{{ data?.pointdevente?.nomEtablissement }}</div>
+                <div class="vcp-vente-tel"><i class="fas fa-phone me-1"></i>{{ data?.pointdevente?.telephone }}</div>
               </div>
             </div>
-            <div
-              class="table-responsive"
-              style="max-height: 300px; overflow-y: auto"
-            >
-              <table class="table">
-                <thead>
-                <tr style="font-size: small">
-                  <th scope="col">Produits</th>
-                  <th scope="col">Qte liquide vendu</th>
-                  <th scope="col">Prix liquide</th>
-                  <th scope="col">Prix total</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr
-                  style="font-size: small"
-                  *ngFor="let item of data.articles; let i = index"
-                >
+            <div class="vcp-vente-header-right">
+              <span class="vcp-statut-badge" [ngClass]="getStatutClass(data?.statut)">{{ data?.statut }}</span>
+              <label class="vcp-link" *ngIf="data.signatureClient" (click)="OnViewSign(data.signatureClient)">
+                <i class="fas fa-signature me-1"></i>Signature
+              </label>
+              <button class="vcp-action-btn blue" (click)="ImprimerBLVente(data)">
+                <i class="fas fa-print me-1"></i>BL
+              </button>
+              <button class="vcp-action-btn danger" [disabled]="data.statut == 'Annulée'" (click)="OnCancel(data)">
+                <i class="fas fa-rotate-left me-1"></i>Annuler
+              </button>
+            </div>
+          </div>
+          <div class="vcp-vente-kpi">
+            <div class="vcp-mini-kpi"><span class="vcp-mk-label">Date</span><span class="vcp-mk-value">{{ data.dateVente | date:'dd/MM/yyyy HH:mm' }}</span></div>
+            <div class="vcp-mini-kpi blue"><span class="vcp-mk-label">À percevoir</span><span class="vcp-mk-value">{{ data.transaction?.montantAPercevoir | number }} FCFA</span></div>
+            <div class="vcp-mini-kpi green"><span class="vcp-mk-label">Perçu</span><span class="vcp-mk-value">{{ data.transaction?.montantPercu | number }} FCFA</span></div>
+            <div class="vcp-mini-kpi" [ngClass]="data.transaction?.montantRestant > 0 ? 'orange' : 'green'"><span class="vcp-mk-label">Restant</span><span class="vcp-mk-value">{{ data.transaction?.montantRestant | number }} FCFA</span></div>
+          </div>
+          <div class="vcp-table-wrap">
+            <table class="vcp-table">
+              <thead><tr><th>Produit</th><th>Qté vendue</th><th>Prix unit.</th><th>Total</th></tr></thead>
+              <tbody>
+                <tr *ngFor="let item of data.articles">
                   <td>
                     {{ item.liquide.libelle }}
-                    <span *ngIf="item.isGratuit" class="badge bg-success ml-2">
-                      Gratuit
-                      </span>
+                    <span *ngIf="item.isGratuit" class="vcp-gratuit-chip">Gratuit</span>
                   </td>
                   <td>{{ item.quantite | number }}</td>
                   <td>{{ item.prixUnitaire | number }}</td>
-                  <td>{{ item.montantTotal | number }}</td>
-
+                  <td class="vcp-amount">{{ item.montantTotal | number }}</td>
                 </tr>
-
-                <!-- Ajoutez d'autres lignes si nécessaire -->
-                </tbody>
-              </table>
-            </div>
-
-            <!--            <div-->
-            <!--              class="table-responsive"-->
-            <!--              style="max-height: 300px; overflow-y: auto"-->
-            <!--            >-->
-            <!--              <table class="table">-->
-            <!--                <thead>-->
-            <!--                <tr style="font-size: small">-->
-            <!--                  <th scope="col">Produits</th>-->
-            <!--                  <th scope="col" class="text-center">Qte Emballage retourné</th>-->
-            <!--                </tr>-->
-            <!--                </thead>-->
-            <!--                <tbody>-->
-            <!--                <tr-->
-            <!--                  style="font-size: small"-->
-            <!--                  *ngFor="let item of data.articles; let i = index"-->
-            <!--                >-->
-            <!--                  <td>{{ item.emballage.libelle }}</td>-->
-            <!--                  <td class="text-center">{{ item.quantite }}</td>-->
-
-            <!--                </tr>-->
-
-            <!--                &lt;!&ndash; Ajoutez d'autres lignes si nécessaire &ndash;&gt;-->
-            <!--                </tbody>-->
-            <!--              </table>-->
-            <!--            </div>-->
-          </fieldset>
-          <label *ngIf="updateData.ventes.length == 0" class="text-gray text-center my-4">Aucune vente effectuée</label>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <!--  RETOUR EMBALLAGE-->
-        <div class="row tab-pane fade show active" *ngIf="activeTab === 'retour'  && operation == 'edit'">
-          <fieldset class="row border my-2" *ngFor="let data of updateData.retours">
-            <legend class="text-primary">Client - {{ data.client?.nomEtablissement }}au {{ data.client?.telephone }}
-            </legend>
-            <div class="d-flex flex-row justify-content-between align-items-center flex-wrap my-2">
-              <div><span>Date de retour- {{ data.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}</span></div>
-              <div><span>Type de retour- {{ data.returnType }}</span></div>
-              <div><span>Statut : {{ data.status }}</span></div>
+      </div>
+
+      <!-- ── ONGLET RETOURS ── -->
+      <div *ngIf="activeTab === 'retour' && operation === 'edit'">
+        <div *ngIf="updateData.retours.length === 0" class="vcp-empty-tab">
+          <i class="fas fa-rotate-left"></i>
+          <p>Aucune récupération effectuée</p>
+        </div>
+        <div class="vcp-retour-card" *ngFor="let data of updateData.retours">
+          <div class="vcp-retour-header">
+            <div>
+              <div class="vcp-vente-client"><i class="fas fa-store me-1"></i>{{ data.client?.nomEtablissement }}</div>
+              <div class="vcp-vente-tel"><i class="fas fa-phone me-1"></i>{{ data.client?.telephone }}</div>
             </div>
-            <div
-              class="table-responsive"
-              style="max-height: 300px; overflow-y: auto"
-            >
-              <table class="table">
-                <thead>
-                <tr style="font-size: small">
-                  <th scope="col">Types</th>
-                  <th scope="col">Codes</th>
-                  <th scope="col">Produits</th>
-                  <th scope="col">Quantite</th>
-                  <th scope="col">Prix unitaire</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr
-                  style="font-size: small"
-                  *ngFor="let item of getFilteredArticles(data); let i = index"
-                >
+            <div class="vcp-retour-chips">
+              <span class="vcp-type-chip">{{ data.returnType }}</span>
+              <span class="vcp-statut-badge" [ngClass]="getStatutClass(data?.status)">{{ data.status }}</span>
+              <span class="vcp-date-cell">{{ data.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+          </div>
+          <div class="vcp-table-wrap mt-2">
+            <table class="vcp-table">
+              <thead><tr><th>Type</th><th>Code</th><th>Produit</th><th>Qté</th><th>Prix unit.</th></tr></thead>
+              <tbody>
+                <tr *ngFor="let item of getFilteredArticles(data)">
                   <td>{{ item.typeArticle }}</td>
-                  <td>{{ item.productCode }}</td>
+                  <td class="vcp-num">{{ item.productCode }}</td>
                   <td>{{ item.libelle }}</td>
                   <td>{{ item.quantity }}</td>
-                  <td>{{ item.prixUnitaire| number }}</td>
-
+                  <td class="vcp-amount">{{ item.prixUnitaire | number }}</td>
                 </tr>
-
-                <!-- Ajoutez d'autres lignes si nécessaire -->
-                </tbody>
-              </table>
-            </div>
-
-          </fieldset>
-          <label *ngIf="updateData.retours.length == 0" class="text-gray text-center my-4">Aucune recupération
-            effectuée</label>
-        </div>
-        <div class="modal-footer gap-3 px-4y">
-          <button
-            *ngIf="operation == 'createNew' || operation == 'update' "
-            (click)="saveGoods(operation)"
-            type="button"
-            class="btn btn-primary"
-          >
-            Enregistrer
-          </button>
-          <button
-            (click)="OnCloseModal()"
-            type="button"
-            class="btn btn-secondary px-2"
-          >
-            Annuler
-          </button>
-          <button
-            type="submit"
-            *ngIf="operation == 'create'"
-            [disabled]="totalQte === 0 && totalQteFree === 0"
-            (click)="onSubmit()"
-            class="btn btn-primary px-2"
-          >
-            Valider
-          </button>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
+    </div><!-- /vd-modal-body -->
 
+    <!-- Footer -->
+    <div class="vd-modal-footer">
+      <button *ngIf="operation === 'createNew' || operation === 'update'" (click)="saveGoods(operation)" type="button" class="vcp-btn-primary">
+        <i class="fas fa-save me-1"></i>Enregistrer
+      </button>
+      <button *ngIf="operation === 'edit'" (click)="ImprimerBL(updateData)" type="button" class="vcp-btn-secondary">
+        <i class="fas fa-print me-1"></i>Imprimer BL
+      </button>
+      <button *ngIf="operation === 'create'" type="submit" [disabled]="totalQte === 0 && totalQteFree === 0" (click)="onSubmit()" class="vcp-btn-primary">
+        <i class="fas fa-check me-1"></i>Valider
+      </button>
+      <button (click)="OnCloseModal()" type="button" class="vd-btn-outline">Fermer</button>
     </div>
   </div>
 </div>
-<!--CHOIX ARTICLE-->
+
+<!-- ══ MODAL CHOIX ARTICLES ══════════════════════════════════════ -->
 <div *ngIf="isChoiceModalOpen" class="custom-modal">
-  <div class="modal-dialog2 modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div
-          class="d-flex justify-content-center align-items-center"
-          style="
-            background-color: rgb(219, 255, 232);
-            border-radius: 3rem;
-            width: 3rem;
-            height: 3rem;
-          "
-        >
-          <i class="fas fa-box-check text-primary fs-3"></i>
-        </div>
-        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
-          Selection des articles
-        </h1>
+  <div class="vcp-choice-dialog">
+    <div class="vcp-choice-header">
+      <div class="vd-mh-icon blue"><i class="fas fa-box-open"></i></div>
+      <div class="vd-mh-title">Sélection des articles</div>
+      <button class="vd-mh-close" (click)="OnCloseChoiceModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="vcp-choice-body">
+      <div class="vcp-filter-wrap mb-3">
+        <i class="fas fa-search vcp-filter-icon"></i>
+        <input type="text" name="search" (input)="filterArticles()" [(ngModel)]="searchTerm" placeholder="Rechercher un produit..." class="vcp-filter-input" />
       </div>
-
-      <div class="modal-body">
-        <form>
-          <div class="row">
-            <fieldset class="row border my-2">
-              <div class="p-3">
-                <!-- Champ de recherche -->
-                <input
-                  type="text"
-                  name="search"
-                  (input)="filterArticles()"
-                  [(ngModel)]="searchTerm"
-                  placeholder="Rechercher un produit"
-                  class="form-control mb-3"
-                />
-              </div>
-              <div
-                class="table-responsive"
-                style="max-height: 200px; overflow-y: auto"
-              >
-                <table class="table">
-                  <thead>
-                  <tr style="font-size: small">
-                    <th scope="col" class="text-secondary">Code</th>
-                    <th scope="col" class="text-secondary">Produits</th>
-                    <th scope="col" class="text-secondary">Disponibilité</th>
-                    <th scope="col" class="text-secondary text-center">
-                      Choix
-                    </th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr
-                    *ngFor="let article of filteredArticleList ; let i = index"
-                    style="font-size: small"
-                  >
-                    <th scope="row">{{ article.reference }}</th>
-                    <th scope="row">{{ article.libelle }}</th>
-                    <th scope="row">{{ stocksDisponibles[article.liquide.id] }}</th>
-                    <td class="">
-                      <input
-                        type="checkbox"
-                        class="form-control-custom"
-                        [name]="'checkbox_' + i"
-                        [(ngModel)]="article.isChecked"
-                        (change)="onCheckboxChange(article)"
-                        [disabled]="stocksDisponibles[article.liquide.id] <=0"
-                      />
-
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
-            </fieldset>
-          </div>
-        </form>
+      <div class="vcp-table-wrap" style="max-height:240px; overflow-y:auto">
+        <table class="vcp-table">
+          <thead><tr><th>Code</th><th>Produit</th><th>Stock dispo</th><th class="text-center">Choix</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let article of filteredArticleList; let i = index">
+              <td class="vcp-num">{{ article.reference }}</td>
+              <td>{{ article.libelle }}</td>
+              <td>
+                <span class="vcp-stock-chip" [ngClass]="stocksDisponibles[article.liquide.id] > 0 ? 'ok' : 'empty'">
+                  {{ stocksDisponibles[article.liquide.id] }}
+                </span>
+              </td>
+              <td class="text-center">
+                <input type="checkbox" class="vcp-checkbox" [name]="'checkbox_' + i" [(ngModel)]="article.isChecked" (change)="onCheckboxChange(article)" [disabled]="stocksDisponibles[article.liquide.id] <= 0" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <div class="modal-footer gap-3 px-4y">
-        <button
-          (click)="OnCloseChoiceModal()"
-          type="button"
-          class="btn btn-secondary px-2"
-        >
-          Annuler
-        </button>
-        <button
-          type="submit"
-          (click)="onSubmitSelection()"
-          class="btn btn-primary px-2"
-        >
-          Valider
-        </button>
-      </div>
+    </div>
+    <div class="vd-modal-footer">
+      <button (click)="OnCloseChoiceModal()" type="button" class="vd-btn-outline">Annuler</button>
+      <button type="submit" (click)="onSubmitSelection()" class="vcp-btn-primary"><i class="fas fa-check me-1"></i>Valider</button>
     </div>
   </div>
 </div>
 
-<!--CHOIX GRATUITE-->
+<!-- ══ MODAL CHOIX GRATUITS ══════════════════════════════════════ -->
 <div *ngIf="isChoiceModalFreeOpen" class="custom-modal">
-  <div class="modal-dialog2 modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div
-          class="d-flex justify-content-center align-items-center"
-          style="
-            background-color: rgb(219, 255, 232);
-            border-radius: 3rem;
-            width: 3rem;
-            height: 3rem;
-          "
-        >
-          <i class="fas fa-box-check text-primary fs-3"></i>
-        </div>
-        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
-          Selection des articles gratuits
-        </h1>
+  <div class="vcp-choice-dialog">
+    <div class="vcp-choice-header">
+      <div class="vd-mh-icon green"><i class="fas fa-gift"></i></div>
+      <div class="vd-mh-title">Sélection des articles gratuits</div>
+      <button class="vd-mh-close" (click)="OnCloseChoiceFreeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="vcp-choice-body">
+      <div class="vcp-filter-wrap mb-3">
+        <i class="fas fa-search vcp-filter-icon"></i>
+        <input type="text" name="search" (input)="filterArticlesFree()" [(ngModel)]="searchTermFree" placeholder="Rechercher un produit..." class="vcp-filter-input" />
       </div>
-
-      <div class="modal-body">
-        <form>
-          <div class="row">
-            <fieldset class="row border my-2">
-              <div class="p-3">
-                <!-- Champ de recherche -->
-                <input
-                  type="text"
-                  name="search"
-                  (input)="filterArticlesFree()"
-                  [(ngModel)]="searchTermFree"
-                  placeholder="Rechercher un produit"
-                  class="form-control mb-3"
-                />
-              </div>
-              <div
-                class="table-responsive"
-                style="max-height: 200px; overflow-y: auto"
-              >
-                <table class="table">
-                  <thead>
-                  <tr style="font-size: small">
-                    <th scope="col" class="text-secondary">Code</th>
-                    <th scope="col" class="text-secondary">Produits</th>
-                    <th scope="col" class="text-secondary">Disponibilité</th>
-                    <th scope="col" class="text-secondary text-center">
-                      Choix
-                    </th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr
-                    *ngFor="let articles of filteredArticleListFree ; let i = index"
-                    style="font-size: small"
-                  >
-                    <th scope="row">{{ articles.reference }}</th>
-                    <th scope="row">{{ articles.libelle }}</th>
-                    <th scope="row">{{ stocksDisponibles[articles.liquide.id] }}</th>
-                    <td class="">
-                      <input
-                        type="checkbox"
-                        class="form-control-custom"
-                        [name]="'checkbox_free_' + i"
-                        [(ngModel)]="articles.isChecked"
-                        (change)="onCheckboxFreeChange(articles)"
-                        [disabled]="stocksDisponibles[articles.liquide.id] <=0"
-                      />
-
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
-            </fieldset>
-          </div>
-        </form>
+      <div class="vcp-table-wrap" style="max-height:240px; overflow-y:auto">
+        <table class="vcp-table">
+          <thead><tr><th>Code</th><th>Produit</th><th>Stock dispo</th><th class="text-center">Choix</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let article of filteredArticleListFree; let i = index">
+              <td class="vcp-num">{{ article.reference }}</td>
+              <td>{{ article.libelle }}</td>
+              <td>
+                <span class="vcp-stock-chip" [ngClass]="stocksDisponibles[article.liquide.id] > 0 ? 'ok' : 'empty'">
+                  {{ stocksDisponibles[article.liquide.id] }}
+                </span>
+              </td>
+              <td class="text-center">
+                <input type="checkbox" class="vcp-checkbox" [name]="'checkbox_free_' + i" [(ngModel)]="article.isChecked" (change)="onCheckboxFreeChange(article)" [disabled]="stocksDisponibles[article.liquide.id] <= 0" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <div class="modal-footer gap-3 px-4y">
-        <button
-          (click)="OnCloseChoiceFreeModal()"
-          type="button"
-          class="btn btn-secondary px-2"
-        >
-          Annuler
-        </button>
-        <button
-          type="submit"
-          (click)="onSubmitSelection()"
-          class="btn btn-primary px-2"
-        >
-          Valider
-        </button>
-      </div>
+    </div>
+    <div class="vd-modal-footer">
+      <button (click)="OnCloseChoiceFreeModal()" type="button" class="vd-btn-outline">Annuler</button>
+      <button type="submit" (click)="onSubmitSelection()" class="vcp-btn-primary"><i class="fas fa-check me-1"></i>Valider</button>
     </div>
   </div>
 </div>
 
-<!-- Modal détail -->
-<!-- Modal -->
+<!-- ══ MODAL SIGNATURE ══════════════════════════════════════════ -->
 <div *ngIf="isModalOpenSign" class="custom-modal">
-  <div
-    class="modal-dialog-sign modal-dialog-centered"
-    style=" max-width: 1200px"
-  >
-    <div class="modal-content">
-      <!-- Header -->
-      <div class="modal-header">
-        <h5 class="modal-title text-success">Signature</h5>
-        <button type="button" class="btn-close" aria-label="Close"></button>
-      </div>
-
-      <!-- Body -->
-      <div
-        class="modal-body"
-        style="padding: 20px; max-height: 70vh; overflow-y: auto"
-      >
-        <div class="row">
-          <!-- Regroupement et Zone -->
-        </div>
-        <div class="col-md-12">
-          <div class="row">
-            <div class="container">
-              <img style="width:100%;height:100%" *ngIf="signature" [src]=signature alt="">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Table des commandes -->
-      <div class="modal-footer gap-3 px-4">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          (click)="closeDetailSign()"
-        >
-          Fermer
-        </button>
-      </div>
+  <div class="vcp-sign-dialog">
+    <div class="vcp-choice-header">
+      <div class="vd-mh-icon blue"><i class="fas fa-signature"></i></div>
+      <div class="vd-mh-title">Signature client</div>
+      <button class="vd-mh-close" (click)="closeDetailSign()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="vcp-sign-body">
+      <img *ngIf="signature" [src]="signature" alt="Signature" style="width:100%; height:auto; border-radius:8px;" />
+    </div>
+    <div class="vd-modal-footer">
+      <button type="button" class="vd-btn-outline" (click)="closeDetailSign()">Fermer</button>
     </div>
   </div>
 </div>

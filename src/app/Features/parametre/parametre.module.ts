@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ParametreComponent } from './parametre.component';
 import { ParametreRoutingModule } from './parametre-routing.module';
 import { ArticlesEtPrixComponent } from './articles-et-prix/articles-et-prix.component';
+import { ArticleInterchangeableComponent } from './article-interchangeable/article-interchangeable.component';
 import { TypeArticleComponent } from './type-article/type-article.component';
 import { GroupeProduitComponent } from './groupe-produit/groupe-produit.component';
 
@@ -121,12 +122,17 @@ import { SharedComponentModule } from '../shared-component/shared-component.modu
 import { QuestionnaireVisiteComponent } from './questionnaire-visite/questionnaire-visite.component';
 import { CommercialComponent } from './commercial/commercial.component';
 import { MoyenDePaiementComponent } from './moyen-de-paiement/moyen-de-paiement.component';
+import { BanqueComponent } from './banque/banque.component';
+import { CompteComponent } from './compte/compte.component';
+import { TypeCompteComponent } from './type-compte/type-compte.component';
 import { DevisesComponent } from './devises/devises.component';
 import { ReglePaletteComponent } from './regle-palette/regle-palette.component';
+import { InfosEntrepriseComponent } from './infos-entreprise/infos-entreprise.component';
+import { SapConfigComponent } from './sap-config/sap-config.component';
 
 
 @NgModule({
-    declarations: [ReglePaletteComponent,CommercialComponent,QuestionnaireVisiteComponent,TransporteurComponent,LogistiqueComponent,ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent, ListPrixComponent, CreationPrixComponent, EmballageComponent, LiquideComponent, VehiculesComponent, UtilisateursComponent, UtilisateurComponent, ProfilUtilisateurComponent, MoyenDePaiementComponent, DevisesComponent],
+    declarations: [ArticleInterchangeableComponent,ReglePaletteComponent,InfosEntrepriseComponent,SapConfigComponent,CommercialComponent,QuestionnaireVisiteComponent,TransporteurComponent,LogistiqueComponent,ParametreComponent, ArticlesEtPrixComponent, TypeArticleComponent, GroupeProduitComponent, ArticleComponent, ListPrixComponent, CreationPrixComponent, EmballageComponent, LiquideComponent, VehiculesComponent, UtilisateursComponent, UtilisateurComponent, ProfilUtilisateurComponent, MoyenDePaiementComponent, DevisesComponent, BanqueComponent, CompteComponent, TypeCompteComponent],
     imports: [
       NgSelectModule,
       SharedComponentModule,

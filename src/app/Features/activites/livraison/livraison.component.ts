@@ -11,7 +11,7 @@ import {CoreServiceService} from '../../../core/core-service.service';
 
 import {LogistiqueService} from '../../../core/logistique.service';
 import {ActiviteService} from '../../../core/activite.service';
-import {StatutCommande} from '../../../utils/utils';
+import {StatutCommande, isDepotHote, getUserDepot} from '../../../utils/utils';
 
 interface RegroupementItem {
   palettes: number;
@@ -57,6 +57,9 @@ export class LivraisonComponent {
   listZone: any = [];
   listTransporteur: any = [];
   listVehicule: any = [];
+  listZoneFiltree: any = [];
+  listTransporteurFiltre: any = [];
+  listVehiculeFiltre: any = [];
   selectedArticles: any = [];
   items: any = [];
   filteredArticleList: any[] = [];
@@ -82,6 +85,18 @@ export class LivraisonComponent {
   isModalOpenDetail: boolean = false;
   isModalOpenSign: boolean = false;
   isModalOpenRetourPlein: boolean = false;
+  isModalRetourPleinCommande: boolean = false;
+  isModalAddCommandesOpen: boolean = false;
+  selectedRegroupement: any = null;
+  filteredListAdd: any[] = [];
+  commandesAAjouter: string[] = [];
+  searchTermAdd: string = '';
+  addModalCapacite: number = 0;
+  addModalCargaisonActuelle: number = 0;
+  addModalCargaisonAjout: number = 0;
+  selectedCommandeRetour: any = null;
+  listRaisonsRetour: any[] = [];
+  selectedRaisonRetourId: number | null = null;
   totalCasiers: number = 0;
   canContinue: boolean = false;
   cargaison: number = 0;
@@ -90,11 +105,48 @@ export class LivraisonComponent {
   totalPages=0
   regroupementList: any[] = [];
   regroupementTable: any[] = [];
+  filterSearch: string = '';
+  filterNumero: string = '';
+  filterConducteur: string = '';
+  filterStatut: string = '';
+  filterDateDebut: string = '';
+  filterDateFin: string = '';
+  filterDepotId: number | null = null;
+  isHote = isDepotHote();
+  depotList: any[] = [];
+
+  // Filtres du modal "Nouveau regroupement" — appliqués côté client sur ListCommande,
+  // distincts des filtres de la liste principale qui eux partent au serveur.
+  regrpDepotId: number | null = null;
+  regrpZoneIds: number[] = [];
+  regrpEtablissement: string = '';
+  regrpDate: string = '';
+  statutOptions = [
+    { value: 'Attente de Validation', label: 'Attente de Validation' },
+    { value: 'Non approuvée', label: 'Non approuvée' },
+    { value: 'Approuvée', label: 'Approuvée' },
+    { value: 'En attente', label: 'En attente' },
+    { value: 'Livrée', label: 'Livrée' },
+    { value: 'Terminé', label: 'Terminé' },
+    { value: 'Annulée', label: 'Annulée' },
+  ];
+
+  loadDepotList() {
+    if (!this.isHote) return;
+    this.coreService.GetDepotList({ paginate: false, page: 1, limit: 0 }).then((res: any) => {
+      this.depotList = res.data || [];
+    });
+  }
+
+  get hasActiveFilters(): boolean {
+    return !!(this.filterNumero || this.filterConducteur || this.filterStatut
+      || this.filterDateDebut || this.filterDateFin || this.filterDepotId);
+  }
   regroupementFinal: {
-    [key: string]: Array<{ type: string; palettes: number; casier: number; totalQuantite: number }>
+    [key: string]: Array<{ type: string; palettes: number; casier: number; totalQuantite: number; fournisseurNom?: string | null }>
   } = {};
   result: { palettes: number; casier: number } | null = null;
-  casiersPerPalette: Record<number, { casiers: number; type: string }[]> = {};
+  casiersPerPalette: Record<number, { casiers: number; type: string; fournisseurId: number | null; fournisseurNom: string | null }[]> = {};
 
 
   constructor(
@@ -122,8 +174,19 @@ export class LivraisonComponent {
       this.canContinue = true;
     }
 
+    // Un dépôt non-hôte ne travaille que sur le sien : il est présélectionné et verrouillé, à la
+    // fois sur la liste et dans le modal de regroupement (zones, véhicules et chauffeurs filtrés).
+    if (!this.isHote) {
+      const depotUtilisateur = getUserDepot();
+      if (depotUtilisateur?.id) {
+        this.filterDepotId = depotUtilisateur.id;
+        this.regrpDepotId = depotUtilisateur.id;
+      }
+    }
+
     // this.selectedArticle = this.articles[0];
     this.GetRegroupementList(this.currentPage);
+    this.loadDepotList();
     this.LoadCasiersPerPalette();
     this.GetRegroupementRules();
     this.GetTransporteurList();
@@ -196,46 +259,28 @@ export class LivraisonComponent {
       }
       console.log('Après retrait, regroupementFinal:', this.regroupementFinal);
     });
-    // Recalcul de la cargaison après modification de regroupementFinal
+    this.regroupementFinal = JSON.parse(JSON.stringify(this.regroupementFinal));
     this.updateCargaison();
   }
 
   calculate(commande: any): void {
-    console.log('Commande:', commande);
-
-    // ✅ Ne réinitialise pas `regroupementFinal` complètement pour ne pas écraser les données existantes
     if (!this.regroupementFinal) {
       this.regroupementFinal = {};
     }
-    console.log('fois:');
     this.result = {palettes: 0, casier: 0};
 
     const articlesParFormatEtType = commande.articles.reduce((acc: any, article: any) => {
-      const format = Number(article?.liquide?.format);
-      const type = article?.groupeArticle?.libelle;
+      const format = Number(article?.liquide?.format) || 0;
+      const type = article?.groupeArticle?.libelle || 'Autre';
 
-      if (!format || !type) {
-        console.warn('Article sans format ou type non défini, ignoré:', article);
-        return acc;
-      }
-
-      if (!acc[format]) {
-        acc[format] = {};
-      }
-
-      if (!acc[format][type]) {
-        acc[format][type] = [];
-      }
-
+      if (!acc[format]) acc[format] = {};
+      if (!acc[format][type]) acc[format][type] = [];
       acc[format][type].push(article);
       return acc;
     }, {});
 
-    console.log('Articles regroupés par format et type:', articlesParFormatEtType);
-
     Object.keys(articlesParFormatEtType).forEach((formatStr: string) => {
       const format = Number(formatStr);
-      const totalCasiersParFormat: any = {};
 
       Object.entries(articlesParFormatEtType[format]).forEach(([type, articles]: [string, any]) => {
         const totalCasiers = articles.reduce(
@@ -243,38 +288,33 @@ export class LivraisonComponent {
           0
         );
 
-        const paletteInfos = this.casiersPerPalette[format];
-        if (!paletteInfos || paletteInfos.length === 0) {
-          console.warn(`Format invalide ou non trouvé : ${format}`);
-          return;
+        const fournisseurId = articles[0]?.produit?.fournisseur?.id ?? undefined;
+        const regle = this.findRegle(format, type, fournisseurId);
+
+        let palettes = 0;
+        let casier = totalCasiers;
+        if (regle.casiers) {
+          palettes = Math.floor(totalCasiers / regle.casiers);
+          casier   = totalCasiers % regle.casiers;
         }
 
-        paletteInfos.forEach(({casiers, type: paletteType}) => {
-          if (paletteType === type) {
-            const palettes = Math.floor(totalCasiers / casiers);
-            const casier = totalCasiers % casiers;
+        if (!this.regroupementFinal[format]) {
+          this.regroupementFinal[format] = [];
+        }
 
-            // ✅ Vérifie si ce format et type existent déjà dans regroupementFinal
-            if (!this.regroupementFinal[format]) {
-              this.regroupementFinal[format] = [];
-            }
-
-            const existingEntry = this.regroupementFinal[format].find((entry: any) => entry.type === type);
-            if (existingEntry) {
-              // 🔄 Additionne les nouvelles valeurs sans écraser l'existant
-              existingEntry.palettes += palettes;
-              existingEntry.casier += casier;
-            } else {
-              // ➕ Ajoute un nouvel article s'il n'existe pas encore
-              this.regroupementFinal[format].push({type, palettes, casier, totalQuantite: 0});
-            }
-          }
-        });
+        const existingEntry = this.regroupementFinal[format].find((entry: any) => entry.type === type);
+        if (existingEntry) {
+          existingEntry.palettes += palettes;
+          existingEntry.casier  += casier;
+        } else {
+          this.regroupementFinal[format].push({ type, palettes, casier, totalQuantite: totalCasiers, fournisseurNom: regle.fournisseurNom });
+        }
       });
     });
-// Recalcul de la cargaison après modification de regroupementFinal
+
+    // Deep clone pour forcer la détection de changement Angular (keyvalue pipe + *ngFor)
+    this.regroupementFinal = JSON.parse(JSON.stringify(this.regroupementFinal));
     this.updateCargaison();
-    console.log('Résultat final:', this.regroupementFinal);
   }
 
   updateCargaison(): void {
@@ -305,20 +345,95 @@ export class LivraisonComponent {
   }
 
 
-  onZoneChange(zone: any | null): void {
-    console.log('zone', zone);
+  // Filtres du modal de regroupement : dépôt, zones (multi), établissement et date.
+  // Critères cumulatifs ; un critère vide n'exclut rien.
+  applyRegroupementFilters(): void {
+    const etablissement = this.regrpEtablissement.trim().toLowerCase();
 
-    if (zone && zone.id) {
-      this.filteredList = this.ListCommande
-        .filter((item: any) => item.client.zoneDeLivraison?.id === zone.id)
-        .sort(
-          (a: any, b: any) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-    } else {
-      // champ vidé → on remet toute la liste
-      this.filteredList = [...this.ListCommande];
+    this.filteredList = this.ListCommande
+      .filter((item: any) => {
+        if (this.regrpDepotId && item.client?.depot?.id !== this.regrpDepotId) {
+          return false;
+        }
+
+        if (this.regrpZoneIds?.length && !this.regrpZoneIds.includes(item.client?.zoneDeLivraison?.id)) {
+          return false;
+        }
+
+        if (etablissement) {
+          const nom = `${item.client?.nomEtablissement ?? ''} ${item.client?.raisonSocial ?? ''}`.toLowerCase();
+          if (!nom.includes(etablissement)) return false;
+        }
+
+        if (this.regrpDate) {
+          const dateCommande = new Date(item.createdAt);
+          const jour = `${dateCommande.getFullYear()}-${String(dateCommande.getMonth() + 1).padStart(2, '0')}-${String(dateCommande.getDate()).padStart(2, '0')}`;
+          if (jour !== this.regrpDate) return false;
+        }
+
+        return true;
+      })
+      .sort(
+        (a: any, b: any) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+  }
+
+  resetRegroupementFilters(): void {
+    // Le dépôt d'un utilisateur non-hôte reste imposé, même après réinitialisation
+    this.regrpDepotId = this.isHote ? null : (getUserDepot()?.id ?? null);
+    this.regrpZoneIds = [];
+    this.regrpEtablissement = '';
+    this.regrpDate = '';
+    this.filtrerOptionsParDepot();
+    this.applyRegroupementFilters();
+  }
+
+  onRegroupementDepotChange(): void {
+    this.filtrerOptionsParDepot();
+    this.applyRegroupementFilters();
+  }
+
+  // Options proposées dans le modal de regroupement quand un dépôt est sélectionné : uniquement
+  // les zones de livraison de ses clients, et les véhicules / transporteurs rattachés à ce dépôt.
+  // Sans dépôt sélectionné, tout est proposé.
+  filtrerOptionsParDepot(): void {
+    const depotId = this.regrpDepotId;
+
+    if (!depotId) {
+      this.listZoneFiltree = this.listZone || [];
+      this.listTransporteurFiltre = this.listTransporteur || [];
+      this.listVehiculeFiltre = this.listVehicule || [];
+      return;
     }
+
+    const zoneIdsDuDepot = new Set(
+      (this.ListCommande || [])
+        .filter((item: any) => item.client?.depot?.id === depotId)
+        .map((item: any) => item.client?.zoneDeLivraison?.id)
+        .filter((id: any) => !!id)
+    );
+
+    this.listZoneFiltree = (this.listZone || []).filter((zone: any) => zoneIdsDuDepot.has(zone.id));
+    this.listTransporteurFiltre = (this.listTransporteur || []).filter((item: any) => item.depot?.id === depotId);
+    this.listVehiculeFiltre = (this.listVehicule || []).filter((item: any) => item.depot?.id === depotId);
+
+    // Les sélections qui ne font plus partie du dépôt sont abandonnées
+    this.regrpZoneIds = (this.regrpZoneIds || []).filter((id: number) => zoneIdsDuDepot.has(id));
+
+    const transporteurId = this.livraisonForm?.controls['transporteur']?.value;
+    if (transporteurId && !this.listTransporteurFiltre.some((item: any) => item.id === transporteurId)) {
+      this.livraisonForm.controls['transporteur'].setValue(null);
+    }
+
+    const vehiculeId = this.livraisonForm?.controls['vehicule']?.value;
+    if (vehiculeId && !this.listVehiculeFiltre.some((item: any) => item.id === vehiculeId)) {
+      this.livraisonForm.controls['vehicule'].setValue(null);
+    }
+  }
+
+  get hasRegroupementFilters(): boolean {
+    return !!(this.regrpDepotId || this.regrpZoneIds?.length || this.regrpEtablissement || this.regrpDate);
   }
 
 
@@ -348,8 +463,8 @@ export class LivraisonComponent {
     // Unifier les deux objets dans un seul tableau
     this.ListCommande = [...commandeClient.data, ...commandeGratuite.data];
     console.log('ListCommande', this.ListCommande);
-    this.filteredList = this.ListCommande
-      .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    this.filtrerOptionsParDepot();
+    this.applyRegroupementFilters();
     console.log('filteredList', this.filteredList);
 
     // this._spinner.hide();
@@ -396,6 +511,7 @@ export class LivraisonComponent {
   OnView(data: any) {
     console.log(data, 'regroupement');
     this.updateData = data;
+    this.regroupementFinal = {};
     this.isModalOpenDetail = true;
     this.updateData.commandes.forEach((commande: any) => {
       this.calculate(commande);
@@ -407,6 +523,32 @@ export class LivraisonComponent {
   closeDetailModal() {
     this.isModalOpenDetail = false;
     this.regroupementFinal = {};
+  }
+
+  OnAnnulerRegroupement(data: any) {
+    ALERT_QUESTION(
+      'warning',
+      'Annuler le regroupement ?',
+      `Le véhicule sera libéré et les commandes redeviendront disponibles pour un nouveau regroupement. Cette action est impossible si une commande est déjà en cours ou livrée.`
+    ).then((res: any) => {
+      if (!res.isConfirmed) return;
+      this._spinner.show();
+      this.activiteService.AnnulerRegroupement(data.id).then(
+        (response: any) => {
+          this._spinner.hide();
+          if (response.statusCode === 200) {
+            this.toastr.success(response.message || 'Regroupement annulé');
+            this.GetRegroupementList(this.currentPage);
+          } else {
+            this.toastr.error(response.message || "Erreur lors de l'annulation");
+          }
+        },
+        (error: any) => {
+          this._spinner.hide();
+          this.toastr.error(error?.error?.message || "Erreur lors de l'annulation");
+        }
+      );
+    });
   }
   closeDetailSign(){
     this.isModalOpenSign = false;
@@ -592,15 +734,30 @@ export class LivraisonComponent {
 
   GetRegroupementList(page:any) {
     let data = {
-      paginate: true,
+      paginate: false,
       page: page,
       limit: 8,
+      statut: this.filterStatut,
+      dateDebut: this.filterDateDebut,
+      dateFin: this.filterDateFin,
+      numero: this.filterNumero,
+      conducteur: this.filterConducteur,
+      depotId: this.filterDepotId,
     };
     this._spinner.show();
     this.activiteService.GetRegroupementList(data).then((res: any) => {
       console.log('GetRegroupementList:::>', res);
       this.listRegroupements = res.data;
       this.totalPages = res.total;
+      if (this.isModalOpenDetail && this.updateData?.id) {
+        const updated = res.data.find((r: any) => r.id === this.updateData.id);
+        if (updated) {
+          this.updateData = updated;
+          this.regroupementFinal = {};
+          updated.commandes.forEach((commande: any) => this.calculate(commande));
+          this.extractAllArticles(updated.commandes);
+        }
+      }
       this._spinner.hide();
     });
   }
@@ -775,6 +932,34 @@ export class LivraisonComponent {
     this.GetRegroupementList(this.currentPage);
   }
 
+  onFilterStatutChange() {
+    this.currentPage = 1;
+    this.GetRegroupementList(1);
+  }
+
+  onFilterDateChange() {
+    this.currentPage = 1;
+    this.GetRegroupementList(1);
+  }
+
+  filterGlobal() {
+    this.currentPage = 1;
+    this.GetRegroupementList(1);
+  }
+
+  resetFilters() {
+    this.filterSearch = '';
+    this.filterNumero = '';
+    this.filterConducteur = '';
+    this.filterStatut = '';
+    this.filterDateDebut = '';
+    this.filterDateFin = '';
+    // Le dépôt d'un utilisateur non-hôte reste imposé, même après réinitialisation
+    this.filterDepotId = this.isHote ? null : (getUserDepot()?.id ?? null);
+    this.currentPage = 1;
+    this.GetRegroupementList(1);
+  }
+
   onChange(event: any): void {
     this.detailPointDevente = event;
     console.log(this.detailPointDevente, 'detailPointDevente');
@@ -788,6 +973,7 @@ export class LivraisonComponent {
     };
     this.coreService.GetZoneList(data).then((res: any) => {
       this.listZone = res.data;
+      this.filtrerOptionsParDepot();
       console.log(res.data);
     });
   }
@@ -804,6 +990,7 @@ export class LivraisonComponent {
         ...item,
         displayName: item.nom + ' ' + item.prenoms,
       }));
+      this.filtrerOptionsParDepot();
       console.log(res.data);
     });
   }
@@ -832,6 +1019,7 @@ export class LivraisonComponent {
         ...item,
         displayName: item.marque + ' - ' + item.immatriculation,
       }));
+      this.filtrerOptionsParDepot();
       console.log(res.data);
     });
   }
@@ -860,9 +1048,18 @@ export class LivraisonComponent {
         if (!this.casiersPerPalette[regle.format]) {
           this.casiersPerPalette[regle.format] = [];
         }
-        this.casiersPerPalette[regle.format].push({ casiers: regle.casiers, type: regle.type });
+        this.casiersPerPalette[regle.format].push({ casiers: regle.casiers, type: regle.type, fournisseurId: regle.fournisseur?.id ?? null, fournisseurNom: regle.fournisseur?.nom ?? null });
       });
     });
+  }
+
+  findRegle(format: number, type: string, fournisseurId?: number): { casiers: number; fournisseurNom: string | null } {
+    const rules = this.casiersPerPalette[format] ?? [];
+    let rule: any = null;
+    if (fournisseurId) rule = rules.find((r: any) => r.type === type && r.fournisseurId === fournisseurId);
+    if (!rule) rule = rules.find((r: any) => r.type === type && !r.fournisseurId);
+    if (!rule) rule = rules.find((r: any) => r.type === type);
+    return { casiers: rule?.casiers ?? 0, fournisseurNom: rule?.fournisseurNom ?? null };
   }
 
   GetRegroupementRules() {
@@ -916,6 +1113,153 @@ export class LivraisonComponent {
       }
     });
     return total;
+  }
+
+  getLivraisonForCommande(numCommande: string): any | null {
+    return (this.updateData?.livraisons ?? []).find(
+      (l: any) => l.commande?.NumCommande === numCommande
+    ) ?? null;
+  }
+
+  printBonLivraison(commande: any): void {
+    const numCommande = commande?.numCommande || commande?.NumCommande;
+    if (!numCommande) {
+      this.toastr.warning('Numéro de commande introuvable.');
+      return;
+    }
+    this._spinner.show();
+    this.activiteService.GetBonLivraisonPdf(numCommande).then(
+      () => this._spinner.hide(),
+      (err: any) => {
+        this._spinner.hide();
+        this.toastr.error(err?.error?.message || 'Erreur lors de la génération du bon de livraison.');
+      }
+    );
+  }
+
+  openRetourPleinCommandeModal(cmd: any) {
+    this.selectedCommandeRetour = cmd;
+    this.selectedRaisonRetourId = null;
+    if (this.listRaisonsRetour.length === 0) {
+      this.activiteService.GetRaisonRetourPleinList().then((res: any) => {
+        this.listRaisonsRetour = res.data || [];
+      });
+    }
+    this.isModalRetourPleinCommande = true;
+  }
+
+  closeRetourPleinCommandeModal() {
+    this.isModalRetourPleinCommande = false;
+    this.selectedCommandeRetour = null;
+    this.selectedRaisonRetourId = null;
+  }
+
+  submitRetourPleinCommande() {
+    if (!this.selectedRaisonRetourId) {
+      this.toastr.warning('Veuillez sélectionner un motif de retour.');
+      return;
+    }
+    const cmd = this.selectedCommandeRetour;
+    const payload = {
+      numCommande: cmd.numCommande,
+      vehiculeId: this.updateData.vehicule?.id,
+      depotId: cmd.clientInfo?.depot?.id,
+      transporteurId: this.updateData.transporteur?.id,
+      raisonRetourId: this.selectedRaisonRetourId,
+      source: 'BO',
+      articles: (cmd.articles || []).map((a: any) => ({
+        idArticle: a.id,
+        quantite: a.quantite,
+        prixUnitaireLiquide: a.prixUnitaireLiquide || 0,
+        prixUnitaireEmballage: a.prixUnitaireEmballage || 0,
+        ...(a.liquide?.code && { codeArticleLiquide: a.liquide.code }),
+        ...(a.emballage?.code && { codeArticleEmballage: a.emballage.code }),
+      })),
+    };
+    this._spinner.show();
+    this.activiteService.CreateRetourPlein(payload).then(
+      (res: any) => {
+        this._spinner.hide();
+        this.toastr.success(res.message || 'Retour plein créé avec succès.');
+        const cmdInList = this.updateData.commandes?.find((c: any) => c.numCommande === cmd.numCommande);
+        if (cmdInList) cmdInList.statutCommande = 'Retournée';
+        this.closeRetourPleinCommandeModal();
+        this.GetRegroupementList(this.currentPage);
+      },
+      (err: any) => {
+        this._spinner.hide();
+        this.toastr.error(err?.error?.message || 'Erreur lors de la création du retour plein.');
+      }
+    );
+  }
+
+  min100(v: number): number { return Math.min(v, 100); }
+
+  get filteredListAddDisplay(): any[] {
+    if (!this.searchTermAdd.trim()) return this.filteredListAdd;
+    const term = this.searchTermAdd.toLowerCase().trim();
+    return this.filteredListAdd.filter((c: any) =>
+      (c.NumCommande || '').toLowerCase().includes(term) ||
+      (c.client?.nomEtablissement || '').toLowerCase().includes(term) ||
+      (c.client?.raisonSocial || '').toLowerCase().includes(term)
+    );
+  }
+
+  openAddCommandesModal(regroupement: any) {
+    this.selectedRegroupement = regroupement;
+    this.commandesAAjouter = [];
+    this.searchTermAdd = '';
+    this.addModalCapacite = regroupement.vehicule?.capacite || 0;
+    this.addModalCargaisonActuelle = (regroupement.commandes || []).reduce(
+      (total: number, cmd: any) => total + this.getTotalQuantite(cmd.articles || []), 0
+    );
+    this.addModalCargaisonAjout = 0;
+    const numsDejaPresents = new Set((regroupement.commandes || []).map((c: any) => c.NumCommande));
+    this.filteredListAdd = this.ListCommande.filter((c: any) => !numsDejaPresents.has(c.NumCommande));
+    this.filteredListAdd.forEach((c: any) => c.isCheckedAdd = false);
+    this.isModalAddCommandesOpen = true;
+  }
+
+  closeAddCommandesModal() {
+    this.isModalAddCommandesOpen = false;
+    this.selectedRegroupement = null;
+    this.commandesAAjouter = [];
+    this.searchTermAdd = '';
+    this.addModalCargaisonAjout = 0;
+    this.filteredListAdd.forEach((c: any) => c.isCheckedAdd = false);
+  }
+
+  onCheckboxAddChange(commande: any) {
+    if (commande.isCheckedAdd) {
+      this.commandesAAjouter.push(commande.NumCommande);
+    } else {
+      this.commandesAAjouter = this.commandesAAjouter.filter(n => n !== commande.NumCommande);
+    }
+    const selected = this.filteredListAdd.filter((c: any) => c.isCheckedAdd);
+    this.addModalCargaisonAjout = selected.reduce(
+      (total: number, c: any) => total + this.getTotalQuantite(c.articles || []), 0
+    );
+  }
+
+  submitAjouterCommandes() {
+    if (this.commandesAAjouter.length === 0) {
+      this.toastr.warning('Sélectionnez au moins une commande.');
+      return;
+    }
+    this._spinner.show();
+    this.activiteService.AjouterCommandesRegroupement(this.selectedRegroupement.id, this.commandesAAjouter).then(
+      (res: any) => {
+        this._spinner.hide();
+        this.toastr.success(res.message || 'Commandes ajoutées avec succès.');
+        this.closeAddCommandesModal();
+        this.GetRegroupementList(this.currentPage);
+        this.GetListCommande(1);
+      },
+      (err: any) => {
+        this._spinner.hide();
+        this.toastr.error(err?.error?.message || 'Erreur lors de l\'ajout des commandes.');
+      }
+    );
   }
 
   preloadInventaire(inventaires: any) {

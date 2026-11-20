@@ -1,11 +1,11 @@
-<div class="bui-back mb-4" (click)="goBack()">
-  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
-  <h4 class="fw-bold mb-0">Logistique</h4>
+<div class="log-back-row" (click)="goBack()">
+  <div class="log-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="log-back-title">Logistique</h4>
 </div>
 
-<div class="cc-tabs mb-3">
-  <button class="cc-tab-btn" [class.active]="activeTab === 'transporteurs'" (click)="activeElement('transporteurs')">Transporteurs</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'vehicules'" (click)="activeElement('vehicules')">Véhicules</button>
+<div class="log-tabs mb-3">
+  <button class="log-tab-btn" [class.active]="activeTab === 'transporteurs'" (click)="activeElement('transporteurs')">Transporteurs</button>
+  <button class="log-tab-btn" [class.active]="activeTab === 'vehicules'" (click)="activeElement('vehicules')">Véhicules</button>
 </div>
 
 <div *ngIf="activeTab === 'transporteurs'">

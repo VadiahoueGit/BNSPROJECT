@@ -38,3 +38,319 @@ span{
   .label-fixed-width {
     min-width: 150px;
   }
+
+
+// ===== CC DESIGN SYSTEM =====
+$primary: #8dae56;
+$blue: #0071c2;
+$gray-light: #f7fcff;
+$gray-border: #e5e7eb;
+$text-muted: #9ca3af;
+$radius: 12px;
+$radius-sm: 8px;
+
+.cc-list-card {
+  background: white;
+  border-radius: $radius;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.cc-list-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.cc-list-count {
+  font-size: 13px;
+  color: $text-muted;
+  font-weight: 500;
+}
+
+.cc-btn-primary {
+  height: 38px;
+  padding: 0 20px;
+  border: none;
+  border-radius: $radius-sm;
+  background: $blue;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba($blue, 0.3);
+  &:hover {
+    background: darken($blue, 8%);
+    box-shadow: 0 4px 12px rgba($blue, 0.4);
+    transform: translateY(-1px);
+  }
+}
+
+.cc-filters {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.cc-filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  min-width: 160px;
+}
+
+.cc-filter-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.cc-filter-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cc-filter-icon {
+  position: absolute;
+  left: 10px;
+  color: $text-muted;
+  font-size: 11px;
+  pointer-events: none;
+}
+
+.cc-filter-input {
+  width: 100%;
+  height: 34px;
+  border: 1.5px solid $gray-border;
+  border-radius: $radius-sm;
+  padding: 0 10px 0 28px;
+  font-size: 12px;
+  color: #374151;
+  transition: border-color 0.2s;
+  &:focus {
+    outline: none;
+    border-color: $blue;
+    box-shadow: 0 0 0 3px rgba($blue, 0.1);
+  }
+}
+
+.cc-btn-reset {
+  width: 34px;
+  height: 34px;
+  background: white;
+  border: 1.5px solid $gray-border;
+  border-radius: $radius-sm;
+  color: $text-muted;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  &:hover { border-color: #ef4444; color: #ef4444; }
+}
+
+.cc-btn-search {
+  height: 34px;
+  padding: 0 18px;
+  border: none;
+  border-radius: $radius-sm;
+  background: $blue;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba($blue, 0.3);
+  &:hover {
+    background: darken($blue, 8%);
+    box-shadow: 0 4px 12px rgba($blue, 0.4);
+    transform: translateY(-1px);
+  }
+}
+
+// ===== MODAL PRIX =====
+.cp-modal {
+  background: white;
+  border-radius: 14px;
+  width: 520px;
+  max-width: 95vw;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  overflow: hidden;
+}
+
+.cp-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 22px;
+  border-bottom: 1px solid $gray-border;
+}
+
+.cp-modal-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba($blue, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $blue;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.cp-modal-title {
+  flex: 1;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.cp-modal-close {
+  background: none;
+  border: none;
+  color: $text-muted;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  &:hover { background: $gray-border; color: #374151; }
+}
+
+.cp-modal-body {
+  padding: 22px;
+}
+
+.cp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+}
+
+.cp-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+
+.cp-field-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.cp-field-input {
+  height: 36px;
+  border: 1.5px solid $gray-border;
+  border-radius: $radius-sm;
+  padding: 0 12px;
+  font-size: 13px;
+  color: #374151;
+  transition: border-color 0.2s;
+  width: 100%;
+  &:focus {
+    outline: none;
+    border-color: $blue;
+    box-shadow: 0 0 0 3px rgba($blue, 0.1);
+  }
+}
+
+.cp-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 22px;
+  border-top: 1px solid $gray-border;
+}
+
+.cp-btn-secondary {
+  height: 36px;
+  padding: 0 18px;
+  border: 1.5px solid $gray-border;
+  border-radius: $radius-sm;
+  background: white;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover { background: $gray-border; }
+}
+
+.cp-btn-submit {
+  height: 36px;
+  padding: 0 20px;
+  border: none;
+  border-radius: $radius-sm;
+  background: $blue;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  box-shadow: 0 2px 8px rgba($blue, 0.3);
+  &:hover:not(:disabled) {
+    background: darken($blue, 8%);
+    box-shadow: 0 4px 12px rgba($blue, 0.4);
+    transform: translateY(-1px);
+  }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+// ng-select dans la modale
+::ng-deep .cp-modal {
+  .ng-select .ng-control,
+  .ng-select .ng-select-container {
+    height: 36px;
+    min-height: 36px;
+    border: 1.5px solid $gray-border;
+    border-radius: $radius-sm;
+    font-size: 13px;
+  }
+  .ng-select.ng-select-focused .ng-select-container {
+    border-color: $blue;
+    box-shadow: 0 0 0 3px rgba($blue, 0.1);
+  }
+  .ng-select .ng-placeholder { color: $text-muted; font-size: 13px; }
+}
+
+::ng-deep .cc-ptable {
+  .p-datatable-thead > tr > th {
+    background: $gray-light;
+    color: #6b7280;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid $gray-border;
+    padding: 10px 14px;
+  }
+  .p-datatable-tbody > tr {
+    font-size: 13px;
+    color: #374151;
+    transition: background 0.15s;
+    > td {
+      padding: 11px 14px;
+      border-bottom: 1px solid $gray-border;
+      vertical-align: middle;
+    }
+    &:hover > td { background: rgba($blue, 0.03); }
+  }
+}

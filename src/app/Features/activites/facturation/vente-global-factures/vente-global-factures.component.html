@@ -1,356 +1,193 @@
-<div class="card">
-  <div class="d-flex justify-content-end py-3">
-    <!-- <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
-        Saisir une vente globale
-      </button> -->
+<!-- Card + Table -->
+<div class="vgf-card">
+  <div class="vgf-topbar">
+    <div>
+      <div class="vgf-card-title"><i class="fas fa-file-invoice"></i> Factures vente globale</div>
+      <div class="vgf-count">{{ dataList?.length || 0 }} facture(s)</div>
+    </div>
   </div>
-  <p-table
-    [styleClass]="'p-datatable-sm'"
-    #dt2
-    [value]="dataList"
-    dataKey="id"
-    [rows]="8"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [paginator]="true"
-    (onPage)="onPage($event)"
-  >
+
+  <p-table [styleClass]="'vgf-ptable p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+           [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
     <ng-template pTemplate="header">
       <tr>
         <th>Référence</th>
-        <!-- <th>Numéro livraison</th> -->
         <th>Date facture</th>
-        <!-- <th>Facture</th> -->
         <th>Montant total</th>
-        <th>Actions</th>
+        <th class="text-center">Actions</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList let-i="index">
       <tr>
-        <td>
-          {{ dataList.reference }}
-        </td>
-        <!-- <td>
-          {{ dataList.livraison.numeroLivraison }}
-        </td> -->
-        <td>
-          {{ dataList.dateFacture | date }}
-        </td>
-
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.montantTotal | number}}
-          </span>
-        </td>
+        <td>{{ dataList.reference }}</td>
+        <td>{{ dataList.dateFacture | date }}</td>
+        <td>{{ dataList.montantTotal | number }}</td>
         <td class="text-center">
-          <div class="d-flex justify-content-center gap-2">
-            <span class="bui-icon-btn view" (click)="OnEdit(dataList)"><i class="fas fa-eye"></i></span>
-          </div>
+          <button class="vgf-action-btn view" (click)="OnEdit(dataList)" title="Voir"><i class="fas fa-eye"></i></button>
         </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">Aucune commande trouvé.</td>
+        <td colspan="4" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">
+          <i class="fas fa-file-invoice" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i>
+          Aucune facture trouvée.
+        </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
-<!-- Modal creation -->
-<!-- Modal -->
+<!-- Modal détail / création -->
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div class="bui-modal-icon"><i class="fas fa-box-check text-primary fs-3"></i></div>
-        <h1
-          *ngIf="operation == 'create'"
-          class="modal-title fs-5 ms-3"
-          id="staticBackdropLabel"
-        >
-          Création de la commande
-        </h1>
-        <h1
-          *ngIf="operation == 'edit'"
-          class="modal-title fs-5 ms-3"
-          id="staticBackdropLabel"
-        >
-          Détails de la facturation
-        </h1>
+  <div class="vgf-modal">
+    <div class="vgf-modal-header">
+      <div class="vgf-modal-icon"><i class="fas fa-file-invoice"></i></div>
+      <h5 class="vgf-modal-title">
+        <span *ngIf="operation == 'create'">Création de la commande</span>
+        <span *ngIf="operation == 'edit'">Détails de la facturation</span>
+      </h5>
+      <button class="vgf-modal-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="vgf-modal-body">
+      <div class="d-flex justify-content-end mb-3">
+        <button type="button" class="vgf-btn-secondary" (DownloadFacture)="DownloadFacture(updateData.id)">
+          <i class="fas fa-download"></i> Générer facture
+        </button>
       </div>
-      <div class="modal-body">
+
+      <fieldset class="row border my-1" *ngIf="updateData?.vente !== null">
+        <legend style="font-size:14px" class="text-secondary">Information vente</legend>
         <div class="row">
-          <div class="d-flex justify-content-end py-3">
-  <button type="button" class="bui-btn-add" (DownloadFacture)="DownloadFacture(updateData.id)">Génerer facture</button>
-</div>
-          <fieldset class="row border my-1" *ngIf="updateData?.vente !== null">
-            <legend style="font-size: 14px" class="text-secondary">
-              Information vente
-            </legend>
-
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Commercial: </strong>
-                <span
-                  >{{ updateData?.vente?.commercial?.nom }}
-                  {{ updateData?.vente?.commercial?.prenom }}</span
-                >
-              </div>
-              <div class="col-md-4">
-                <strong>Téléphone: </strong>
-                <span>{{ updateData?.vente?.commercial?.telephone }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant: </strong>
-                <span>{{ updateData?.montantTotal| number }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Point de vente: </strong>
-                <span>{{
-                  updateData?.vente?.pointdevente?.nomEtablissement
-                }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Date facture: </strong>
-                <span>{{ updateData.dateFacture | date }}</span>
-              </div>
-            </div>
-
-            <div *ngIf="updateData?.vente.articles.length>0">
-
-              <legend class="fs-6 text-primary mt-3">Articles</legend>
-              <div
-                class="table-responsive"
-                style="max-height: 300px; overflow-y: auto"
-              >
-                <table class="table">
-                  <thead>
-                    <tr style="font-size: small">
-                      <th scope="col">Produits</th>
-                      <th scope="col">Qte liquide</th>
-                      <th scope="col">Prix unitaire</th>
-                      <th scope="col">Prix total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      style="font-size: small"
-                      *ngFor="let item of updateData?.vente.articles; let i = index"
-                    >
-                      <td>{{ item.liquide.libelle }}</td>
-                      <td>{{ item.quantite | number}}</td>
-
-                      <td>{{  item.prixUnitaire| number}}</td>
-                      <td>{{ item.montantTotal| number}}</td>
-
-                    </tr>
-                    <tr class="table-dark" *ngIf="updateData?.vente.articles.length > 0">
-                      <th scope="col" colspan="1">Total :</th>
-                      <td>{{ totalQte | number}}</td>
-                      <td>{{ totalLiquide | number}}</td>
-                      <td>{{ totalGlobal | number}}</td>
-                    </tr>
-                    <!-- Ajoutez d'autres lignes si nécessaire -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset class="row border my-2" *ngIf="updateData?.livraison !== null">
-            <legend style="font-size: 14px" class="text-secondary">
-              Information livraison
-            </legend>
-            <div class="row">
-              <div class="col-md-6">
-                <strong>Numéro livraison: </strong>
-                <span
-                  >
-                  {{ updateData?.livraison?.numeroLivraison }}</span
-                >
-              </div>
-              <div class="col-md-6">
-                <strong>Date début livraison: </strong>
-                <span
-                  >
-                  {{ updateData?.livraison?.dateLivraisonDebut| date}}</span
-                >
-              </div>
-              <div class="col-md-6">
-                <strong>Date fin livraison: </strong>
-                <span
-                  >
-                  {{ updateData?.livraison?.dateLivraisonFin| date }}</span
-                >
-              </div>
-
-              <div class="col-md-6">
-                <strong>Statut: </strong>
-                <span
-                  >
-                  {{ updateData?.livraison?.statut }}</span
-                >
-              </div>
-              <div class="col-md-6">
-                <strong>Montant total: </strong>
-                <span
-                  >
-                  {{ updateData?.montantTotal| number}}</span
-                >
-              </div>
-            </div>
-            <div *ngIf="updateData?.livraison.articles.length>0">
-
-              <legend class="fs-6 mt-3 text-primary">Articles</legend>
-              <div
-                class="table-responsive"
-                style="max-height: 300px; overflow-y: auto"
-              >
-                <table class="table">
-                  <thead>
-                    <tr style="font-size: small">
-                      <th scope="col">Produits</th>
-                      <th scope="col">Qte liquide</th>
-                      <th scope="col">Prix unitaire</th>
-                      <th scope="col">Prix total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      style="font-size: small"
-                      *ngFor="let item of updateData?.livraison.articles; let i = index"
-                    >
-                      <td>{{ item.liquide.libelle }}</td>
-                      <td>{{ item.quantite }}</td>
-                      <td>{{  item.prixUnitaire| number}}</td>
-                      <td>{{ item.montantTotal| number}}</td>
-
-                    </tr>
-                    <tr class="table-dark" *ngIf="updateData?.livraison.articles.length > 0">
-                      <th scope="col" colspan="1">Total :</th>
-                      <td>{{ totalQte | number}}</td>
-                      <td>{{ totalLiquide | number}}</td>
-                      <td>{{ totalGlobal| number }}</td>
-                    </tr>
-                    <!-- Ajoutez d'autres lignes si nécessaire -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-          </fieldset>
+          <div class="col-md-4"><strong>Commercial: </strong><span>{{ updateData?.vente?.commercial?.nom }} {{ updateData?.vente?.commercial?.prenom }}</span></div>
+          <div class="col-md-4"><strong>Téléphone: </strong><span>{{ updateData?.vente?.commercial?.telephone }}</span></div>
+          <div class="col-md-4"><strong>Montant: </strong><span>{{ updateData?.montantTotal | number }}</span></div>
+          <div class="col-md-4"><strong>Point de vente: </strong><span>{{ updateData?.vente?.pointdevente?.nomEtablissement }}</span></div>
+          <div class="col-md-4"><strong>Date facture: </strong><span>{{ updateData.dateFacture | date }}</span></div>
         </div>
-      </div>
+        <div *ngIf="updateData?.vente.articles.length > 0">
+          <legend class="fs-6 text-primary mt-3">Articles</legend>
+          <div class="table-responsive" style="max-height:300px;overflow-y:auto">
+            <table class="table">
+              <thead>
+                <tr style="font-size:small">
+                  <th scope="col">Produits</th>
+                  <th scope="col">Qte liquide</th>
+                  <th scope="col">Prix unitaire</th>
+                  <th scope="col">Prix total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="font-size:small" *ngFor="let item of updateData?.vente.articles; let i = index">
+                  <td>{{ item.liquide.libelle }}</td>
+                  <td>{{ item.quantite | number }}</td>
+                  <td>{{ item.prixUnitaire | number }}</td>
+                  <td>{{ item.montantTotal | number }}</td>
+                </tr>
+                <tr class="table-dark" *ngIf="updateData?.vente.articles.length > 0">
+                  <th scope="col" colspan="1">Total :</th>
+                  <td>{{ totalQte | number }}</td>
+                  <td>{{ totalLiquide | number }}</td>
+                  <td>{{ totalGlobal | number }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </fieldset>
 
-      <div class="modal-footer gap-3 px-4">
-        <button
-          (click)="OnCloseModal()"
-          type="button"
-          class="btn btn-secondary px-2"
-        >
-          Annuler
-        </button>
-        <button
-          type="submit"
-          *ngIf="operation == 'create'"
-          [disabled]="totalQte === 0"
-          (click)="onSubmit()"
-          class="btn btn-primary px-2"
-        >
-          Valider
-        </button>
-      </div>
+      <fieldset class="row border my-2" *ngIf="updateData?.livraison !== null">
+        <legend style="font-size:14px" class="text-secondary">Information livraison</legend>
+        <div class="row">
+          <div class="col-md-6"><strong>Numéro livraison: </strong><span>{{ updateData?.livraison?.numeroLivraison }}</span></div>
+          <div class="col-md-6"><strong>Date début livraison: </strong><span>{{ updateData?.livraison?.dateLivraisonDebut | date }}</span></div>
+          <div class="col-md-6"><strong>Date fin livraison: </strong><span>{{ updateData?.livraison?.dateLivraisonFin | date }}</span></div>
+          <div class="col-md-6"><strong>Statut: </strong><span>{{ updateData?.livraison?.statut }}</span></div>
+          <div class="col-md-6"><strong>Montant total: </strong><span>{{ updateData?.montantTotal | number }}</span></div>
+        </div>
+        <div *ngIf="updateData?.livraison.articles.length > 0">
+          <legend class="fs-6 mt-3 text-primary">Articles</legend>
+          <div class="table-responsive" style="max-height:300px;overflow-y:auto">
+            <table class="table">
+              <thead>
+                <tr style="font-size:small">
+                  <th scope="col">Produits</th>
+                  <th scope="col">Qte liquide</th>
+                  <th scope="col">Prix unitaire</th>
+                  <th scope="col">Prix total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="font-size:small" *ngFor="let item of updateData?.livraison.articles; let i = index">
+                  <td>{{ item.liquide.libelle }}</td>
+                  <td>{{ item.quantite }}</td>
+                  <td>{{ item.prixUnitaire | number }}</td>
+                  <td>{{ item.montantTotal | number }}</td>
+                </tr>
+                <tr class="table-dark" *ngIf="updateData?.livraison.articles.length > 0">
+                  <th scope="col" colspan="1">Total :</th>
+                  <td>{{ totalQte | number }}</td>
+                  <td>{{ totalLiquide | number }}</td>
+                  <td>{{ totalGlobal | number }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="vgf-modal-footer">
+      <button class="vgf-btn-secondary" (click)="OnCloseModal()">Annuler</button>
+      <button *ngIf="operation == 'create'" class="vgf-btn-submit" [disabled]="totalQte === 0" (click)="onSubmit()">
+        <i class="fas fa-check"></i> Valider
+      </button>
     </div>
   </div>
 </div>
 
-<!--CHOIX ARTICLE-->
+<!-- Modal sélection d'articles -->
 <div *ngIf="isChoiceModalOpen" class="custom-modal">
-  <div class="modal-dialog2 modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div class="bui-modal-icon"><i class="fas fa-box-check text-primary fs-3"></i></div>
-        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
-          Selection des articles
-        </h1>
+  <div class="vgf-modal-sm">
+    <div class="vgf-modal-header">
+      <div class="vgf-modal-icon"><i class="fas fa-boxes"></i></div>
+      <h5 class="vgf-modal-title">Sélection des articles</h5>
+      <button class="vgf-modal-close" (click)="OnCloseChoiceModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="vgf-modal-body">
+      <input type="text" name="search" (input)="filterArticles()" [(ngModel)]="searchTerm"
+             placeholder="Rechercher un produit" class="form-control mb-3" />
+      <div class="table-responsive" style="max-height:200px;overflow-y:auto">
+        <table class="table">
+          <thead>
+            <tr style="font-size:small">
+              <th scope="col" class="text-secondary">Code</th>
+              <th scope="col" class="text-secondary">Produits</th>
+              <th scope="col" class="text-secondary">Disponibilité</th>
+              <th scope="col" class="text-secondary text-center">Choix</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let article of filteredArticleList; let i = index" style="font-size:small">
+              <th scope="row">{{ article.code }}</th>
+              <th scope="row">{{ article.libelle }}</th>
+              <th scope="row">{{ stocksDisponibles[article.liquide.id] }}</th>
+              <td>
+                <input type="checkbox" class="form-control-custom" [name]="'checkbox_' + i"
+                       [(ngModel)]="article.isChecked" (change)="onCheckboxChange(article)"
+                       [disabled]="stocksDisponibles[article.liquide.id] <= 0" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-
-      <div class="modal-body">
-        <form>
-          <div class="row">
-            <fieldset class="row border my-2">
-              <div class="p-3">
-                <!-- Champ de recherche -->
-                <input
-                  type="text"
-                  name="search"
-                  (input)="filterArticles()"
-                  [(ngModel)]="searchTerm"
-                  placeholder="Rechercher un produit"
-                  class="form-control mb-3"
-                />
-              </div>
-              <div
-                class="table-responsive"
-                style="max-height: 200px; overflow-y: auto"
-              >
-                <table class="table">
-                  <thead>
-                    <tr style="font-size: small">
-                      <th scope="col" class="text-secondary">Code</th>
-                      <th scope="col" class="text-secondary">Produits</th>
-                      <th scope="col" class="text-secondary">Disponibilité</th>
-                      <th scope="col" class="text-secondary text-center">
-                        Choix
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      *ngFor="let article of filteredArticleList; let i = index"
-                      style="font-size: small"
-                    >
-                      <th scope="row">{{ article.code }}</th>
-                      <th scope="row">{{ article.libelle }}</th>
-                      <th scope="row">
-                        {{ stocksDisponibles[article.liquide.id] }}
-                      </th>
-                      <td class="">
-                        <input
-                          type="checkbox"
-                          class="form-control-custom"
-                          [name]="'checkbox_' + i"
-                          [(ngModel)]="article.isChecked"
-                          (change)="onCheckboxChange(article)"
-                          [disabled]="
-                            stocksDisponibles[article.liquide.id] <= 0
-                          "
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </fieldset>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer gap-3 px-4y">
-        <button
-          (click)="OnCloseChoiceModal()"
-          type="button"
-          class="btn btn-secondary px-2"
-        >
-          Annuler
-        </button>
-        <button
-          type="submit"
-          (click)="onSubmitSelection()"
-          class="btn btn-primary px-2"
-        >
-          Valider
-        </button>
-      </div>
+    </div>
+    <div class="vgf-modal-footer">
+      <button class="vgf-btn-secondary" (click)="OnCloseChoiceModal()">Annuler</button>
+      <button class="vgf-btn-submit" (click)="onSubmitSelection()">
+        <i class="fas fa-check"></i> Valider
+      </button>
     </div>
   </div>
 </div>

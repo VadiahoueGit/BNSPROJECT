@@ -587,9 +587,14 @@ export class UtilisateurResolveService {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
+      const filterParams =
+        `&commercial=${encodeURIComponent(data.commercial || '')}` +
+        `&localite=${encodeURIComponent(data.localite || '')}` +
+        `&statut=${encodeURIComponent(data.statut || '')}` +
+        `&numVenteChine=${encodeURIComponent(data.numVenteChine || '')}`;
       this._http
         .get(
-          `${this.apiUrl}/v1/ventes?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+          `${this.apiUrl}/v1/ventes?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}${filterParams}`,{headers}
         )
         .subscribe(
           (res: any) => {

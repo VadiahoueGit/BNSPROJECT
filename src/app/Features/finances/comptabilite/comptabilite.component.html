@@ -1,16 +1,16 @@
-<div class="bui-back mb-4" (click)="goBack()">
-  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
-  <h4 class="fw-bold mb-0">Comptabilité</h4>
+<div class="cpt-back-row" (click)="goBack()">
+  <div class="cpt-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="cpt-back-title">Comptabilité</h4>
 </div>
 
-<div class="cc-tabs mb-3">
-  <button class="cc-tab-btn" [class.active]="activeTab === 'suiviCompte'" (click)="activeElement('suiviCompte')">Suivi des comptes</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'sousCompte'" (click)="activeElement('sousCompte')">Sous comptes</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'paiementEnAttente'" (click)="activeElement('paiementEnAttente')">Paiements en attente</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'validationPaiement'" (click)="activeElement('validationPaiement')">Validation des paiements</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'commandeGroupe'" (click)="activeElement('commandeGroupe')">Validation agent</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'commandePayees'" (click)="activeElement('commandePayees')">Commande payées</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'creance'" (click)="activeElement('creance')">Créances</button>
+<div class="cpt-tabs mb-3">
+  <button class="cpt-tab-btn" [class.active]="activeTab === 'suiviCompte'" (click)="activeElement('suiviCompte')">Suivi des comptes</button>
+  <button class="cpt-tab-btn" [class.active]="activeTab === 'sousCompte'" (click)="activeElement('sousCompte')">Sous comptes</button>
+  <button class="cpt-tab-btn" [class.active]="activeTab === 'paiementEnAttente'" (click)="activeElement('paiementEnAttente')">Paiements en attente</button>
+  <button class="cpt-tab-btn" [class.active]="activeTab === 'validationPaiement'" (click)="activeElement('validationPaiement')">Validation des paiements</button>
+  <button class="cpt-tab-btn" [class.active]="activeTab === 'commandeGroupe'" (click)="activeElement('commandeGroupe')">Validation agent</button>
+  <button class="cpt-tab-btn" [class.active]="activeTab === 'commandePayees'" (click)="activeElement('commandePayees')">Commande payées</button>
+  <button class="cpt-tab-btn" [class.active]="activeTab === 'creance'" (click)="activeElement('creance')">Créances</button>
 </div>
 
 <div *ngIf="activeTab === 'suiviCompte'">

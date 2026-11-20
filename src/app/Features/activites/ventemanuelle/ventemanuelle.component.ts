@@ -129,8 +129,14 @@ export class VentemanuelleComponent {
     return this.articlesVendus.length > 0 || this.articlesGratuits.length > 0;
   }
 
+  get hasEmptyEmballageQuantite(): boolean {
+    return this.emballageRecup.some(
+      (a: any) => a.emballage.quantite === null || a.emballage.quantite === undefined || a.emballage.quantite === ''
+    );
+  }
+
   get step3Valid(): boolean {
-    if (this.mode === 'APPOINTMENT') return !!this.rdvDate;
+    if (this.mode === 'APPOINTMENT') return !!this.rdvDate && !this.hasEmptyEmballageQuantite;
     return true;
   }
 
@@ -149,7 +155,13 @@ export class VentemanuelleComponent {
         else this.toastr.warning('Saisissez au moins une quantité pour continuer.');
       }
       if (this.currentStep === 2) this.toastr.warning('Aucun article à livrer.');
-      if (this.currentStep === 3) this.toastr.warning('Veuillez saisir la date du RDV.');
+      if (this.currentStep === 3) {
+        this.toastr.warning(
+          this.mode === 'APPOINTMENT' && this.hasEmptyEmballageQuantite
+            ? 'Veuillez saisir la quantité pour chaque emballage.'
+            : 'Veuillez saisir la date du RDV.'
+        );
+      }
       return;
     }
     if (this.currentStep === 1) {
@@ -173,7 +185,20 @@ export class VentemanuelleComponent {
   }
 
   setMode(m: string) {
+    const previousMode = this.mode;
     this.mode = m;
+    // En mode RDV, la quantité récupérée plus tard doit être saisie explicitement par
+    // l'utilisateur (pas de pré-remplissage avec la quantité livrée) pour éviter qu'un
+    // RDV soit validé par erreur avec la totalité des emballages.
+    if (m === 'APPOINTMENT' && previousMode !== 'APPOINTMENT') {
+      this.emballageRecup.forEach((article: any) => {
+        article.emballage.quantite = null;
+      });
+    } else if (previousMode === 'APPOINTMENT' && m !== 'APPOINTMENT') {
+      this.emballageRecup.forEach((article: any) => {
+        article.emballage.quantite = article.liquide.quantite;
+      });
+    }
   }
 
   // ===== LOGIQUE METIER (inchangée) =====
@@ -200,12 +225,31 @@ export class VentemanuelleComponent {
       }
     });
 
-    this.emballageRecup = [
+    const rawEmballages = [
       ...(this.updateData.articles || []),
       ...(this.updateData.articlesGratuit || [])
     ]
       .filter((article: any) => article.liquide?.quantite > 0)
-      .filter((emballage: any) => !!emballage);
+      .filter((article: any) => !!article);
+
+    const emballageMap = new Map<string, any>();
+    for (const article of rawEmballages) {
+      const key = article.emballage?.libelle || article.emballage?.code || article.emballage?.id;
+      if (emballageMap.has(key)) {
+        const existing = emballageMap.get(key);
+        existing.liquide.quantite += Number(article.liquide?.quantite || 0);
+        if (existing.emballage.quantite != null) {
+          existing.emballage.quantite += Number(article.emballage?.quantite || 0);
+        }
+      } else {
+        emballageMap.set(key, {
+          ...article,
+          emballage: { ...article.emballage },
+          liquide: { ...article.liquide },
+        });
+      }
+    }
+    this.emballageRecup = Array.from(emballageMap.values());
 
     console.log(this.emballageRecup)
   }
@@ -263,14 +307,14 @@ export class VentemanuelleComponent {
 
       const articlesGratuit = this.articlesGratuits.map((article: any) => {
         const quantite = article.liquide.quantite;
-        const prixUnitaire = Number(article.prixUnitaireLiquide);
+        // Un article gratuit ne coûte rien au client : ne pas reprendre le prix catalogue.
         return {
           venteChineArticleGratuitId: article.id,
           liquideId: article.liquide.id,
           emballageId: article.emballage.id,
           quantite: quantite,
-          prixUnitaire: prixUnitaire,
-          montantTotal: prixUnitaire * quantite
+          prixUnitaire: 0,
+          montantTotal: 0
         };
       });
 
@@ -398,9 +442,9 @@ export class VentemanuelleComponent {
       const returnObject = {
         "depotId": this.updateData.commercial.depot.id,
         "commandeCliOrGratuitCode": this.updateData.numVenteChine,
-        "venteChineId": Number(this.venteId),
+        "venteChineIdRetour": Number(this.venteId),
         "returnType": this.mode,
-        ...((this.mode === 'APPOINTMENT' || this.mode === 'COMPTANT') && {"appointmentDate": this.isRdv ? this.rdvDate : null }),
+        ...((this.mode === 'APPOINTMENT' || this.mode === 'COMPTANT') && {"appointmentDate": this.rdvDate || null }),
         "montantAPercevoir": this.mode === 'COMPTANT'
           ? articlesObject.reduce((total: number, a: any) => total + Number(a.prixUnitaireEmballage || 0), 0)
           : 0,

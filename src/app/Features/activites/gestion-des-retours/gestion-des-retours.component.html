@@ -1,15 +1,17 @@
-<div class="bui-back mb-4" (click)="goBack()">
-  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
-  <h4 class="fw-bold mb-0">Gestion des retours</h4>
+<div class="gdr-back-row" (click)="goBack()">
+  <div class="gdr-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="gdr-back-title">Gestion des retours</h4>
 </div>
 
-<div class="cc-tabs mb-3">
-  <button class="cc-tab-btn" [class.active]="activeTab === 'suiviRdv'" (click)="activeElement('suiviRdv')">Suivi des Rdv</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'consigne'" (click)="activeElement('consigne')">Consignes</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'receptionEmallage'" (click)="activeElement('receptionEmallage')">Réceptions emballages</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'retourPlein'" (click)="activeElement('retourPlein')">Retour plein</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'listReceptionEmallage'" (click)="activeElement('listReceptionEmallage')">Regroupement/agents</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'ecartEmballage'" (click)="activeElement('ecartEmballage')">Ecart</button>
+<div class="gdr-tabs mb-3">
+  <button class="gdr-tab-btn" [class.active]="activeTab === 'suiviRdv'" (click)="activeElement('suiviRdv')">Suivi des Rdv</button>
+  <button class="gdr-tab-btn" [class.active]="activeTab === 'consigne'" (click)="activeElement('consigne')">Consignes</button>
+  <button class="gdr-tab-btn" [class.active]="activeTab === 'receptionEmallage'" (click)="activeElement('receptionEmallage')">Réceptions emballages</button>
+  <button class="gdr-tab-btn" [class.active]="activeTab === 'retourPlein'" (click)="activeElement('retourPlein')">Retour plein</button>
+  <button class="gdr-tab-btn" [class.active]="activeTab === 'listReceptionEmallage'" (click)="activeElement('listReceptionEmallage')">Regroupement/agents</button>
+  <button class="gdr-tab-btn" [class.active]="activeTab === 'regroupementRetourPlein'" (click)="activeElement('regroupementRetourPlein')">Regroupement Retour Plein</button>
+  <button class="gdr-tab-btn" [class.active]="activeTab === 'ecartEmballage'" (click)="activeElement('ecartEmballage')">Ecart</button>
+  <button class="gdr-tab-btn" [class.active]="activeTab === 'recuperationEmballagesRdv'" (click)="activeElement('recuperationEmballagesRdv')">Récupération emballages RDV</button>
 </div>
 
 <div *ngIf="activeTab === 'suiviRdv'">
@@ -32,10 +34,18 @@
   <app-list-des-receptions-emballages></app-list-des-receptions-emballages>
 </div>
 
+<div *ngIf="activeTab === 'regroupementRetourPlein'">
+  <app-regroupement-retour-plein></app-regroupement-retour-plein>
+</div>
+
 <div *ngIf="activeTab === 'regroupementEmballages'">
   <app-regroupement-emballages></app-regroupement-emballages>
 </div>
 
 <div *ngIf="activeTab === 'ecartEmballage'">
   <app-ecart-emballage></app-ecart-emballage>
+</div>
+
+<div *ngIf="activeTab === 'recuperationEmballagesRdv'">
+  <app-recuperation-emballages-rdv></app-recuperation-emballages-rdv>
 </div>

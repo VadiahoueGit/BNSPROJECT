@@ -19,7 +19,9 @@ export class PaiementenattenteComponent {
     commande: '',
     agent: '',
     client: '',
-    statut: ''
+    statut: '',
+    dateDebut: '',
+    dateFin: '',
   };
   statuses!: any[];
   dataList!: any[];
@@ -42,6 +44,7 @@ export class PaiementenattenteComponent {
   selectedArticles: never[];
   totalPages: number;
   hstoriquePayment: any = [];
+  vcFilters = { statut: '', type: '', search: '' };
   constructor(
     private articleService: ArticleServiceService,
     private financeService: FinanceService,
@@ -89,25 +92,25 @@ export class PaiementenattenteComponent {
   }
 
   filterGlobal() {
-    this.GetPaiementList(
-      1,
-      this.filters.commande,
-      this.filters.agent,
-      this.filters.client,
-      this.filters.statut
-    );
+    this.GetPaiementList(1);
   }
 
+  resetFilters() {
+    this.filters = { commande: '', agent: '', client: '', statut: '', dateDebut: '', dateFin: '' };
+    this.GetPaiementList(1);
+  }
 
-  GetPaiementList(page: number,numeroCommande?: string,agent?: string,clientNom?: string,statut?: string) {
+  GetPaiementList(page: number) {
     let data = {
       paginate: true,
       page: page,
       limit: 8,
-      numeroCommande: numeroCommande || '',
-      agent:agent || '',
-      clientNom: clientNom || '',
-      statut:statut || ''
+      numeroCommande: this.filters.commande || '',
+      agent: this.filters.agent || '',
+      clientNom: this.filters.client || '',
+      statut: this.filters.statut || '',
+      dateDebut: this.filters.dateDebut || '',
+      dateFin: this.filters.dateFin || '',
     };
     this._spinner.show();
     this.financeService.GetPaiementListAttente(data).then((res: any) => {
@@ -142,9 +145,9 @@ export class PaiementenattenteComponent {
 
 
   onPage(event: any) {
-    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.currentPage = event.first / event.rows + 1;
     this.rowsPerPage = event.rows;
-    this.GetPaiementList(this.currentPage)
+    this.GetPaiementList(this.currentPage);
   }
 
   getEcartEnJours(dateEcheance: string | Date): number | null {
@@ -192,6 +195,19 @@ export class PaiementenattenteComponent {
       }
     );
   }
+  get filteredHistorique() {
+    return this.hstoriquePayment.filter((item: any) => {
+      const matchStatut = !this.vcFilters.statut || item?.statut === this.vcFilters.statut;
+      const matchType   = !this.vcFilters.type   || item?.typePaiement === this.vcFilters.type;
+      const q = this.vcFilters.search.toLowerCase();
+      const matchSearch = !q ||
+        (item?.numPaiement || '').toLowerCase().includes(q) ||
+        String(item?.montant || '').includes(q) ||
+        (item?.moyenPaiement?.libelle || '').toLowerCase().includes(q);
+      return matchStatut && matchType && matchSearch;
+    });
+  }
+
   get filteredArticles() {
     return this.updateData.returnStock?.ventesReturn?.filter((a:any) => a.prixUnitaire > 0);
   }
@@ -202,8 +218,26 @@ export class PaiementenattenteComponent {
     this.totalQte = 0;
     this.isModalOpen = false;
     this.selectedArticles = [];
+    this.vcFilters = { statut: '', type: '', search: '' };
     console.log(this.isModalOpen);
   }
+  AnnulerTransaction(item: any) {
+    ALERT_QUESTION('warning', 'Annuler ce paiement ?', 'Cette action est irréversible.').then((res) => {
+      if (res.isConfirmed) {
+        this._spinner.show();
+        this.financeService.AnnulerPaiementTransaction(item.id).then((result: any) => {
+          this._spinner.hide();
+          this.toastr.success(result.message);
+          this.GetHistoriquePayment(this.updateData.id);
+          this.GetPaiementList(1);
+        }).catch(() => {
+          this._spinner.hide();
+          this.toastr.error('Erreur lors de l\'annulation');
+        });
+      }
+    });
+  }
+
   ValidatePaiement(item: any) {
     ALERT_QUESTION(
       'warning',
@@ -225,6 +259,19 @@ export class PaiementenattenteComponent {
         this.isModalOpen = false;
       }
     });
+  }
+
+  downloadRecu(row: any) {
+    this.financeService.getRecuPaiement(row.id).then((blob: Blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `recu-${row.numTransaction || row.id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }).catch(() => this.toastr.error('Erreur lors du téléchargement du reçu'));
   }
 
   protected readonly Status = Status;

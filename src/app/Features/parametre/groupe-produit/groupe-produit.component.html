@@ -1,98 +1,84 @@
-<div class="card">
-    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8" [totalRecords]="totalPages" [lazy]="true" 
-        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" [globalFilterFields]="['code', 'libelle']"(onPage)="onPage($event)" >
-        <ng-template pTemplate="caption">
-            <div class=" d-flex justify-content-between py-3">
-                <span class="p-input-icon-left ml-auto d-flex align-items-center">
-                    <i class="fas fa-search"></i>
-                    <input pInputText type="text" (input)="filterGlobal($event)" placeholder="Recherche" />
-                </span>
-                <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Ajouter un groupe d'article</button>
-            </div>
-        </ng-template>
-        <ng-template pTemplate="header">
-            <tr>
-                <th style="width:30%;color: var(--secondary-color);">Code</th>
-                <th style="width:50%;color: var(--secondary-color);">Groupe d'article</th>
-                <th style="width:20%;color: var(--secondary-color);">Actions</th>
-            </tr>
-            <tr>
-                <th>
-                    <p-columnFilter  type="text" field="code" placeholder="Code" />
-                </th>
-                <th>
-                    <p-columnFilter type="text" field="libelle" placeholder="Libellé de l'article" />
-                </th>
-                <th>
-
-                </th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-dataList>
-            <tr>
-                <td class="">
-                    {{ dataList.code }}
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.libelle }}
-                    </span>
-                </td>
-                <td>
-            <tr class="d-flex justify-content-center gap-3">
-                <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
-                <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;" class="fas fa-trash-alt text-danger"></i></td>
-            </tr>
-
-            </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="5">Aucun groupe d'article trouvé.</td>
-            </tr>
-        </ng-template>
-    </p-table>
+<div class="cc-list-card">
+  <div class="cc-list-topbar">
+    <span class="cc-list-count">{{ totalPages }} groupe(s)</span>
+    <button class="cc-btn-primary" type="button" (click)="OnCreate()">
+      <i class="fas fa-plus me-2"></i>Ajouter un groupe d'article
+    </button>
+  </div>
+  <div class="cc-filters">
+    <div class="cc-filter-item">
+      <span class="cc-filter-label">Libellé</span>
+      <div class="cc-filter-input-wrap">
+        <i class="fas fa-search cc-filter-icon"></i>
+        <input class="cc-filter-input" type="text" [(ngModel)]="filters.libelle" (keydown.enter)="filterGlobal()" placeholder="Recherche…">
+      </div>
+    </div>
+    <div>
+      <button class="cc-btn-search" type="button" (click)="filterGlobal()">
+        <i class="fas fa-search me-1"></i> Rechercher
+      </button>
+    </div>
+  </div>
+  <p-table [styleClass]="'cc-ptable p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8" [totalRecords]="totalPages" [lazy]="true"
+      [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Code</th>
+        <th>Groupe d'article</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>{{ row.code }}</td>
+        <td>{{ row.libelle }}</td>
+        <td class="text-center">
+          <div style="display:flex;gap:6px;justify-content:center">
+            <button class="cc-action-btn edit" (click)="OnEdit(row)" title="Modifier"><i class="fas fa-edit"></i></button>
+            <button class="cc-action-btn del" (click)="OnDelete(row.id)" title="Supprimer"><i class="fas fa-trash"></i></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="3" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">
+          <i class="fas fa-layer-group" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i>
+          Aucun groupe d'article trouvé.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>
 
-
-<!-- Modal creation -->
-<!-- Modal -->
 <div *ngIf="isModalOpen" class="custom-modal">
-    <div class="modal-dialog  modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header d-flex align-items-center">
-                <div class="d-flex justify-content-center align-items-center"
-                    style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
-                    <i class="fas fa-box-check text-primary fs-3"></i>
-                </div>
-                <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création de groupe d'article</h1>
-                <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification du groupe d'article</h1>
-            </div>
-
-            <div class="modal-body">
-                <form [formGroup]="groupeProduitForm">
-                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
-                        <div class="d-flex align-items-center">
-                            <label for="code" class="form-label me-1 label-fixed-width">Code</label>
-                            <p class="text-danger mb-0">*</p>
-                        </div>
-                        <input type="text" class="form-control" id="code"  formControlName="code" placeholder="Entrez le code" >
-                    </div>
-                    <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
-                        <div class="d-flex align-items-center">
-                            <label for="libelle" class="form-label me-1 label-fixed-width">Groupe d'article</label>
-                            <p class="text-danger mb-0">*</p>
-                        </div>
-                        <input type="text" class="form-control" id="libelle"  formControlName="libelle" placeholder="Entrez le libelle" >
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer gap-3 px-4">
-                <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-                <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
-                
-            </div>
-        </div>
+  <div class="cc-modal">
+    <div class="cc-modal-header">
+      <div class="cc-modal-icon"><i class="fas fa-layer-group"></i></div>
+      <h5 class="cc-modal-title">
+        {{ operation === 'create' ? 'Création de groupe d\'article' : 'Modification du groupe d\'article' }}
+      </h5>
+      <button class="cc-modal-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
     </div>
+    <div class="cc-modal-body">
+      <form [formGroup]="groupeProduitForm">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px">
+          <div class="cc-field">
+            <label class="cc-field-label">Code *</label>
+            <input class="cc-field-input" formControlName="code" placeholder="Entrez le code" />
+          </div>
+          <div class="cc-field">
+            <label class="cc-field-label">Groupe d'article *</label>
+            <input class="cc-field-input" formControlName="libelle" placeholder="Entrez le libellé" />
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="cc-modal-footer">
+      <button class="cc-btn-secondary" (click)="OnCloseModal()">Annuler</button>
+      <button class="cc-btn-submit" (click)="onSubmit()">
+        <i class="fas fa-check"></i> {{ operation === 'create' ? 'Créer' : 'Enregistrer' }}
+      </button>
+    </div>
+  </div>
 </div>

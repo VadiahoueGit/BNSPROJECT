@@ -1,113 +1,86 @@
-<div class="card">
-
-    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8" [totalRecords]="totalPages" [lazy]="true"
-        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" [globalFilterFields]="['code', 'libelle']" [globalFilterFields]="['code', 'libelle']" (onPage)="onPage($event)">
-        <ng-template pTemplate="caption">
-            <div class=" d-flex justify-content-between py-3">
-                <span class="p-input-icon-left ml-auto d-flex align-items-center">
-                    <i class="fas fa-search"></i>
-                    <input pInputText type="text" (input)="filterGlobal($event)" placeholder="Recherche" />
-                </span>
-                <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Ajouter un type article</button>
-            </div>
-        </ng-template>
-        <ng-template pTemplate="header">
-            <tr>
-                <th style="width:30%;color: var(--secondary-color);">Code article</th>
-                <th style="width:50%;color: var(--secondary-color);">Libelle</th>
-                <th style="width:40%;color: var(--secondary-color);">Date création</th>
-                <th style="width:30%;color: var(--secondary-color);">Actions</th>
-            </tr>
-            <tr>
-                <th>
-                    <p-columnFilter type="text" field="code" placeholder="Code groupe" />
-                </th>
-                <th>
-                    <p-columnFilter type="text" field="libelle" placeholder="Libellé " />
-                </th>
-                <th>
-
-                </th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-dataList>
-            <tr>
-                <td class="">
-                    {{ dataList.code }}
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.libelle }}
-                    </span>
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.createdAt | date }}
-                    </span>
-                </td>
-                <td>
-            <tr class="d-flex justify-content-center gap-3">
-                <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
-                <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;" class="fas fa-trash-alt text-danger"></i>
-                </td>
-            </tr>
-
-            </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="5">Aucun type article trouvé!</td>
-            </tr>
-        </ng-template>
-    </p-table>
+<div class="cc-list-card">
+  <div class="cc-list-topbar">
+    <span class="cc-list-count">{{ totalPages }} type(s) article</span>
+    <button class="cc-btn-primary" type="button" (click)="OnCreate()">
+      <i class="fas fa-plus me-2"></i>Ajouter un type article
+    </button>
+  </div>
+  <div class="cc-filters">
+    <div class="cc-filter-item">
+      <span class="cc-filter-label">Libellé</span>
+      <div class="cc-filter-input-wrap">
+        <i class="fas fa-search cc-filter-icon"></i>
+        <input class="cc-filter-input" type="text" [(ngModel)]="filters.libelle" (keydown.enter)="filterGlobal()" placeholder="Recherche…">
+      </div>
+    </div>
+    <div>
+      <button class="cc-btn-search" type="button" (click)="filterGlobal()">
+        <i class="fas fa-search me-1"></i> Rechercher
+      </button>
+    </div>
+  </div>
+  <p-table [styleClass]="'cc-ptable p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8" [totalRecords]="totalPages" [lazy]="true"
+      [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Code article</th>
+        <th>Libellé</th>
+        <th>Date création</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>{{ row.code }}</td>
+        <td>{{ row.libelle }}</td>
+        <td>{{ row.createdAt | date }}</td>
+        <td class="text-center">
+          <div style="display:flex;gap:6px;justify-content:center">
+            <button class="cc-action-btn edit" (click)="OnEdit(row)" title="Modifier"><i class="fas fa-edit"></i></button>
+            <button class="cc-action-btn del" (click)="OnDelete(row.id)" title="Supprimer"><i class="fas fa-trash"></i></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="4" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">
+          <i class="fas fa-tags" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i>
+          Aucun type article trouvé.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>
 
-
-<!-- Modal creation -->
-<!-- Modal -->
 <div *ngIf="isModalOpen" class="custom-modal">
-    <div class="modal-dialog  modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header d-flex align-items-center">
-                <div class="d-flex justify-content-center align-items-center"
-                    style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
-                    <i class="fas fa-box-check text-primary fs-3"></i>
-                </div>
-                <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création d'un
-                    type article</h1>
-                <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification du type
-                    article</h1>
-            </div>
-
-            <div class="modal-body">
-                <form [formGroup]="articleForm">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="mb-3">
-                        <label for="code" class="form-label">Code <span
-                          class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="code" formControlName="code"
-                               placeholder="Entrez le code">
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="mb-3">
-                        <label for="code" class="form-label">Nom du type article <span
-                          class="text-danger">*</span></label>
-                        <input type="text" class="form-control" formControlName="libelle" id="nom"
-                               placeholder="Entrez le type article">
-                      </div>
-                    </div>
-
-                  </div>
-
-                </form>
-            </div>
-            <div class="modal-footer gap-3 px-4">
-                <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-                <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
-            </div>
-        </div>
+  <div class="cc-modal">
+    <div class="cc-modal-header">
+      <div class="cc-modal-icon"><i class="fas fa-tags"></i></div>
+      <h5 class="cc-modal-title">
+        {{ operation === 'create' ? 'Création d\'un type article' : 'Modification du type article' }}
+      </h5>
+      <button class="cc-modal-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
     </div>
+    <div class="cc-modal-body">
+      <form [formGroup]="articleForm">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px">
+          <div class="cc-field">
+            <label class="cc-field-label">Code *</label>
+            <input class="cc-field-input" formControlName="code" placeholder="Entrez le code" />
+          </div>
+          <div class="cc-field">
+            <label class="cc-field-label">Nom du type article *</label>
+            <input class="cc-field-input" formControlName="libelle" placeholder="Entrez le type article" />
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="cc-modal-footer">
+      <button class="cc-btn-secondary" (click)="OnCloseModal()">Annuler</button>
+      <button class="cc-btn-submit" (click)="onSubmit()">
+        <i class="fas fa-check"></i> {{ operation === 'create' ? 'Créer' : 'Enregistrer' }}
+      </button>
+    </div>
+  </div>
 </div>

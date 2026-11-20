@@ -34,6 +34,7 @@ export class GroupeProduitComponent {
   currentPage: number;
   rowsPerPage: any;
   totalPages: number;
+  filters: any = { libelle: '' };
   constructor(private articleService: ArticleServiceService, private _spinner:NgxSpinnerService,
     private toastr: ToastrService,
     private fb: FormBuilder,
@@ -51,10 +52,8 @@ export class GroupeProduitComponent {
   clear(table: Table) {
     table.clear();
   }
-  filterGlobal(event:any) {
-    const inputElement = event.target as HTMLInputElement;
-    const value = inputElement?.value || ''; // Utilisez une valeur par défaut
-    this.dt2.filterGlobal(value, 'contains');
+  filterGlobal() {
+    this.GetGroupeProduitList(1);
   }
   OnCloseModal()
   {
@@ -141,7 +140,8 @@ export class GroupeProduitComponent {
     let data = {
       paginate: true,
       page:page,
-      limit:8
+      limit:8,
+      libelle: this.filters.libelle || '',
     }
     this._spinner.show()
     this.articleService.GetGroupeArticleList(data).then((res:any)=>{

@@ -1,0 +1,194 @@
+<div class="ai-layout">
+  <!-- Listes -->
+  <div class="cc-list-card ai-listes">
+    <div class="cc-list-topbar">
+      <span class="cc-list-count">{{ listes.length }} liste(s)</span>
+      <button class="cc-btn-primary" type="button" (click)="OnCreateListe()">
+        <i class="fas fa-plus me-2"></i>Nouvelle liste
+      </button>
+    </div>
+
+    <div *ngIf="!listes.length" class="ai-empty">
+      <i class="fas fa-layer-group"></i>
+      Aucune liste. Créez-en une pour y ajouter des emballages et des plastiques.
+    </div>
+
+    <div *ngFor="let liste of listes" class="ai-liste-item" [class.active]="liste.id === listeSelectionnee?.id"
+      (click)="OnSelectListe(liste)">
+      <div class="ai-liste-info">
+        <span class="ai-liste-nom">{{ liste.libelle }}</span>
+        <span class="ai-liste-fournisseur" [class.manquant]="!liste.fournisseur">
+          <i class="fas fa-truck me-1"></i>{{ liste.fournisseur?.nom || 'Fournisseur à renseigner' }}
+        </span>
+        <span class="ai-liste-fournisseur" [class.manquant]="!liste.typePrix">
+          <i class="fas fa-tags me-1"></i>{{ liste.typePrix?.libelle || 'Liste de prix à renseigner' }}
+        </span>
+        <span class="ai-liste-count">{{ liste.articles?.length || 0 }} article(s)</span>
+      </div>
+      <div class="ai-liste-actions">
+        <button class="cc-action-btn edit" (click)="OnEditListe(liste, $event)" title="Modifier"><i class="fas fa-edit"></i></button>
+        <button class="cc-action-btn del" (click)="OnDeleteListe(liste, $event)" title="Supprimer la liste"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Articles de la liste sélectionnée -->
+  <div class="cc-list-card ai-detail">
+    <div class="cc-list-topbar">
+      <div>
+        <div class="ai-detail-titre">{{ listeSelectionnee?.libelle || 'Aucune liste sélectionnée' }}</div>
+        <span class="cc-list-count" *ngIf="listeSelectionnee">
+          {{ listeSelectionnee.fournisseur?.nom || 'Fournisseur à renseigner' }} ·
+          {{ listeSelectionnee.typePrix?.libelle || 'Liste de prix à renseigner' }} ·
+        </span>
+        <span class="cc-list-count">{{ listeSelectionnee?.articles?.length || 0 }} article(s) interchangeable(s)</span>
+      </div>
+      <button class="cc-btn-primary" type="button" (click)="OnCreate()" [disabled]="!listeSelectionnee">
+        <i class="fas fa-plus me-2"></i>Ajouter un article
+      </button>
+    </div>
+    <div class="cc-filters">
+      <div class="cc-filter-item">
+        <span class="cc-filter-label">Libellé</span>
+        <div class="cc-filter-input-wrap">
+          <i class="fas fa-search cc-filter-icon"></i>
+          <input class="cc-filter-input" type="text" [(ngModel)]="filters.libelle" (keydown.enter)="filterGlobal()" placeholder="Recherche…">
+        </div>
+      </div>
+      <div>
+        <button class="cc-btn-search" type="button" (click)="filterGlobal()">
+          <i class="fas fa-search me-1"></i> Rechercher
+        </button>
+      </div>
+    </div>
+    <p-table [styleClass]="'cc-ptable p-datatable-sm'" [value]="articlesFiltres" dataKey="id" [rows]="8" [paginator]="articlesFiltres.length > 8">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Type</th>
+          <th>Code</th>
+          <th>Libellé</th>
+          <th>Format / conditionnement</th>
+          <th class="text-end">Prix</th>
+          <th>Date d'ajout</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>
+            <span class="ai-type" [class.plastique]="row.plastiqueNu">{{ row.plastiqueNu ? 'Plastique' : 'Emballage' }}</span>
+          </td>
+          <td>{{ article(row).code }}</td>
+          <td>{{ article(row).libelle }}</td>
+          <td>
+            <ng-container *ngIf="row.emballage">{{ row.emballage.format }} {{ row.emballage.condition }}</ng-container>
+            <ng-container *ngIf="row.plastiqueNu">{{ row.plastiqueNu.conditionnement }}</ng-container>
+          </td>
+          <td class="text-end">
+            <span *ngIf="row.prix != null">{{ row.prix | number:'1.0-2':'fr' }}</span>
+            <span *ngIf="row.prix == null" class="ai-sans-prix" [title]="row.emballage ? 'Pas de prix de consigne pour cet emballage dans la liste de prix de la liste' : ''">—</span>
+          </td>
+          <td>{{ row.createdAt | date }}</td>
+          <td class="text-center">
+            <button class="cc-action-btn del" (click)="OnDelete(row.id)" title="Retirer de la liste"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">
+            <i class="fas fa-exchange-alt" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i>
+            {{ listeSelectionnee ? 'Aucun article dans cette liste.' : 'Sélectionnez une liste.' }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- Modale liste -->
+<div *ngIf="isModalListeOpen" class="custom-modal">
+  <div class="cc-modal" style="width:32em">
+    <div class="cc-modal-header">
+      <div class="cc-modal-icon"><i class="fas fa-layer-group"></i></div>
+      <h5 class="cc-modal-title">{{ operationListe === 'create' ? 'Nouvelle liste' : 'Modifier la liste' }}</h5>
+      <button class="cc-modal-close" (click)="OnCloseModalListe()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="cc-modal-body">
+      <form [formGroup]="listeForm" (ngSubmit)="onSubmitListe()">
+        <div class="cc-field">
+          <label class="cc-field-label">Fournisseur *</label>
+          <ng-select [items]="dataListFournisseurs" bindLabel="nom" bindValue="id" formControlName="fournisseurId"
+            [searchable]="true" [clearable]="true"
+            placeholder="Choisir le fournisseur…" notFoundText="Aucun fournisseur">
+          </ng-select>
+        </div>
+        <div class="cc-field">
+          <label class="cc-field-label">Liste de prix *</label>
+          <ng-select [items]="dataListTypePrix" bindLabel="libelle" bindValue="id" formControlName="typePrixId"
+            [searchable]="true" [clearable]="true"
+            placeholder="Choisir la liste de prix…" notFoundText="Aucune liste de prix">
+          </ng-select>
+          <div class="ai-aide">Les prix de consigne des emballages sont repris de cette liste de prix ; les plastiques gardent leur prix unitaire.</div>
+        </div>
+        <div class="cc-field">
+          <label class="cc-field-label">Nom de la liste *</label>
+          <input class="cc-field-input" formControlName="libelle" placeholder="Ex. : Bouteilles 1L" />
+        </div>
+      </form>
+    </div>
+    <div class="cc-modal-footer">
+      <button class="cc-btn-secondary" (click)="OnCloseModalListe()">Annuler</button>
+      <button class="cc-btn-submit" [disabled]="listeForm.invalid" (click)="onSubmitListe()">
+        <i class="fas fa-check"></i> {{ operationListe === 'create' ? 'Créer' : 'Enregistrer' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modale ajout d'un emballage ou d'un plastique -->
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div class="cc-modal" style="width:32em">
+    <div class="cc-modal-header">
+      <div class="cc-modal-icon"><i class="fas fa-exchange-alt"></i></div>
+      <h5 class="cc-modal-title">Ajouter à « {{ listeSelectionnee?.libelle }} »</h5>
+      <button class="cc-modal-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="cc-modal-body">
+      <form [formGroup]="articleForm">
+        <div class="cc-field">
+          <label class="cc-field-label">Type d'article *</label>
+          <div class="ai-type-choix">
+            <button type="button" [class.active]="articleForm.value.type === 'emballage'" (click)="OnChangeType('emballage')">
+              <i class="fas fa-box me-1"></i>Emballage
+            </button>
+            <button type="button" [class.active]="articleForm.value.type === 'plastique'" (click)="OnChangeType('plastique')">
+              <i class="fas fa-th me-1"></i>Plastique
+            </button>
+          </div>
+        </div>
+        <div class="cc-field" *ngIf="articleForm.value.type === 'emballage'">
+          <label class="cc-field-label">Emballage *</label>
+          <ng-select [items]="emballagesDisponibles" bindLabel="label" bindValue="id" formControlName="articleId"
+            [searchable]="true" [clearable]="true"
+            placeholder="Rechercher un emballage…" notFoundText="Aucun emballage disponible">
+          </ng-select>
+        </div>
+        <div class="cc-field" *ngIf="articleForm.value.type === 'plastique'">
+          <label class="cc-field-label">Plastique *</label>
+          <ng-select [items]="plastiquesDisponibles" bindLabel="label" bindValue="id" formControlName="articleId"
+            [searchable]="true" [clearable]="true"
+            placeholder="Rechercher un plastique…" notFoundText="Aucun plastique disponible">
+          </ng-select>
+        </div>
+        <div class="ai-aide">Seuls sont proposés les emballages et plastiques du fournisseur de la liste ({{ listeSelectionnee?.fournisseur?.nom }}) qui ne sont encore dans aucune liste.</div>
+      </form>
+    </div>
+    <div class="cc-modal-footer">
+      <button class="cc-btn-secondary" (click)="OnCloseModal()">Annuler</button>
+      <button class="cc-btn-submit" [disabled]="articleForm.invalid" (click)="onSubmit()">
+        <i class="fas fa-check"></i> Ajouter
+      </button>
+    </div>
+  </div>
+</div>

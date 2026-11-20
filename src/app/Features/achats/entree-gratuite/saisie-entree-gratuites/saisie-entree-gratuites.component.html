@@ -1,4 +1,4 @@
-<div class="card">
+<div class="seg-card">
   <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="ListEntreeGratuite" dataKey="id"
     [rows]="8" [totalRecords]="totalPages" [lazy]="true"
     [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
@@ -31,7 +31,7 @@
             </div>
           </div>
         </div>
-        <button *ngIf="!ListenMode" type="button" class="bui-btn-add" (click)="OnCreate()">
+        <button *ngIf="!ListenMode" type="button" class="seg-btn-add" (click)="OnCreate()">
           <i class="fas fa-plus me-1"></i>Saisir une entrée
         </button>
       </div>
@@ -54,7 +54,7 @@
         <td>{{ row?.depot?.nomDepot }}</td>
         <td>{{ row?.dateReception }}</td>
         <td class="text-center">
-          <span class="bui-icon-btn view" (click)="OnEdit(row)"><i class="fas fa-eye"></i></span>
+          <button class="seg-action-btn view" (click)="OnEdit(row)" title="Voir"><i class="fas fa-eye"></i></button>
         </td>
       </tr>
     </ng-template>
@@ -226,9 +226,9 @@
                       [(ngModel)]="item.quantite" [min]="0" />
                   </td>
                   <td class="text-center">
-                    <span class="bui-icon-btn delete" (click)="removeArticle(item)">
+                    <button class="seg-action-btn delete" (click)="removeArticle(item)" title="Supprimer">
                       <i class="fas fa-trash-alt"></i>
-                    </span>
+                    </button>
                   </td>
                 </tr>
                 <tr *ngIf="!articlesRecues?.length">

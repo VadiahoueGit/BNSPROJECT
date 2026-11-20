@@ -1,37 +1,32 @@
-.modal-dialog{
-    max-width: 45em;
-    min-width: auto;
+$blue:#0071c2;$green:#16a34a;$red:#dc2626;$border:#e5e7eb;$muted:#9ca3af;$light:#f8fafc;
+.tr-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.tr-title{display:flex;align-items:center;gap:10px;h4{font-size:18px;font-weight:700;color:#111827;margin:0;}}
+.tr-btn-primary{height:36px;padding:0 18px;background:$blue;color:white;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba($blue,.3);transition:all .15s;&:hover{background:darken($blue,8%);transform:translateY(-1px);}}
+.tr-card{background:white;border-radius:14px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid $border;}
+.tr-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid $border;}
+.tr-card-title{font-size:15px;font-weight:700;color:#111827;i{color:$blue;margin-right:6px;}}
+.tr-count{font-size:12px;color:$muted;margin-top:2px;}
+.tr-name{font-weight:600;font-size:13px;color:#111827;}
+.tr-depot-badge{display:inline-flex;align-items:center;gap:4px;background:rgba($green,.08);border:1px solid rgba($green,.15);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;color:darken($green,5%);i{font-size:10px;}}
+::ng-deep .tr-ptable{
+  .p-datatable-thead>tr>th{background:$light;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:$muted;border-bottom:2px solid $border;padding:10px 14px;}
+  .p-datatable-tbody>tr>td{font-size:13px;color:#374151;padding:11px 14px;border-bottom:1px solid #f3f4f6;vertical-align:middle;}
+  .p-datatable-tbody>tr:hover>td{background:#f0f7ff;}
+  .p-datatable-tbody>tr:nth-child(even)>td{background:#fafafa;}
+  .p-datatable-tbody>tr:nth-child(even):hover>td{background:#f0f7ff;}
 }
-
-.custom-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1050;
-  }
-span{
-  font-size: 11px;
-}
-  .modal-dialog {
-    background-color: white;
-    border-radius: 0.3rem;
-    width: 45em;
-    max-width: 45em;
-    padding: 1rem;
-  }
-
-  .modal-header, .modal-body, .modal-footer {
-    padding: 1rem;
-  }
-
-  .btn-close {
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
-  }
+.tr-action-btn{width:28px;height:28px;border-radius:7px;border:1.5px solid $border;background:white;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:all .15s;&.edit{color:$green;&:hover{background:rgba($green,.08);border-color:$green;}}&.del{color:$red;&:hover{background:#fee2e2;border-color:$red;}}}
+.custom-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:flex;justify-content:center;align-items:center;z-index:1050;}
+.tr-modal{background:white;border-radius:14px;width:580px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.15);}
+.tr-modal-header{display:flex;align-items:center;gap:12px;padding:20px 24px 16px;border-bottom:1px solid $border;}
+.tr-modal-icon{width:40px;height:40px;border-radius:10px;background:rgba($blue,.1);color:$blue;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.tr-modal-title{font-size:15px;font-weight:700;color:#111827;margin:0;flex:1;}
+.tr-modal-close{width:30px;height:30px;border-radius:50%;border:1.5px solid $border;background:white;color:$muted;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:all .15s;&:hover{background:#fee2e2;border-color:$red;color:$red;}}
+.tr-modal-body{padding:20px 24px;}
+.tr-modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:16px 24px;border-top:1px solid $border;}
+.tr-field{display:flex;flex-direction:column;gap:4px;margin-bottom:14px;}
+.tr-field-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:$muted;}
+.tr-field-input{height:36px;border:1.5px solid $border;border-radius:8px;padding:0 12px;font-size:13px;color:#111827;font-family:inherit;width:100%;transition:border-color .15s,box-shadow .15s;&:focus{outline:none;border-color:$blue;box-shadow:0 0 0 3px rgba($blue,.08);}&::placeholder{color:$muted;}}
+.tr-field-select{height:36px;border:1.5px solid $border;border-radius:8px;padding:0 12px;font-size:13px;color:#111827;width:100%;background:white;cursor:pointer;&:focus{outline:none;border-color:$blue;box-shadow:0 0 0 3px rgba($blue,.08);}}
+.tr-btn-secondary{height:36px;padding:0 16px;background:white;border:1.5px solid $border;border-radius:8px;font-size:13px;font-weight:600;color:#374151;cursor:pointer;transition:all .15s;&:hover{border-color:#9ca3af;}}
+.tr-btn-submit{height:36px;padding:0 20px;background:$blue;color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba($blue,.3);transition:all .15s;display:flex;align-items:center;gap:6px;&:hover{background:darken($blue,8%);}}

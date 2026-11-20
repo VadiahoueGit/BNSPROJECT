@@ -224,3 +224,11 @@
     grid-template-columns: 1fr;
   }
 }
+
+$blue:#0071c2;$red:#dc2626;$border:#e5e7eb;$muted:#9ca3af;$light:#f8fafc;
+.seg-card{background:white;border-radius:14px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid $border;}
+.seg-action-btn{width:28px;height:28px;border-radius:7px;border:1.5px solid $border;background:white;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:all .15s;
+  &.view{color:$blue;&:hover{background:rgba($blue,.1);border-color:$blue;}}
+  &.delete{color:$red;&:hover{background:rgba($red,.1);border-color:$red;}}
+}
+.seg-btn-add{height:34px;padding:0 14px;background:$blue;color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:opacity .15s;&:hover{opacity:.88;}}

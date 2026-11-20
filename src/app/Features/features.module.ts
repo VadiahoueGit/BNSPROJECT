@@ -19,6 +19,8 @@ import {NgxFileDropModule} from "ngx-file-drop";
 import {ConfidentialityComponent} from "./confidentiality/confidentiality.component";
 import {PermissionComponent} from "./adminstration/permission/permission.component";
 import {AdminstrationComponent} from "./adminstration/adminstration.component";
+import {JournalModificationsComponent} from "./adminstration/journal-modifications/journal-modifications.component";
+import {GoogleMapsRequetesComponent} from "./adminstration/google-maps-requetes/google-maps-requetes.component";
 import {TableModule} from "primeng/table";
 
 @NgModule({
@@ -27,7 +29,9 @@ import {TableModule} from "primeng/table";
     FeaturesComponent,
     AnnonceComponent,
     PermissionComponent,
-    AdminstrationComponent
+    AdminstrationComponent,
+    JournalModificationsComponent,
+    GoogleMapsRequetesComponent
   ],
   imports: [
     FeaturesRoutingModule,

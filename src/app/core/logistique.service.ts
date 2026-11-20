@@ -189,6 +189,21 @@ export class LogistiqueService {
     });
   }
 
+  LibererVehicule(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      this._http.patch(`${this.apiUrl}/v1/vehicule/${id}/liberer`, {}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
   DeleteVehicule(id: number) {
     return new Promise((resolve: any, reject: any) => {
       this._http
@@ -207,7 +222,7 @@ export class LogistiqueService {
   }
 
   GetAddress(lat: number, lng: number): Observable<any> {
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key='AIzaSyDV1ke-HxBDmSPpqyfivksnjzeD29AC18k'`;
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyDJBENW4Gdx7U-cJr8XLHK3qHFd5jn8F_Q`;
     return this._http.get(url);
   }
 }

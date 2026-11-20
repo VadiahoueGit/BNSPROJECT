@@ -1,0 +1,143 @@
+<div class="fn-card">
+  <!-- Topbar -->
+  <div class="fn-topbar">
+    <div class="fn-topbar-left" style="flex-direction:row; align-items:center; gap:10px">
+      <button class="fn-action-btn view" (click)="goBack()" title="Retour"><i class="fas fa-arrow-left"></i></button>
+      <div class="fn-title"><i class="fas fa-plug me-2"></i>Intégration SAP Business One</div>
+    </div>
+    <button class="vd-btn-primary" (click)="onSubmit()">
+      <i class="fas fa-save me-1"></i> Enregistrer
+    </button>
+  </div>
+
+  <div class="ie-body">
+    <form [formGroup]="form">
+
+      <!-- Activation -->
+      <div class="ie-section sap-toggle-section">
+        <div class="sap-toggle-row">
+          <div>
+            <div class="ie-section-title" style="border:none; margin:0; padding:0"><i class="fas fa-power-off me-2"></i>Activer l'intégration SAP</div>
+            <p class="sap-toggle-hint">
+              Quand c'est activé, une extraction quotidienne récupère automatiquement clients, commandes,
+              livraisons, retours, factures, avoirs et grilles tarifaires depuis SAP pour rapprochement.
+              Désactivé, l'application fonctionne exactement comme avant.
+            </p>
+          </div>
+          <p-inputSwitch formControlName="sapEnabled"></p-inputSwitch>
+        </div>
+      </div>
+
+      <!-- Connexion -->
+      <div class="ie-section">
+        <div class="ie-section-title"><i class="fas fa-server me-2"></i>Paramètres de connexion (Service Layer)</div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="ie-label">URL de base</label>
+            <input type="text" class="form-control" formControlName="baseUrl" placeholder="https://votre-serveur:50000">
+          </div>
+          <div class="col-md-6">
+            <label class="ie-label">Base de données (CompanyDB)</label>
+            <input type="text" class="form-control" formControlName="companyDB" placeholder="ex : SBODEMOFR">
+          </div>
+          <div class="col-md-6">
+            <label class="ie-label">Utilisateur</label>
+            <input type="text" class="form-control" formControlName="username" placeholder="manager">
+          </div>
+          <div class="col-md-6">
+            <label class="ie-label">Mot de passe</label>
+            <input type="password" class="form-control" formControlName="password" placeholder="••••••••">
+          </div>
+        </div>
+
+        <div class="sap-actions-row">
+          <button type="button" class="vd-btn-outline" [disabled]="testingConnexion" (click)="testerConnexion()">
+            <i class="fas fa-satellite-dish me-1"></i>{{ testingConnexion ? 'Test en cours...' : 'Tester la connexion' }}
+          </button>
+          <button type="button" class="vd-btn-outline" [disabled]="runningNow" (click)="lancerMaintenant()">
+            <i class="fas fa-bolt me-1"></i>{{ runningNow ? 'Extraction en cours...' : "Lancer l'extraction maintenant" }}
+          </button>
+          <button type="button" class="vd-btn-outline" (click)="goToRapprochement()">
+            <i class="fas fa-table me-1"></i>Voir le rapprochement SAP
+          </button>
+        </div>
+
+        <div *ngIf="connexionResult" class="sap-connexion-result" [ngClass]="connexionResult.success ? 'ok' : 'ko'">
+          <i class="fas" [ngClass]="connexionResult.success ? 'fa-circle-check' : 'fa-circle-exclamation'"></i>
+          {{ connexionResult.message }}
+        </div>
+      </div>
+
+      <!-- Statut dernière synchro -->
+      <div class="ie-section" *ngIf="currentConfig">
+        <div class="ie-section-title"><i class="fas fa-clock-rotate-left me-2"></i>Dernière synchronisation</div>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="ie-label">Date</label>
+            <div class="sap-readonly-value">{{ currentConfig.lastSyncAt ? (currentConfig.lastSyncAt | date:'dd/MM/yyyy HH:mm') : 'Jamais exécutée' }}</div>
+          </div>
+          <div class="col-md-4">
+            <label class="ie-label">Statut</label>
+            <div class="sap-readonly-value">
+              <span class="fn-badge" [ngClass]="currentConfig.lastSyncStatus === 'SUCCES' ? 'green' : (currentConfig.lastSyncStatus === 'ECHEC' ? 'red' : 'gray')">
+                {{ currentConfig.lastSyncStatus || '—' }}
+              </span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label class="ie-label">Message</label>
+            <div class="sap-readonly-value">{{ currentConfig.lastSyncMessage || '—' }}</div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Historique -->
+    <div class="ie-section">
+      <div class="ie-section-title"><i class="fas fa-history me-2"></i>Historique des synchronisations</div>
+      <div class="table-responsive">
+        <p-table [styleClass]="'fn-ptable p-datatable-sm'" [value]="syncLog" [rows]="syncLogPageSize"
+                 [totalRecords]="syncLogTotal" [lazy]="true" [paginator]="true"
+                 [rowsPerPageOptions]="[10,25,50]" (onPage)="onSyncLogPage($event)">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Date</th>
+              <th>Déclencheur</th>
+              <th class="text-center">Statut</th>
+              <th class="text-center">Clients</th>
+              <th class="text-center">Commandes</th>
+              <th class="text-center">Livraisons</th>
+              <th class="text-center">Retours</th>
+              <th class="text-center">Factures</th>
+              <th class="text-center">Avoirs</th>
+              <th class="text-center">Articles</th>
+              <th class="text-center">Tarifs</th>
+              <th>Erreur</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-row>
+            <tr>
+              <td style="font-size:11px">{{ row.datePivot | date:'dd/MM/yyyy' }}</td>
+              <td style="font-size:11px">{{ row.declenchePar }}</td>
+              <td class="text-center">
+                <span class="fn-badge" [ngClass]="row.statut === 'SUCCES' ? 'green' : (row.statut === 'ECHEC' ? 'red' : 'orange')">{{ row.statut }}</span>
+              </td>
+              <td class="text-center">{{ row.nbClients }}</td>
+              <td class="text-center">{{ row.nbCommandes }}</td>
+              <td class="text-center">{{ row.nbLivraisons }}</td>
+              <td class="text-center">{{ row.nbRetours }}</td>
+              <td class="text-center">{{ row.nbFactures }}</td>
+              <td class="text-center">{{ row.nbAvoirs }}</td>
+              <td class="text-center">{{ row.nbArticles }}</td>
+              <td class="text-center">{{ row.nbGrillesTarifaires }}</td>
+              <td style="font-size:11px; color:#dc2626; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap" [title]="row.erreur">{{ row.erreur || '—' }}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr><td colspan="12" style="text-align:center; padding:32px; color:#9ca3af; font-size:13px;"><i class="fas fa-inbox me-2"></i>Aucune synchronisation pour le moment.</td></tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</div>

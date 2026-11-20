@@ -1,15 +1,16 @@
-<div class="bui-back mb-4" (click)="goBack()">
-  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
-  <h4 class="fw-bold mb-0">Article & prix</h4>
+<div class="ap-back-row" (click)="goBack()">
+  <div class="ap-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="ap-back-title">Article &amp; prix</h4>
 </div>
 
-<div class="cc-tabs mb-3">
-  <button class="cc-tab-btn" [class.active]="activeTab === 'groupeProduits'" (click)="activeElement('groupeProduits')">Groupe d'articles</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'typeArticle'" (click)="activeElement('typeArticle')">Types d'articles</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'liquide'" (click)="activeElement('liquide')">Liquides</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'emballage'" (click)="activeElement('emballage')">Emballages</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'articles'" (click)="activeElement('articles')">Articles</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'creatPrix'" (click)="activeElement('creatPrix')">Liste des prix</button>
+<div class="ap-tabs mb-3">
+  <button class="ap-tab-btn" [class.active]="activeTab === 'groupeProduits'" (click)="activeElement('groupeProduits')">Groupe d'articles</button>
+  <button class="ap-tab-btn" [class.active]="activeTab === 'typeArticle'" (click)="activeElement('typeArticle')">Types d'articles</button>
+  <button class="ap-tab-btn" [class.active]="activeTab === 'liquide'" (click)="activeElement('liquide')">Liquides</button>
+  <button class="ap-tab-btn" [class.active]="activeTab === 'emballage'" (click)="activeElement('emballage')">Emballages</button>
+  <button class="ap-tab-btn" [class.active]="activeTab === 'articles'" (click)="activeElement('articles')">Articles</button>
+  <button class="ap-tab-btn" [class.active]="activeTab === 'creatPrix'" (click)="activeElement('creatPrix')">Liste des prix</button>
+  <button class="ap-tab-btn" [class.active]="activeTab === 'articleInterchangeable'" (click)="activeElement('articleInterchangeable')">Articles interchangeables</button>
 </div>
 
 <div *ngIf="activeTab === 'groupeProduits'">
@@ -34,4 +35,8 @@
 
 <div *ngIf="activeTab === 'creatPrix'">
   <app-creation-prix></app-creation-prix>
+</div>
+
+<div *ngIf="activeTab === 'articleInterchangeable'">
+  <app-article-interchangeable></app-article-interchangeable>
 </div>

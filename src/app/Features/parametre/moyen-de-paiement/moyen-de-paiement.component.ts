@@ -28,6 +28,7 @@ export class MoyenDePaiementComponent {
   currentPage: number;
   rowsPerPage: any;
   totalPages: number;
+  typesCompte: any[] = [];
   constructor(
     private _financeService: FinanceService,
     private _spinner: NgxSpinnerService,
@@ -40,8 +41,16 @@ export class MoyenDePaiementComponent {
   ngOnInit() {
     this.moyenPaiementForm = this.fb.group({
       libelle: [null, Validators.required],
+      typeCompteId: [null],
     });
+    this.GetListTypeCompte();
     this.GetListMoyenPaiement(1);
+  }
+  GetListTypeCompte() {
+    let data = { paginate: false, page: 1, limit: 8 };
+    this._financeService.GetTypeCompteList(data).then((res: any) => {
+      this.typesCompte = res.data;
+    });
   }
   GetListMoyenPaiement(page:number) {
     let data = {
@@ -88,7 +97,10 @@ export class MoyenDePaiementComponent {
     console.log(data);
     this.updateData = data;
     this.prixId = data.id;
-    this.moyenPaiementForm.patchValue(data);
+    this.moyenPaiementForm.patchValue({
+      libelle: data.libelle,
+      typeCompteId: data.typeCompte ? data.typeCompte.id : null,
+    });
     this.isModalOpen = true;
     this.operation = 'edit';
     console.log(this.isModalOpen);

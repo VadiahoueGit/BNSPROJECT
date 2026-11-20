@@ -1,12 +1,12 @@
-<div class="bui-back mb-4" (click)="goBack()">
-  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
-  <h4 class="fw-bold mb-0">Visites commerciales</h4>
+<div class="vco-back-row" (click)="goBack()">
+  <div class="vco-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="vco-back-title">Visites commerciales</h4>
 </div>
 
-<div class="cc-tabs mb-3">
-  <button class="cc-tab-btn" [class.active]="activeTab === 'gestvisit'" (click)="activeElement('gestvisit')">Gestion des visites</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'progvisite'" (click)="activeElement('progvisite')">Visites programmées</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'svisite'" (click)="activeElement('svisite')">Suivi des visites</button>
+<div class="vco-tabs mb-3">
+  <button class="vco-tab-btn" [class.active]="activeTab === 'gestvisit'" (click)="activeElement('gestvisit')">Gestion des visites</button>
+  <button class="vco-tab-btn" [class.active]="activeTab === 'progvisite'" (click)="activeElement('progvisite')">Visites programmées</button>
+  <button class="vco-tab-btn" [class.active]="activeTab === 'svisite'" (click)="activeElement('svisite')">Suivi des visites</button>
 </div>
 
 <div *ngIf="activeTab === 'gestvisit'">

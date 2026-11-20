@@ -5,6 +5,7 @@ import { FinancesRoutingModule } from './finances-routing.module';
 import { ComptabiliteComponent } from './comptabilite/comptabilite.component';
 import { FinancesComponent } from './finances.component';
 import { SuiviComptesComponent } from './suivi-comptes/suivi-comptes.component';
+import { SapRapprochementComponent } from './sap-rapprochement/sap-rapprochement.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -119,6 +120,8 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {PaiementGroupeComponent} from "./paiement-groupe/paiement-groupe.component";
 import { EcartComponent } from './ecart/ecart.component';
 import { SousCompteComponent } from './sous-compte/sous-compte.component';
+import { PaiementBoComponent } from './paiement-bo/paiement-bo.component';
+import { RecouvrementComponent } from './recouvrement/recouvrement.component';
 
 
 @NgModule({
@@ -139,7 +142,10 @@ import { SousCompteComponent } from './sous-compte/sous-compte.component';
     ComptesComponent,
     CaisseComponent,
     EcartComponent,
-    SousCompteComponent
+    SousCompteComponent,
+    PaiementBoComponent,
+    SapRapprochementComponent,
+    RecouvrementComponent,
   ],
   imports: [
     CommonModule,

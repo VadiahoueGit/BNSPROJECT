@@ -1,0 +1,90 @@
+.ie-body {
+  padding: 1.5rem;
+  max-width: 1100px;
+}
+
+.ie-section {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.ie-section-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.ie-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+.form-control {
+  font-size: 0.875rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  &:focus {
+    border-color: #8dae56;
+    box-shadow: 0 0 0 3px rgba(141, 174, 86, 0.15);
+  }
+}
+
+.sap-toggle-section {
+  background: #f8fafb;
+}
+
+.sap-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.sap-toggle-hint {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0.4rem 0 0;
+  max-width: 640px;
+}
+
+.sap-actions-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 1.25rem;
+}
+
+.sap-connexion-result {
+  margin-top: 1rem;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &.ok {
+    background: #ecfdf3;
+    color: #067647;
+    border: 1px solid #abefc6;
+  }
+  &.ko {
+    background: #fef3f2;
+    color: #b42318;
+    border: 1px solid #fecdca;
+  }
+}
+
+.sap-readonly-value {
+  font-size: 0.875rem;
+  color: #111827;
+}

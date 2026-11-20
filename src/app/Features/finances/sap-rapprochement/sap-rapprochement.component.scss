@@ -1,0 +1,37 @@
+.sap-rp-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.sap-rp-tab-btn {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #4b5563;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover { background: #f8fafb; }
+
+  &.active {
+    background: #0071c2;
+    border-color: #0071c2;
+    color: #fff;
+  }
+}
+
+.sap-price-chip {
+  display: inline-block;
+  font-size: 11px;
+  background: #f3f4f6;
+  border-radius: 6px;
+  padding: 2px 8px;
+  margin: 2px 4px 2px 0;
+  white-space: nowrap;
+}

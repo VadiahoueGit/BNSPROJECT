@@ -29,6 +29,7 @@ export class ClientosrComponent {
   grpClient!: any[];
   localite!: any[];
   depots!: any[];
+  commerciaux!: any[];
   currentPage: number;
   rowsPerPage: any;
   selectedFile: File | null = null;
@@ -64,17 +65,19 @@ export class ClientosrComponent {
       longitude: ['', [Validators.required]],
       contactGerant: ['', [Validators.required]],
       telephone: ['', [Validators.required]],
-      localiteId: [null],
+      localiteId: [null, Validators.required],
       zoneLivraisonId: [null, Validators.required],
       groupeClientId: [null, Validators.required],
       depotId: [null, Validators.required],
       nomEtablissement: [null, Validators.required],
+      commercialId: [null],
     });
 
     this.GetLocaliteList();
     this.GetDepotList();
     this.GetZoneList();
     this.GetGroupeClientList();
+    this.GetCommercialList();
     this.GetClientOSRList(1);
   }
 
@@ -95,34 +98,6 @@ export class ClientosrComponent {
   }
   goBack() {
     this.location.back();
-  }
-
-  onDepotChange(event: any): void {
-    const depotId = event?.id;
-    this.clientosrForm.controls['zoneLivraisonId'].setValue(event.zone.id);
-    console.log(event, 'depotId');
-    if (depotId) {
-      this.getDepotDetails(depotId);
-    }
-  }
-
-  getDepotDetails(depotId: number): void {
-    this.coreService
-      .GetDepotDetail(depotId)
-      .then((response: any) => {
-        if (response) {
-          console.log(response, 'response');
-          this.clientosrForm.patchValue({
-            localiteId: response.data.zone.localite?.id || null,
-          });
-        }
-      })
-      .catch((error: any) => {
-        console.error(
-          'Erreur lors de la récupération des informations du dépôt:',
-          error
-        );
-      });
   }
 
   onFilterGlobal(event: Event) {
@@ -190,7 +165,10 @@ export class ClientosrComponent {
 
       Object.keys(this.clientosrForm.value).forEach((key) => {
         if (key !== 'photo') {
-          formData.append(key, this.clientosrForm.value[key]);
+          const val = this.clientosrForm.value[key];
+          if (val !== null && val !== undefined) {
+            formData.append(key, val);
+          }
         }
       });
 
@@ -245,10 +223,11 @@ export class ClientosrComponent {
       longitude: this.updateData.longitude,
       contactGerant: this.updateData.contactGerant,
       telephone: this.updateData.telephone,
-      localiteId: this.updateData.localite.id,
-      zoneLivraisonId: this.updateData.zoneDeLivraison.id,
-      groupeClientId: this.updateData.GroupeClient.id,
-      depotId: this.updateData.depot.id,
+      localiteId: this.updateData.localite?.id,
+      zoneLivraisonId: this.updateData.zoneDeLivraison?.id,
+      groupeClientId: this.updateData.GroupeClient?.id,
+      depotId: this.updateData.depot?.id,
+      commercialId: this.updateData.createdBy?.id || null,
     });
   }
 
@@ -388,6 +367,13 @@ export class ClientosrComponent {
       console.log('GetZoneList:::>', res);
       this.grpClient = res.data;
       this._spinner.hide();
+    });
+  }
+
+  GetCommercialList() {
+    const data = { paginate: false, page: 1, limit: 500 };
+    this.utilisateurService.GetCommercialList(data).then((res: any) => {
+      this.commerciaux = res.data || [];
     });
   }
 }

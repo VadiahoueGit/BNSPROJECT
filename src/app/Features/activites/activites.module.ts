@@ -120,6 +120,7 @@ import { SuiviDesRDVComponent } from './gestion-des-retours/suivi-des-rdv/suivi-
 import { ListDesReceptionsEmballagesComponent } from './gestion-des-retours/list-des-receptions-emballages/list-des-receptions-emballages.component';
 import { RetourPleinComponent } from './gestion-des-retours/retour-plein/retour-plein.component';
 import { RegroupementEmballagesComponent } from './gestion-des-retours/regroupement-emballages/regroupement-emballages.component';
+import { RegroupementRetourPleinComponent } from './gestion-des-retours/regroupement-retour-plein/regroupement-retour-plein.component';
 import { ReceptionsEmballagesComponent } from './gestion-des-retours/receptions-emballages/receptions-emballages.component';
 import { FacturationComponent } from './facturation/facturation.component';
 import { LivraisonComponent } from './livraison/livraison.component';
@@ -132,6 +133,7 @@ import {VentemanuelleComponent} from "./ventemanuelle/ventemanuelle.component";
 import {VenteAuDepotComponent} from "./commandes-clients/vente-au-depot/vente-au-depot.component";
 import {NgWizardModule} from "ng-wizard";
 import { ConsigneComponent } from './gestion-des-retours/consigne/consigne.component';
+import { RecuperationEmballagesRdvComponent } from './gestion-des-retours/recuperation-emballages-rdv/recuperation-emballages-rdv.component';
 import {InterchangeTooltipPipe} from "../../core/interchange-tooltip.pipe";
 registerLocaleData(localeFr, 'fr');
 @NgModule({
@@ -160,6 +162,7 @@ registerLocaleData(localeFr, 'fr');
     ListDesReceptionsEmballagesComponent,
     RetourPleinComponent,
     RegroupementEmballagesComponent,
+    RegroupementRetourPleinComponent,
     ReceptionsEmballagesComponent,
     FacturationComponent,
     LivraisonComponent,
@@ -167,7 +170,8 @@ registerLocaleData(localeFr, 'fr');
     VenteGlobalFacturesComponent,
     ProgrammationComponent,
     EcartEmballageComponent,
-    ConsigneComponent
+    ConsigneComponent,
+    RecuperationEmballagesRdvComponent
   ],
     imports: [
         TableModule,

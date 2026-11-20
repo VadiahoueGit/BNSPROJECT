@@ -1,9 +1,37 @@
-<div class="bui-back mb-4" (click)="goBack()">
-  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
-  <h4 class="fw-bold mb-0">Visualisation des stocks</h4>
+<div class="sk-back-row" (click)="goBack()">
+  <div class="sk-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="sk-back-title">Visualisation des stocks</h4>
 </div>
 
-<div class="card">
+<div class="sk-card">
+  <div class="sk-filters">
+    <div class="sk-filter-item">
+      <div class="sk-filter-label">Dépôt</div>
+      <div class="sk-filter-wrap">
+        <i class="fas fa-warehouse sk-filter-icon"></i>
+        <ng-select [items]="depotList" bindLabel="nomDepot" bindValue="id" [(ngModel)]="selectedDepotId"
+                   (change)="onDepotFilterChange()" [searchable]="true" [clearable]="true"
+                   placeholder="Tous les dépôts"></ng-select>
+      </div>
+    </div>
+    <div class="sk-filter-item">
+      <div class="sk-filter-label">Stock à la date du</div>
+      <div class="sk-filter-wrap">
+        <i class="fas fa-calendar sk-filter-icon"></i>
+        <input type="date" class="sk-filter-date" [(ngModel)]="selectedDate" [max]="now"
+               (change)="onDateFilterChange()" />
+      </div>
+    </div>
+    <button class="sk-filter-reset" *ngIf="selectedDepotId || selectedDate"
+            (click)="selectedDepotId = null; resetDateFilter()">
+      <i class="fas fa-times me-1"></i>Réinitialiser
+    </button>
+  </div>
+
+  <div class="sk-info-tag" *ngIf="selectedDate">
+    <i class="fas fa-history me-1"></i>Stock reconstitué au {{ selectedDate | date:'dd/MM/yyyy' }} 23h59
+  </div>
+
   <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id"
            [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true"
            [globalFilterFields]="['code', 'libelle', 'totalQuantity']"

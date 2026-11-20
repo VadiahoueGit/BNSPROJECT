@@ -1,245 +1,132 @@
-<div
-  class="gap-2 d-flex align-items-center mb-3"
-  style="cursor: pointer"
-  (click)="goBack()"
->
-  <i style="font-size: 18px" class="fas fw-bold fa-chevron-left me-2"></i>
-  <h4 class="fw-bold mb-0">Fournisseurs</h4>
-</div>
-<div class="card">
-  <div>
-    <span style="font-size:13px;">Nombre: </span>
-    <span style="font-size:13px;" class="fw-bold text-secondary">{{ filteredCount }}</span>
+<!-- Header -->
+<div class="fo-header">
+  <div class="fo-title">
+    <button class="fo-back-btn" (click)="goBack()"><i class="fas fa-chevron-left"></i></button>
+    <h4>Fournisseurs</h4>
   </div>
-  <p-table
-    #dt
-    [styleClass]="'p-datatable-sm'"
-    #dt2
-    [value]="dataList"
-    dataKey="id"
-    [rows]="8"
-    [totalRecords]="totalPages" [lazy]="true"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [globalFilterFields]="['raisonSocial', 'nomProprietaire', 'nomGerant']"
-    (onFilter)="updateFilteredCount(dt)"
-    [paginator]="true"
-    (onPage)="onPage($event)"
-  >
-    <ng-template pTemplate="caption">
-      <div class=" d-flex justify-content-between py-3">
-                <span class="p-input-icon-left ml-auto d-flex align-items-center">
-                    <i class="fas fa-search"></i>
-                    <input style="width: 300px; border-radius: 7px;" pInputText type="text"
-                           (input)="filterGlobal($event)" placeholder="Recherche"/>
-                </span>
-        <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
-          Créer un fournisseur
-        </button>
-      </div>
-    </ng-template>
+  <button class="fo-btn-primary" (click)="OnCreate()">
+    <i class="fas fa-plus"></i> Nouveau fournisseur
+  </button>
+</div>
+
+<!-- Card + Table -->
+<div class="fo-card">
+  <div class="fo-topbar">
+    <div>
+      <div class="fo-card-title"><i class="fas fa-truck"></i> Liste des fournisseurs</div>
+      <div class="fo-count">{{ filteredCount }} résultat(s)</div>
+    </div>
+    <div class="fo-filter-wrap">
+      <i class="fas fa-search fo-filter-icon"></i>
+      <input class="fo-filter-input" type="text" (input)="filterGlobal($event)" placeholder="Rechercher…" />
+    </div>
+  </div>
+
+  <p-table #dt [styleClass]="'fo-ptable p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+           [totalRecords]="totalPages" [lazy]="true" (onFilter)="updateFilteredCount(dt)"
+           [globalFilterFields]="['raisonSocial', 'nomProprietaire', 'nomGerant']"
+           [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color)">Nom Fournisseur</th>
-        <th style="color: var(--secondary-color)">Code groupe</th>
-        <th style="color: var(--secondary-color)">Adresse</th>
-        <th style="color: var(--secondary-color)">Pays</th>
-        <th style="color: var(--secondary-color)">Devise</th>
-        <th style="color: var(--secondary-color)">Téléphone 1</th>
-        <th style="color: var(--secondary-color)">Téléphone 2</th>
-        <th style="color: var(--secondary-color)">Site web</th>
-        <th
-          class="d-flex justify-content-center"
-          style="color: var(--secondary-color)"
-        >
-          Actions
-        </th>
+        <th>Nom Fournisseur</th>
+        <th>Code groupe</th>
+        <th>Adresse</th>
+        <th>Pays</th>
+        <th>Devise</th>
+        <th>Téléphone 1</th>
+        <th>Téléphone 2</th>
+        <th>Site web</th>
+        <th class="text-center">Actions</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dataList>
       <tr>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.nom }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.codeGroupe }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.adresse }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.pays }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.devise?.nom }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.telephone1 }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.telephone2 }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.siteWeb }}
-          </span>
-        </td>
-        <td>
-      <tr class="d-flex justify-content-center gap-3">
-
-        <td>
-          <i
-            (click)="OnEdit(dataList)"
-            style="cursor: pointer"
-            class="fas fa-edit text-secondary fw-bold"
-          ></i>
-        </td>
-        <td>
-          <i
-            (click)="OnDelete(dataList.id)"
-            style="cursor: pointer"
-            class="fas fa-trash-alt text-danger fw-bold"
-          ></i>
+        <td>{{ dataList?.nom }}</td>
+        <td>{{ dataList?.codeGroupe }}</td>
+        <td>{{ dataList?.adresse }}</td>
+        <td>{{ dataList?.pays }}</td>
+        <td>{{ dataList?.devise?.nom }}</td>
+        <td>{{ dataList?.telephone1 }}</td>
+        <td>{{ dataList?.telephone2 }}</td>
+        <td>{{ dataList?.siteWeb }}</td>
+        <td class="text-center">
+          <div style="display:flex;gap:6px;justify-content:center">
+            <button class="fo-action-btn edit" (click)="OnEdit(dataList)" title="Modifier"><i class="fas fa-edit"></i></button>
+            <button class="fo-action-btn del" (click)="OnDelete(dataList.id)" title="Supprimer"><i class="fas fa-trash"></i></button>
+          </div>
         </td>
       </tr>
-      </td></tr
-      ></ng-template>
-
+    </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">Aucun article trouvé.</td>
+        <td colspan="9" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">
+          <i class="fas fa-truck" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i>
+          Aucun fournisseur trouvé.
+        </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
+<!-- Modal création / modification -->
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div
-          class="d-flex justify-content-center align-items-center"
-          style="
-            background-color: #dbffe8;
-            border-radius: 50%;
-            width: 3rem;
-            height: 3rem;
-          "
-        >
-          <i class="fas fa-box-check text-success fs-4"></i>
+  <div class="fo-modal">
+    <div class="fo-modal-header">
+      <div class="fo-modal-icon"><i class="fas fa-truck"></i></div>
+      <h5 class="fo-modal-title">{{ operation === 'create' ? 'Création de fournisseur' : 'Modification de fournisseur' }}</h5>
+      <button class="fo-modal-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="fo-modal-body">
+      <form [formGroup]="fournisseurForm">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px">
+          <div class="fo-field">
+            <label class="fo-field-label">Code FS</label>
+            <input class="fo-field-input" formControlName="codeFs" placeholder="Entrez le code FS" />
+          </div>
+          <div class="fo-field">
+            <label class="fo-field-label">Nom fournisseur *</label>
+            <input class="fo-field-input" formControlName="nom" placeholder="Entrez le nom" />
+          </div>
+          <div class="fo-field">
+            <label class="fo-field-label">Code groupe</label>
+            <input class="fo-field-input" formControlName="codeGroupe" placeholder="Entrez le code groupe" />
+          </div>
+          <div class="fo-field">
+            <label class="fo-field-label">Site web</label>
+            <input class="fo-field-input" type="url" formControlName="siteWeb" placeholder="https://…" />
+          </div>
+          <div class="fo-field">
+            <label class="fo-field-label">Adresse</label>
+            <input class="fo-field-input" formControlName="adresse" placeholder="Entrez l'adresse" />
+          </div>
+          <div class="fo-field">
+            <label class="fo-field-label">Pays</label>
+            <ng-select [items]="PaysList" bindLabel="name" bindValue="name"
+                       formControlName="pays" [searchable]="true" placeholder="Sélectionner...">
+            </ng-select>
+          </div>
+          <div class="fo-field">
+            <label class="fo-field-label">Devise *</label>
+            <ng-select [items]="CurrencyList" bindLabel="nom" bindValue="id"
+                       formControlName="deviseId" [searchable]="true" placeholder="Sélectionner...">
+            </ng-select>
+          </div>
+          <div class="fo-field">
+            <label class="fo-field-label">Téléphone 1</label>
+            <input class="fo-field-input" formControlName="telephone1" placeholder="Entrez le téléphone" />
+          </div>
+          <div class="fo-field">
+            <label class="fo-field-label">Téléphone 2</label>
+            <input class="fo-field-input" formControlName="telephone2" placeholder="Entrez le téléphone" />
+          </div>
         </div>
-        <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création
-          de fournisseur</h1>
-        <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification de
-          fournisseurr</h1>
-        <button
-          type="button"
-          class="btn-close"
-          aria-label="Close"
-          (click)="OnCloseModal()"
-        ></button>
-      </div>
-      <div class="modal-body" style="max-height: 70vh; overflow-y: auto">
-        <form [formGroup]="fournisseurForm">
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="nomFournisseur" class="form-label">Code FSs</label>
-              <input id="nomFournisseur" type="text" class="form-control" formControlName="codeFs" />
-            </div>
-
-            <div class="col-md-6 mb-3">
-
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="nomFournisseur" class="form-label">Nom Fournisseur</label>
-              <input id="nomFournisseur" type="text" class="form-control" formControlName="nom" />
-            </div>
-
-            <div class="col-md-6 mb-3">
-              <label for="siteWeb" class="form-label">Site Web</label>
-              <input id="siteWeb" type="url" class="form-control" formControlName="siteWeb" />
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="codeGroupe" class="form-label">Code Groupe</label>
-              <input id="codeGroupe" type="text" class="form-control" formControlName="codeGroupe" />
-            </div>
-            <div class="col-md-6 mb-3">
-              <label for="adresse" class="form-label">Adresse</label>
-              <input id="adresse" type="text" class="form-control" formControlName="adresse" />
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="pays" class="form-label">Pays</label>
-              <!-- <span class="text-danger">*</span> -->
-                <ng-select
-                  class="form-control"
-                  [items]="PaysList"
-                  bindLabel="name"
-                  bindValue="name"
-                  formControlName="pays"
-                  [searchable]="true"
-                >
-                </ng-select>
-            </div>
-            <div class="col-md-6 mb-3">
-                <label for="" class="form-label">Devise</label>
-                <span class="text-danger">*</span>
-                <ng-select
-                  class="form-control"
-                  [items]="CurrencyList"
-                  bindLabel="nom"
-                  bindValue="id"
-                  formControlName="deviseId"
-                  [searchable]="true"
-                >
-                </ng-select>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="telephone1" class="form-label">Téléphone 1</label>
-              <input id="telephone1" type="text" class="form-control" formControlName="telephone1" />
-            </div>
-            <div class="col-md-6 mb-3">
-              <label for="telephone2" class="form-label">Téléphone 2</label>
-              <input id="telephone2" type="text" class="form-control" formControlName="telephone2" />
-            </div>
-          </div>
-          <!-- FOOTER -->
-          <div class="modal-footer gap-3 px-4">
-            <button
-              type="button" class="btn btn-secondary" (click)="OnCloseModal()"  >
-              Annuler
-            </button>
-            <button
-              type="submit"
-              [disabled]="fournisseurForm.invalid"
-              class="btn btn-primary"
-              (click)="onSubmit()"
-            >
-              Enregistrer
-            </button>
-          </div>
-        </form>
-      </div>
+      </form>
+    </div>
+    <div class="fo-modal-footer">
+      <button class="fo-btn-secondary" (click)="OnCloseModal()">Annuler</button>
+      <button class="fo-btn-submit" [disabled]="fournisseurForm.invalid" (click)="onSubmit()">
+        <i class="fas fa-check"></i> {{ operation === 'create' ? 'Créer' : 'Enregistrer' }}
+      </button>
     </div>
   </div>
 </div>

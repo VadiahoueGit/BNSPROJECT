@@ -1,477 +1,267 @@
-<div class="card">
-  <div class="d-flex justify-content-end py-3">
-
-    <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
-      Saisir une commande
+<!-- Card + Table -->
+<div class="scg-card">
+  <div class="scg-topbar">
+    <div>
+      <div class="scg-card-title"><i class="fas fa-gift"></i> Commandes gratuites</div>
+      <div class="scg-count">{{ ListCommandeGratuites?.length }} commande(s)</div>
+    </div>
+    <button class="scg-btn-primary" (click)="OnCreate()">
+      <i class="fas fa-plus"></i> Saisir une commande
     </button>
   </div>
-    <div class="row">
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Numéro commande :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-      <i class="fas fa-search"></i>
-      <input class="w-100" style="border-radius: 7px;"
-             pInputText type="text"
-             [(ngModel)]="filters.numeroCommande"
-             (keydown.enter)="filterGlobal()"
-             placeholder="Recherche"/>
-    </span>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Date :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-      <i class="fas fa-search"></i>
-      <input class="w-100" style="border-radius: 7px;"
-             pInputText type="text"
-             [(ngModel)]="filters.date"
-             (keydown.enter)="filterGlobal()"
-             placeholder="Recherche"/>
-    </span>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Etablissement :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-      <i class="fas fa-search"></i>
-      <input class="w-100" style="border-radius: 7px;"
-             pInputText type="text"
-             [(ngModel)]="filters.etablissement"
-             (keydown.enter)="filterGlobal()"
-             placeholder="Recherche"/>
-    </span>
 
-
+  <!-- Filtres -->
+  <div class="scg-filters">
+    <div class="scg-filter-item">
+      <span class="scg-filter-label">N° commande</span>
+      <div class="scg-filter-wrap">
+        <i class="fas fa-search scg-filter-icon"></i>
+        <input class="scg-filter-input" type="text" [(ngModel)]="filters.numeroCommande" (keydown.enter)="filterGlobal()" placeholder="Recherche" />
+      </div>
+    </div>
+    <div class="scg-filter-item">
+      <span class="scg-filter-label">Date</span>
+      <div class="scg-filter-wrap">
+        <i class="fas fa-search scg-filter-icon"></i>
+        <input class="scg-filter-input" type="text" [(ngModel)]="filters.date" (keydown.enter)="filterGlobal()" placeholder="Recherche" />
+      </div>
+    </div>
+    <div class="scg-filter-item">
+      <span class="scg-filter-label">Établissement</span>
+      <div class="scg-filter-wrap">
+        <i class="fas fa-search scg-filter-icon"></i>
+        <input class="scg-filter-input" type="text" [(ngModel)]="filters.etablissement" (keydown.enter)="filterGlobal()" placeholder="Recherche" />
+      </div>
+    </div>
+    <div class="scg-filter-item">
+      <span class="scg-filter-label">Statut</span>
+      <div class="scg-filter-wrap">
+        <i class="fas fa-search scg-filter-icon"></i>
+        <input class="scg-filter-input" type="text" [(ngModel)]="filters.statut" (keydown.enter)="filterGlobal()" placeholder="Recherche" />
+      </div>
+    </div>
+    <button class="scg-btn-search" (click)="filterGlobal()"><i class="fas fa-search"></i> Rechercher</button>
   </div>
-   <div class="col-12 col-sm-6 col-md-3 mb-3">
-        <span>Statut :</span>
-        <span class="p-input-icon-left w-100 d-flex align-items-center">
-      <i class="fas fa-search"></i>
-      <input class="w-100" style="border-radius: 7px;"
-             pInputText type="text"
-             [(ngModel)]="filters.statut"
-             (keydown.enter)="filterGlobal()"
-             placeholder="Recherche"/>
-    </span>
-    </div>
-  <p-table
-    [styleClass]="'p-datatable-sm'"
-    #dt2
-    [totalRecords]="totalPages" [lazy]="true"
-    [value]="ListCommandeGratuites"
-    dataKey="id"
-    [rows]="8"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [paginator]="true"
-    (onPage)="onPage($event)"
-  >
+
+  <p-table [styleClass]="'scg-ptable p-datatable-sm'" #dt2 [value]="ListCommandeGratuites" dataKey="id" [rows]="8"
+           [totalRecords]="totalPages" [lazy]="true" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color)">N° commande</th>
-        <th style="color: var(--secondary-color)">Type client</th>
-        <th style="color: var(--secondary-color)">Etablissement</th>
-        <th style="color: var(--secondary-color)">Depôt</th>
-        <th style="color: var(--secondary-color)">Statut</th>
-        <!-- <th style="color: var(--secondary-color)">Montant</th> -->
-        <th style="color: var(--secondary-color)">Actions</th>
+        <th>N° commande</th>
+        <th>Type client</th>
+        <th>Établissement</th>
+        <th>Dépôt</th>
+        <th>Statut</th>
+        <th class="text-center">Actions</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-ListCommandeGratuites let-i="index">
       <tr>
+        <td>{{ ListCommandeGratuites?.NumCommande }}</td>
+        <td>{{ ListCommandeGratuites?.clientType }}</td>
+        <td>{{ ListCommandeGratuites?.client?.nomEtablissement ? ListCommandeGratuites.client.nomEtablissement : ListCommandeGratuites.client.raisonSocial }}</td>
+        <td>{{ ListCommandeGratuites?.client?.depot?.nomDepot }}</td>
         <td>
-          {{ ListCommandeGratuites?.NumCommande }}
-        </td>
-    <td>
-          {{ ListCommandeGratuites?.clientType }}
-        </td>
-        <td>
-          {{ ListCommandeGratuites?.client?.nomEtablissement ? ListCommandeGratuites.client.nomEtablissement : ListCommandeGratuites.client.raisonSocial}}
-        </td>
-
-        <td>
-          {{ ListCommandeGratuites?.client?.depot?.nomDepot }}
-        </td>
-
-        <td>
-          <span class="ml-1 vertical-align-middle">
-           {{ ListCommandeGratuites?.statut }}
+          <span class="cc-statut-badge"
+            [class.green]="ListCommandeGratuites.statut === 'Approuvée' || ListCommandeGratuites.statut === 'Commande Livrée' || ListCommandeGratuites.statut === 'Validée'"
+            [class.orange]="ListCommandeGratuites.statut === 'Attente de Validation' || ListCommandeGratuites.statut === 'Planification de Livraison' || ListCommandeGratuites.statut === 'Attente Livraison'"
+            [class.red]="ListCommandeGratuites.statut === 'Non approuvée' || ListCommandeGratuites.statut === 'Annulée' || ListCommandeGratuites.statut === 'Rejetée'"
+            [class.gray]="ListCommandeGratuites.statut === 'Non regroupé'">
+            {{ ListCommandeGratuites.statut }}
           </span>
         </td>
-        <!-- <td>
-          <span class="ml-1 vertical-align-middle">
-           {{ ListCommandeGratuites.articles[i]?.montantLiquide }}
-          </span>
-        </td> -->
-        <td>
-          <tr class="d-flex justify-content-center gap-3">
-            <td>
-              <i
-                (click)="OnEdit(ListCommandeGratuites)"
-                style="cursor: pointer"
-                class="fas fa-eye text-secondary"
-              ></i>
-            </td>
-            <td>
-              <i
-                (click)="OnDelete(ListCommandeGratuites.id)"
-                style="cursor: pointer"
-                class="fas fa-trash-alt text-danger"
-              ></i>
-            </td>
-          </tr>
+        <td class="text-center">
+          <div style="display:flex;gap:6px;justify-content:center">
+            <button class="scg-action-btn view" (click)="OnEdit(ListCommandeGratuites)" title="Voir"><i class="fas fa-eye"></i></button>
+            <button *ngIf="ListCommandeGratuites.statut !== 'Non regroupé' && ListCommandeGratuites.statut !== 'Attente de Validation' && ListCommandeGratuites.statut !== 'Livrée' && ListCommandeGratuites.statut !== 'Commande Livrée' && ListCommandeGratuites.statut !== 'Annulée' && ListCommandeGratuites.statut !== 'Retournée' && ListCommandeGratuites.statut !== 'Rejetée'"
+              class="scg-action-btn view" type="button" (click)="goToVenteAuDepot(ListCommandeGratuites)" title="Vente au dépôt">
+              <i class="fas fa-store"></i>
+            </button>
+            <button class="scg-action-btn del" (click)="OnDelete(ListCommandeGratuites.id)" title="Supprimer"><i class="fas fa-trash"></i></button>
+          </div>
         </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">Aucune commande trouvé.</td>
+        <td colspan="6" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">
+          <i class="fas fa-gift" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i>
+          Aucune commande trouvée.
+        </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
-<!-- Modal creation -->
-<!-- Modal -->
+<!-- Modal principale -->
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div
-          class="d-flex justify-content-center align-items-center"
-          style="
-            background-color: rgb(219, 255, 232);
-            border-radius: 3rem;
-            width: 3rem;
-            height: 3rem;
-          "
-        >
-          <i class="fas fa-box-check text-primary fs-3"></i>
+  <div class="scg-modal">
+    <div class="scg-modal-header">
+      <div class="scg-modal-icon"><i class="fas fa-gift"></i></div>
+      <h5 class="scg-modal-title">
+        {{ operation == 'create' ? 'Création de la commande' : 'Détails de la commande' }}
+      </h5>
+      <button class="scg-modal-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="scg-modal-body">
+      <form [formGroup]="CommandeForm" *ngIf="operation == 'create'">
+        <div class="row">
+          <div class="col-12 d-flex align-items-center justify-content-between">
+            <div>
+              <label class="form-label">Client <span class="text-danger">*</span></label>
+              <ng-select class="form-control" [items]="listRevendeurs" bindLabel="displayName" bindValue="id"
+                         formControlName="clientId" [searchable]="true" (change)="onRevendeurChange($event)"></ng-select>
+            </div>
+            <div>
+              <label class="form-label"></label>
+              <button type="button" [disabled]="CommandeForm.controls['clientId'].invalid"
+                      class="btn btn-secondary" (click)="selectArticle()">Ajouter des articles</button>
+            </div>
+          </div>
         </div>
-        <h1
-          *ngIf="operation == 'create'"
-          class="modal-title fs-5 ms-3"
-          id="staticBackdropLabel"
-        >
-          Création de la commande
-        </h1>
-        <h1
-          *ngIf="operation == 'edit'"
-          class="modal-title fs-5 ms-3"
-          id="staticBackdropLabel"
-        >
-          Détails de la commande
-        </h1>
-      </div>
-      <div class="modal-body">
-        <form [formGroup]="CommandeForm" *ngIf="operation == 'create'">
-          <div class="row">
-            <div
-              class="col-12 d-flex align-items-center justify-content-between"
-            >
-              <div class="">
-                <label for="" class="form-label">Client</label>
-                <span class="text-danger">*</span>
-                <ng-select
-                  class="form-control"
-                  [items]="listRevendeurs"
-                  bindLabel="displayName"
-                  bindValue="id"
-                  formControlName="clientId"
-                  [searchable]="true"
-                  (change)="onRevendeurChange($event)"
-                >
-                </ng-select>
-              </div>
-              <div class="">
-                <label for="" class="form-label"></label>
-                <button
-                  type="button"
-                  [disabled]="CommandeForm.controls['clientId'].invalid"
-                  class="btn btn-secondary"
-                  (click)="selectArticle()"
-                >
-                  Ajouter des articles
-                </button>
-              </div>
-            </div>
-          </div>
-        </form>
-        <fieldset class="row border my-1"  *ngIf="operation == 'edit'">
-          <div class="d-flex justify-content-around">
-            <legend style="font-size: 14px;" class="text-secondary">Numero Commande : {{updateData.NumCommande}} du {{updateData.createdAt | date}}</legend>
-            <button type="button" class="btn btn-warning px-4" (click)="PrintDoc(updateData)" *ngIf="operation == 'edit'">
-              Imprimer
-            </button>
-          </div>
-        </fieldset>
-        <fieldset class="row border my-2"  *ngIf="operation == 'edit'">
-          <legend style="font-size: 14px;" class="text-secondary">Informations du client</legend>
-          <div class="row">
-            <div class="col-md-4">
-              <strong>Groupe de client :</strong>
-              <span>{{updateData.client?.groupeClient?.nomGroupe || updateData.client?.GroupeClient?.nomGroupe}}</span>
-            </div>
-            <div class="col-md-4">
-              <strong>Type de client :</strong>
-              <span>{{updateData.client.role}}</span>
-            </div>
-            <div class="col-md-4">
-              <strong>Propriétaire :</strong>
-              <span>{{ updateData.client.nomProprietaire }}</span>
-            </div>
-            <div class="col-md-4">
-              <strong>Gérant :</strong>
-              <span>{{ updateData.client.nomGerant }}</span>
-            </div>
-            <div class="col-md-4">
-              <strong>Établissement :</strong>
-              <span>{{ updateData.client.nomEtablissement ? updateData.client.nomEtablissement : updateData.client.raisonSocial }}</span>
-            </div>
-            <div class="col-md-4">
-              <strong>Numero de registre :</strong>
-              <span>{{ updateData.client.numeroRegistre }}</span>
-            </div>
-            <div class="col-md-4">
-              <strong>Numero contribuable :</strong>
-              <span>{{ updateData.client.numeroCompteContribuable }}</span>
-            </div>
-            <div class="col-md-4">
-              <strong>Contact Gérant :</strong>
-              <span>{{ updateData.client.telephoneGerant }}</span>
-            </div>
-            <div class="col-md-4 mb-4">
-              <strong>Téléphone :</strong>
-              <span>{{ updateData.client.telephoneProprietaire }}</span>
-            </div>
-          </div>
-        </fieldset>
-        <div class="p-2 mt-3">
-          <div style="max-height: 350px; overflow-y: auto">
-            <table  *ngIf="operation == 'create'" class="table table-bordered">
-              <thead class="table-success">
-                <!-- Première ligne d'en-tête -->
-                <tr>
-                  <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
-                  <th scope="col" colspan="4">MONTANT TTC(FCFA)</th>
-                </tr>
-                <!-- Deuxième ligne d'en-tête -->
-                <tr>
-                  <th scope="col">Liquide</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Qte</th>
-                  <th scope="col">Liquide (FCFA)</th>
-                  <th scope="col">Emballage (FCFA)</th>
-                  <th scope="col">Total (FCFA)</th>
-                  <th scope="col">Actions</th>
-                </tr>
-              </thead>
+      </form>
 
-              <tbody>
-                <tr *ngFor="let item of selectedArticles">
-                  <td>{{ item.liquide.libelle }}</td>
-                  <td>{{ prixLiquide[item.id] | number}}</td>
-                  <td>{{ prixEmballage[item.id] | number}}</td>
-                  <td>{{ prixEmballage[item.id] + prixLiquide[item.id] | number}}</td>
-                  <td>
-                    <input
-                      type="number"
-                      class="form-control-custom"
-                      [(ngModel)]="item.quantite"
-                      [min]="0"
-                      [max]="stocksDisponibles[item.liquide.id]"
-                      [disabled]="stocksDisponibles[item.liquide.id] === 0"
-                      [ngClass]="{
-                        invalid: item.quantite > stocksDisponibles[item.liquide.id]
-                      }"
-                      (blur)="validateQuantite(item)"
-                    />
-                    / {{stocksDisponibles[item.liquide.id]}}
-                  </td>
-                  <td>{{ prixLiquideTotal[item.id] | number}}</td>
-                  <td>{{ prixEmballageTotal[item.id] | number}}</td>
-                  <td>{{ montantTotal[item.id] | number}}</td>
-                  <td class="d-flex justify-content-center">
-                    <button
-                      type="button"
-                      class="btn btn-danger btn-sm"
-                      (click)="removeArticle(item)"
-                    >
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr class="table-dark">
-                  <th scope="col" colspan="4">Total :</th>
-                  <td>{{ totalQte | number}}</td>
-                  <td>{{ totalLiquide| number }}</td>
-                  <td>{{ totalEmballage | number}}</td>
-                  <td>{{ totalGlobal| number }}</td>
-                  <td></td>
-                </tr>
-              </tbody>
-            </table>
-            <table  *ngIf="operation == 'edit'" class="table table-bordered">
-              <thead class="table-success">
-              <!-- Première ligne d'en-tête -->
+      <fieldset class="row border my-1" *ngIf="operation == 'edit'">
+        <div class="d-flex justify-content-around">
+          <legend style="font-size:14px" class="text-secondary">Numero Commande : {{ updateData.NumCommande }} du {{ updateData.createdAt | date }}</legend>
+          <button type="button" class="btn btn-warning px-4" (click)="PrintDoc(updateData)">Imprimer</button>
+        </div>
+      </fieldset>
+      <fieldset class="row border my-2" *ngIf="operation == 'edit'">
+        <legend style="font-size:14px" class="text-secondary">Informations du client</legend>
+        <div class="row">
+          <div class="col-md-4"><strong>Groupe de client :</strong><span>{{ updateData.client?.groupeClient?.nomGroupe || updateData.client?.GroupeClient?.nomGroupe }}</span></div>
+          <div class="col-md-4"><strong>Type de client :</strong><span>{{ updateData.client.role }}</span></div>
+          <div class="col-md-4"><strong>Propriétaire :</strong><span>{{ updateData.client.nomProprietaire }}</span></div>
+          <div class="col-md-4"><strong>Gérant :</strong><span>{{ updateData.client.nomGerant }}</span></div>
+          <div class="col-md-4"><strong>Établissement :</strong><span>{{ updateData.client.nomEtablissement ? updateData.client.nomEtablissement : updateData.client.raisonSocial }}</span></div>
+          <div class="col-md-4"><strong>Numero de registre :</strong><span>{{ updateData.client.numeroRegistre }}</span></div>
+          <div class="col-md-4"><strong>Numero contribuable :</strong><span>{{ updateData.client.numeroCompteContribuable }}</span></div>
+          <div class="col-md-4"><strong>Contact Gérant :</strong><span>{{ updateData.client.telephoneGerant }}</span></div>
+          <div class="col-md-4 mb-4"><strong>Téléphone :</strong><span>{{ updateData.client.telephoneProprietaire }}</span></div>
+        </div>
+      </fieldset>
+
+      <div class="p-2 mt-3">
+        <div style="max-height:350px;overflow-y:auto">
+          <table *ngIf="operation == 'create'" class="table table-bordered">
+            <thead class="table-success">
+              <tr><th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th><th scope="col" colspan="4">MONTANT TTC(FCFA)</th></tr>
               <tr>
-                <th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th>
-                <th scope="col" colspan="3">MONTANT TTC(FCFA)</th>
+                <th scope="col">Liquide</th><th scope="col">Liquide (FCFA)</th><th scope="col">Emballage (FCFA)</th>
+                <th scope="col">Total (FCFA)</th><th scope="col">Qte</th><th scope="col">Liquide (FCFA)</th>
+                <th scope="col">Emballage (FCFA)</th><th scope="col">Total (FCFA)</th><th scope="col">Actions</th>
               </tr>
-              <!-- Deuxième ligne d'en-tête -->
-              <tr>
-                <th scope="col">Liquide</th>
-                <th scope="col">Liquide (FCFA)</th>
-                <th scope="col">Emballage (FCFA)</th>
-                <th scope="col">Total (FCFA)</th>
-                <th scope="col">Qte</th>
-                <th scope="col">Liquide (FCFA)</th>
-                <th scope="col">Emballage (FCFA)</th>
-                <th scope="col">Total (FCFA)</th>
-              </tr>
-              </thead>
-
-              <tbody>
-              <tr *ngFor="let item of updateData.articles">
-                <td>{{ item.liquide.libelle }}1</td>
-                <td>{{ item.prixUnitaireLiquide| number }}</td>
-                <td>{{ item.prixUnitaireEmballage| number}}</td>
-                <td>{{  Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) }}</td>
-                <td>{{ item.quantite }}</td>
-                <td>{{ item.montantLiquide| number }}</td>
-                <td>{{ item.montantEmballage | number}}</td>
-                <td>{{Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0)| number }}</td>
-
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of selectedArticles">
+                <td>{{ item.liquide.libelle }}</td>
+                <td>{{ prixLiquide[item.id] | number }}</td>
+                <td>{{ prixEmballage[item.id] | number }}</td>
+                <td>{{ prixEmballage[item.id] + prixLiquide[item.id] | number }}</td>
+                <td>
+                  <input type="number" class="form-control-custom" [(ngModel)]="item.quantite" [min]="0"
+                         [max]="stocksDisponibles[item.liquide.id]" [disabled]="stocksDisponibles[item.liquide.id] === 0"
+                         [ngClass]="{ invalid: item.quantite > stocksDisponibles[item.liquide.id] }"
+                         (blur)="validateQuantite(item)" />
+                  / {{ stocksDisponibles[item.liquide.id] }}
+                </td>
+                <td>{{ prixLiquideTotal[item.id] | number }}</td>
+                <td>{{ prixEmballageTotal[item.id] | number }}</td>
+                <td>{{ montantTotal[item.id] | number }}</td>
+                <td class="d-flex justify-content-center">
+                  <button type="button" class="btn btn-danger btn-sm" (click)="removeArticle(item)"><i class="fas fa-trash"></i></button>
+                </td>
               </tr>
               <tr class="table-dark">
                 <th scope="col" colspan="4">Total :</th>
-                <td>{{ totalQte| number }}</td>
-                <td>{{ totalLiquide | number}}</td>
-                <td>{{ totalEmballage | number}}</td>
-                <td>{{ totalGlobal | number}}</td>
+                <td>{{ totalQte | number }}</td><td>{{ totalLiquide | number }}</td>
+                <td>{{ totalEmballage | number }}</td><td>{{ totalGlobal | number }}</td><td></td>
               </tr>
-              </tbody>
-            </table>
-          </div>
+            </tbody>
+          </table>
+          <table *ngIf="operation == 'edit'" class="table table-bordered">
+            <thead class="table-success">
+              <tr><th scope="col" colspan="5">PRIX UNITAIRE TTC(FCFA)</th><th scope="col" colspan="3">MONTANT TTC(FCFA)</th></tr>
+              <tr>
+                <th scope="col">Liquide</th><th scope="col">Liquide (FCFA)</th><th scope="col">Emballage (FCFA)</th>
+                <th scope="col">Total (FCFA)</th><th scope="col">Qte</th><th scope="col">Liquide (FCFA)</th>
+                <th scope="col">Emballage (FCFA)</th><th scope="col">Total (FCFA)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of updateData.articles">
+                <td>{{ item.liquide.libelle }}1</td>
+                <td>{{ item.prixUnitaireLiquide | number }}</td>
+                <td>{{ item.prixUnitaireEmballage | number }}</td>
+                <td>{{ Number(item.prixUnitaireLiquide ?? 0) + Number(item.prixUnitaireEmballage ?? 0) }}</td>
+                <td>{{ item.quantite }}</td>
+                <td>{{ item.montantLiquide | number }}</td>
+                <td>{{ item.montantEmballage | number }}</td>
+                <td>{{ Number(item.montantLiquide ?? 0) + Number(item.montantEmballage ?? 0) | number }}</td>
+              </tr>
+              <tr class="table-dark">
+                <th scope="col" colspan="4">Total :</th>
+                <td>{{ totalQte | number }}</td><td>{{ totalLiquide | number }}</td>
+                <td>{{ totalEmballage | number }}</td><td>{{ totalGlobal | number }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
+    </div>
 
-      <div class="modal-footer gap-3 px-4">
-        <button
-          (click)="OnCloseModal()"
-          type="button"
-          class="btn btn-secondary px-2"
-        >
-          Annuler
-        </button>
-        <button
-          type="submit"
-          *ngIf="operation == 'create'"
-          [disabled]="totalQte === 0"
-          (click)="onSubmit()"
-          class="btn btn-primary px-2"
-        >
-          Valider
-        </button>
-      </div>
+    <div class="scg-modal-footer">
+      <button class="scg-btn-secondary" (click)="OnCloseModal()">Annuler</button>
+      <button class="scg-btn-submit" *ngIf="operation == 'create'" [disabled]="totalQte === 0" (click)="onSubmit()">
+        <i class="fas fa-check"></i> Valider
+      </button>
     </div>
   </div>
 </div>
 
-<!--CHOIX ARTICLE-->
+<!-- Modal sélection d'articles -->
 <div *ngIf="isChoiceModalOpen" class="custom-modal">
-  <div class="modal-dialog2 modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div
-          class="d-flex justify-content-center align-items-center"
-          style="
-            background-color: rgb(219, 255, 232);
-            border-radius: 3rem;
-            width: 3rem;
-            height: 3rem;
-          "
-        >
-          <i class="fas fa-box-check text-primary fs-3"></i>
-        </div>
-        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
-          Selection des articles
-        </h1>
+  <div class="scg-modal-sm">
+    <div class="scg-modal-header">
+      <div class="scg-modal-icon"><i class="fas fa-boxes"></i></div>
+      <h5 class="scg-modal-title">Sélection des articles</h5>
+      <button class="scg-modal-close" (click)="OnCloseChoiceModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="scg-modal-body">
+      <input type="text" name="search" (input)="filterArticles()" [(ngModel)]="searchTerm"
+             placeholder="Rechercher un produit" class="form-control mb-3" />
+      <div class="table-responsive" style="max-height:200px;overflow-y:auto">
+        <table class="table">
+          <thead>
+            <tr style="font-size:small">
+              <th scope="col" class="text-secondary">Code</th>
+              <th scope="col" class="text-secondary">Produits</th>
+              <th scope="col" class="text-secondary">Disponibilité</th>
+              <th scope="col" class="text-secondary text-center">Choix</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let article of filteredArticleList; let i = index" style="font-size:small">
+              <th scope="row">{{ article.reference }}</th>
+              <th scope="row">{{ article.libelle }}</th>
+              <th scope="row">{{ stocksDisponibles[article.liquide.id] }}</th>
+              <td>
+                <input type="checkbox" class="form-control-custom" [name]="'checkbox_' + i"
+                       [(ngModel)]="article.isChecked" (change)="onCheckboxChange(article)"
+                       [disabled]="stocksDisponibles[article.liquide.id] <= 0" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-
-      <div class="modal-body">
-        <form>
-          <div class="row">
-            <fieldset class="row border my-2">
-              <div class="p-3">
-                <!-- Champ de recherche -->
-                <input
-                  type="text"
-                  name="search"
-                  (input)="filterArticles()"
-                  [(ngModel)]="searchTerm"
-                  placeholder="Rechercher un produit"
-                  class="form-control mb-3"
-                />
-              </div>
-              <div
-                class="table-responsive"
-                style="max-height: 200px; overflow-y: auto"
-              >
-                <table class="table">
-                  <thead>
-                    <tr style="font-size: small">
-                      <th scope="col" class="text-secondary">Code</th>
-                      <th scope="col" class="text-secondary">Produits</th>
-                      <th scope="col" class="text-secondary">Disponibilité</th>
-                      <th scope="col" class="text-secondary text-center">
-                        Choix
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      *ngFor="let article of filteredArticleList ; let i = index"
-                      style="font-size: small"
-                    >
-                      <th scope="row">{{ article.reference }}</th>
-                      <th scope="row">{{ article.libelle }}</th>
-                      <th scope="row">{{stocksDisponibles[article.liquide.id]}}</th>
-                      <td class="">
-                        <input
-                          type="checkbox"
-                          class="form-control-custom"
-                          [name]="'checkbox_' + i"
-                          [(ngModel)]="article.isChecked"
-                          (change)="onCheckboxChange(article)"
-                          [disabled]="stocksDisponibles[article.liquide.id] <=0"
-                        />
-
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </fieldset>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer gap-3 px-4y">
-        <button
-          (click)="OnCloseChoiceModal()"
-          type="button"
-          class="btn btn-secondary px-2"
-        >
-          Annuler
-        </button>
-        <button
-
-          type="submit"
-          (click)="onSubmitSelection()"
-          class="btn btn-primary px-2"
-        >
-          Valider
-        </button>
-      </div>
+    </div>
+    <div class="scg-modal-footer">
+      <button class="scg-btn-secondary" (click)="OnCloseChoiceModal()">Annuler</button>
+      <button class="scg-btn-submit" (click)="onSubmitSelection()">
+        <i class="fas fa-check"></i> Valider
+      </button>
     </div>
   </div>
 </div>

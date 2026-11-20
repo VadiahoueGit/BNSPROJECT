@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
+import { ConfigService } from 'src/app/core/config-service.service';
 import { CoreServiceService } from 'src/app/core/core-service.service';
 import { FinanceService } from 'src/app/core/finance.service';
 import { LogistiqueService } from 'src/app/core/logistique.service';
@@ -54,6 +55,8 @@ export class ValidationVenteChineComponent {
   montantTotalFree:any = {};
   totalLiquideFree: number = 0;
   totalEmballageFree :number = 0;
+  docUrl: string;
+
   constructor(
     private cdr: ChangeDetectorRef,
     private _spinner: NgxSpinnerService,
@@ -62,9 +65,12 @@ export class ValidationVenteChineComponent {
     private coreService: CoreServiceService,
     private utilisateurService: UtilisateurResolveService,
     private _financeService: FinanceService,
+    private _config: ConfigService,
     private toastr: ToastrService,
     private fb: FormBuilder
-  ) {}
+  ) {
+    this.docUrl = this._config.docUrl;
+  }
 
   ngOnInit() {
     this.groupeProduitForm = this.fb.group({
@@ -346,9 +352,24 @@ export class ValidationVenteChineComponent {
     console.log(this.isModalOpen);
   }
   OnDelete(id: number) {}
+
+  ImprimerBL(data: any) {
+    this._spinner.show();
+    this._financeService.GenererBLVenteChine(data.id).then((res: any) => {
+      this._spinner.hide();
+      if (res?.data?.bonLivraison) {
+        window.open(this.docUrl + '/' + res.data.bonLivraison, '_blank');
+      } else {
+        this.toastr.error('Impossible de générer le bon de livraison.');
+      }
+    }).catch(() => {
+      this._spinner.hide();
+      this.toastr.error('Erreur lors de la génération du bon de livraison.');
+    });
+  }
   GetVenteChineList(page: number) {
     let data = {
-      paginate: false,
+      paginate: true,
       page: page,
       limit: 8,
     };

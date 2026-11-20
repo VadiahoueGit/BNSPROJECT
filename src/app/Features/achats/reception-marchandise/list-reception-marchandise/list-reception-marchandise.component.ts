@@ -72,6 +72,7 @@ export class ListReceptionMarchandiseComponent {
     dateDebut: '',
     dateFin: '',
     numeroBonLivraison: '',
+    numeroCommande: '',
   };
   totalPages: any;
   ListReceptionCommandeFournisseurs: any;
@@ -131,6 +132,19 @@ export class ListReceptionMarchandiseComponent {
     this.operation = 'view';
      this.updateData = data;
     console.log(this.updateData,'updateData');
+  }
+
+  imprimerBonLivraison(data: any) {
+    this._spinner.show();
+    this.articleService.ImprimerBonLivraisonReception(data.id).then(
+      () => {
+        this._spinner.hide();
+      },
+      (error: any) => {
+        this._spinner.hide();
+        this.toastr.error(error?.message || 'Erreur lors de la génération du bon de livraison.');
+      }
+    );
   }
 
   OnEdit(data: any) {
@@ -287,7 +301,8 @@ export class ListReceptionMarchandiseComponent {
     numeroReception?: string,
     numeroBonLivraison?: string,
     dateDebut?: string,
-    dateFin?: string
+    dateFin?: string,
+    numeroCommande?: string
   ) {
     let data = {
       paginate: true,
@@ -295,8 +310,10 @@ export class ListReceptionMarchandiseComponent {
       limit: 8,
       numeroReception: numeroReception || '',
       numeroBonLivraison: numeroBonLivraison || '',
+      numeroCommande: numeroCommande || '',
       dateDebut: dateDebut || '',
       dateFin: dateFin || '',
+      statuts: ['TRAITE', 'PARTIELLEMENT_RENDU', 'EN_ATTENTE'],
     };
     this._spinner.show();
     this.articleService
@@ -341,12 +358,14 @@ export class ListReceptionMarchandiseComponent {
           const articlesAvecEcart = Object.values(mapParCode).map((recu: any) => {
             const codeRecu = recu.emballage?.code;
 
-            const attendu = articlesRecus.find(
-              (item: any) => item.articleCommande?.emballage?.code === codeRecu
+            const attendus = articlesRecus.filter(
+              (item: any) =>
+                item.articleCommande?.emballage?.code === codeRecu ||
+                item.articleEntree?.emballage?.code === codeRecu ||
+                item.emballage?.code === codeRecu
             );
 
-            // 👉 Prendre la quantité réellement reçue comme référence
-            const quantiteAttendue = attendu?.quantiteRecue || 0;
+            const quantiteAttendue = attendus.reduce((sum: number, item: any) => sum + (item.quantiteRecue ?? 0), 0);
             const quantiteReçue = recu.quantite || 0;
             const ecart = quantiteReçue - quantiteAttendue;
 
@@ -357,7 +376,7 @@ export class ListReceptionMarchandiseComponent {
               ecart,
               ecartPositif: ecart > 0,
               ecartNegatif: ecart < 0,
-              articleNonCommande: !attendu
+              articleNonCommande: attendus.length === 0
             };
           });
 
@@ -365,6 +384,10 @@ export class ListReceptionMarchandiseComponent {
           // 🔁 4. Écraser `emballagesRendus` avec une seule entrée contenant les articles groupés
           return {
             ...ligne,
+            // Retours conservés un par un (avec leur date) pour l'historique du détail
+            historiqueRendus: [...(ligne.emballagesRendus ?? [])].sort(
+              (a: any, b: any) => new Date(a.dateRetour).getTime() - new Date(b.dateRetour).getTime()
+            ),
             emballagesRendus: [
               {
                 ...ligne.emballagesRendus?.[0], // pour conserver date, id, etc.
@@ -388,6 +411,7 @@ export class ListReceptionMarchandiseComponent {
       this.filters.numeroBonLivraison,
       this.filters.dateDebut,
       this.filters.dateFin,
+      this.filters.numeroCommande,
     );
   }
 
@@ -466,8 +490,30 @@ export class ListReceptionMarchandiseComponent {
       liquideId: 1,
     });
   }
+  OnAnnuler(commandeId: number) {
+    ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous annuler cette commande et sa réception ?').then(
+      (res: any) => {
+        if (res.isConfirmed) {
+          this._spinner.show();
+          this.articleService.AnnulerCommandeFournisseur(commandeId).then(
+            (response: any) => {
+              this._spinner.hide();
+              this.toastr.success(response.message);
+              this.OnCloseModal();
+              this.GetListReceptionCommandeFournisseurs(this.currentPage);
+            },
+            (error: any) => {
+              this._spinner.hide();
+              this.toastr.error(error.error?.message || 'Erreur lors de l\'annulation');
+            }
+          );
+        }
+      }
+    );
+  }
+
   onPage(event: any) {
-    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.currentPage = event.first / event.rows + 1;
     this.rowsPerPage = event.rows;
     this.GetListReceptionCommandeFournisseurs(this.currentPage);
   }

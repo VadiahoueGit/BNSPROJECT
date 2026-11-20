@@ -1,0 +1,249 @@
+<!-- ===== HEADER ===== -->
+<div class="vd-header d-flex align-items-center justify-content-between mb-4">
+  <div class="d-flex align-items-center gap-3">
+    <div class="vd-card-icon blue">
+      <i class="fas fa-cash-register"></i>
+    </div>
+    <div>
+      <h4 class="fw-bold mb-0">Paiements BO</h4>
+      <span class="text-muted" style="font-size:12px">Transactions issues des livraisons avec retour</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== KPI ===== -->
+<div class="vd-kpi-row mb-4">
+  <div class="vd-kpi">
+    <span class="vd-kpi-label">Transactions</span>
+    <span class="vd-kpi-value">{{ totalPages }}</span>
+  </div>
+  <div class="vd-kpi orange">
+    <span class="vd-kpi-label">Total à percevoir</span>
+    <span class="vd-kpi-value">{{ totalAPercevoir | number:'1.0-0' }} <small>FCFA</small></span>
+  </div>
+  <div class="vd-kpi" [ngClass]="totalRestant > 0 ? 'red' : 'green'">
+    <span class="vd-kpi-label">Total restant</span>
+    <span class="vd-kpi-value">{{ totalRestant | number:'1.0-0' }} <small>FCFA</small></span>
+  </div>
+</div>
+
+<!-- ===== CARD LISTE ===== -->
+<div class="vd-card">
+
+  <!-- Card header + filtre -->
+  <div class="vd-card-header mb-3">
+    <div class="vd-card-icon blue">
+      <i class="fas fa-list-alt"></i>
+    </div>
+    <div class="flex-grow-1">
+      <h6 class="fw-bold mb-0">Lignes de paiement</h6>
+      <span class="text-muted" style="font-size:11px">Cliquez sur Payer pour enregistrer un paiement</span>
+    </div>
+    <!-- Filtre -->
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      <div class="vd-search-wrap">
+        <i class="fas fa-search vd-search-icon"></i>
+        <input class="vd-search-input" [(ngModel)]="filters.commande"
+               (keydown.enter)="filterGlobal()" placeholder="N° commande..." />
+      </div>
+      <div class="vd-search-wrap">
+        <i class="fas fa-tag vd-search-icon"></i>
+        <input class="vd-search-input" [(ngModel)]="filters.motif"
+               (keydown.enter)="filterGlobal()" placeholder="Motif..." style="width:140px" />
+      </div>
+      <div class="vd-search-wrap">
+        <i class="fas fa-user vd-search-icon"></i>
+        <input class="vd-search-input" [(ngModel)]="filters.client"
+               (keydown.enter)="filterGlobal()" placeholder="Nom client..." />
+      </div>
+      <select class="vd-search-input" style="padding-left:12px; width:160px"
+              [(ngModel)]="filters.statut" (change)="filterGlobal()">
+        <option value="">Tous les statuts</option>
+        <option *ngFor="let s of statutOptions" [value]="s">{{ s }}</option>
+      </select>
+      <input class="vd-search-input" type="date" style="padding-left:12px; width:140px"
+             [(ngModel)]="filters.dateDebut" (change)="filterGlobal()" title="Date début" />
+      <input class="vd-search-input" type="date" style="padding-left:12px; width:140px"
+             [(ngModel)]="filters.dateFin" (change)="filterGlobal()" title="Date fin" />
+      <button class="vd-btn-primary" style="padding:8px 16px" (click)="filterGlobal()">
+        <i class="fas fa-search"></i>
+      </button>
+      <button class="vd-btn-outline" style="padding:8px 16px" *ngIf="hasActiveFilters" (click)="resetFilters()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-responsive">
+    <table class="vd-table">
+      <thead>
+        <tr>
+          <th>N° Commande</th>
+          <th>Motif</th>
+          <th>Client</th>
+          <th>Compte à prélever</th>
+          <th>À percevoir</th>
+          <th>Perçu</th>
+          <th>Restant</th>
+          <th>Statut</th>
+          <th>Date</th>
+          <th class="text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of dataList">
+          <td>
+            <span class="vd-badge">{{ getNumCommande(row) }}</span>
+          </td>
+          <td>
+            <span class="vd-badge" style="background:#f0f4ff; color:#3b5bdb; font-size:11px">{{ row.motif || '—' }}</span>
+          </td>
+          <td>
+            <div class="vd-product-cell">
+              <div class="vd-avatar-sm">
+                <i class="fas fa-store"></i>
+              </div>
+              <span>{{ getClientNom(row) }}</span>
+            </div>
+          </td>
+          <td style="font-size:11px">{{ getComptePaiement(row) }}</td>
+          <td><span class="fw-semibold">{{ row.montantAPercevoir | number:'1.0-0' }}</span> <small class="text-muted">FCFA</small></td>
+          <td>
+            <span class="fw-semibold text-success">{{ row.montantPercu | number:'1.0-0' }}</span> <small class="text-muted">FCFA</small>
+            <div *ngIf="getSurplusTotal(row) > 0" class="vd-surplus-badge" title="Surplus versé par le client, crédité sur son sous-compte">
+              <i class="fas fa-arrow-up"></i> +{{ getSurplusTotal(row) | number:'1.0-0' }} FCFA en sous-compte
+            </div>
+          </td>
+          <td>
+            <span class="fw-bold" [ngClass]="row.montantRestant > 0 ? 'text-danger' : 'text-success'">
+              {{ row.montantRestant | number:'1.0-0' }} <small>FCFA</small>
+            </span>
+          </td>
+          <td>
+            <span class="vd-status-badge"
+              [ngClass]="{
+                'attente':  row.statut === 'En attente',
+                'cours':    row.statut === 'En cours',
+                'partiel':  row.statut === 'Partiellement reglé',
+                'paye':     row.statut === 'Payé'
+              }">
+              {{ row.statut === 'En attente' ? 'En attente'
+               : row.statut === 'En cours' ? 'En cours'
+               : row.statut === 'Partiellement reglé' ? 'Partiel'
+               : row.statut === 'Payé' ? 'Payé'
+               : (row.statut || '—') }}
+            </span>
+          </td>
+          <td>{{ row.createdAt | date:'dd/MM/yyyy' }}</td>
+          <td class="text-center">
+            <button class="vd-btn-pay" *ngIf="row.montantRestant > 0" (click)="openPaiement(row)">
+              <i class="fas fa-money-bill-wave me-1"></i> Payer
+            </button>
+            <div *ngIf="row.montantRestant <= 0" class="d-flex align-items-center gap-2">
+              <span class="vd-done-check"><i class="fas fa-check-circle"></i> Soldé</span>
+              <button class="fn-action-btn view" title="Télécharger le reçu" (click)="downloadRecu(row.id, row.numTransaction)">
+                <i class="fas fa-download"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="dataList.length === 0">
+          <td colspan="10">
+            <div class="vd-empty">
+              <i class="fas fa-inbox"></i>
+              <span>Aucune transaction BO en attente</span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="vd-pagination mt-3" *ngIf="totalPages > pageSize">
+    <button class="vd-page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <span class="vd-page-info">Page {{ currentPage }} / {{ totalPagesCount }}</span>
+    <button class="vd-page-btn" [disabled]="currentPage >= totalPagesCount" (click)="goToPage(currentPage + 1)">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ===== MODAL PAIEMENT ===== -->
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div class="vd-modal-dialog">
+
+    <div class="vd-modal-header">
+      <div class="vd-mh-left">
+        <div class="vd-mh-icon blue"><i class="fas fa-money-bill-wave"></i></div>
+        <div>
+          <div class="vd-mh-title">Enregistrer un paiement</div>
+          <div class="vd-mh-sub">{{ getNumCommande(selectedTransaction) }}</div>
+        </div>
+      </div>
+      <button class="vd-mh-close" (click)="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- Récap transaction -->
+    <div class="vd-modal-recap">
+      <div class="vd-recap-item">
+        <span class="vd-recap-label">À percevoir</span>
+        <span class="vd-recap-value">{{ selectedTransaction?.montantAPercevoir | number:'1.0-0' }} FCFA</span>
+      </div>
+      <div class="vd-recap-sep"></div>
+      <div class="vd-recap-item">
+        <span class="vd-recap-label">Déjà perçu</span>
+        <span class="vd-recap-value text-success">{{ selectedTransaction?.montantPercu | number:'1.0-0' }} FCFA</span>
+      </div>
+      <div class="vd-recap-sep"></div>
+      <div class="vd-recap-item">
+        <span class="vd-recap-label">Restant</span>
+        <span class="vd-recap-value text-danger fw-bold">{{ selectedTransaction?.montantRestant | number:'1.0-0' }} FCFA</span>
+      </div>
+    </div>
+
+    <div class="vd-modal-body">
+      <form [formGroup]="paiementForm">
+        <div class="mb-4">
+          <label class="vd-label">Montant perçu <span class="text-danger">*</span></label>
+          <input type="number" class="vd-input" formControlName="montantPercu" placeholder="0" />
+        </div>
+        <div class="mb-3">
+          <label class="vd-label">Moyen de paiement <span class="text-danger">*</span></label>
+          <div class="vd-moyen-grid">
+            <div *ngFor="let mp of moyensPaiement"
+                 class="vd-moyen-card"
+                 [class.selected]="paiementForm.get('moyenDePaiementId')?.value == mp.id"
+                 (click)="onMoyenSelect(mp)">
+              <i class="fas" [ngClass]="getMoyenIcon(mp.libelle)"></i>
+              <span>{{ mp.libelle }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="mb-3" *ngIf="requiresCompte">
+          <label class="vd-label">Compte <span class="text-danger">*</span></label>
+          <ng-select [items]="filteredComptes" bindLabel="label" bindValue="id"
+                     formControlName="compteId" [searchable]="true" [clearable]="true"
+                     placeholder="Sélectionner un compte..."></ng-select>
+          <div class="text-danger small mt-1" *ngIf="isCaisseMoyen && !selectedTransaction?.depot?.compte">
+            Aucune caisse n'est configurée pour le dépôt de cette commande. Contactez un administrateur.
+          </div>
+        </div>
+        <div class="mb-3" *ngIf="requiresNumeroCheque">
+          <label class="vd-label">Numéro de chèque <span class="text-danger">*</span></label>
+          <input type="text" class="vd-input" formControlName="numeroCheque" placeholder="Numéro de chèque (alphanumérique)" />
+        </div>
+      </form>
+    </div>
+
+    <div class="vd-modal-footer">
+      <button class="vd-btn-outline" (click)="closeModal()">Annuler</button>
+      <button class="vd-btn-primary" [disabled]="paiementForm.invalid || isSubmittingPaiement" (click)="onSubmitPaiement()">
+        <i class="fas fa-check me-1"></i> Confirmer
+      </button>
+    </div>
+  </div>
+</div>

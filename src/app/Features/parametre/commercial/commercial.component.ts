@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { CoreServiceService } from 'src/app/core/core-service.service';
+import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { Location } from '@angular/common';
 
 @Component({
@@ -15,26 +16,31 @@ import { Location } from '@angular/common';
 })
 export class CommercialComponent {
   @ViewChild('dt2') dt2!: Table;
-  totalPages: number = 0;
-  dataList!: any[];
+  dataList: any[] = [];
+  filteredList: any[] = [];
   commercialForm!: FormGroup;
-  loading: boolean = true;
   isModalOpen = false;
   operation: string = '';
   updateData: any = {};
   articleId: any = 0;
   isEditMode: boolean = false;
-  zoneLivraison!: any[];
-  grpClient!: any[];
-  localite!: any[];
-  depots!: any[];
-  currentPage: number;
-  rowsPerPage: any;
+  depots: any[] = [];
+  typePrixList: any[] = [];
+
+  // Filtres
+  filterNom = '';
+  filterDepot = '';
+
+  // Pagination
+  currentPage = 1;
+  pageSize = 10;
+  totalItems = 0;
 
   constructor(
     private location: Location,
     private coreService:CoreServiceService,
     private utilisateurService:UtilisateurResolveService,
+    private _articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
@@ -44,12 +50,21 @@ export class CommercialComponent {
       nom: [null, Validators.required],
       prenoms: [null, Validators.required],
       email: [null, [Validators.required, Validators.email]],
-      telephone: [null, [Validators.required]], // Validation pour 10 chiffres
+      telephone: [null, [Validators.required]],
       idCommercialBNS: [null, Validators.required],
       depotId: [null, Validators.required],
+      typePrixId: [null],
     });
-    this.GetCommercialList(1)
-    this.GetDepotList()
+
+    this._articleService.ListTypePrix.subscribe((res: any) => {
+      this.typePrixList = res;
+    });
+    if (this._articleService.ListTypePrix.getValue().length === 0) {
+      this._articleService.GetListTypePrix({ paginate: false, page: 1, limit: 100 });
+    }
+
+    this.GetCommercialList(1);
+    this.GetDepotList();
   }
   GetDepotList() {
     let data = {
@@ -109,11 +124,29 @@ export class CommercialComponent {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
-  onPage(event: any) {
-    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
-    this.rowsPerPage = event.rows;
+  get totalPages(): number {
+    return Math.ceil(this.totalItems / this.pageSize);
+  }
 
-    this.GetCommercialList(this.currentPage);
+  goToPage(page: number) {
+    this.currentPage = page;
+    this.GetCommercialList(page);
+  }
+
+  applyFilters() {
+    const nom = this.filterNom.toLowerCase();
+    const depot = this.filterDepot;
+    this.filteredList = this.dataList.filter(c => {
+      const matchNom = !nom || (c.nom + ' ' + c.prenoms).toLowerCase().includes(nom);
+      const matchDepot = !depot || String(c.depot?.id) === String(depot);
+      return matchNom && matchDepot;
+    });
+  }
+
+  resetFilters() {
+    this.filterNom = '';
+    this.filterDepot = '';
+    this.filteredList = [...this.dataList];
   }
   onSubmit(): void {
     this._spinner.show();
@@ -166,7 +199,8 @@ export class CommercialComponent {
       prenoms: this.updateData.prenoms,
       email: this.updateData.email,
       telephone: this.updateData.telephone,
-      depotId: this.updateData.depot.id,
+      depotId: this.updateData.depot?.id,
+      typePrixId: this.updateData.typePrix?.id ?? null,
     });
   }
   OnDelete(Id: any) {
@@ -186,25 +220,16 @@ export class CommercialComponent {
     );
   }
 
-  GetCommercialList(page:number)
-  {
-    let data = {
-      paginate: true,
-      page: page,
-      limit: 8,
-    };
-    console.log('data', data);
-    this._spinner.show()
-    this.utilisateurService.GetCommercialList(data).then((res:any)=>{
-      this.totalPages = res.total; // nombre total d’enregistrements
-      console.log('totalPages:::>', this.totalPages);
-        this.dataList = res.data;
-      console.log('currentPage', this.totalPages);
-      this._spinner.hide()
-      console.log(this.dataList)
+  GetCommercialList(page: number) {
+    this._spinner.show();
+    this.utilisateurService.GetCommercialList({ paginate: true, page, limit: this.pageSize }).then((res: any) => {
+      this.dataList = res.data || [];
+      this.totalItems = res.total || 0;
+      this.applyFilters();
+      this._spinner.hide();
     }, (error: any) => {
       this._spinner.hide();
-      this.toastr.error('Erreur!', error.error.message);
-    })
+      this.toastr.error('Erreur!', error?.error?.message || 'Erreur');
+    });
   }
 }

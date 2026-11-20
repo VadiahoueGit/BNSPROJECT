@@ -1,605 +1,474 @@
-<div
-  class="gap-2 d-flex align-items-center mb-3"
-  style="cursor: pointer"
-  (click)="goBack()"
->
-  <i style="font-size: 18px" class="fas fw-bold fa-chevron-left me-2"></i>
-  <h4 class="fw-bold mb-0">Revendeurs</h4>
+<!-- ===== HEADER ===== -->
+<div class="rv-page-header">
+  <div class="d-flex align-items-center gap-3">
+    <div class="rv-back-btn" (click)="goBack()">
+      <i class="fas fa-chevron-left"></i>
+    </div>
+    <div class="rv-page-icon">
+      <i class="fas fa-handshake"></i>
+    </div>
+    <div>
+      <h4 class="fw-bold mb-0">Revendeurs</h4>
+      <span class="text-muted" style="font-size:12px">Gestion des clients revendeurs</span>
+    </div>
+  </div>
+  <button class="rv-btn-create" (click)="OnCreate()">
+    <i class="fas fa-plus me-2"></i>Nouveau revendeur
+  </button>
 </div>
-<div class="card">
-  <div>
-    <span style="font-size:13px;">Nombre: </span>
-    <span style="font-size:13px;" class="fw-bold text-secondary">{{ totalPages }}</span>
+
+<!-- ===== KPI GRID ===== -->
+<div class="rv-kpi-grid mb-4">
+  <div class="rv-kpi blue">
+    <div class="rv-kpi-icon"><i class="fas fa-users"></i></div>
+    <div>
+      <div class="rv-kpi-label">Total</div>
+      <div class="rv-kpi-value">{{ totalPages }}</div>
+    </div>
+  </div>
+  <div class="rv-kpi green">
+    <div class="rv-kpi-icon"><i class="fas fa-crown"></i></div>
+    <div>
+      <div class="rv-kpi-label">Validés (page)</div>
+      <div class="rv-kpi-value">{{ validesCount }}</div>
+    </div>
+  </div>
+  <div class="rv-kpi orange">
+    <div class="rv-kpi-icon"><i class="fas fa-link"></i></div>
+    <div>
+      <div class="rv-kpi-label">Associés (page)</div>
+      <div class="rv-kpi-value">{{ associesCount }}</div>
+    </div>
+  </div>
+  <div class="rv-kpi red">
+    <div class="rv-kpi-icon"><i class="fas fa-clock"></i></div>
+    <div>
+      <div class="rv-kpi-label">En attente (page)</div>
+      <div class="rv-kpi-value">{{ enAttenteCount }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FILTRES + TABLE ===== -->
+<div class="rv-card">
+
+  <!-- Barre filtres -->
+  <div class="rv-filters-bar">
+    <div class="rv-filter-group">
+      <label class="rv-filter-label">Établissement</label>
+      <div class="rv-filter-input-wrap">
+        <i class="fas fa-search rv-filter-icon"></i>
+        <input class="rv-filter-input" type="text" placeholder="Rechercher..."
+               [(ngModel)]="filters.raisonSociale" (keydown.enter)="filterGlobal()" />
+      </div>
+    </div>
+    <div class="rv-filter-group">
+      <label class="rv-filter-label">Groupe client</label>
+      <div class="rv-filter-input-wrap">
+        <i class="fas fa-search rv-filter-icon"></i>
+        <input class="rv-filter-input" type="text" placeholder="Rechercher..."
+               [(ngModel)]="filters.groupeClient" (keydown.enter)="filterGlobal()" />
+      </div>
+    </div>
+    <div class="rv-filter-group">
+      <label class="rv-filter-label">Propriétaire</label>
+      <div class="rv-filter-input-wrap">
+        <i class="fas fa-search rv-filter-icon"></i>
+        <input class="rv-filter-input" type="text" placeholder="Rechercher..."
+               [(ngModel)]="filters.proprietaire" (keydown.enter)="filterGlobal()" />
+      </div>
+    </div>
+    <div class="rv-filter-group">
+      <label class="rv-filter-label">Dépôt</label>
+      <ng-select [items]="depots" bindLabel="nomDepot" bindValue="id"
+                 [(ngModel)]="filters.depotId" placeholder="Tous les dépôts"
+                 [clearable]="true" class="rv-ng-select">
+      </ng-select>
+    </div>
+    <button class="rv-btn-search" (click)="filterGlobal()">
+      <i class="fas fa-search me-1"></i>Rechercher
+    </button>
   </div>
 
-  <p-table
-    [styleClass]="'p-datatable-sm'"
-    #dt
-    [value]="dataList"
-    dataKey="id"
-    [rows]="8"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [totalRecords]="totalPages" [lazy]="true"
-    [paginator]="true"
-    (onPage)="onPage($event)"
-  >
-    <ng-template pTemplate="caption">
-      <div class=" d-flex justify-content-between py-3">
-        <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
-          Créer un revendeur
-        </button>
-      </div>
-      <div class="row">
-        <div class="col-12 col-sm-6 col-md-3 mb-3">
-          <span>Etablissement :</span>
-          <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.raisonSociale"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
-        </div>
-        <div class="col-12 col-sm-6 col-md-3 mb-3">
-          <span>Groupe Client :</span>
-          <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.groupeClient"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
-        </div>
-        <div class="col-12 col-sm-6 col-md-3 mb-3">
-          <span>Propriétaire :</span>
-          <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.proprietaire"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
-        </div>
-      </div>
-    </ng-template>
+  <!-- Table -->
+  <p-table [value]="dataList" dataKey="id" [rows]="8" [totalRecords]="totalPages"
+           [lazy]="true" [paginator]="true" (onPage)="onPage($event)"
+           [rowsPerPageOptions]="[8,25,50]" [styleClass]="'p-datatable-sm'">
+
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color)">Ref client</th>
-        <th style="color: var(--secondary-color)">Agent</th>
-        <th style="color: var(--secondary-color)">Raison sociale</th>
-        <th style="color: var(--secondary-color)">Gérant</th>
-        <th style="color: var(--secondary-color)">Propriétaire</th>
-        <th style="color: var(--secondary-color)">Groupe client</th>
-        <th style="color: var(--secondary-color)">Depots</th>
-        <th
-          class="d-flex justify-content-center"
-          style="color: var(--secondary-color)"
-        >
-          Actions
-        </th>
+        <th>Réf. client</th>
+        <th>Agent</th>
+        <th>Raison sociale</th>
+        <th>Propriétaire</th>
+        <th>Groupe client</th>
+        <th>Dépôt</th>
+        <th>Statut</th>
+        <th class="text-center">Actions</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-dataList>
+
+    <ng-template pTemplate="body" let-r>
       <tr>
         <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.codeClient }}
+          <span class="rv-code">{{ r.codeClient || '—' }}</span>
+        </td>
+        <td style="font-size:13px">
+          {{ r.agentCommercial
+            ? r.agentCommercial?.nom + ' ' + r.agentCommercial?.prenoms
+            : (r.agentTransporteur?.nom + ' ' + r.agentTransporteur?.prenoms) || '—' }}
+        </td>
+        <td>
+          <div class="rv-raison">
+            <div class="rv-raison-dot"></div>
+            <span class="fw-semibold" style="font-size:13px">{{ r.raisonSocial }}</span>
+          </div>
+        </td>
+        <td>
+          <div style="font-size:13px">{{ r.nomProprietaire }}</div>
+          <div class="text-muted" style="font-size:11px">{{ r.telephoneProprietaire }}</div>
+        </td>
+        <td>
+          <span class="rv-groupe-badge">{{ r.groupeClient?.nomGroupe }}</span>
+        </td>
+        <td>
+          <span class="rv-depot-badge">
+            <i class="fas fa-warehouse me-1"></i>{{ r.depot?.nomDepot }}
           </span>
         </td>
         <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.agentCommercial ? dataList.agentCommercial?.nom + ' ' + dataList.agentCommercial?.prenoms :
-            dataList.agentTransporteur?.nom + ' ' + dataList.agentTransporteur?.prenoms}}
+          <span class="rv-status-badge"
+                [class.valide]="r.isValide && !r.isAssocie"
+                [class.associe]="r.isAssocie"
+                [class.attente]="!r.isValide && !r.isAssocie">
+            <i class="fas"
+               [class.fa-crown]="r.isValide && !r.isAssocie"
+               [class.fa-link]="r.isAssocie"
+               [class.fa-clock]="!r.isValide && !r.isAssocie"></i>
+            {{ r.isAssocie ? 'Associé' : r.isValide ? 'Validé' : 'En attente' }}
           </span>
         </td>
         <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.raisonSocial }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.nomGerant }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.nomProprietaire }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.groupeClient.nomGroupe }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.depot.nomDepot }}
-          </span>
-        </td>
-        <td>
-      <tr class="d-flex justify-content-center gap-3">
-        <td>
-          <i *ngIf="dataList.isValide && !dataList.isAssocie" class="fa-solid fa-crown" style="color:#ffc400"
-          ></i>
-          <i
-            *ngIf="!dataList.isValide && !dataList.isAssocie"
-            [ngStyle]="{
-                        'color': dataList.isValide ? 'gray' : '#08AD36',
-                      }"
-            (click)="OnValidate(dataList)"
-            style="cursor: pointer"
-            class="fas fa-check fw-bold"
-          ></i>
-        </td>
-        <td>
-          <i
-            (click)="OnEdit(dataList)"
-            style="cursor: pointer"
-            class="fas fa-edit text-secondary fw-bold"
-          ></i>
-        </td>
-        <td>
-          <i
-            (click)="OnDelete(dataList.id)"
-            style="cursor: pointer"
-            class="fas fa-trash-alt text-danger fw-bold"
-          ></i>
+          <div class="rv-actions">
+            <button class="rv-action-btn validate" *ngIf="!r.isValide && !r.isAssocie"
+                    title="Valider" (click)="OnValidate(r)">
+              <i class="fas fa-check"></i>
+            </button>
+            <button class="rv-action-btn edit" title="Modifier" (click)="OnEdit(r)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="rv-action-btn delete" title="Supprimer" (click)="OnDelete(r.id)">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
         </td>
       </tr>
-      </td></tr
-      ></ng-template>
+    </ng-template>
 
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">Aucun article trouvé.</td>
+        <td colspan="8">
+          <div class="rv-empty">
+            <i class="fas fa-users-slash"></i>
+            <div>Aucun revendeur trouvé</div>
+          </div>
+        </td>
       </tr>
     </ng-template>
+
   </p-table>
+
 </div>
 
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- MODAL CRÉATION / MODIFICATION                              -->
+<!-- ═══════════════════════════════════════════════════════════ -->
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div
-          class="d-flex justify-content-center align-items-center"
-          style="
-            background-color: #dbffe8;
-            border-radius: 50%;
-            width: 3rem;
-            height: 3rem;
-          "
-        >
-          <i class="fas fa-box-check text-success fs-4"></i>
+  <div class="rv-modal-dialog">
+
+    <!-- Header -->
+    <div class="rv-modal-header">
+      <div class="d-flex align-items-center gap-3">
+        <div class="rv-modal-icon" [class.blue]="operation === 'edit'" [class.green]="operation === 'create'">
+          <i class="fas" [class.fa-user-plus]="operation === 'create'" [class.fa-user-edit]="operation === 'edit'"></i>
         </div>
-        <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création
-          de client revendeur</h1>
-        <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification de
-          client revendeur</h1>
-        <button
-          type="button"
-          class="btn-close"
-          aria-label="Close"
-          (click)="OnCloseModal()"
-        ></button>
-      </div>
-      <div class="modal-body" style="max-height: 70vh; overflow-y: auto">
-        <form [formGroup]="revendeurForm" (ngSubmit)="onSubmit()">
-          <fieldset class="border px-3 pb-2" *ngIf="!isEditMode">
-            <legend class="float-none w-auto px-2">Voulez-vous l'associer ?</legend>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-check">
-                  <input class="form-check-input" formControlName="isAssocie" type="checkbox" id="associerCheckbox"
-                         (change)="activateField(!isActive)">
-                  <label class="form-check-label" for="associerCheckbox">
-                    Associer
-                  </label>
-                </div>
-                <ng-select
-                  formControlName="parentRevendeurId"
-                  (change)="preloadData($event)"
-                  [readonly]="!isActive"
-                  class="form-control"
-                  [items]="revendeurConfirmed"
-                  bindLabel="raisonSocial"
-                  bindValue="id"
-                  [searchable]="true"
-                >
-                </ng-select>
-              </div>
-            </div>
-          </fieldset>
-          <!-- REFERENCES -->
-          <fieldset class="border p-3 mb-3">
-            <legend class="float-none w-auto px-2">Références</legend>
-            <div class="row" *ngIf="isEditMode">
-              <label>Numero SAP : {{ numeroSap?.numeroSAP }}</label>
-            </div>
-
-            <div class="row">
-              <div class="col-md-6 mt-3">
-                <label for="groupeClientId" class="form-label"
-                >Type de Client</label
-                >
-                <ng-select
-                  class="form-control"
-                  [items]="clientTypes"
-                  bindLabel="nomGroupe"
-                  bindValue="id"
-                  formControlName="groupeClientId"
-                  [searchable]="true"
-                >
-                </ng-select>
-              </div>
-              <div class="col-md-6 mt-3">
-                <label for="numeroRegistre" class="form-label"
-                >N° Registre de commerce</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="numeroRegistre"
-                  formControlName="numeroRegistre"
-                  placeholder="Entrez le numéro"
-                />
-              </div>
-              <div class="col-md-6 mt-3">
-                <label for="raisonSociale" class="form-label"
-                >Raison sociale</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="raisonSociale"
-                  formControlName="raisonSocial"
-                  placeholder="Entrez la raison sociale"
-                />
-              </div>
-
-              <div class="col-md-6 mt-3">
-                <label for="compteContribuable" class="form-label"
-                >N° Compte contribuable</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="compteContribuable"
-                  formControlName="numeroCompteContribuable"
-                  placeholder="Entrez le numéro"
-                />
-              </div>
-            </div>
-
-          </fieldset>
-
-          <!-- ADRESSE -->
-          <fieldset class="border p-3 mb-3">
-            <legend class="float-none w-auto px-2">Adresse</legend>
-            <div class="row">
-              <div class="col-md-6">
-                <label for="latitude" class="form-label">latitude</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="latitude"
-                  formControlName="latitude"
-                  placeholder="Entrez la latitude"
-                />
-              </div>
-              <div class="col-md-6">
-                <label for="longitude" class="form-label">longitude</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="longitude"
-                  formControlName="longitude"
-                  placeholder="Entrez la longitude"
-                />
-              </div>
-              <div class="col-md-6">
-                <label for="telephone" class="form-label">Téléphone</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="telephone"
-                  formControlName="telephone"
-                  placeholder="Entrez le téléphone"
-                />
-              </div>
-              <div class="col-md-6">
-                <label for="depot" class="form-label">Dépôt</label>
-                <ng-select
-                  class="form-control"
-                  [items]="depots"
-                  bindLabel="nomDepot"
-                  bindValue="id"
-                  (change)="onDepotChange($event)"
-                  formControlName="depotId"
-                  [searchable]="true"
-                >
-                </ng-select>
-              </div>
-            </div>
-          </fieldset>
-
-          <!-- GESTION -->
-          <fieldset class="border p-3 mb-3">
-            <legend class="float-none w-auto px-2">Gestion</legend>
-            <div class="row">
-              <div class="col-md-6">
-                <label for="nomProprietaire" class="form-label"
-                >Nom du propriétaire</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="nomProprietaire"
-                  formControlName="nomProprietaire"
-                  placeholder="Entrez le nom"
-                />
-              </div>
-              <div class="col-md-6">
-                <label for="telProprietaire" class="form-label"
-                >Tel du propriétaire</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="telProprietaire"
-                  formControlName="telephoneProprietaire"
-                  placeholder="Entrez le téléphone"
-                />
-              </div>
-              <div class="col-md-6 mt-3">
-                <label for="nomGerant" class="form-label">Nom du gérant</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="nomGerant"
-                  formControlName="nomGerant"
-                  placeholder="Entrez le nom"
-                />
-              </div>
-              <div class="col-md-6 mt-3">
-                <label for="telGerant" class="form-label">Tel du gérant</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="telGerant"
-                  formControlName="telephoneGerant"
-                  placeholder="Entrez le téléphone"
-                />
-              </div>
-            </div>
-          </fieldset>
-
-          <!-- AUTRES -->
-          <fieldset class="border p-3 mb-3">
-            <legend class="float-none w-auto px-2">Autres</legend>
-            <div class="row">
-              <div class="col-md-6">
-                <label for="quantiteMinimum" class="form-label"
-                >Quantité minimum à commander</label
-                >
-                <input
-                  type="number"
-                  class="form-control"
-                  id="quantiteMinimum"
-                  formControlName="quantiteMinimumACommander"
-                  placeholder="Entrez la quantité"
-                />
-              </div>
-              <div class="col-md-6">
-                <label for="familleProduit" class="form-label"
-                >Famille de produit (Produit favoris)</label
-                >
-                <ng-select
-                  class="form-control"
-                  [items]="ListGroupesArticles"
-                  bindLabel="libelle"
-                  bindValue="id"
-                  formControlName="familleProduitId"
-                  [searchable]="true"
-                >
-                </ng-select>
-              </div>
-            </div>
-            <div class="row"  *ngIf="operation == 'edit'">
-              <div class="col-md-6 mt-3">
-                <label for="compteContribuable" class="form-label"
-                >Type de prix</label
-                >
-                <ng-select
-                  class="form-control"
-                  [items]="typePrixList"
-                  bindLabel="libelle"
-                  bindValue="id"
-                  formControlName="typePrixId"
-                  [searchable]="true"
-                >
-                </ng-select>
-
-              </div>
-            </div>
-          </fieldset>
-
-          <!-- FOOTER -->
-          <div class="modal-footer gap-3 px-4">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              (click)="OnCloseModal()"
-            >
-              Annuler
-            </button>
-            <button
-              type="submit"
-              class="btn btn-primary"
-              [disabled]="revendeurForm.invalid"
-            >
-              Enregistrer
-            </button>
+        <div>
+          <div class="rv-modal-title">
+            {{ operation === 'create' ? 'Nouveau revendeur' : 'Modifier le revendeur' }}
           </div>
-        </form>
+          <div class="rv-modal-sub">Remplissez les informations ci-dessous</div>
+        </div>
       </div>
+      <button class="rv-close-btn" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
     </div>
+
+    <!-- Body -->
+    <div class="rv-modal-body">
+      <form [formGroup]="revendeurForm" (ngSubmit)="onSubmit()">
+
+        <!-- Association (création seulement) -->
+        <div class="rv-section" *ngIf="!isEditMode">
+          <div class="rv-section-title"><i class="fas fa-link me-2"></i>Association</div>
+          <div class="rv-grid-2">
+            <div class="rv-check-wrap">
+              <label class="rv-toggle-label">
+                <input type="checkbox" formControlName="isAssocie" (change)="activateField(!isActive)" />
+                <span class="rv-toggle-text">Associer à un revendeur existant</span>
+              </label>
+            </div>
+            <div class="rv-field" *ngIf="isActive">
+              <label class="rv-label">Revendeur parent</label>
+              <ng-select formControlName="parentRevendeurId" (change)="preloadData($event)"
+                         [items]="revendeurConfirmed" bindLabel="raisonSocial" bindValue="id"
+                         placeholder="Sélectionner..." class="rv-ng-select">
+              </ng-select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Références -->
+        <div class="rv-section">
+          <div class="rv-section-title"><i class="fas fa-tag me-2"></i>Références</div>
+          <div class="rv-info-tag" *ngIf="isEditMode && numeroSap">
+            <i class="fas fa-barcode me-2"></i>N° SAP : <strong>{{ numeroSap }}</strong>
+          </div>
+          <div class="rv-check-wrap mb-3">
+            <label class="rv-toggle-label">
+              <input type="checkbox" formControlName="isAirsi" />
+              <span class="rv-toggle-text">Soumis à l'A.I.R.S.I (5%)</span>
+            </label>
+          </div>
+          <div class="rv-grid-2">
+            <div class="rv-field">
+              <label class="rv-label">Type de client <span class="text-danger">*</span></label>
+              <ng-select [items]="clientTypes" bindLabel="nomGroupe" bindValue="id"
+                         formControlName="groupeClientId" placeholder="Sélectionner..." class="rv-ng-select">
+              </ng-select>
+            </div>
+            <div class="rv-field">
+              <label class="rv-label">Raison sociale <span class="text-danger">*</span></label>
+              <input type="text" class="rv-input" formControlName="raisonSocial" placeholder="Entrez la raison sociale" />
+            </div>
+            <div class="rv-field">
+              <label class="rv-label">N° Registre de commerce</label>
+              <input type="text" class="rv-input" formControlName="numeroRegistre" placeholder="Entrez le numéro" />
+            </div>
+            <div class="rv-field">
+              <label class="rv-label">N° Compte contribuable</label>
+              <input type="text" class="rv-input" formControlName="numeroCompteContribuable" placeholder="Entrez le numéro" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Adresse -->
+        <div class="rv-section">
+          <div class="rv-section-title"><i class="fas fa-map-marker-alt me-2"></i>Adresse</div>
+          <div class="rv-grid-2">
+            <div class="rv-field">
+              <label class="rv-label">Latitude <span class="text-danger">*</span></label>
+              <input type="text" class="rv-input" formControlName="latitude" placeholder="Ex: 5.3600" />
+            </div>
+            <div class="rv-field">
+              <label class="rv-label">Longitude <span class="text-danger">*</span></label>
+              <input type="text" class="rv-input" formControlName="longitude" placeholder="Ex: -4.0083" />
+            </div>
+            <div class="rv-field">
+              <label class="rv-label">Téléphone</label>
+              <input type="text" class="rv-input" formControlName="telephone" placeholder="Entrez le téléphone" />
+            </div>
+            <div class="rv-field">
+              <label class="rv-label">Dépôt <span class="text-danger">*</span></label>
+              <ng-select [items]="depots" bindLabel="nomDepot" bindValue="id"
+                         (change)="onDepotChange($event)" formControlName="depotId"
+                         placeholder="Sélectionner..." class="rv-ng-select">
+              </ng-select>
+            </div>
+            <div class="rv-field">
+              <label class="rv-label">Zone de livraison <span class="text-danger">*</span></label>
+              <ng-select [items]="zoneLivraison" bindLabel="nomZone" bindValue="id"
+                         formControlName="zoneDeLivraisonId" [searchable]="true"
+                         placeholder="Sélectionner..." class="rv-ng-select">
+              </ng-select>
+            </div>
+            <div class="rv-field">
+              <label class="rv-label">Localité <span class="text-danger">*</span></label>
+              <ng-select [items]="localites" bindLabel="nomLocalite" bindValue="id"
+                         formControlName="localiteId" [searchable]="true"
+                         placeholder="Sélectionner..." class="rv-ng-select">
+              </ng-select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gestion -->
+        <div class="rv-section">
+          <div class="rv-section-title"><i class="fas fa-user-tie me-2"></i>Gestion</div>
+          <div class="rv-grid-2">
+            <div class="rv-field">
+              <label class="rv-label">Nom du propriétaire <span class="text-danger">*</span></label>
+              <input type="text" class="rv-input" formControlName="nomProprietaire" placeholder="Entrez le nom" />
+            </div>
+            <div class="rv-field">
+              <label class="rv-label">Tél. propriétaire</label>
+              <input type="text" class="rv-input" formControlName="telephoneProprietaire" placeholder="Entrez le téléphone" />
+            </div>
+            <div class="rv-field">
+              <label class="rv-label">Nom du gérant <span class="text-danger">*</span></label>
+              <input type="text" class="rv-input" formControlName="nomGerant" placeholder="Entrez le nom" />
+            </div>
+            <div class="rv-field">
+              <label class="rv-label">Tél. gérant</label>
+              <input type="text" class="rv-input" formControlName="telephoneGerant" placeholder="Entrez le téléphone" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Autres -->
+        <div class="rv-section">
+          <div class="rv-section-title"><i class="fas fa-sliders-h me-2"></i>Autres</div>
+          <div class="rv-grid-2">
+            <div class="rv-field">
+              <label class="rv-label">Qté minimum à commander</label>
+              <input type="number" class="rv-input" formControlName="quantiteMinimumACommander" placeholder="0" />
+            </div>
+            <div class="rv-field">
+              <label class="rv-label">Famille de produit <span class="text-danger">*</span></label>
+              <ng-select [items]="ListGroupesArticles" bindLabel="libelle" bindValue="id"
+                         formControlName="familleProduitId" placeholder="Sélectionner..." class="rv-ng-select">
+              </ng-select>
+            </div>
+            <div class="rv-field" *ngIf="operation === 'edit'">
+              <label class="rv-label">Type de prix</label>
+              <ng-select [items]="typePrixList" bindLabel="libelle" bindValue="id"
+                         formControlName="typePrixId" placeholder="Sélectionner..." class="rv-ng-select">
+              </ng-select>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Footer -->
+    <div class="rv-modal-footer">
+      <button type="button" class="rv-btn-cancel" (click)="OnCloseModal()">
+        <i class="fas fa-times me-1"></i>Annuler
+      </button>
+      <button type="button" class="rv-btn-submit" [disabled]="revendeurForm.invalid" (click)="onSubmit()">
+        <i class="fas fa-save me-1"></i>
+        {{ operation === 'create' ? 'Enregistrer' : 'Mettre à jour' }}
+      </button>
+    </div>
+
   </div>
 </div>
 
-<div *ngIf="isModalDetail" class="custom-modal">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div
-          class="d-flex justify-content-center align-items-center"
-          style="
-            background-color: rgb(219, 255, 232);
-            border-radius: 3rem;
-            width: 3rem;
-            height: 3rem;
-          "
-        >
-          <i class="fas fa-box-check text-primary fs-3"></i>
-        </div>
-        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
-          Détails revendeur
-        </h1>
-        <button
-          type="button"
-          class="btn-close justify-content-end"
-          (click)="OnCloseDetailModal()"
-        >
-          <i class="fas fa-window-close fs-4 me-2"></i>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="zone-livraison mb-3">
-          <strong>Zone de livraison : </strong>
-          <span>{{ RevendeurDetail.zoneDeLivraison.nomZone }}</span>
-        </div>
-        <div class="row">
-          <div class="col-md-6">
-            <strong>Groupe de client :</strong>
-            <span>{{ RevendeurDetail.groupeClient.nomGroupe }}</span>
-          </div>
-          <div class="col-md-6">
-            <strong>Propriétaire :</strong>
-            <span>{{ RevendeurDetail.nomProprietaire }}</span>
-          </div>
-          <div class="col-md-6">
-            <strong>Gérant :</strong>
-            <span>{{ RevendeurDetail.nomGerant }}</span>
-          </div>
-          <div class="col-md-6">
-            <strong>Établissement :</strong>
-            <span>{{
-                RevendeurDetail.nomEtablissement
-                  ? RevendeurDetail.nomEtablissement
-                  : RevendeurDetail.raisonSocial
-              }}</span>
-          </div>
-          <div class="col-md-6">
-            <strong>Contact Gérant :</strong>
-            <span>{{ RevendeurDetail.telephoneGerant }}</span>
-          </div>
-          <div class="col-md-6 mb-4">
-            <strong>Téléphone :</strong>
-            <span>{{ RevendeurDetail.telephoneProprietaire }}</span>
-          </div>
-          <div class="col-md-6">
-            <label for="rccm" class="form-label"
-            >Registre de commerce </label
-            >
-            <input
-              type="file"
-              class="form-control"
-              id="rccm"
-              (change)="onRccmSelected($event)"
-              placeholder="Importez"
-              (change)="onFileSelected($event)"
-            />
-          </div>
-          <div class="col-md-6">
-            <label for="cni" class="form-label"
-            >CNI <span class="text-danger">*</span></label
-            >
-            <input
-              type="file"
-              class="form-control"
-              (change)="onCniSelected($event)"
-              id="cni"
-              placeholder="Importez"
-            />
-          </div>
-          <div class="col-md-6">
-            <label for="dfe" class="form-label"
-            >Déclaration fiscale (DFE)</label
-            >
-            <input
-              type="file"
-              (change)="onDfeSelected($event)"
-              class="form-control"
-              id="dfe"
-              placeholder="Importez"
-            />
-          </div>
-          <div class="col-md-6">
-            <label for="dfe" class="form-label"
-            >Numero SAP <span class="text-danger">*</span></label
-            >
-            <input
-              type="text"
-              class="form-control"
-              id="numeroSap"
-              [(ngModel)]="numeroSap"
-              placeholder="Entrez le numéro SAP"
-            />
-          </div>
-          <div class="col-md-6 mt-3">
-            <label for="compteContribuable" class="form-label"
-            >Type de prix</label
-            >
-            <ng-select
-              class="form-control"
-              [items]="typePrixList"
-              bindLabel="libelle"
-              bindValue="id"
-              [(ngModel)]="typePrixId"
-              [searchable]="true"
-            >
-            </ng-select>
 
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- MODAL VALIDATION                                           -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div *ngIf="isModalDetail" class="custom-modal">
+  <div class="rv-modal-dialog rv-modal-validate">
+
+    <!-- Header -->
+    <div class="rv-modal-header">
+      <div class="d-flex align-items-center gap-3">
+        <div class="rv-modal-icon orange">
+          <i class="fas fa-award"></i>
+        </div>
+        <div>
+          <div class="rv-modal-title">Validation du revendeur</div>
+          <div class="rv-modal-sub">{{ RevendeurDetail?.raisonSocial }}</div>
+        </div>
+      </div>
+      <button class="rv-close-btn" (click)="OnCloseDetailModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- Body -->
+    <div class="rv-modal-body">
+
+      <!-- Info détails -->
+      <div class="rv-detail-grid">
+        <div class="rv-detail-item">
+          <span class="rv-detail-label">Zone de livraison</span>
+          <span class="rv-detail-value">{{ RevendeurDetail?.zoneDeLivraison?.nomZone }}</span>
+        </div>
+        <div class="rv-detail-item">
+          <span class="rv-detail-label">Groupe client</span>
+          <span class="rv-detail-value">{{ RevendeurDetail?.groupeClient?.nomGroupe }}</span>
+        </div>
+        <div class="rv-detail-item">
+          <span class="rv-detail-label">Propriétaire</span>
+          <span class="rv-detail-value">{{ RevendeurDetail?.nomProprietaire }}</span>
+        </div>
+        <div class="rv-detail-item">
+          <span class="rv-detail-label">Gérant</span>
+          <span class="rv-detail-value">{{ RevendeurDetail?.nomGerant }}</span>
+        </div>
+        <div class="rv-detail-item">
+          <span class="rv-detail-label">Contact gérant</span>
+          <span class="rv-detail-value">{{ RevendeurDetail?.telephoneGerant }}</span>
+        </div>
+        <div class="rv-detail-item">
+          <span class="rv-detail-label">Téléphone</span>
+          <span class="rv-detail-value">{{ RevendeurDetail?.telephoneProprietaire }}</span>
+        </div>
+      </div>
+
+      <!-- Documents + SAP -->
+      <div class="rv-section mt-3">
+        <div class="rv-section-title"><i class="fas fa-file-alt me-2"></i>Documents &amp; Validation</div>
+        <div class="rv-grid-2">
+          <div class="rv-field">
+            <label class="rv-label">Registre de commerce</label>
+            <label class="rv-file-label">
+              <i class="fas fa-upload me-2"></i>
+              {{ selectedRccmFile ? selectedRccmFile.name : 'Choisir un fichier...' }}
+              <input type="file" hidden (change)="onRccmSelected($event)" />
+            </label>
+          </div>
+          <div class="rv-field">
+            <label class="rv-label">CNI <span class="text-danger">*</span></label>
+            <label class="rv-file-label">
+              <i class="fas fa-upload me-2"></i>
+              {{ selectedCniFile ? selectedCniFile.name : 'Choisir un fichier...' }}
+              <input type="file" hidden (change)="onCniSelected($event)" />
+            </label>
+          </div>
+          <div class="rv-field">
+            <label class="rv-label">Déclaration fiscale (DFE)</label>
+            <label class="rv-file-label">
+              <i class="fas fa-upload me-2"></i>
+              {{ selectedDfeFile ? selectedDfeFile.name : 'Choisir un fichier...' }}
+              <input type="file" hidden (change)="onDfeSelected($event)" />
+            </label>
+          </div>
+          <div class="rv-field">
+            <label class="rv-label">Numéro SAP <span class="text-danger">*</span></label>
+            <input type="text" class="rv-input" [(ngModel)]="numeroSap" placeholder="Entrez le numéro SAP" />
+          </div>
+          <div class="rv-field">
+            <label class="rv-label">Type de prix</label>
+            <ng-select [items]="typePrixList" bindLabel="libelle" bindValue="id"
+                       [(ngModel)]="typePrixId" placeholder="Sélectionner..." class="rv-ng-select">
+            </ng-select>
           </div>
         </div>
       </div>
-      <div class="modal-footer d-flex justify-content-end gap-2">
-        <button (click)="OnCloseDetailModal()" class="btn btn-secondary">
-          Fermer
-        </button>
-        <button
-          *ngIf="!RevendeurDetail.isValide"
-          (click)="confirmValidateOperation(RevendeurDetail)"
-          class="btn btn-success">
-          Valider
-        </button>
-      </div>
+
     </div>
+
+    <!-- Footer -->
+    <div class="rv-modal-footer">
+      <button type="button" class="rv-btn-cancel" (click)="OnCloseDetailModal()">
+        <i class="fas fa-times me-1"></i>Fermer
+      </button>
+      <button *ngIf="!RevendeurDetail?.isValide" type="button" class="rv-btn-submit green"
+              (click)="confirmValidateOperation(RevendeurDetail)">
+        <i class="fas fa-check me-1"></i>Valider le revendeur
+      </button>
+    </div>
+
   </div>
 </div>

@@ -1,162 +1,120 @@
-<div class="card">
-
-    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"[totalRecords]="totalPages" [lazy]="true"
-        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" [globalFilterFields]="['code', 'libelle']"
-        [globalFilterFields]="['code', 'libelle']" (onPage)="onPage($event)">
-        <ng-template pTemplate="caption">
-            <div class=" d-flex justify-content-between py-3">
-                <span class="p-input-icon-left ml-auto d-flex align-items-center">
-                    <i class="fas fa-search"></i>
-                    <input pInputText type="text" (input)="filterGlobal($event)" placeholder="Recherche" />
-                </span>
-                <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer un vehicule</button>
-            </div>
-        </ng-template>
-        <ng-template pTemplate="header">
-            <tr>
-                <th style="color: var(--secondary-color);">Immatriculation</th>
-                <th style="color: var(--secondary-color);">Marque</th>
-                <th style="color: var(--secondary-color);">Énergie</th>
-                <th style="color: var(--secondary-color);">Capacité</th>
-                <th style="color: var(--secondary-color);">Date de Visite</th>
-                <th style="color: var(--secondary-color);">Actions</th>
-            </tr>
-
-        </ng-template>
-        <ng-template pTemplate="body" let-dataList>
-            <tr>
-                <td class="">
-                    {{ dataList.immatriculation }}
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.marque }}
-                    </span>
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.energie}}
-                    </span>
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.capacite}}
-                    </span>
-                </td>
-                <td class="">
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.dateDeVisite | date }}
-                    </span>
-                </td>
-                <td>
-            <tr class="d-flex  gap-3">
-                <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
-                <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
-                        class="fas fa-trash-alt text-danger"></i>
-                </td>
-            </tr>
-
-            </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="5">Aucun article trouvé!</td>
-            </tr>
-        </ng-template>
-    </p-table>
+<div class="vh-header">
+  <div class="vh-title">
+    <h4>Véhicules</h4>
+  </div>
+  <button class="vh-btn-primary" (click)="OnCreate()">
+    <i class="fas fa-plus"></i> Nouveau véhicule
+  </button>
 </div>
 
-<!-- Modal creation -->
-<!-- Modal -->
-<div *ngIf="isModalOpen" class="custom-modal">
-    <div class="modal-dialog  modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header d-flex align-items-center">
-                <div class="d-flex justify-content-center align-items-center"
-                    style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
-                    <i class="fas fa-box-check text-primary fs-3"></i>
-                </div>
-                <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création d'un
-                    véhicule</h1>
-                <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification du
-                    véhicule</h1>
-            </div>
-
-            <div class="modal-body">
-                <form [formGroup]="vehicleForm" class="row g-3">
-                    <!-- Colonne de gauche -->
-                    <div class="col-md-6">
-                        <!-- Numero -->
-                        <div class="mb-3">
-                            <label for="NumeroBalise" class="form-label">No Balise</label>
-                            <input type="text" class="form-control" formControlName="NumeroBalise" id="NumeroBalise"
-                                placeholder="Entrez le numéro de balise">
-                        </div>
-
-                        <!-- Marque -->
-                        <div class="mb-3">
-                            <label for="marque" class="form-label">Marque <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" formControlName="marque" id="marque"
-                                placeholder="Entrez la marque">
-                        </div>
-
-                        <!-- Energie -->
-                        <div class="mb-3">
-                            <label for="energie" class="form-label">Énergie <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" formControlName="energie" id="energie"
-                                placeholder="Entrez l'énergie">
-                        </div>
-
-                        <!-- Immatriculation -->
-                        <div class="mb-3">
-                            <label for="immatriculation" class="form-label">Immatriculation <span
-                                    class="text-danger">*</span></label>
-                            <input type="text" class="form-control" formControlName="immatriculation"
-                                id="immatriculation" placeholder="Entrez l'immatriculation">
-                        </div>
-
-                    </div>
-
-                    <!-- Colonne de droite -->
-                    <div class="col-md-6">
-                        <!-- Chauffeur -->
-                        <div class="mb-3">
-                            <label for="depotId" class="form-label">Dépot<span
-                                    class="text-danger">*</span></label>
-                            <ng-select class="form-control" [items]="depots" bindLabel="nomDepot" bindValue="id"
-                                formControlName="depotId" [searchable]="true">
-                            </ng-select>
-
-                        </div>
-                        <!-- Capacité -->
-                        <div class="mb-3">
-                            <label for="capacite" class="form-label">Capacité <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control" formControlName="capacite" id="capacite"
-                                placeholder="Entrez la capacité">
-                        </div>
-                        <!-- Date d'acquisition -->
-                        <div class="mb-3">
-                            <label for="dateAcqui" class="form-label">Date d'acquisition <span
-                                    class="text-danger">*</span></label>
-                            <input type="date" class="form-control" formControlName="dateAcqui"
-                                id="dateAcqui">
-                        </div>
-                        <!-- Date de visite -->
-                        <div class="mb-3">
-                            <label for="dateDeVisite" class="form-label">Date de visite <span
-                                    class="text-danger">*</span></label>
-                            <input type="date" class="form-control" formControlName="dateDeVisite"
-                                id="dateDeVisite">
-                        </div>
-                    </div>
-                </form>
-
-            </div>
-            <div class="modal-footer gap-3 px-4">
-                <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-                <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
-            </div>
-        </div>
+<div class="vh-card">
+  <div class="vh-topbar">
+    <div>
+      <div class="vh-card-title"><i class="fas fa-car"></i> Liste des véhicules</div>
+      <div class="vh-count">{{ dataList.length }} résultat(s)</div>
     </div>
+  </div>
+
+  <p-table [styleClass]="'vh-ptable p-datatable-sm'" [value]="dataList" dataKey="id"
+           [totalRecords]="totalPages" [lazy]="true" [rows]="8"
+           [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Immatriculation</th>
+        <th>Marque</th>
+        <th>Énergie</th>
+        <th>Capacité</th>
+        <th>Date de visite</th>
+        <th class="text-center">Disponibilité</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td><span class="vh-code-badge">{{ row.immatriculation }}</span></td>
+        <td><span class="vh-name">{{ row.marque }}</span></td>
+        <td>{{ row.energie }}</td>
+        <td>{{ row.capacite }}</td>
+        <td>{{ row.dateDeVisite | date }}</td>
+        <td class="text-center">
+          <span class="fn-badge" [ngClass]="row.disponible ? 'green' : 'red'">
+            {{ row.disponible ? 'Disponible' : 'Indisponible' }}
+          </span>
+        </td>
+        <td class="text-center">
+          <div style="display:flex;gap:6px;justify-content:center">
+            <button *ngIf="!row.disponible" class="vh-action-btn" (click)="OnLiberer(row)" title="Libérer ce véhicule"><i class="fas fa-unlock"></i></button>
+            <button class="vh-action-btn edit" (click)="OnEdit(row)" title="Modifier"><i class="fas fa-edit"></i></button>
+            <button class="vh-action-btn del" (click)="OnDelete(row.id)" title="Supprimer"><i class="fas fa-trash"></i></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="7" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">
+          <i class="fas fa-car" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i>
+          Aucun véhicule trouvé.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div class="vh-modal">
+    <div class="vh-modal-header">
+      <div class="vh-modal-icon"><i class="fas fa-car"></i></div>
+      <h5 class="vh-modal-title">
+        {{ operation === 'create' ? 'Nouveau véhicule' : 'Modifier le véhicule' }}
+      </h5>
+      <button class="vh-modal-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="vh-modal-body">
+      <form [formGroup]="vehicleForm">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px">
+          <div class="vh-field">
+            <label class="vh-field-label">N° Balise</label>
+            <input class="vh-field-input" formControlName="NumeroBalise" placeholder="Entrez le numéro de balise" />
+          </div>
+          <div class="vh-field">
+            <label class="vh-field-label">Immatriculation *</label>
+            <input class="vh-field-input" formControlName="immatriculation" placeholder="Entrez l'immatriculation" />
+          </div>
+          <div class="vh-field">
+            <label class="vh-field-label">Marque *</label>
+            <input class="vh-field-input" formControlName="marque" placeholder="Entrez la marque" />
+          </div>
+          <div class="vh-field">
+            <label class="vh-field-label">Énergie *</label>
+            <input class="vh-field-input" formControlName="energie" placeholder="Entrez l'énergie" />
+          </div>
+          <div class="vh-field">
+            <label class="vh-field-label">Capacité *</label>
+            <input class="vh-field-input" type="number" formControlName="capacite" placeholder="Entrez la capacité" />
+          </div>
+          <div class="vh-field">
+            <label class="vh-field-label">Dépôt *</label>
+            <ng-select [items]="depots" bindLabel="nomDepot" bindValue="id"
+              formControlName="depotId" [searchable]="true" placeholder="Sélectionner un dépôt">
+            </ng-select>
+          </div>
+          <div class="vh-field">
+            <label class="vh-field-label">Date d'acquisition *</label>
+            <input class="vh-field-input" type="date" formControlName="dateAcqui" />
+          </div>
+          <div class="vh-field">
+            <label class="vh-field-label">Date de visite *</label>
+            <input class="vh-field-input" type="date" formControlName="dateDeVisite" />
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="vh-modal-footer">
+      <button class="vh-btn-secondary" (click)="OnCloseModal()">Annuler</button>
+      <button class="vh-btn-submit" (click)="onSubmit()">
+        <i class="fas fa-check"></i> {{ operation === 'create' ? 'Créer' : 'Enregistrer' }}
+      </button>
+    </div>
+  </div>
 </div>

@@ -1,84 +1,32 @@
-input[type="radio"] {
-    accent-color: green; /* Sets the color of the selected radio button */
-  }
-  
-  /* Optional: Style the labels to add spacing and font customization */
-  label {
-    font-size: 1rem;
-    color: #333;
-    cursor: pointer;
-  }
-  
-  label + label {
-    margin-left: 15px; /* Adds space between the two labels */
-  }
-  
-  
-  .custom-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1050;
-  }
-  
-  .modal-dialog {
-    background-color: white;
-    border-radius: 0.3rem;
-    width: 90%;
-    min-width: 45em;
-    padding: 1rem;
-  }
-  
-  .modal-dialog2 {
-    background-color: white;
-    border-radius: 0.3rem;
-    width: 45em;
-    padding: 1rem;
-  }
-  
-  .modal-header, .modal-body, .modal-footer {
-    padding: 1rem;
-  }
-  
-  .btn-close {
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
-  }
-  strong{
-    font-size: 13px;
-  }
-  span{
-    font-size: 13px;
-  }
-  
-  .p-fluid .p-inputtext {
-    width: 8em !important;
-    height: 2.5rem;
-  }
-  fieldset{
-    border:1px solid gray;
-    border-radius:10px !important;
-    padding: 1em;
-  }
-  .p-column-filter-menu-button {
-    display: none; /* Masquer l'icône de filtre */
-  }
-  
-  /* Ajuster l'espacement si nécessaire après suppression de l'icône */
-  .p-column-filter {
-    padding-right: 0; /* Supprime l'espace réservé à l'icône */
-  }
-  .form-control-custom{
-    width: 50px;
-  }
-  .label-fixed-width {
-    min-width: 10px;
-  }
-  
+$blue:#0071c2;$green:#16a34a;$red:#dc2626;$border:#e5e7eb;$muted:#9ca3af;$light:#f8fafc;
+.vg-card{background:white;border-radius:14px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid $border;}
+.vg-topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid $border;}
+.vg-card-title{font-size:15px;font-weight:700;color:#111827;i{color:$blue;margin-right:6px;}}
+.vg-count{font-size:12px;color:$muted;margin-top:2px;}
+::ng-deep .vg-ptable{
+  .p-datatable-thead>tr>th{background:$light;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:$muted;padding:10px 14px;border:none;border-bottom:2px solid $border;}
+  .p-datatable-tbody>tr>td{font-size:13px;color:#374151;padding:11px 14px;border-bottom:1px solid #f3f4f6;}
+  .p-datatable-tbody>tr:hover>td{background:#f0f7ff;}
+  .p-datatable-tbody>tr:nth-child(even)>td{background:#fafafa;}
+}
+.vg-status-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;
+  &.paid{background:rgba($green,.1);color:$green;}
+  &.unpaid{background:rgba($red,.1);color:$red;}
+}
+.vg-action-btn{width:28px;height:28px;border-radius:7px;border:1.5px solid $border;background:white;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:all .15s;
+  &.view{color:$blue;&:hover{background:rgba($blue,.1);border-color:$blue;}}
+  &.del{color:$red;&:hover{background:rgba($red,.1);border-color:$red;}}
+}
+.custom-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:flex;justify-content:center;align-items:center;z-index:1050;}
+.vg-modal{background:white;border-radius:14px;width:90%;max-width:960px;box-shadow:0 20px 60px rgba(0,0,0,.15);max-height:90vh;display:flex;flex-direction:column;}
+.vg-modal-sm{background:white;border-radius:14px;width:560px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.15);max-height:90vh;display:flex;flex-direction:column;}
+.vg-modal-header{display:flex;align-items:center;gap:12px;padding:20px 24px 16px;border-bottom:1px solid $border;flex-shrink:0;}
+.vg-modal-icon{width:40px;height:40px;border-radius:10px;background:rgba($blue,.1);color:$blue;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.vg-modal-title{font-size:15px;font-weight:700;color:#111827;margin:0;flex:1;}
+.vg-modal-close{width:30px;height:30px;border-radius:50%;border:1.5px solid $border;background:white;display:flex;align-items:center;justify-content:center;cursor:pointer;color:$muted;font-size:13px;&:hover{background:#fee2e2;border-color:$red;color:$red;}}
+.vg-modal-body{padding:20px 24px;overflow-y:auto;flex:1;}
+.vg-modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:16px 24px;border-top:1px solid $border;flex-shrink:0;}
+.vg-btn-secondary{height:36px;padding:0 16px;background:white;border:1.5px solid $border;border-radius:8px;font-size:13px;font-weight:500;color:#374151;cursor:pointer;&:hover{border-color:#d1d5db;}}
+.vg-btn-submit{height:36px;padding:0 20px;background:$blue;color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;&:hover{background:#005fa3;}&:disabled{opacity:.5;cursor:default;}}
+fieldset{border:1px solid #d1d5db;border-radius:10px;padding:1em;}
+.form-control-custom{width:50px;}

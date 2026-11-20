@@ -1,130 +1,238 @@
-<div class="card" [@fadeOutUp]="isCreating ? 'out' : 'in'" *ngIf="!isCreating">
-  <div class="d-flex justify-content-end py-3">
-    <button type="button" class="btn btn-secondary px-4 d-flex justify-content-around align-items-center"
-            (click)="OnCreate()">
-      <i class="fad fa-chevron-double-up me-2"></i>
-      <span>Faire une dépense</span>
-    </button>
-
+<!-- ── KPI Totaux globaux ────────────────────────── -->
+<div class="brl-kpi-row">
+  <div class="brl-kpi green">
+    <div class="brl-kpi-icon green"><i class="fas fa-arrow-trend-up"></i></div>
+    <div class="brl-kpi-body">
+      <div class="brl-kpi-label">Total Entrées</div>
+      <div class="brl-kpi-value green">{{ totalEntrees | number:'1.0-0' }} <small>FCFA</small></div>
+    </div>
   </div>
+  <div class="brl-kpi red">
+    <div class="brl-kpi-icon red"><i class="fas fa-arrow-trend-down"></i></div>
+    <div class="brl-kpi-body">
+      <div class="brl-kpi-label">Total Sorties</div>
+      <div class="brl-kpi-value red">{{ totalSorties | number:'1.0-0' }} <small>FCFA</small></div>
+    </div>
+  </div>
+  <div class="brl-kpi blue">
+    <div class="brl-kpi-icon blue"><i class="fas fa-landmark"></i></div>
+    <div class="brl-kpi-body">
+      <div class="brl-kpi-label">Solde caisse</div>
+      <div class="brl-kpi-value blue">{{ soldeCaisse | number:'1.0-0' }} <small>FCFA</small></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Totaux par moyen de paiement ──────────────── -->
+<div class="brl-moyen-row" *ngIf="totauxParMoyen.length > 0">
+  <div class="brl-moyen-card" *ngFor="let m of totauxParMoyen">
+    <div class="brl-moyen-name"><i class="fas fa-wallet"></i>{{ m.moyen }}</div>
+    <div class="brl-moyen-net positive">
+      {{ m.net | number:'1.0-0' }} <span class="brl-moyen-fcfa">F</span>
+    </div>
+  </div>
+
+  <!-- Card dépenses cumulées -->
+  <div class="brl-moyen-card depenses">
+    <div class="brl-moyen-name"><i class="fas fa-file-invoice"></i>Total dépenses</div>
+    <div class="brl-moyen-net negative">
+      {{ totalDepenses | number:'1.0-0' }} <span class="brl-moyen-fcfa">F</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Brouillard + Dépense ──────────────────────── -->
+<div class="brl-card">
+  <div class="brl-topbar">
+    <div>
+      <div class="brl-card-title"><i class="fas fa-book-open"></i> Brouillard de caisse</div>
+      <div class="brl-count">
+        {{ filteredList?.length || 0 }} opération(s)
+        <span *ngIf="hasActiveFilters" class="brl-filtered-badge">filtré</span>
+      </div>
+    </div>
+    <button class="brl-btn-primary" (click)="OnCreate()">
+      <i class="fas fa-plus"></i> Dépense
+    </button>
+  </div>
+
+  <!-- Formulaire dépense inline -->
+  <div class="brl-depense-inline" *ngIf="isCreating" [@fadeInDown]="'in'">
+    <div class="brl-depense-header">
+      <div class="brl-card-icon orange"><i class="fas fa-minus-circle"></i></div>
+      <div>
+        <div class="brl-depense-title">Nouvelle dépense</div>
+        <div class="brl-depense-sub">Sortie de caisse</div>
+      </div>
+      <button class="brl-close-btn" (click)="onCancel()"><i class="fas fa-times"></i></button>
+    </div>
+    <form [formGroup]="depenseForm" class="brl-depense-form">
+      <div class="brl-field">
+        <label class="brl-filter-label">Motif *</label>
+        <ng-select [items]="motifCompteOptions" bindLabel="label" bindValue="id" formControlName="motifCompteId"
+                   [searchable]="true" placeholder="Sélectionner un compte..."></ng-select>
+      </div>
+      <div class="brl-field">
+        <label class="brl-filter-label">Compte à prélever *</label>
+        <ng-select [items]="comptePreleverOptions" bindLabel="label" bindValue="id" formControlName="compteAPreleverId"
+                   [searchable]="true" placeholder="Sélectionner un compte..."></ng-select>
+      </div>
+      <div class="brl-field">
+        <label class="brl-filter-label">Montant (FCFA) *</label>
+        <input class="brl-field-input" type="number" formControlName="montant" placeholder="0" />
+      </div>
+      <div class="brl-field" *ngIf="isHote">
+        <label class="brl-filter-label">Dépôt</label>
+        <ng-select [items]="depotList" bindLabel="nomDepot" bindValue="id" formControlName="depotId"
+                   [searchable]="true" [clearable]="true" placeholder="Mon dépôt (par défaut)"></ng-select>
+      </div>
+      <div class="brl-field">
+        <label class="brl-filter-label">Date</label>
+        <input class="brl-field-input" [value]="todayISO() | date:'dd/MM/yyyy HH:mm'" disabled readonly />
+      </div>
+      <div class="brl-field">
+        <label class="brl-filter-label">Description</label>
+        <input class="brl-field-input" formControlName="description" placeholder="Optionnel..." />
+      </div>
+      <div class="brl-depense-actions">
+        <button class="brl-btn-outline" type="button" (click)="onCancel()">Annuler</button>
+        <button class="brl-btn-danger" type="button" [disabled]="depenseForm.invalid" (click)="saveDepense()">
+          <i class="fas fa-check"></i> Enregistrer
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Filtres -->
+  <div class="brl-filters">
+    <div class="brl-filter-item">
+      <div class="brl-filter-label">Sens</div>
+      <select class="brl-filter-select" [(ngModel)]="filterSens" (change)="applyFilters()">
+        <option value="">Tous</option>
+        <option value="ENTREE">↓ Entrées</option>
+        <option value="SORTIE">↑ Sorties</option>
+      </select>
+    </div>
+    <div class="brl-filter-item">
+      <div class="brl-filter-label">Dépôt</div>
+      <ng-select [items]="depotList" bindLabel="nomDepot" bindValue="id" [(ngModel)]="filterDepotId"
+                 (change)="applyFilters()" [searchable]="true" [clearable]="true"
+                 placeholder="Mon dépôt"></ng-select>
+    </div>
+    <div class="brl-filter-item">
+      <div class="brl-filter-label">Moyen de paiement</div>
+      <select class="brl-filter-select" [(ngModel)]="filterMoyen" (change)="applyFilters()">
+        <option value="">Tous</option>
+        <option *ngFor="let m of moyensDisponibles" [value]="m">{{ m }}</option>
+      </select>
+    </div>
+    <div class="brl-filter-item" style="flex:1; min-width:180px">
+      <div class="brl-filter-label">Motif / Client</div>
+      <div class="brl-filter-wrap">
+        <i class="fas fa-search brl-filter-icon"></i>
+        <input class="brl-filter-input" [(ngModel)]="filterMotif" (input)="applyFilters()" placeholder="Rechercher..." />
+      </div>
+    </div>
+    <div class="brl-filter-item">
+      <div class="brl-filter-label">Du</div>
+      <input class="brl-filter-date" type="date" [(ngModel)]="filterDateFrom" (change)="applyFilters()" />
+    </div>
+    <div class="brl-filter-item">
+      <div class="brl-filter-label">Au</div>
+      <input class="brl-filter-date" type="date" [(ngModel)]="filterDateTo" (change)="applyFilters()" />
+    </div>
+    <button class="brl-reset-btn" *ngIf="hasActiveFilters" (click)="resetFilters()">
+      <i class="fas fa-times"></i> Réinitialiser
+    </button>
+  </div>
+
+  <!-- Table -->
   <p-table
-    [styleClass]="'p-datatable-sm'"
-    #dt2
-    [value]="dataList"
+    [styleClass]="'brl-ptable p-datatable-sm'"
+    [value]="filteredList"
     dataKey="id"
-    [rows]="8"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [paginator]="true"
-    (onPage)="onPage($event)"
   >
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color)"></th>
-        <th style="color: var(--secondary-color)">Paiement de</th>
-        <th style="color: var(--secondary-color)">Type opérations</th>
-        <th style="color: var(--secondary-color)">Mode de paiement</th>
-        <th style="color: var(--secondary-color)">Origine</th>
-        <th style="color: var(--secondary-color)">Statut</th>
-        <th style="color: var(--secondary-color)">Date paiement</th>
-        <th class="ml-1 text-center" style="color: var(--secondary-color)">Montant</th>
+        <th style="width:48px"></th>
+        <th>Client / Bénéficiaire</th>
+        <th>Dépôt</th>
+        <th>Type opération</th>
+        <th>Moyen</th>
+        <th>Statut</th>
+        <th>Date</th>
+        <th class="text-end">Montant</th>
+        <th class="text-end">Solde progressif</th>
+        <th class="text-center" style="width:56px">Action</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-dataList>
+
+    <ng-template pTemplate="body" let-row>
       <tr>
         <td>
-          <div class="d-flex align-items-center justify-content-center" *ngIf="dataList.transaction.sens == 'ENTREE'"
-               style="background-color: #bdffd3; padding: 5px; border-radius: 6px;">
-            <i class="fad fa-chevron-double-down text-success"></i>
-          </div>
-          <div class="d-flex align-items-center justify-content-center" *ngIf="dataList.transaction.sens == 'SORTIE'"
-               style="background-color: #ffbdbd; padding: 5px; border-radius: 6px;">
-            <i class="fad fa-chevron-double-up text-danger"></i>
+          <div class="brl-sens-icon" [ngClass]="row.transaction?.sens === 'ENTREE' ? 'green' : 'red'">
+            <i class="fas" [ngClass]="row.transaction?.sens === 'ENTREE' ? 'fa-arrow-down' : 'fa-arrow-up'"></i>
           </div>
         </td>
         <td>
-           <span class="ml-1 vertical-align-middle fw-bold" style="font-size: 11px">
-  {{
-               dataList.client?.nomEtablissement
-                 ? dataList.client?.nomEtablissement
-                 : dataList.client?.nom
-                   ? dataList.client?.nom + ' ' + dataList.client?.prenoms
-                   : dataList.client?.raisonSocial
-             }}
-</span>
-
+          <span class="brl-client-name">
+            {{ row.client?.nomEtablissement
+              || (row.client?.nom ? (row.client.nom + ' ' + row.client.prenoms) : null)
+              || row.client?.raisonSocial || '—' }}
+          </span>
         </td>
+        <td style="font-size:11px; color:#6b7280">{{ row.nomDepot || '—' }}</td>
+        <td><span class="brl-motif">{{ row.transaction?.motif || '—' }}</span></td>
         <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-            {{ dataList.transaction.motif }}
+          <span class="brl-moyen-badge">
+            <i class="fas fa-wallet"></i>{{ row.moyenPaiement || '—' }}
           </span>
         </td>
         <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-             {{ dataList.moyenPaiement }}
+          <span class="brl-statut-badge" [ngClass]="{
+            'green':  row.statut === 'PAYE' || row.statut === 'VALIDE' || row.statut === 'Payé',
+            'orange': row.statut === 'EN_ATTENTE' || row.statut === 'EN_COURS',
+            'blue':   row.statut === 'PARTIELLEMENT_PAYE',
+            'red':    row.statut === 'ANNULE' || row.statut === 'Annulé'
+          }">{{ row.statut || 'N/A' }}</span>
+        </td>
+        <td><span class="brl-date">{{ (row.datePaiement || row.createdAt) | date:'dd/MM/yy · HH:mm' }}</span></td>
+        <td class="text-end">
+          <span class="brl-montant" [ngClass]="row.transaction?.sens === 'ENTREE' ? 'green' : 'red'">
+            {{ row.transaction?.sens === 'ENTREE' ? '+' : '−' }}{{ (row.montantValide ?? row.montant) | number:'1.0-0' }}
           </span>
         </td>
-        <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px"
-                [ngClass]="dataList.transaction.sens == 'ENTREE' ? 'text-success' : 'text-danger'">
-             {{ dataList.transaction.sens }}
-          </span>
+        <td class="text-end">
+          <span class="brl-solde-progressif">{{ row.soldeProgressif != null ? (row.soldeProgressif | number:'1.0-0') : '—' }}</span>
         </td>
-        <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-             {{ dataList.statut || 'N/A' }}
-          </span>
+        <td class="text-center">
+          <button *ngIf="isDepense(row) && row.statut !== 'Annulé' && row.statut !== 'ANNULE'"
+                  class="brl-cancel-btn" title="Annuler la dépense" (click)="annulerDepense(row)">
+            <i class="fas fa-rotate-left"></i>
+          </button>
         </td>
-        <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-            {{ dataList.dateValidation | date: 'dd/MM/yyyy à HH:mm' }}
-          </span>
-        </td>
-        <td>
-          <div class="text-center" [ngClass]="dataList.transaction.sens == 'ENTREE' ? 'bg-entry' : 'bg-out'">
-             <span class="ml-1 vertical-align-middle w-100 fw-bold " style="font-size: 12px">
-             {{ dataList.transaction.sens == 'ENTREE' ? '+' : '' }}{{ dataList.montant | currency:'XOF' }}
-          </span>
-          </div>
-        </td>
-
       </tr>
-
     </ng-template>
+
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">Aucun élément trouvé.</td>
+        <td colspan="10" style="text-align:center; padding:40px; color:#9ca3af; font-size:13px;">
+          <i class="fas fa-inbox" style="font-size:28px; display:block; margin-bottom:8px; opacity:.4"></i>
+          Aucune opération trouvée.
+        </td>
       </tr>
     </ng-template>
   </p-table>
-</div>
 
-<div [@fadeInDown]="isCreating ? 'in' : 'out'" *ngIf="isCreating" class="card p-4 mt-3">
-  <h5>Nouvelle dépense</h5>
-  <form [formGroup]="depenseForm">
-    <div class="mb-3">
-      <label for="libelle" class="form-label">Motif</label><label class="text-danger">*</label>
-      <input id="libelle" class="form-control" formControlName="libelle">
-      <div *ngIf="depenseForm.get('libelle')?.invalid && depenseForm.get('libelle')?.touched" class="text-danger">
-        Motif requis
-      </div>
-    </div>
-
-    <div class="mb-3">
-      <label for="montant" class="form-label">Montant</label><label class="text-danger">*</label>
-      <input id="montant" type="number" class="form-control" formControlName="montant">
-      <div *ngIf="depenseForm.get('montant')?.invalid && depenseForm.get('montant')?.touched" class="text-danger">
-        Montant valide requis
-      </div>
-    </div>
-
-    <div class="mb-3">
-      <label for="description" class="form-label">Description</label>
-      <textarea id="description" class="form-control" formControlName="description"></textarea>
-    </div>
-
-    <div class="d-flex gap-4">
-      <button class="btn btn-secondary" type="button" (click)="onCancel()">Annuler</button>
-      <button class="btn btn-success" [disabled]="depenseForm.invalid" (click)="saveDepense()">Enregistrer</button>
-    </div>
-  </form>
+  <!-- Pagination serveur -->
+  <div class="brl-pagination" *ngIf="totalItems > pageSize">
+    <span class="brl-page-info">{{ (currentPage - 1) * pageSize + 1 }}–{{ currentPage * pageSize > totalItems ? totalItems : currentPage * pageSize }} sur {{ totalItems }}</span>
+    <button class="brl-page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <span class="brl-page-num">Page {{ currentPage }} / {{ totalPages }}</span>
+    <button class="brl-page-btn" [disabled]="currentPage >= totalPages" (click)="goToPage(currentPage + 1)">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
 </div>

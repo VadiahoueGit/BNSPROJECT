@@ -187,6 +187,92 @@ $radius-sm: 8px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
 
+// ---- Date filter ----
+.db-date-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.db-date-filter-btn {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  background: white;
+  border: 1.5px solid $gray-border;
+  border-radius: 20px;
+  padding: 7px 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: $blue;
+    color: $blue;
+  }
+
+  &.active {
+    background: $blue;
+    border-color: $blue;
+    color: white;
+  }
+}
+
+.db-date-custom {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  border: 1.5px solid $gray-border;
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 13px;
+  color: #6b7280;
+
+  i {
+    font-size: 12px;
+  }
+
+  &.active {
+    border-color: $blue;
+    color: $blue;
+  }
+}
+
+.db-date-input {
+  border: none;
+  outline: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  background: transparent;
+  padding: 2px 0;
+  width: 122px;
+}
+
+.db-date-sep {
+  color: #9ca3af;
+}
+
+.db-date-apply-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: $blue;
+  color: white;
+  cursor: pointer;
+  font-size: 10px;
+  transition: opacity 0.15s;
+
+  &:disabled {
+    background: $gray-border;
+    cursor: not-allowed;
+  }
+}
+
 // ---- KPI Grid ----
 .db-kpi-grid {
   display: grid;

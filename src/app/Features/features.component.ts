@@ -8,6 +8,8 @@ import {NgxSpinnerService} from "ngx-spinner";
 import {ToastrService} from "ngx-toastr";
 import {hasPermission} from "../utils/utils";
 import {CorsMonitorService} from "../core/cors-monitoring.service";
+import {ParametreService} from "../core/parametre.service";
+import {ConfigService} from "../core/config-service.service";
 
 @Component({
   selector: 'app-features',
@@ -44,11 +46,21 @@ export class FeaturesComponent {
   ];
   UserInfo: any
   selectedItem: number | null = null;
+  entrepriseConfig: any = null;
+  depotHoteNom: string = '';
 
-  constructor(private _auth: CoreServiceService, private router: Router, private coreServices: CoreServiceService, private localstorage: LocalStorageService, private _spinner: NgxSpinnerService,
-              private fb: FormBuilder,
-              private corsMonitor: CorsMonitorService,
-              private toastr: ToastrService,) {
+  constructor(
+    private _auth: CoreServiceService,
+    private router: Router,
+    private coreServices: CoreServiceService,
+    private localstorage: LocalStorageService,
+    private _spinner: NgxSpinnerService,
+    private fb: FormBuilder,
+    private corsMonitor: CorsMonitorService,
+    private toastr: ToastrService,
+    private parametreService: ParametreService,
+    private configService: ConfigService,
+  ) {
     this.currentUrl = this.router.url; // URL courante
     this.passwordForm = this.fb.group({
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -56,10 +68,26 @@ export class FeaturesComponent {
     });
   }
 
+  getLogoUrl(logoPath: string): string {
+    if (!logoPath) return 'assets/image/armonyssansfond.png';
+    if (logoPath.startsWith('http')) return logoPath;
+    return (this.configService.docUrl || '').replace(/\/$/, '') + logoPath;
+  }
+
   ngOnInit(): void {
     this.corsMonitor.startMonitoring();
     this.UserInfo = this.localstorage.getItem(storage_keys.STOREUser);
-    console.log(this.UserInfo)
+
+    this.parametreService.getEntrepriseConfig().then((cfg: any) => {
+      this.entrepriseConfig = cfg;
+    }).catch(() => {});
+
+    this.coreServices.GetDepotList({ paginate: false, page: 1, limit: 100 }).then((res: any) => {
+      const depots: any[] = res?.data || [];
+      const hote = depots.find((d: any) => d.hote) || depots[0];
+      if (hote) this.depotHoteNom = hote.nomDepot;
+    }).catch(() => {});
+
     this.getNotifications(1);
     setInterval(() => {
       this.getNotifications(1);
@@ -172,7 +200,7 @@ console.log(storedNotif);
           this.toastr.error(response.message);
         }
       },
-      (error: any) => {
+      () => {
         this._spinner.hide();
         this.toastr.error('Erreur!', 'Erreur lors de la récupération.');
       }

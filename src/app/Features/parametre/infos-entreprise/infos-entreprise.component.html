@@ -1,0 +1,104 @@
+<div class="fn-card">
+  <!-- Topbar -->
+  <div class="fn-topbar">
+    <div class="fn-topbar-left" style="flex-direction:row; align-items:center; gap:10px">
+      <button class="fn-action-btn view" (click)="goBack()" title="Retour"><i class="fas fa-arrow-left"></i></button>
+      <div class="fn-title"><i class="fas fa-building me-2"></i>Informations de l'entreprise</div>
+    </div>
+    <button class="vd-btn-primary" (click)="onSubmit()" [disabled]="form.invalid">
+      <i class="fas fa-save me-1"></i> Enregistrer
+    </button>
+  </div>
+
+  <div class="ie-body">
+    <form [formGroup]="form">
+
+      <!-- Logo -->
+      <div class="ie-logo-section">
+        <div class="ie-logo-preview">
+          <img *ngIf="logoPreview" [src]="logoPreview" alt="Logo entreprise" class="ie-logo-img">
+          <div *ngIf="!logoPreview" class="ie-logo-placeholder">
+            <i class="fas fa-image"></i>
+            <span>Aucun logo</span>
+          </div>
+        </div>
+        <div class="ie-logo-upload">
+          <label class="vd-btn-outline ie-upload-btn" for="logoInput">
+            <i class="fas fa-upload me-1"></i> Choisir un logo
+          </label>
+          <input id="logoInput" type="file" accept="image/*" (change)="onLogoChange($event)" hidden>
+          <p class="ie-upload-hint">Format JPG, PNG ou SVG — max 5 Mo</p>
+        </div>
+      </div>
+
+      <!-- Identité -->
+      <div class="ie-section">
+        <div class="ie-section-title"><i class="fas fa-building me-2"></i>Identité de l'entreprise</div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="ie-label">Nom de l'entreprise <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" formControlName="nom" placeholder="ex : BNS CORPORATION">
+            <div *ngIf="form.get('nom')?.invalid && form.get('nom')?.touched" class="ie-error">Champ requis</div>
+          </div>
+          <div class="col-md-6">
+            <label class="ie-label">Slogan</label>
+            <input type="text" class="form-control" formControlName="slogan" placeholder="ex : La qualité, notre passion">
+          </div>
+          <div class="col-12">
+            <label class="ie-label">Adresse</label>
+            <input type="text" class="form-control" formControlName="adresse" placeholder="ex : 01 BP 1234 Abidjan 01 - Côte d'Ivoire">
+          </div>
+        </div>
+      </div>
+
+      <!-- Contacts -->
+      <div class="ie-section">
+        <div class="ie-section-title"><i class="fas fa-address-book me-2"></i>Contacts</div>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="ie-label">Téléphone 1</label>
+            <input type="text" class="form-control" formControlName="telephone1" placeholder="+225 27 XX XX XX XX">
+          </div>
+          <div class="col-md-4">
+            <label class="ie-label">Téléphone 2</label>
+            <input type="text" class="form-control" formControlName="telephone2" placeholder="+225 07 XX XX XX XX">
+          </div>
+          <div class="col-md-4">
+            <label class="ie-label">Email</label>
+            <input type="email" class="form-control" formControlName="email" placeholder="contact@entreprise.ci">
+            <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="ie-error">Email invalide</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Registres légaux -->
+      <div class="ie-section">
+        <div class="ie-section-title"><i class="fas fa-file-contract me-2"></i>Registres légaux</div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="ie-label">RC (Registre du Commerce)</label>
+            <input type="text" class="form-control" formControlName="rc" placeholder="ex : CI-ABJ-2018-B-12345">
+          </div>
+          <div class="col-md-6">
+            <label class="ie-label">CC (Compte Contribuable)</label>
+            <input type="text" class="form-control" formControlName="cc" placeholder="ex : 1801234 X">
+          </div>
+        </div>
+      </div>
+
+      <!-- Intégration SAP -->
+      <div class="ie-section">
+        <div class="ie-section-title"><i class="fas fa-truck me-2"></i>Achats fournisseurs (export SAP)</div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="ie-label">Délai d'échéance fournisseur (jours) <span class="text-danger">*</span></label>
+            <input type="number" min="1" class="form-control" formControlName="delaiEcheanceFournisseurJours" placeholder="14">
+            <div *ngIf="form.get('delaiEcheanceFournisseurJours')?.invalid && form.get('delaiEcheanceFournisseurJours')?.touched" class="ie-error">Doit être un nombre de jours supérieur à 0</div>
+            <p class="ie-upload-hint">Date d'échéance envoyée à SAP = date de commande + ce délai.</p>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>

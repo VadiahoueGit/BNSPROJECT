@@ -35,3 +35,71 @@
   </div>
 
 </div>
+
+<!-- Modal création dépôt hôte (première connexion Société 2) -->
+<div class="company-modal-overlay" *ngIf="showDepotHoteModal">
+  <div class="company-modal depot-hote-modal">
+    <div class="company-modal__header">
+      <div class="depot-hote-icon">🏭</div>
+      <h5 class="company-modal__title">Créer le dépôt hôte</h5>
+      <p class="company-modal__sub">Aucun dépôt n'existe pour cette société. Créez-en un pour continuer.</p>
+    </div>
+    <form [formGroup]="depotHoteForm" (ngSubmit)="submitDepotHote()">
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Nom du dépôt <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" formControlName="nomDepot" placeholder="Ex: Dépôt Principal Abidjan">
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Gérant <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" formControlName="gerant" placeholder="Nom du gérant">
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Téléphone <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" formControlName="telephone" placeholder="Ex: 0700000000">
+      </div>
+      <button type="submit" class="btn btn-primary w-100" [disabled]="depotHoteForm.invalid || isCreatingDepot">
+        <span *ngIf="isCreatingDepot">
+          <span class="spinner-border spinner-border-sm me-2"></span>Création en cours...
+        </span>
+        <span *ngIf="!isCreatingDepot">Créer le dépôt et accéder à l'application</span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal choix de société (Super Admin uniquement) -->
+<div class="company-modal-overlay" *ngIf="showCompanyModal">
+  <div class="company-modal">
+    <div class="company-modal__header">
+      <h5 class="company-modal__title">Choisir l'entreprise</h5>
+      <p class="company-modal__sub">Sélectionnez la société sur laquelle vous souhaitez travailler</p>
+    </div>
+
+    <!-- Chargement -->
+    <div class="company-modal__loading" *ngIf="loadingCompanies">
+      <div class="spinner-border spinner-border-sm text-primary me-2"></div>
+      Chargement des sociétés...
+    </div>
+
+    <!-- Cartes sociétés -->
+    <div class="company-modal__cards" *ngIf="!loadingCompanies">
+      <button
+        *ngFor="let c of companies"
+        class="company-card"
+        [disabled]="isSwitching"
+        (click)="selectCompany(c.tenantId)">
+        <div class="company-card__logo">
+          <img *ngIf="c.logoPath" [src]="getLogoUrl(c.logoPath)" [alt]="c.nom">
+          <span *ngIf="!c.logoPath" class="company-card__logo-placeholder">🏬</span>
+        </div>
+        <span class="company-card__label">{{ c.nom || 'Société' }}</span>
+        <span class="company-card__arrow">›</span>
+      </button>
+    </div>
+
+    <div class="company-modal__loading" *ngIf="isSwitching">
+      <div class="spinner-border spinner-border-sm text-primary me-2"></div>
+      Connexion en cours...
+    </div>
+  </div>
+</div>

@@ -1,55 +1,225 @@
-.modal-dialog{
-    max-width: 45em;
-    min-width: auto;
+$blue:   #0071c2;
+$green:  #16a34a;
+$red:    #dc2626;
+$border: #e5e7eb;
+$muted:  #9ca3af;
+$light:  #f8fafc;
+
+// ── Header ───────────────────────────────────────────
+.com-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px;
+}
+.com-title {
+  display: flex; align-items: center; gap: 10px;
+  h4 { font-size: 18px; font-weight: 700; color: #111827; margin: 0; }
+}
+.com-back-btn {
+  width: 34px; height: 34px; border-radius: 8px;
+  border: 1.5px solid $border; background: white; color: #374151;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.15s;
+  &:hover { border-color: $blue; color: $blue; }
+}
+.com-badge-total {
+  background: rgba($blue, 0.1); color: $blue;
+  border-radius: 20px; padding: 2px 10px;
+  font-size: 11px; font-weight: 700;
 }
 
+// ── Card ─────────────────────────────────────────────
+.com-card {
+  background: white; border-radius: 14px;
+  padding: 20px 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border: 1px solid $border;
+}
+
+// ── Topbar ───────────────────────────────────────────
+.com-topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid $border;
+}
+.com-card-title {
+  font-size: 15px; font-weight: 700; color: #111827;
+  i { color: $blue; margin-right: 6px; }
+}
+.com-count { font-size: 12px; color: $muted; margin-top: 2px; }
+
+.com-btn-primary {
+  height: 36px; padding: 0 18px;
+  background: $blue; color: white;
+  border: none; border-radius: 9px;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; display: flex; align-items: center; gap: 6px;
+  box-shadow: 0 2px 8px rgba($blue, 0.3);
+  transition: all 0.15s;
+  &:hover { background: darken($blue, 8%); transform: translateY(-1px); }
+}
+
+// ── Filtres ───────────────────────────────────────────
+.com-filters {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end;
+  margin-bottom: 16px; padding: 14px 16px;
+  background: $light; border-radius: 10px; border: 1px solid $border;
+}
+.com-filter-item { display: flex; flex-direction: column; gap: 4px; min-width: 150px; }
+.com-filter-label {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.4px; color: $muted;
+}
+.com-filter-wrap { position: relative; }
+.com-filter-icon {
+  position: absolute; left: 9px; top: 50%; transform: translateY(-50%);
+  color: $muted; font-size: 11px; pointer-events: none;
+}
+.com-filter-input {
+  height: 33px; width: 100%; border: 1.5px solid $border; border-radius: 8px;
+  padding: 0 10px 0 28px; font-size: 12px; color: #374151;
+  background: white; outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  &:focus { border-color: $blue; box-shadow: 0 0 0 3px rgba($blue,0.08); }
+  &::placeholder { color: $muted; }
+}
+.com-filter-select {
+  height: 33px; border: 1.5px solid $border; border-radius: 8px;
+  padding: 0 10px; font-size: 12px; color: #374151;
+  background: white; outline: none; cursor: pointer; width: 100%;
+  transition: border-color 0.15s;
+  &:focus { border-color: $blue; box-shadow: 0 0 0 3px rgba($blue,0.08); }
+}
+.com-reset-btn {
+  height: 33px; padding: 0 14px;
+  background: white; border: 1.5px solid $red; border-radius: 8px;
+  font-size: 12px; font-weight: 600; color: $red;
+  cursor: pointer; display: flex; align-items: center; align-self: flex-end; gap: 4px;
+  transition: all 0.15s; white-space: nowrap;
+  &:hover { background: #fee2e2; }
+}
+
+// ── Table ─────────────────────────────────────────────
+::ng-deep .com-ptable {
+  .p-datatable-thead > tr > th {
+    background: $light; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px; color: $muted;
+    border-bottom: 2px solid $border; padding: 10px 14px; white-space: nowrap;
+  }
+  .p-datatable-tbody > tr > td {
+    font-size: 13px; color: #374151;
+    padding: 11px 14px; border-bottom: 1px solid #f3f4f6;
+    vertical-align: middle;
+  }
+  .p-datatable-tbody > tr:hover > td { background: #f0f7ff; }
+  .p-datatable-tbody > tr:nth-child(even) > td { background: #fafafa; }
+  .p-datatable-tbody > tr:nth-child(even):hover > td { background: #f0f7ff; }
+}
+
+.com-code-badge {
+  display: inline-block; padding: 2px 8px;
+  background: rgba($blue,0.08); border: 1px solid rgba($blue,0.15);
+  border-radius: 6px; font-size: 11px; font-weight: 700; color: $blue;
+  font-family: monospace;
+}
+.com-name { font-weight: 600; font-size: 13px; color: #111827; }
+.com-sub  { font-size: 11px; color: $muted; }
+.com-depot-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: rgba($green,0.08); border: 1px solid rgba($green,0.15);
+  border-radius: 20px; padding: 3px 10px;
+  font-size: 11px; font-weight: 600; color: darken($green, 5%);
+  i { font-size: 10px; }
+}
+.com-phone {
+  font-size: 12px; color: #374151; display: flex; align-items: center; gap: 5px;
+  i { color: $muted; font-size: 10px; }
+}
+
+.com-action-btn {
+  width: 28px; height: 28px; border-radius: 7px;
+  border: 1.5px solid $border; background: white;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 12px; transition: all 0.15s;
+  &.view  { color: $blue;  &:hover { background: rgba($blue,0.08);  border-color: $blue; } }
+  &.edit  { color: $green; &:hover { background: rgba($green,0.08); border-color: $green; } }
+  &.del   { color: $red;   &:hover { background: #fee2e2; border-color: $red; } }
+}
+
+// ── Pagination ────────────────────────────────────────
+.com-pagination {
+  display: flex; align-items: center; gap: 10px;
+  justify-content: flex-end; margin-top: 14px;
+  padding-top: 12px; border-top: 1px solid $border;
+}
+.com-page-info  { font-size: 12px; color: $muted; }
+.com-page-num   { font-size: 12px; font-weight: 600; color: #374151; }
+.com-page-btn {
+  width: 30px; height: 30px; border-radius: 8px;
+  border: 1.5px solid $border; background: white;
+  color: #374151; font-size: 11px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.15s;
+  &:hover:not(:disabled) { border-color: $blue; color: $blue; background: rgba($blue,0.05); }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+// ── Modal ─────────────────────────────────────────────
 .custom-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1050;
-  }
-
-  .modal-dialog {
-    background-color: white;
-    border-radius: 0.3rem;
-    width: 45em;
-    max-width: 45em;
-    padding: 1rem;
-  }
-
-  .modal-header, .modal-body, .modal-footer {
-    padding: 1rem;
-  }
-
-  .btn-close {
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
-  }
-  .p-fluid .p-inputtext {
-    width: 8em !important;
-    height: 2.5rem;
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); display: flex;
+  justify-content: center; align-items: center; z-index: 1050;
+}
+.com-modal {
+  background: white; border-radius: 14px; width: 560px; max-width: 95vw;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+.com-modal-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 24px 16px; border-bottom: 1px solid $border;
+}
+.com-modal-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: rgba($blue,0.1); color: $blue;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+}
+.com-modal-title { font-size: 15px; font-weight: 700; color: #111827; margin: 0; flex: 1; }
+.com-modal-close {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1.5px solid $border; background: white; color: $muted;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 12px; transition: all 0.15s;
+  &:hover { background: #fee2e2; border-color: $red; color: $red; }
+}
+.com-modal-body { padding: 20px 24px; }
+.com-modal-footer {
+  display: flex; justify-content: flex-end; gap: 8px;
+  padding: 16px 24px; border-top: 1px solid $border;
 }
 
-.p-column-filter-menu-button {
-    display: none; /* Masquer l'icône de filtre */
-  }
-
-  /* Ajuster l'espacement si nécessaire après suppression de l'icône */
-  .p-column-filter {
-    padding-right: 0; /* Supprime l'espace réservé à l'icône */
-  }
-  .label-fixed-width {
-    min-width: 10px;
-  }
-
-span{
-  font-size: 11px;
+.com-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+.com-field-label {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.4px; color: $muted;
+}
+.com-field-input {
+  height: 36px; border: 1.5px solid $border; border-radius: 8px;
+  padding: 0 12px; font-size: 13px; color: #111827; font-family: inherit; width: 100%;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  &:focus { outline: none; border-color: $blue; box-shadow: 0 0 0 3px rgba($blue,0.08); }
+  &::placeholder { color: $muted; }
+  &:disabled { background: $light; color: $muted; }
+}
+.com-btn-secondary {
+  height: 36px; padding: 0 16px; background: white;
+  border: 1.5px solid $border; border-radius: 8px;
+  font-size: 13px; font-weight: 600; color: #374151;
+  cursor: pointer; transition: all 0.15s;
+  &:hover { border-color: #9ca3af; }
+}
+.com-btn-submit {
+  height: 36px; padding: 0 20px;
+  background: $blue; color: white; border: none; border-radius: 8px;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  box-shadow: 0 2px 8px rgba($blue,0.3); transition: all 0.15s;
+  &:hover:not(:disabled) { background: darken($blue,8%); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
 }

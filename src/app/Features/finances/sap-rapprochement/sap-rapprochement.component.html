@@ -1,0 +1,124 @@
+<div class="fn-card">
+  <div class="fn-topbar">
+    <div class="fn-topbar-left" style="flex-direction:row; align-items:center; gap:10px">
+      <button class="fn-action-btn view" (click)="goBack()" title="Retour"><i class="fas fa-arrow-left"></i></button>
+      <div class="fn-title"><i class="fas fa-right-left me-2"></i>Rapprochement SAP</div>
+      <div class="fn-count">{{ total }} résultat(s)</div>
+    </div>
+  </div>
+
+  <div class="sap-rp-tabs">
+    <button class="sap-rp-tab-btn" [class.active]="activeTab === 'clients'" (click)="setTab('clients')"><i class="fas fa-store me-1"></i>Clients</button>
+    <button class="sap-rp-tab-btn" [class.active]="activeTab === 'ORDER'" (click)="setTab('ORDER')"><i class="fas fa-file-lines me-1"></i>Commandes</button>
+    <button class="sap-rp-tab-btn" [class.active]="activeTab === 'DELIVERY'" (click)="setTab('DELIVERY')"><i class="fas fa-truck me-1"></i>Livraisons</button>
+    <button class="sap-rp-tab-btn" [class.active]="activeTab === 'RETURN'" (click)="setTab('RETURN')"><i class="fas fa-rotate-left me-1"></i>Retours</button>
+    <button class="sap-rp-tab-btn" [class.active]="activeTab === 'INVOICE'" (click)="setTab('INVOICE')"><i class="fas fa-file-invoice-dollar me-1"></i>Factures</button>
+    <button class="sap-rp-tab-btn" [class.active]="activeTab === 'CREDIT_NOTE'" (click)="setTab('CREDIT_NOTE')"><i class="fas fa-file-invoice me-1"></i>Avoirs</button>
+    <button class="sap-rp-tab-btn" [class.active]="activeTab === 'tarifs'" (click)="setTab('tarifs')"><i class="fas fa-tags me-1"></i>Grilles tarifaires</button>
+  </div>
+
+  <div class="fn-filters">
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Recherche</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-search fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="search" (keydown.enter)="onSearch()" placeholder="Code, nom, référence..." />
+      </div>
+    </div>
+    <button class="fn-filter-btn" (click)="onSearch()"><i class="fas fa-search"></i> Rechercher</button>
+  </div>
+
+  <!-- Clients -->
+  <p-table *ngIf="activeTab === 'clients'" [styleClass]="'fn-ptable p-datatable-sm'" [value]="dataList" [rows]="pageSize"
+           [totalRecords]="total" [lazy]="true" [paginator]="true" [rowsPerPageOptions]="[10,25,50]" (onPage)="onPage($event)">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Code SAP</th>
+        <th>Raison sociale</th>
+        <th>Type</th>
+        <th>Groupe</th>
+        <th>Devise</th>
+        <th>Maj SAP</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td><span class="fn-badge gray">{{ row.cardCode }}</span></td>
+        <td>{{ row.cardName }}</td>
+        <td style="font-size:11px">{{ row.cardType }}</td>
+        <td style="font-size:11px">{{ row.groupCode }}</td>
+        <td style="font-size:11px">{{ row.currency }}</td>
+        <td style="font-size:11px; color:#6b7280">{{ row.sapUpdateDate | date:'dd/MM/yyyy' }}</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="6" style="text-align:center; padding:32px; color:#9ca3af; font-size:13px;"><i class="fas fa-inbox me-2"></i>Aucun client synchronisé.</td></tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Documents (Commandes / Livraisons / Retours / Factures / Avoirs) -->
+  <p-table *ngIf="isDocumentTab()" [styleClass]="'fn-ptable p-datatable-sm'" [value]="dataList" [rows]="pageSize"
+           [totalRecords]="total" [lazy]="true" [paginator]="true" [rowsPerPageOptions]="[10,25,50]" (onPage)="onPage($event)">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>N° Doc</th>
+        <th>Client</th>
+        <th>Date doc.</th>
+        <th *ngIf="activeTab === 'ORDER' || activeTab === 'INVOICE'">Échéance</th>
+        <th class="text-center">Statut</th>
+        <th class="text-end">Total TTC</th>
+        <th *ngIf="activeTab === 'INVOICE'" class="text-end">TVA</th>
+        <th class="text-center">Lignes</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td style="font-weight:600; color:#0071c2">{{ row.docNum || row.docEntry }}</td>
+        <td>
+          <div>{{ row.cardName || '—' }}</div>
+          <div style="font-size:11px; color:#9ca3af">{{ row.cardCode }}</div>
+        </td>
+        <td style="font-size:11px">{{ row.docDate | date:'dd/MM/yyyy' }}</td>
+        <td *ngIf="activeTab === 'ORDER' || activeTab === 'INVOICE'" style="font-size:11px">{{ row.docDueDate | date:'dd/MM/yyyy' }}</td>
+        <td class="text-center">
+          <span class="fn-badge" [ngClass]="row.documentStatus === 'bost_Open' ? 'orange' : 'green'">{{ row.documentStatus }}</span>
+        </td>
+        <td class="text-end fw-bold">{{ row.docTotal | number }}</td>
+        <td *ngIf="activeTab === 'INVOICE'" class="text-end">{{ row.vatSum | number }}</td>
+        <td class="text-center">{{ row.lines?.length || 0 }}</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="7" style="text-align:center; padding:32px; color:#9ca3af; font-size:13px;"><i class="fas fa-inbox me-2"></i>Aucun document synchronisé pour ce type.</td></tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Grilles tarifaires -->
+  <p-table *ngIf="activeTab === 'tarifs'" [styleClass]="'fn-ptable p-datatable-sm'" [value]="dataList" [rows]="pageSize"
+           [totalRecords]="total" [lazy]="true" [paginator]="true" [rowsPerPageOptions]="[10,25,50]" (onPage)="onPage($event)">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Code article</th>
+        <th>Désignation</th>
+        <th>Prix par liste tarifaire</th>
+        <th>Maj SAP</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td><span class="fn-badge gray">{{ row.itemCode }}</span></td>
+        <td>{{ row.itemName }}</td>
+        <td>
+          <span *ngFor="let p of row.prices" class="sap-price-chip">
+            {{ priceListName(p.priceList) }} : <strong>{{ p.price | number }} {{ p.currency }}</strong>
+          </span>
+          <span *ngIf="!row.prices?.length" class="text-muted" style="font-size:11px">—</span>
+        </td>
+        <td style="font-size:11px; color:#6b7280">{{ row.sapUpdateDate | date:'dd/MM/yyyy' }}</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="4" style="text-align:center; padding:32px; color:#9ca3af; font-size:13px;"><i class="fas fa-inbox me-2"></i>Aucun article synchronisé.</td></tr>
+    </ng-template>
+  </p-table>
+</div>

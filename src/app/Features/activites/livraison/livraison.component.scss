@@ -353,6 +353,484 @@ $radius-sm: 8px;
 
 .fw-600 { font-weight: 600; }
 
+// ===== LISTE =====
+
+.lv-back-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: #374151;
+  transition: color 0.2s;
+
+  &:hover { color: $blue; }
+}
+
+.lv-back-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid $gray-border;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  transition: all 0.2s;
+
+  &:hover { border-color: $blue; color: $blue; }
+}
+
+.lv-list-card {
+  background: white;
+  border-radius: $radius;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.lv-list-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lv-filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.lv-filter-search {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+}
+
+.lv-filter-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $text-muted;
+  font-size: 13px;
+}
+
+.lv-filter-search-input {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px 0 34px;
+  border: 1px solid $gray-border;
+  border-radius: $radius-sm;
+  font-size: 13px;
+  outline: none;
+  &:focus { border-color: $primary; }
+}
+
+.lv-filter-select {
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid $gray-border;
+  border-radius: $radius-sm;
+  font-size: 13px;
+  outline: none;
+  background: white;
+  cursor: pointer;
+  &:focus { border-color: $primary; }
+}
+
+.lv-filter-clear {
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid $gray-border;
+  border-radius: $radius-sm;
+  font-size: 13px;
+  background: white;
+  color: $text-muted;
+  cursor: pointer;
+  white-space: nowrap;
+  &:hover { border-color: $red; color: $red; }
+}
+
+.lv-list-count {
+  font-size: 13px;
+  color: $text-muted;
+  font-weight: 500;
+}
+
+.lv-btn-primary {
+  height: 38px;
+  padding: 0 20px;
+  border: none;
+  border-radius: $radius-sm;
+  background: $blue;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba($blue, 0.3);
+
+  &:hover {
+    background: darken($blue, 8%);
+    box-shadow: 0 4px 12px rgba($blue, 0.4);
+    transform: translateY(-1px);
+  }
+}
+
+.lv-count-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 10px;
+  border-radius: 20px;
+  background: rgba($blue, 0.1);
+  color: $blue;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.lv-action-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid $gray-border;
+  background: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 13px;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: $blue;
+    color: $blue;
+    background: rgba($blue, 0.06);
+  }
+
+  &.lv-action-btn-add {
+    border-color: #16a34a;
+    color: #16a34a;
+    &:hover { background: rgba(#16a34a, 0.06); }
+  }
+}
+
+::ng-deep .lv-ptable {
+  .p-datatable-thead > tr > th {
+    background: $gray-light;
+    color: #6b7280;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid $gray-border;
+    padding: 10px 14px;
+  }
+
+  .p-datatable-tbody > tr {
+    font-size: 13px;
+    color: #374151;
+    transition: background 0.15s;
+
+    > td {
+      padding: 11px 14px;
+      border-bottom: 1px solid $gray-border;
+      vertical-align: middle;
+    }
+
+    &:hover { background: rgba($blue, 0.03); }
+  }
+
+  .p-paginator {
+    background: transparent;
+    border-top: 1px solid $gray-border;
+    padding: 10px 0 0;
+    font-size: 12px;
+  }
+}
+
+// ===== MODAL CRÉATION =====
+
+.lv-modal-xl {
+  max-width: 1200px !important;
+  width: 95vw !important;
+}
+
+.lv-modal-body-create {
+  padding: 20px 24px;
+}
+
+.lv-create-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 20px;
+  height: 100%;
+}
+
+.lv-create-left {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.lv-create-right {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.lv-create-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+}
+
+.lv-commandes-table-wrap {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid $gray-border;
+  border-radius: $radius-sm;
+  max-height: 340px;
+
+  &::-webkit-scrollbar { width: 5px; }
+  &::-webkit-scrollbar-thumb { background: $gray-border; border-radius: 3px; }
+}
+
+.lv-charge-table-wrap {
+  border: 1px solid $gray-border;
+  border-radius: $radius-sm;
+  overflow-y: auto;
+  max-height: 180px;
+
+  &::-webkit-scrollbar { width: 5px; }
+  &::-webkit-scrollbar-thumb { background: $gray-border; border-radius: 3px; }
+}
+
+.lv-transport-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lv-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lv-form-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.lv-capacity-card {
+  background: $gray-light;
+  border: 1px solid $gray-border;
+  border-radius: $radius-sm;
+  padding: 12px 14px;
+}
+
+.lv-capacity-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.lv-capacity-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: $text-muted;
+  text-transform: uppercase;
+}
+
+.lv-capacity-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+
+  &.lv-capacity-over { color: $red; }
+}
+
+.lv-capacity-bar-wrap { margin-bottom: 6px; }
+
+.lv-capacity-bar-track {
+  height: 8px;
+  background: $gray-border;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.lv-capacity-bar-fill {
+  height: 100%;
+  background: $primary;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  max-width: 100%;
+
+  &.lv-capacity-full { background: $red; }
+}
+
+.lv-capacity-warning {
+  font-size: 11px;
+  font-weight: 600;
+  color: $red;
+}
+
+.lv-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: $blue;
+  cursor: pointer;
+}
+
+.lv-btn-submit {
+  height: 40px;
+  padding: 0 24px;
+  border: none;
+  border-radius: $radius-sm;
+  background: $primary;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba($primary, 0.3);
+
+  &:hover:not(:disabled) {
+    background: darken($primary, 8%);
+    box-shadow: 0 4px 12px rgba($primary, 0.4);
+    transform: translateY(-1px);
+  }
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+// ===== MODAL AJOUTER COMMANDES =====
+
+.lv-add-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.lv-add-search-icon {
+  position: absolute;
+  left: 12px;
+  color: $text-muted;
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.lv-add-search-input {
+  width: 100%;
+  height: 38px;
+  border: 1.5px solid $gray-border;
+  border-radius: $radius-sm;
+  padding: 0 12px 0 36px;
+  font-size: 13px;
+  color: #374151;
+  background: white;
+  transition: border-color 0.2s;
+  outline: none;
+  &:focus { border-color: $blue; }
+  &::placeholder { color: $text-muted; }
+}
+
+.lv-add-cap-card {
+  background: $gray-light;
+  border: 1px solid $gray-border;
+  border-radius: $radius-sm;
+  padding: 12px 14px;
+}
+
+.lv-add-cap-track {
+  height: 8px;
+  background: $gray-border;
+  border-radius: 4px;
+  display: flex;
+  overflow: hidden;
+}
+
+.lv-add-cap-current {
+  height: 100%;
+  background: $blue;
+  border-radius: 4px 0 0 4px;
+  transition: width 0.3s ease;
+  flex-shrink: 0;
+}
+
+.lv-add-cap-new {
+  height: 100%;
+  background: #16a34a;
+  transition: width 0.3s ease;
+  flex-shrink: 0;
+  &.lv-capacity-full { background: $red; }
+}
+
+.lv-add-cap-legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  flex-wrap: wrap;
+}
+
+.lv-cap-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 4px;
+  &.blue  { background: $blue; }
+  &.green { background: #16a34a; }
+}
+
+// ===== MODAL SIGNATURE =====
+
+.lv-sign-modal {
+  background: white;
+  border-radius: $radius;
+  width: 600px;
+  max-width: 96vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.lv-sign-body {
+  flex: 1;
+  overflow: auto;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lv-sign-img {
+  max-width: 100%;
+  border-radius: $radius-sm;
+  border: 1px solid $gray-border;
+}
+
 input[type="radio"] {
     accent-color: green;
   }

@@ -1,169 +1,116 @@
-<div class="card">
-  <div class="row">
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Commande :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-      <i class="fas fa-search"></i>
-      <input class="w-100" style="border-radius: 7px;"
-             pInputText type="text"
-             [(ngModel)]="filters.commande"
-             (keydown.enter)="filterGlobal()"
-             placeholder="Recherche"/>
-    </span>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Agent :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-      <i class="fas fa-search"></i>
-      <input class="w-100" style="border-radius: 7px;"
-             pInputText type="text"
-             [(ngModel)]="filters.agent"
-             (keydown.enter)="filterGlobal()"
-             placeholder="Recherche"/>
-    </span>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Client :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-      <i class="fas fa-search"></i>
-      <input class="w-100" style="border-radius: 7px;"
-             pInputText type="text"
-             [(ngModel)]="filters.client"
-             (keydown.enter)="filterGlobal()"
-             placeholder="Recherche"/>
-    </span>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Statut :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-      <i class="fas fa-search"></i>
-      <input class="w-100" style="border-radius: 7px;"
-             pInputText type="text"
-             [(ngModel)]="filters.statut"
-             (keydown.enter)="filterGlobal()"
-             placeholder="Recherche"/>
-    </span>
+<!-- Liste -->
+<div class="fn-card">
+  <div class="fn-topbar">
+    <div class="fn-topbar-left">
+      <div class="fn-title"><i class="fas fa-tag"></i> Consignes</div>
+      <div class="fn-count">{{ totalPages }} résultat(s)</div>
     </div>
   </div>
-  <p-table
-    [styleClass]="'p-datatable-sm'"
-    #dt2
-    [totalRecords]="totalPages" [lazy]="true"
-    [value]="dataList"
-    dataKey="id"
-    [rows]="8"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [paginator]="true"
-    (onPage)="onPage($event)"
-  >
+
+  <div class="fn-filters">
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Commande</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-hashtag fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.commande" (keydown.enter)="filterGlobal()" placeholder="N° commande..." />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Agent</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-user fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.agent" (keydown.enter)="filterGlobal()" placeholder="Nom agent..." />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Client</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-store fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.client" (keydown.enter)="filterGlobal()" placeholder="Nom client..." />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Statut</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-circle fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.statut" (keydown.enter)="filterGlobal()" placeholder="Statut..." />
+      </div>
+    </div>
+  </div>
+
+  <p-table [styleClass]="'fn-ptable p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+           [totalRecords]="totalPages" [lazy]="true"
+           [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
     <ng-template pTemplate="header">
       <tr>
         <th>Commandes</th>
         <th>Agent</th>
-        <th>Dépot</th>
+        <th>Dépôt</th>
         <th>Motif</th>
         <th>Client</th>
-        <th>Montant à verser</th>
-        <th>Montant versé</th>
-        <th>Date création</th>
+        <th class="text-right">Montant dû</th>
+        <th class="text-right">Montant versé</th>
+        <th>Date</th>
         <th>Statut</th>
-        <!--        <th style="color: var(&#45;&#45;secondary-color)">Actions</th>-->
+        <th class="text-center">Actions</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-dataList>
+    <ng-template pTemplate="body" let-row>
       <tr>
-        <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-            {{
-              dataList?.paiementsCommandeClient?.length
-                ? dataList.paiementsCommandeClient[0]?.NumCommande
-                : dataList?.paiementsCommandeGratuit?.length
-                  ? dataList.paiementsCommandeGratuit[0]?.NumCommande
-                  : dataList?.paiementsVente?.length
-                    ? dataList.paiementsVente[0]?.venteChine.numVenteChine
-                    : dataList?.returnStock?.venteChine
-                      ? dataList?.returnStock?.venteChine?.numVenteChine
-                      : dataList?.returnStock?.commandeClient
-                        ? dataList?.returnStock?.commandeClient?.NumCommande
-                        : dataList?.returnStock?.commandeGratuite
-                          ? dataList?.returnStock?.commandeGratuite?.NumCommande
-                          : dataList?.paiementsCommandeFournisseur?.length
-                            ? dataList.paiementsCommandeFournisseur[0]?.NumCommande
-                            : "N/A"
-            }}
-          </span>
+        <td style="font-size:11px; font-weight:600; color:#0071c2">
+          {{
+            row?.paiementsCommandeClient?.length
+              ? row.paiementsCommandeClient[0]?.NumCommande
+              : row?.paiementsCommandeGratuit?.length
+                ? row.paiementsCommandeGratuit[0]?.NumCommande
+                : row?.paiementsVente?.length
+                  ? row.paiementsVente[0]?.venteChine?.numVenteChine
+                  : row?.returnStock?.venteChine
+                    ? row?.returnStock?.venteChine?.numVenteChine
+                    : row?.returnStock?.commandeClient
+                      ? row?.returnStock?.commandeClient?.NumCommande
+                      : row?.returnStock?.commandeGratuite
+                        ? row?.returnStock?.commandeGratuite?.NumCommande
+                        : row?.paiementsCommandeFournisseur?.length
+                          ? row.paiementsCommandeFournisseur[0]?.NumCommande
+                          : 'N/A'
+          }}
         </td>
         <td>
-          <span class="ml-1 vertical-align-middle">
-            {{
-              dataList?.paiementsCommandeClient?.length
-                ? (dataList?.transporteur?.nom || "N/A") +
-                " " +
-                (dataList?.transporteur?.prenoms || "N/A")
-                : dataList?.paiementsCommandeGratuit?.length
-                  ? (dataList?.transporteur?.nom || "N/A") +
-                  " " +
-                  (dataList?.transporteur?.prenoms || "N/A")
-                  : dataList?.paiementsVente?.length
-                    ? (dataList?.paiementsVente[0]?.commercial?.nom || "N/A") +
-                    " " +
-                    (dataList?.paiementsVente[0]?.commercial?.prenoms || "N/A")
-                    : dataList?.returnStock?.venteChine
-                      ? dataList?.returnStock?.venteChine?.commercial?.nom +
-                      dataList?.returnStock?.venteChine?.commercial?.prenoms : "N/A"
-            }}
-          </span>
-
+          {{
+            row?.paiementsCommandeClient?.length
+              ? ((row?.transporteur?.nom || 'N/A') + ' ' + (row?.transporteur?.prenoms || ''))
+              : row?.paiementsCommandeGratuit?.length
+                ? ((row?.transporteur?.nom || 'N/A') + ' ' + (row?.transporteur?.prenoms || ''))
+                : row?.paiementsVente?.length
+                  ? ((row?.paiementsVente[0]?.commercial?.nom || 'N/A') + ' ' + (row?.paiementsVente[0]?.commercial?.prenoms || ''))
+                  : 'N/A'
+          }}
         </td>
+        <td style="color:#6b7280">{{ row?.depot?.nomDepot }}</td>
+        <td><span class="fn-badge blue">{{ row?.motif }}</span></td>
+        <td>{{ row?.client?.raisonSocial || row?.client?.nomEtablissement || row?.paiementsVente?.[0]?.pointdevente?.nomEtablissement || 'N/A' }}</td>
+        <td class="text-right fw-bold">{{ row?.montantAPercevoir | number }}</td>
+        <td class="text-right">{{ row?.montantPercu | number }}</td>
+        <td style="color:#6b7280; font-size:12px">{{ row?.createdAt | date:'dd/MM/yyyy' }}</td>
         <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.depot?.nomDepot }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.motif }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-             {{
-              dataList?.client?.raisonSocial || dataList?.client?.nomEtablissement ||
-              dataList?.paiementsVente[0]?.pointdevente.nomEtablissement || "N/A"
-            }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.montantAPercevoir| number }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.montantPercu | number }}
-          </span>
-        </td>
-
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.createdAt | date :"dd/MM/yyyy" }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.statut }}
-          </span>
+          <span [ngClass]="{
+            'fn-badge green':  row.statut === 'Payé',
+            'fn-badge orange': row.statut !== 'Payé'
+          }">{{ row.statut }}</span>
         </td>
         <td class="text-center">
-          <div class="d-flex justify-content-center gap-2">
-            <span class="bui-icon-btn view" (click)="OnEdit(dataList)"><i class="fas fa-eye"></i></span>
-          </div>
+          <button class="fn-action-btn view" (click)="OnEdit(row)" title="Voir"><i class="fas fa-eye"></i></button>
+          <button *ngIf="row?.motif === 'CONSIGNE'" class="fn-action-btn del ms-1" (click)="AnnulerConsigne(row)"
+                  title="Annuler la consigne et remettre les emballages en RDV"><i class="fas fa-ban"></i></button>
         </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">Aucun élément trouvé.</td>
+        <td colspan="10" style="text-align:center; padding:32px; color:#9ca3af; font-size:13px;">
+          <i class="fas fa-inbox me-2"></i>Aucune consigne trouvée.
+        </td>
       </tr>
     </ng-template>
   </p-table>
@@ -185,172 +132,162 @@
         <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
       </div>
     </div>
+
     <div class="vd-modal-body" *ngIf="operation == 'edit'">
-        <ng-container *ngIf="updateData.motif == 'CONSIGNE' || updateData.motif == 'ECART RETOUR PLEIN'">
-          <fieldset class="row border my-1">
-            <legend style="font-size: 14px" class="text-secondary">
-              Informationde la Commande :
-              {{ updateData.paiementsCommandeGratuit[0]?.NumCommande }} du
-              {{ updateData.createdAt | date : "dd/MM/yyyy HH:mm" }}
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Payeur: </strong>
-                <span>{{ updateData?.client?.raisonSocial || updateData?.client?.nom+' '+updateData?.client?.prenoms }}</span>
+      <ng-container *ngIf="updateData.motif == 'CONSIGNE' || updateData.motif == 'ECART RETOUR PLEIN'">
+
+        <div class="vd-info-grid">
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-hashtag me-1"></i>N° commande</div>
+            <div class="vd-info-value fw-bold" style="color:#0071c2">{{ updateData.paiementsCommandeGratuit?.[0]?.NumCommande || '—' }}</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-user me-1"></i>Payeur</div>
+            <div class="vd-info-value">{{ updateData?.client?.raisonSocial || (updateData?.client?.nom + ' ' + updateData?.client?.prenoms) }}</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-warehouse me-1"></i>Dépôt</div>
+            <div class="vd-info-value">{{ updateData?.depot?.nomDepot || '—' }}</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-tag me-1"></i>Motif</div>
+            <div class="vd-info-value">{{ updateData?.motif }}</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-coins me-1"></i>Montant à percevoir</div>
+            <div class="vd-info-value fw-bold">{{ updateData?.montantAPercevoir | number }} XOF</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-check-circle me-1"></i>Montant perçu</div>
+            <div class="vd-info-value">{{ updateData?.montantPercu | number }} XOF</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-exclamation-circle me-1"></i>Montant restant</div>
+            <div class="vd-info-value" style="color:#ef4444; font-weight:600">{{ updateData?.montantRestant | number }} XOF</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-calendar-alt me-1"></i>Date échéance</div>
+            <div class="vd-info-value" [style.color]="isDateEchue(updateData?.dateEchanceCalculer) ? '#ef4444' : '#374151'">
+              {{ updateData?.dateEchanceCalculer | date:'dd/MM/yyyy HH:mm' }}
+              <span *ngIf="isDateEchue(updateData?.dateEchanceCalculer)" style="font-size:11px; color:#ef4444"> ({{ getEcartEnJours(updateData?.dateEchanceCalculer) }}j de retard)</span>
+            </div>
+          </div>
+        </div>
+
+        <ng-container *ngIf="updateData.motif == 'CONSIGNE'">
+          <div class="vd-card">
+            <div class="vd-card-header">
+              <div class="vd-card-icon blue"><i class="fas fa-layer-group"></i></div>
+              <div class="vd-section-label">Regroupement</div>
+            </div>
+            <div class="vd-info-grid">
+              <div class="vd-info-block">
+                <div class="vd-info-label">Numéro</div>
+                <div class="vd-info-value">{{ updateData?.regroupement?.numRegroupement }}</div>
               </div>
-              <!--              <div class="col-md-4">-->
-              <!--                <strong>Localité: </strong>-->
-              <!--                <span>{{ updateData?.client?.localite.nomLocalite }}</span>-->
-              <!--              </div>-->
-              <div class="col-md-4">
-                <strong>Dépot: </strong>
-                <span>{{ updateData?.depot?.nomDepot }}</span>
+              <div class="vd-info-block">
+                <div class="vd-info-label">Transporteur</div>
+                <div class="vd-info-value">{{ updateData?.transporteur?.nom }} {{ updateData?.transporteur?.prenoms }}</div>
+              </div>
+              <div class="vd-info-block">
+                <div class="vd-info-label">Téléphone</div>
+                <div class="vd-info-value">{{ updateData?.regroupement?.telephone }}</div>
               </div>
             </div>
-          </fieldset>
-          <fieldset class="row border my-1"  *ngIf="updateData.motif == 'CONSIGNE' ">
-            <legend style="font-size: 14px" class="text-secondary">
-              Informations regroupement
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Numéro : </strong>
-                <span>{{ updateData?.regroupement?.numRegroupement }}</span>
+          </div>
+
+          <div class="vd-card">
+            <div class="vd-card-header">
+              <div class="vd-card-icon gray"><i class="fas fa-truck"></i></div>
+              <div class="vd-section-label">Véhicule</div>
+            </div>
+            <div class="vd-info-grid">
+              <div class="vd-info-block">
+                <div class="vd-info-label">Immatriculation</div>
+                <div class="vd-info-value">{{ updateData?.vehicule?.immatriculation }}</div>
               </div>
-              <div class="col-md-4">
-                <strong>Transporteur : </strong>
-                <span
-                >{{ updateData?.transporteur?.nom }}
-                  {{ updateData?.transporteur?.prenoms }}</span
-                >
+              <div class="vd-info-block">
+                <div class="vd-info-label">Marque</div>
+                <div class="vd-info-value">{{ updateData?.vehicule?.marque }}</div>
               </div>
-              <div class="col-md-4">
-                <strong>Téléphone : </strong>
-                <span>{{ updateData?.regroupement?.telephone }}</span>
+              <div class="vd-info-block">
+                <div class="vd-info-label">Capacité</div>
+                <div class="vd-info-value">{{ updateData?.vehicule?.capacite }}</div>
+              </div>
+              <div class="vd-info-block">
+                <div class="vd-info-label">Disponible</div>
+                <div class="vd-info-value">{{ updateData?.vehicule?.disponible ? 'OUI' : 'NON' }}</div>
               </div>
             </div>
-          </fieldset>
-          <fieldset class="row border my-1"  *ngIf="updateData.motif == 'CONSIGNE' "  >
-            <legend style="font-size: 14px" class="text-secondary">
-              Informations véhicule
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Immatriculation: </strong>
-                <span>{{ updateData?.vehicule?.immatriculation }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Marque : </strong>
-                <span>{{ updateData?.vehicule?.marque }} </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Capacité : </strong>
-                <span>{{ updateData?.vehicule?.capacite }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Disponible : </strong>
-                <span>{{
-                    updateData?.vehicule?.disponible == true ? "OUI" : "NON"
-                  }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-1">
-            <legend style="font-size: 14px" class="text-secondary">
-              Autres informations
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Statut: </strong>
-                <span>{{ updateData?.statut }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Motif : </strong>
-                <span>{{ updateData?.motif }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant à percevoir : </strong>
-                <span>{{ updateData?.montantAPercevoir| number }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant perçu : </strong>
-                <span>{{ updateData?.montantPercu| number }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant restant : </strong>
-                <span>{{ updateData?.montantRestant | number }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Délai : </strong>
-                <span>{{ updateData?.credit?.delaiReglement || "NA" }}Jours</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Date échéance : </strong>
-                <span>{{ updateData?.dateEchanceCalculer| date : "dd/MM/yyyy HH:mm" }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-2" >
-            <legend class="fs-6 text-primary">Historique de paiement</legend>
-            <div
-              class="table-responsive"
-              style="max-height: 300px; overflow-y: auto"
-            >
-              <table class="table">
-                <thead>
-                <tr style="font-size: small">
-                  <th scope="col">Opérations</th>
-                  <th scope="col">Mode de paiement</th>
-                  <th scope="col">Montant versé</th>
-                  <th scope="col">Date de paiement</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr
-                  style="font-size: small"
-                  *ngFor="let item of hstoriquePayment; let i = index "
-                >
-                  <td>{{ item.transaction.motif }}</td>
-                  <td>{{ item.moyenPaiement.libelle ? item.moyenPaiement.libelle : 'N/A' }}</td>
-                  <td>{{ item.montant | number }}</td>
-                  <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
-                </tr>
-                <!-- Ajoutez d'autres lignes si nécessaire -->
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+          </div>
         </ng-container>
 
-        <fieldset  *ngIf="updateData.motif == 'CONSIGNE'">
-          <legend style="font-size: 14px" class="text-secondary">
-            Emballages
-          </legend>
-          <table class="table table-bordered">
-            <thead class="table-success">
-            <tr>
-              <th scope="col">Code</th>
-              <th scope="col">Type</th>
-              <th scope="col">Désignation</th>
-              <th scope="col">Coût unitaire</th>
-              <th scope="col">Quantité</th>
-            </tr>
+        <div class="vd-card">
+          <div class="vd-card-header">
+            <div class="vd-card-icon green"><i class="fas fa-history"></i></div>
+            <div class="vd-section-label">Historique de paiement</div>
+          </div>
+          <div class="vd-table-wrap">
+            <table class="vd-table">
+              <thead>
+                <tr>
+                  <th>Opération</th>
+                  <th>Mode de paiement</th>
+                  <th class="text-right">Montant versé</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of hstoriquePayment">
+                  <td>{{ item.transaction.motif }}</td>
+                  <td>{{ item.moyenPaiement?.libelle || 'N/A' }}</td>
+                  <td class="text-right fw-bold">{{ item.montant | number }}</td>
+                  <td style="color:#6b7280; font-size:12px">{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
+                </tr>
+                <tr *ngIf="!hstoriquePayment?.length">
+                  <td colspan="4"><div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucun historique</span></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="vd-card" *ngIf="updateData.motif == 'CONSIGNE'">
+        <div class="vd-card-header">
+          <div class="vd-card-icon orange"><i class="fas fa-recycle"></i></div>
+          <div class="vd-section-label">Emballages</div>
+        </div>
+        <div class="vd-table-wrap">
+          <table class="vd-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Type</th>
+                <th>Désignation</th>
+                <th class="text-right">Coût unitaire</th>
+                <th class="text-center">Quantité</th>
+              </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let item of filteredArticles">
-              <td>{{ item.productCode }}</td>
-              <td>{{ item.category }}</td>
-              <td>{{ item.libelle }}</td>
-              <td>{{ item.prixUnitaire }}</td>
-              <td>{{ item.quantity }}</td>
-            </tr>
+              <tr *ngFor="let item of filteredArticles">
+                <td><span class="vd-badge gray">{{ item.productCode }}</span></td>
+                <td>{{ item.category }}</td>
+                <td>{{ item.libelle }}</td>
+                <td class="text-right">{{ item.prixUnitaire | number }}</td>
+                <td class="text-center fw-bold">{{ item.quantity }}</td>
+              </tr>
+              <tr *ngIf="!filteredArticles?.length">
+                <td colspan="5"><div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucun emballage</span></div></td>
+              </tr>
             </tbody>
           </table>
-        </fieldset>
+        </div>
+      </div>
+    </div>
 
-      </div>
-      <div class="vd-modal-footer">
-        <button (click)="OnCloseModal()" type="button" class="vd-btn-outline">Fermer</button>
-      </div>
+    <div class="vd-modal-footer">
+      <button (click)="OnCloseModal()" type="button" class="vd-btn-outline">Fermer</button>
+    </div>
   </div>
 </div>

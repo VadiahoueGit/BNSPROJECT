@@ -1,0 +1,263 @@
+<div class="fn-card">
+  <div class="fn-topbar">
+    <div class="fn-topbar-left">
+      <div class="fn-title"><i class="fas fa-dolly"></i> Regroupement retour plein</div>
+      <div class="fn-count">{{ totalPages }} résultat(s)</div>
+    </div>
+  </div>
+
+  <div class="fn-filters">
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">N° regroupement</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-hashtag fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.numero" (keydown.enter)="filterGlobal()" placeholder="N° regroupement..." style="padding-left:28px" />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Agent</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-id-badge fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.agent" (keydown.enter)="filterGlobal()" placeholder="Nom agent..." style="padding-left:28px" />
+      </div>
+    </div>
+    <div class="fn-filter-item" *ngIf="isHote">
+      <div class="fn-filter-label">Dépôt</div>
+      <div class="fn-filter-wrap">
+        <ng-select [items]="depotList" bindLabel="nomDepot" bindValue="id" [(ngModel)]="filters.depotId"
+                   (change)="filterGlobal()" [searchable]="true" [clearable]="true"
+                   placeholder="Tous les dépôts"></ng-select>
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Statut</div>
+      <div class="fn-filter-wrap">
+        <select class="fn-filter-input" [(ngModel)]="filters.statut" (change)="filterGlobal()" style="padding-left:8px">
+          <option value="">Tous les statuts</option>
+          <option value="Encours">Encours</option>
+          <option value="Inventaire">Inventaire</option>
+          <option value="Terminé">Terminé</option>
+        </select>
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Date début</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-calendar fn-filter-icon"></i>
+        <input class="fn-filter-input" type="date" [(ngModel)]="filters.dateDebut" (change)="filterGlobal()" style="padding-left:28px" />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Date fin</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-calendar fn-filter-icon"></i>
+        <input class="fn-filter-input" type="date" [(ngModel)]="filters.dateFin" (change)="filterGlobal()" style="padding-left:28px" />
+      </div>
+    </div>
+    <button class="fn-filter-btn" (click)="filterGlobal()"><i class="fas fa-search"></i> Rechercher</button>
+    <button class="fn-filter-btn secondary" *ngIf="hasActiveFilters" (click)="resetFilters()"><i class="fas fa-times"></i> Réinitialiser</button>
+  </div>
+
+  <p-table [styleClass]="'fn-ptable p-datatable-sm'" #dt2 [value]="dataList" dataKey="regroupementId" [rows]="8"
+           [totalRecords]="totalPages" [lazy]="true" (onPage)="onPage($event)"
+           [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>N° regroupement</th>
+        <th>Agent</th>
+        <th>Contact</th>
+        <th>Fonction</th>
+        <th>Véhicule</th>
+        <th>Dépôt</th>
+        <th>Nb retours</th>
+        <th>Date début</th>
+        <th>Date fin</th>
+        <th>Date inventaire</th>
+        <th>Statut</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td style="font-weight:600; color:#0071c2">{{ row?.regroupementNumber || 'N/A' }}</td>
+        <td>
+          {{
+            row.commercial
+              ? (row.commercial.nom + ' ' + row.commercial.prenoms)
+              : (row.transporteur?.nom && row.transporteur?.prenoms)
+                ? (row.transporteur.nom + ' ' + row.transporteur.prenoms)
+                : 'N/A'
+          }}
+        </td>
+        <td style="color:#6b7280">{{ row?.transporteur ? row?.transporteur.telephone : row.commercial?.telephone }}</td>
+        <td>{{ row.transporteur?.role || row.commercial?.role }}</td>
+        <td style="color:#6b7280">{{ row?.vehicule?.immatriculation || row?.vehicule?.libelle || '—' }}</td>
+        <td>{{ row?.depot?.nomDepot }}</td>
+        <td class="text-center">{{ row?.retourCount }}</td>
+        <td style="font-size:11px; color:#6b7280">{{ row?.dateDebut | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td style="font-size:11px; color:#6b7280">{{ row?.dateFin | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td style="font-size:11px; color:#6b7280">{{ row?.dateInventaire ? (row.dateInventaire | date:'dd/MM/yyyy HH:mm') : '—' }}</td>
+        <td>
+          <span class="fn-badge" [ngClass]="{
+            'green': row.regroupementStatut === 'Terminé',
+            'blue':  row.regroupementStatut === 'Inventaire',
+            'red':   row.regroupementStatut === 'Encours'
+          }">{{ row.regroupementStatut }}</span>
+        </td>
+        <td class="text-center">
+          <button class="fn-action-btn view" (click)="OnEdit(row)" title="Voir"><i class="fas fa-eye"></i></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="12" style="text-align:center; padding:32px; color:#9ca3af; font-size:13px;">
+          <i class="fas fa-inbox me-2"></i>Aucun regroupement trouvé.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div class="vd-modal-dialog wide">
+    <div class="vd-modal-header">
+      <div class="vd-mh-left">
+        <div class="vd-mh-icon orange"><i class="fas fa-dolly"></i></div>
+        <div>
+          <div class="vd-mh-title">Détails regroupement retour plein</div>
+          <div class="vd-mh-sub">
+            N° {{ updateData?.regroupementNumber }}
+            <span *ngIf="dates?.firstDate">&nbsp;·&nbsp;Début : {{ dates?.firstDate | date:'dd/MM/yyyy HH:mm' }}</span>
+            <span *ngIf="dates?.lastDate">&nbsp;·&nbsp;Fin : {{ dates?.lastDate | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="vd-mh-right">
+        <span [ngClass]="{
+          'vd-statut-chip green': updateData?.regroupementStatut === 'Terminé',
+          'vd-statut-chip blue':  updateData?.regroupementStatut === 'Inventaire',
+          'vd-statut-chip red':   updateData?.regroupementStatut === 'Encours'
+        }">{{ updateData?.regroupementStatut }}</span>
+        <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+
+    <div class="vd-modal-body">
+      <div class="vd-info-grid">
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-id-badge me-1"></i>Agent</div>
+          <div class="vd-info-value">
+            {{ updateData?.commercial?.nom || updateData?.transporteur?.nom }} {{ updateData?.commercial?.prenoms || updateData?.transporteur?.prenoms }}
+          </div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-truck me-1"></i>Véhicule</div>
+          <div class="vd-info-value">{{ updateData?.vehicule?.immatriculation || updateData?.vehicule?.libelle || '—' }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-warehouse me-1"></i>Dépôt</div>
+          <div class="vd-info-value">{{ updateData?.depot?.nomDepot || 'NÉANT' }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-clipboard-check me-1"></i>Date inventaire physique</div>
+          <div class="vd-info-value">{{ updateData?.dateInventaire ? (updateData.dateInventaire | date:'dd/MM/yyyy HH:mm') : 'NÉANT' }}</div>
+        </div>
+      </div>
+
+      <div class="vd-card">
+        <div class="vd-card-header">
+          <div class="vd-card-icon orange"><i class="fas fa-clipboard-list"></i></div>
+          <div class="vd-section-label flex-grow-1">Inventaire des retours</div>
+          <button *ngIf="canAddArticle" type="button" class="vd-btn-outline" (click)="openAddArticle()">
+            <i class="fas fa-plus"></i>Ajouter un article
+          </button>
+        </div>
+
+        <div *ngIf="isAddArticleOpen" class="vd-info-grid" style="align-items:flex-end; background:#f7fcff; border-radius:8px; padding:12px; margin-bottom:12px;">
+          <div class="vd-info-block" style="grid-column:span 2">
+            <div class="vd-info-label">Liquide / Emballage présent mais non attendu</div>
+            <ng-select [items]="filteredArticlePickerList" bindLabel="libelle" [(ngModel)]="selectedArticleToAdd"
+                       groupBy="type" [searchable]="true" [clearable]="true"
+                       (search)="articlePickerSearch = $event.term; filterArticlePicker()"
+                       placeholder="Rechercher un liquide ou un emballage...">
+              <ng-template ng-label-tmp let-item="item">{{ item.libelle }} ({{ item.code }})</ng-template>
+              <ng-template ng-option-tmp let-item="item">{{ item.libelle }} ({{ item.code }})</ng-template>
+            </ng-select>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label">Quantité trouvée</div>
+            <input type="number" class="form-control-custom" min="1" [(ngModel)]="newArticleQuantite" placeholder="0" />
+          </div>
+          <div class="vd-info-block d-flex gap-2">
+            <button type="button" class="vd-btn-primary" (click)="confirmAddArticle()"><i class="fas fa-check"></i>Ajouter</button>
+            <button type="button" class="vd-btn-outline" (click)="closeAddArticle()"><i class="fas fa-times"></i></button>
+          </div>
+        </div>
+
+        <div class="vd-table-wrap" style="overflow-y:auto; overflow-x:auto;">
+          <table class="vd-table">
+            <thead>
+              <tr>
+                <th>Raison Sociale</th>
+                <th>Statut</th>
+                <th>Date</th>
+                <th class="text-center" *ngFor="let article of visibleArticles">
+                  {{ article.libelle }}
+                  <span *ngIf="article.isManual" class="vd-badge orange ms-1" title="Article ajouté manuellement (non attendu)">Ajouté
+                    <i *ngIf="canAddArticle" class="fas fa-times ms-1" style="cursor:pointer" title="Retirer" (click)="removeManualArticle(article)"></i>
+                  </span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let retour of updateData.retours">
+                <td style="font-weight:600; color:#0071c2">{{ retour.client?.raisonSocial || retour.client?.nomEtablissement || (retour.user ? (retour.user.nom + ' ' + (retour.user.prenoms || '')) : 'NÉANT') }}</td>
+                <td>
+                  <span [ngClass]="{
+                    'vd-badge green':  retour.statut === 'Validé',
+                    'vd-badge orange': retour.statut === 'En attente',
+                    'vd-badge gray':   retour.statut !== 'Validé' && retour.statut !== 'En attente'
+                  }">{{ retour.statut }}</span>
+                </td>
+                <td style="font-size:11px; color:#6b7280">{{ retour.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="text-center" *ngFor="let article of visibleArticles">{{ getQuantity(retour, article) || '—' }}</td>
+              </tr>
+              <tr class="vd-total-row">
+                <td>Total théorique</td>
+                <td></td>
+                <td></td>
+                <td class="text-center" *ngFor="let article of visibleArticles">{{ article.expectedQuantity }}</td>
+              </tr>
+              <tr style="background: rgba(0,113,194,0.04)">
+                <td class="fw-bold" style="color:#0071c2">Total physique</td>
+                <td></td>
+                <td></td>
+                <td class="text-center" *ngFor="let article of visibleArticles">
+                  <input [disabled]="updateData.inventaires.length > 0 || updateData.regroupementStatut !== 'Inventaire'"
+                    type="number"
+                    [ngStyle]="{ 'color': article.receivedQuantity != article.expectedQuantity ? '#ef4444' : '#8dae56' }"
+                    class="form-control-custom text-center fw-bold"
+                    [(ngModel)]="article.receivedQuantity" min="0" style="width:70px" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="vd-modal-footer">
+      <button *ngIf="updateData?.regroupementStatut === 'Encours'" type="button" class="vd-btn-danger" (click)="TerminerRegroupement(updateData)">
+        <i class="fas fa-flag-checkered"></i>Terminer le ramassage
+      </button>
+      <button type="button" class="vd-btn-outline" (click)="OnCloseModal()">Fermer</button>
+      <button *ngIf="updateData?.inventaires?.length == 0" [disabled]="updateData?.regroupementStatut !== 'Inventaire' || !inventaireComplet" type="button" class="vd-btn-primary" (click)="TerminerInventaire(updateData, allArticles)">
+        <i class="fas fa-save"></i>Enregistrer l'inventaire
+      </button>
+      <button *ngIf="updateData?.inventaires?.length > 0 && updateData?.regroupementStatut === 'Terminé'" type="button" class="vd-btn-danger" (click)="AnnulerInventaire(updateData)">
+        <i class="fas fa-undo"></i>Annuler l'inventaire
+      </button>
+    </div>
+  </div>
+</div>

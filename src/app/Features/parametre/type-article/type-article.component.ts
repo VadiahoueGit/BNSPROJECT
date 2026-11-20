@@ -26,6 +26,7 @@ export class TypeArticleComponent {
   currentPage: number;
   rowsPerPage: any;
   totalPages: number;
+  filters: any = { libelle: '' };
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -45,10 +46,8 @@ export class TypeArticleComponent {
   clear(table: Table) {
     table.clear();
   }
-  filterGlobal(event:any) {
-    const inputElement = event.target as HTMLInputElement;
-    const value = inputElement?.value || ''; // Utilisez une valeur par défaut
-    this.dt2.filterGlobal(value, 'contains');
+  filterGlobal() {
+    this.GetTypesArticlesList(1);
   }
 
   OnCloseModal() {
@@ -136,6 +135,7 @@ export class TypeArticleComponent {
       paginate: true,
       page: page,
       limit: 8,
+      libelle: this.filters.libelle || '',
     };
     this._spinner.show();
     this.articleService.GetTypesArticlesList(data).then((res: any) => {

@@ -40,6 +40,10 @@ export class ArticleComponent {
   rowsPerPage: any;
   totalPages: number;
   Listfournisseurs: any = [];
+  filters: any = {
+    libelle: '',
+    reference: '',
+  };
   constructor(
     private utilisateurService:UtilisateurResolveService,
     private articleService: ArticleServiceService,
@@ -179,11 +183,17 @@ export class ArticleComponent {
     console.log(this.isModalOpen);
   }
 
+  filterGlobal() {
+    this.GetArticleList(1);
+  }
+
   GetArticleList(page: number) {
     let data = {
       paginate: true,
       page: page,
       limit: 8,
+      libelle: this.filters.libelle || '',
+      reference: this.filters.reference || '',
     };
     this._spinner.show();
     this.articleService.GetArticleList(data).then((res: any) => {

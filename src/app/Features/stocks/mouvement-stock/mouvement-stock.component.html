@@ -1,56 +1,164 @@
-<div class="bui-back mb-4" (click)="goBack()">
-  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
-  <h4 class="fw-bold mb-0">Historique des mouvements de stock</h4>
+<div class="sk-back-row" (click)="goBack()">
+  <div class="sk-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="sk-back-title">Historique des mouvements de stock</h4>
 </div>
 
-<div class="card">
-  <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id"
-           [rows]="8" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true"
-           (onPage)="onPage($event)">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Dépôt</th>
-        <th>Liquide</th>
-        <th>Emballage</th>
-        <th>Mouvement</th>
-        <th>Qté avant</th>
-        <th>Qté après</th>
-        <th>Quantité</th>
-        <th>Date</th>
-        <th class="text-center">Actions</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-dataList>
-      <tr>
-        <td>{{ dataList.depot.nomDepot }}</td>
-        <td>{{ dataList.stock.liquide ? dataList.stock.liquide.libelle : '—' }}</td>
-        <td>{{ dataList.stock.emballage ? dataList.stock.emballage.libelle : '—' }}</td>
-        <td>
-          <span class="sk-mv-badge" [class.in]="dataList.mouvement.type === 'ENTREE'"
-                [class.out]="dataList.mouvement.type === 'SORTIE'"
-                [class.tr]="dataList.mouvement.type === 'TRANSFERT'">
-            {{ dataList.mouvement.type }}
-          </span>
-        </td>
-        <td>{{ dataList.stockAvantMouvement }}</td>
-        <td>{{ dataList.stockApresMouvement }}</td>
-        <td><strong>{{ dataList.quantite }}</strong></td>
-        <td>{{ dataList.stock?.updatedAt | date:'dd/MM/yyyy HH:mm' }}</td>
-        <td class="text-center">
-          <span class="bui-icon-btn view" (click)="OnEdit(dataList.mouvement)" title="Voir détails">
-            <i class="fas fa-eye"></i>
-          </span>
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="9" style="text-align:center;padding:24px;color:#9ca3af">
-          <i class="fas fa-history me-2"></i>Aucun mouvement trouvé
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+<div class="sk-card">
+  <div class="sk-filters">
+    <div class="sk-filter-item">
+      <div class="sk-filter-label">Dépôt</div>
+      <div class="sk-filter-wrap">
+        <i class="fas fa-warehouse sk-filter-icon"></i>
+        <ng-select [items]="depotList" bindLabel="nomDepot" bindValue="id" [(ngModel)]="selectedDepotId"
+                   (change)="onFilterChange()" [searchable]="true" [clearable]="true"
+                   placeholder="Tous les dépôts"></ng-select>
+      </div>
+    </div>
+    <div class="sk-filter-item">
+      <div class="sk-filter-label">Liquide</div>
+      <div class="sk-filter-wrap">
+        <i class="fas fa-tint sk-filter-icon"></i>
+        <ng-select [items]="liquideList" bindLabel="libelle" bindValue="id" [(ngModel)]="selectedLiquideId"
+                   (change)="onFilterChange()" [searchable]="true" [clearable]="true"
+                   placeholder="Tous les liquides"></ng-select>
+      </div>
+    </div>
+    <div class="sk-filter-item">
+      <div class="sk-filter-label">Emballage</div>
+      <div class="sk-filter-wrap">
+        <i class="fas fa-box sk-filter-icon"></i>
+        <ng-select [items]="emballageList" bindLabel="libelle" bindValue="id" [(ngModel)]="selectedEmballageId"
+                   (change)="onFilterChange()" [searchable]="true" [clearable]="true"
+                   placeholder="Tous les emballages"></ng-select>
+      </div>
+    </div>
+    <div class="sk-filter-item">
+      <div class="sk-filter-label">Nature</div>
+      <div class="sk-filter-wrap">
+        <i class="fas fa-exchange-alt sk-filter-icon"></i>
+        <ng-select [items]="natureOptions" bindLabel="label" bindValue="value" [(ngModel)]="selectedType"
+                   (change)="onFilterChange()" [searchable]="false" [clearable]="true"
+                   placeholder="Toutes"></ng-select>
+      </div>
+    </div>
+    <div class="sk-filter-item">
+      <div class="sk-filter-label">Code</div>
+      <div class="sk-filter-wrap">
+        <i class="fas fa-tag sk-filter-icon"></i>
+        <ng-select [items]="codeOptions" bindLabel="label" bindValue="value" [(ngModel)]="selectedCode"
+                   (change)="onFilterChange()" [searchable]="false" [clearable]="true"
+                   placeholder="Tous"></ng-select>
+      </div>
+    </div>
+    <div class="sk-filter-item">
+      <div class="sk-filter-label">Opération</div>
+      <div class="sk-filter-wrap">
+        <i class="fas fa-list sk-filter-icon"></i>
+        <ng-select [items]="operationOptions" [(ngModel)]="selectedOperation"
+                   (change)="onFilterChange()" [searchable]="true" [clearable]="true"
+                   placeholder="Toutes"></ng-select>
+      </div>
+    </div>
+    <div class="sk-filter-item">
+      <div class="sk-filter-label">Date début</div>
+      <div class="sk-filter-wrap">
+        <i class="fas fa-calendar sk-filter-icon"></i>
+        <input type="date" class="sk-filter-date" [(ngModel)]="filterDateDebut" (change)="onFilterChange()" />
+      </div>
+    </div>
+    <div class="sk-filter-item">
+      <div class="sk-filter-label">Date fin</div>
+      <div class="sk-filter-wrap">
+        <i class="fas fa-calendar sk-filter-icon"></i>
+        <input type="date" class="sk-filter-date" [(ngModel)]="filterDateFin" (change)="onFilterChange()" />
+      </div>
+    </div>
+    <button class="sk-filter-reset" *ngIf="selectedDepotId || selectedLiquideId || selectedEmballageId || selectedType || selectedCode || selectedOperation || filterDateDebut || filterDateFin"
+            (click)="resetFilters()">
+      <i class="fas fa-times me-1"></i>Réinitialiser
+    </button>
+  </div>
+
+  <div class="sk-table-wrap">
+    <table class="sk-table">
+      <thead>
+        <tr>
+          <th>Dépôt</th>
+          <th>Liquide</th>
+          <th>Emballage</th>
+          <th class="text-center">Code</th>
+          <th>Opération</th>
+          <th>Agent BNS</th>
+          <th>Mouvement</th>
+          <th class="text-center">Qté avant</th>
+          <th class="text-center">Qté après</th>
+          <th class="text-center">Quantité</th>
+          <th>Date</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of dataList">
+          <td>
+            <div class="sk-depot-cell">
+              <i class="fas fa-warehouse"></i>
+              <span>{{ row.stock?.depot?.nomDepot || '—' }}</span>
+            </div>
+          </td>
+          <td>{{ row.stock.liquide ? row.stock.liquide.libelle : '—' }}</td>
+          <td>{{ row.stock.emballage ? row.stock.emballage.libelle : '—' }}</td>
+          <td class="text-center">
+            <span *ngIf="row.stock?.emballage" class="sk-mv-badge" [class.out]="row.codeEmballage === 'Vemb'" [class.in]="row.codeEmballage === 'Emb'">
+              {{ row.codeEmballage }}
+            </span>
+            <span *ngIf="!row.stock?.emballage">—</span>
+          </td>
+          <td class="sk-muted-cell">{{ row.natureLigne || row.mouvement?.nature || '—' }}</td>
+          <td class="sk-muted-cell">{{ row.mouvement?.agentNom || '—' }}</td>
+          <td>
+            <span class="sk-mv-badge" [class.in]="row.mouvement.type === 'ENTREE'"
+                  [class.out]="row.mouvement.type === 'SORTIE'"
+                  [class.tr]="row.mouvement.type === 'TRANSFERT'">
+              <i class="fas" [class.fa-arrow-down]="row.mouvement.type === 'ENTREE'"
+                 [class.fa-arrow-up]="row.mouvement.type === 'SORTIE'"
+                 [class.fa-right-left]="row.mouvement.type === 'TRANSFERT'"></i>
+              {{ row.mouvement.type }}
+            </span>
+          </td>
+          <td class="text-center sk-muted-cell">{{ row.stockAvantMouvement }}</td>
+          <td class="text-center sk-muted-cell">{{ row.stockApresMouvement }}</td>
+          <td class="text-center"><strong>{{ row.quantite }}</strong></td>
+          <td class="sk-muted-cell">{{ row.mouvement?.dateEnregistrement | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td class="text-center">
+            <button class="sk-action-btn view" (click)="OnEdit(row.mouvement)" title="Voir détails">
+              <i class="fas fa-eye"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="dataList.length === 0">
+          <td colspan="12" class="sk-empty-row">
+            <i class="fas fa-history me-2"></i>Aucun mouvement trouvé
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination custom -->
+  <div *ngIf="totalItems > rowsPerPage" style="display:flex;align-items:center;gap:10px;justify-content:flex-end;margin-top:14px;padding-top:12px;border-top:1px solid #e5e7eb">
+    <span style="font-size:12px;color:#9ca3af">
+      {{ (currentPage - 1) * rowsPerPage + 1 }}–{{ currentPage * rowsPerPage > totalItems ? totalItems : currentPage * rowsPerPage }} sur {{ totalItems }}
+    </span>
+    <button style="width:30px;height:30px;border-radius:8px;border:1.5px solid #e5e7eb;background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px"
+            [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <span style="font-size:12px;font-weight:600;color:#374151">Page {{ currentPage }} / {{ totalPages }}</span>
+    <button style="width:30px;height:30px;border-radius:8px;border:1.5px solid #e5e7eb;background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px"
+            [disabled]="currentPage >= totalPages" (click)="goToPage(currentPage + 1)">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
 </div>
 
 <!-- Modal détail mouvement -->

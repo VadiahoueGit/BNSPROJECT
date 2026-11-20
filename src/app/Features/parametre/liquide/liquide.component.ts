@@ -32,6 +32,7 @@ export class LiquideComponent {
   currentPage: number;
   rowsPerPage: any;
   totalPages: number;
+  filters: any = { libelle: '', code: '' };
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -108,6 +109,8 @@ export class LiquideComponent {
       paginate: true,
       page:page,
       limit: 8,
+      libelle: this.filters.libelle || '',
+      code: this.filters.code || '',
     };
     this._spinner.show();
     this.articleService.GetLiquideList(data).then((res: any) => {
@@ -120,10 +123,8 @@ export class LiquideComponent {
     });
   }
 
-  filterGlobal(event: any) {
-    const inputElement = event.target as HTMLInputElement;
-    const value = inputElement?.value || '';
-    this.dt2.filterGlobal(value, 'contains');
+  filterGlobal() {
+    this.GetLiquideList(1);
   }
   OnCloseModal() {
     this.liquideForm.reset();

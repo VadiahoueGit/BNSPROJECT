@@ -1,81 +1,166 @@
-.modal-dialog {
-  background-color: white;
-  border-radius: 0.3rem;
-  width: 90%;
-  padding: 1rem;
+$blue: #0071c2;
+$border: #e5e7eb;
+$muted: #9ca3af;
+$green: #16a34a;
+
+.pg-solde-section {
+  border-top: 1px solid $border;
+  padding: 16px 24px 0;
+  background: #f8fafc;
 }
 
+.pg-solde-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #374151;
+  margin-bottom: 10px;
+  i { color: $blue; }
+}
 
-.custom-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+.pg-solde-grid {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 0;
+  border: 1px solid $border;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 12px;
+}
+
+.pg-solde-header {
+  background: #f1f5f9;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: $muted;
+  padding: 7px 12px;
+  border-bottom: 1px solid $border;
+  &.text-end { text-align: right; }
+}
+
+.pg-solde-label {
+  padding: 9px 12px;
+  border-bottom: 1px solid #f3f4f6;
+  color: #374151;
+  font-weight: 500;
+  background: white;
+  i { color: $blue; }
+}
+
+.pg-solde-attendu {
+  padding: 9px 12px;
+  border-bottom: 1px solid #f3f4f6;
+  text-align: right;
+  color: $muted;
+  background: white;
+  white-space: nowrap;
+}
+
+.pg-solde-input-wrap {
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1050;
+  gap: 4px;
+  padding: 6px 10px;
+  border-bottom: 1px solid #f3f4f6;
+  background: white;
 }
-.modal-dialog2 {
-  background-color: white;
-  border-radius: 0.3rem;
-  width: 45em;
-  padding: 1rem;
+
+.pg-solde-input {
+  width: 110px;
+  height: 28px;
+  border: 1.5px solid $border;
+  border-radius: 6px;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #111827;
+  text-align: right;
+  outline: none;
+  &:focus { border-color: $blue; box-shadow: 0 0 0 2px rgba($blue, 0.1); }
 }
-.modal-dialog {
-  background-color: white;
-  border-radius: 0.3rem;
-  width: 90%;
-  padding: 1rem;
+
+.pg-solde-currency {
+  font-size: 10px;
+  color: $muted;
+  white-space: nowrap;
 }
-strong,span{
+
+.pg-solde-total-label {
+  padding: 9px 12px;
+  font-weight: 700;
+  font-size: 12px;
+  color: #111827;
+  background: #f1f5f9;
+}
+
+.pg-solde-total-value {
+  padding: 9px 12px;
+  font-weight: 700;
   font-size: 13px;
-}
-.modal-header, .modal-body, .modal-footer {
-  padding: 1rem;
-}
-
-.btn-close {
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
-}
-.p-fluid .p-inputtext {
-  width: 8em !important;
-  height: 2.5rem;
+  color: $green;
+  background: #f1f5f9;
+  text-align: right;
+  white-space: nowrap;
 }
 
-.p-column-filter-menu-button {
-  display: none; /* Masquer l'icône de filtre */
+.pg-solde-ecart-label {
+  padding: 7px 12px;
+  font-weight: 600;
+  font-size: 11px;
+  color: #b45309;
+  background: #fffbeb;
 }
 
-/* Ajuster l'espacement si nécessaire après suppression de l'icône */
-.p-column-filter {
-  padding-right: 0; /* Supprime l'espace réservé à l'icône */
-}
-.label-fixed-width {
-  min-width: 10px;
-}
-.modal-footer {
-  padding: 0.5rem;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
+.pg-solde-ecart-value {
+  padding: 7px 12px;
+  font-weight: 700;
+  font-size: 12px;
+  color: $green;
+  background: #fffbeb;
+  text-align: right;
+  white-space: nowrap;
+  &.neg { color: #b45309; }
 }
 
-td, th {
-  border: 1px solid #ddd;
-  padding: 8px;
-  font-size:12px
+.pg-solde-action {
+  padding: 5px 10px;
+  border-bottom: 1px solid #f3f4f6;
+  background: white;
+  display: flex;
+  align-items: center;
 }
 
-tr:nth-child(even) {
-  background-color: #f9f9f9;
+.pg-solde-btn {
+  font-size: 11px;
+  padding: 4px 10px;
+  white-space: nowrap;
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
-tr:hover {
-  background-color: #f1f1f1;
+.pg-solde-warning {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #92400e;
+  i { color: #d97706; }
+}
+
+::ng-deep .fn-ptable {
+  .p-datatable-thead > tr > th {
+    background: #f7fcff; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px; color: #9ca3af;
+    border-bottom: 1px solid #e5e7eb; padding: 10px 12px; white-space: nowrap;
+  }
+  .p-datatable-tbody > tr > td {
+    font-size: 12px; color: #374151; padding: 10px 12px;
+    border-bottom: 1px solid #e5e7eb; vertical-align: middle;
+  }
+  .p-datatable-tbody > tr:hover > td { background: rgba(0,113,194,0.025); }
+  .p-paginator { border-top: 1px solid #e5e7eb; padding: 8px 0 0; background: transparent; font-size: 12px; }
 }

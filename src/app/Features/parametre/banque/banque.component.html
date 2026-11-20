@@ -1,0 +1,90 @@
+<div class="bq-header">
+  <div class="bq-title">
+    <button class="bq-back-btn" (click)="goBack()"><i class="fas fa-chevron-left"></i></button>
+    <h4>Banques</h4>
+  </div>
+  <button class="bq-btn-primary" (click)="OnCreate()">
+    <i class="fas fa-plus"></i> Nouvelle banque
+  </button>
+</div>
+
+<div class="bq-card">
+  <div class="bq-topbar">
+    <div>
+      <div class="bq-card-title"><i class="fas fa-university"></i> Liste des banques</div>
+      <div class="bq-count">{{ totalPages }} résultat(s)</div>
+    </div>
+    <div class="bq-search-wrap">
+      <i class="fas fa-search bq-search-icon"></i>
+      <input class="bq-search-input" type="text" (keyup.enter)="filterGlobal($event)" placeholder="Code, nom, n° compte…">
+    </div>
+  </div>
+
+  <p-table [styleClass]="'bq-ptable p-datatable-sm'" [value]="dataList" dataKey="id"
+           [totalRecords]="totalPages" [lazy]="true" [rows]="8"
+           [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Code banque</th>
+        <th>Nom de la banque</th>
+        <th>Numéro de compte</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td><span class="bq-badge">{{ row.codeBanque }}</span></td>
+        <td><span class="bq-name">{{ row.nomBanque }}</span></td>
+        <td>{{ row.numeroCompte || '—' }}</td>
+        <td class="text-center">
+          <div style="display:flex;gap:6px;justify-content:center">
+            <button class="bq-action-btn edit" (click)="OnEdit(row)" title="Modifier"><i class="fas fa-edit"></i></button>
+            <button class="bq-action-btn del" (click)="OnDelete(row.id)" title="Supprimer"><i class="fas fa-trash"></i></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="4" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">
+          <i class="fas fa-university" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i>
+          Aucune banque trouvée.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div class="bq-modal">
+    <div class="bq-modal-header">
+      <div class="bq-modal-icon"><i class="fas fa-university"></i></div>
+      <h5 class="bq-modal-title">
+        {{ operation === 'create' ? 'Nouvelle banque' : 'Modifier la banque' }}
+      </h5>
+      <button class="bq-modal-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="bq-modal-body">
+      <form [formGroup]="banqueForm">
+        <div class="bq-field">
+          <label class="bq-field-label">Code banque *</label>
+          <input class="bq-field-input" formControlName="codeBanque" placeholder="Ex: CI008" />
+        </div>
+        <div class="bq-field">
+          <label class="bq-field-label">Nom de la banque *</label>
+          <input class="bq-field-input" formControlName="nomBanque" placeholder="Ex: SOCIETE GENERALE COTE D'IVOIRE" />
+        </div>
+        <div class="bq-field">
+          <label class="bq-field-label">Numéro de compte</label>
+          <input class="bq-field-input" formControlName="numeroCompte" placeholder="Ex: 10162326752" />
+        </div>
+      </form>
+    </div>
+    <div class="bq-modal-footer">
+      <button class="bq-btn-secondary" (click)="OnCloseModal()">Annuler</button>
+      <button class="bq-btn-submit" [disabled]="banqueForm.invalid" (click)="onSubmit()">
+        <i class="fas fa-check"></i> {{ operation === 'create' ? 'Créer' : 'Enregistrer' }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,442 @@
+// ===== VARIABLES =====
+$blue:   #0071c2;
+$green:  #8dae56;
+$orange: #f59e0b;
+$red:    #ef4444;
+$border: #e5e7eb;
+$bg:     #f7fcff;
+$muted:  #9ca3af;
+$radius: 12px;
+$radius-sm: 8px;
+
+// ===== HEADER =====
+.vd-header h4 { color: #1f2937; }
+
+// ===== KPI =====
+.vd-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.vd-kpi {
+  background: white;
+  border-radius: $radius;
+  padding: 18px 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  border: 1px solid $border;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &.orange {
+    background: rgba($orange, 0.06);
+    border-color: rgba($orange, 0.25);
+    .vd-kpi-value { color: darken($orange, 10%); }
+  }
+  &.green {
+    background: rgba($green, 0.06);
+    border-color: rgba($green, 0.25);
+    .vd-kpi-value { color: darken($green, 8%); }
+  }
+  &.red {
+    background: rgba($red, 0.05);
+    border-color: rgba($red, 0.2);
+    .vd-kpi-value { color: $red; }
+  }
+}
+
+.vd-kpi-label {
+  font-size: 11px;
+  color: $muted;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.vd-kpi-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1f2937;
+
+  small {
+    font-size: 12px;
+    font-weight: 400;
+    color: $muted;
+    margin-left: 3px;
+  }
+}
+
+// ===== CARD =====
+.vd-card {
+  background: white;
+  border-radius: $radius;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.vd-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid $border;
+}
+
+.vd-card-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  flex-shrink: 0;
+
+  &.blue { background: rgba($blue, 0.1); color: $blue; }
+  &.green { background: rgba($green, 0.12); color: $green; }
+  &.orange { background: rgba($orange, 0.12); color: $orange; }
+}
+
+// ===== SEARCH =====
+.vd-search-wrap {
+  position: relative;
+}
+
+.vd-search-icon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $muted;
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.vd-search-input {
+  padding: 8px 12px 8px 32px;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  font-size: 13px;
+  color: #374151;
+  background: $bg;
+  outline: none;
+  width: 220px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    border-color: $blue;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba($blue, 0.1);
+  }
+}
+
+// ===== TABLE =====
+.vd-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+
+  thead tr { background: $bg; }
+
+  thead th {
+    padding: 10px 14px;
+    font-weight: 600;
+    color: #6b7280;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    border-bottom: 1px solid $border;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    transition: background 0.15s;
+    &:hover { background: rgba($blue, 0.025); }
+    &:not(:last-child) td { border-bottom: 1px solid $border; }
+  }
+
+  tbody td {
+    padding: 13px 14px;
+    color: #374151;
+    vertical-align: middle;
+  }
+}
+
+// ===== CELLS =====
+.vd-product-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vd-avatar-sm {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba($blue, 0.1);
+  color: $blue;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.vd-badge {
+  background: $bg;
+  border: 1px solid $border;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.vd-surplus-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  border-radius: 20px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #c2410c;
+  width: fit-content;
+}
+
+// ===== STATUS BADGE =====
+.vd-status-badge {
+  display: inline-block;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+
+  &.attente  { background: rgba($orange, 0.12); color: darken($orange, 15%); }
+  &.cours    { background: rgba($blue, 0.1);    color: darken($blue, 5%); }
+  &.partiel  { background: rgba(139,92,246,0.1); color: #7c3aed; }
+  &.paye     { background: rgba($green, 0.12);  color: darken($green, 8%); }
+}
+
+// ===== ACTION BUTTONS =====
+.vd-btn-pay {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: $blue;
+  color: white;
+  border: none;
+  border-radius: $radius-sm;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+
+  &:hover { background: darken($blue, 8%); transform: translateY(-1px); }
+  &:active { transform: translateY(0); }
+}
+
+.vd-done-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: $green;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+// ===== EMPTY =====
+.vd-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 40px 0;
+  color: $muted;
+
+  i { font-size: 28px; }
+  span { font-size: 13px; }
+}
+
+// ===== PAGINATION =====
+.vd-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid $border;
+}
+
+.vd-page-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: $radius-sm;
+  border: 1px solid $border;
+  background: white;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) { border-color: $blue; color: $blue; background: rgba($blue, 0.05); }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.vd-page-info {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+// ===== BUTTONS =====
+.vd-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: $blue;
+  color: white;
+  border: none;
+  border-radius: $radius-sm;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover:not(:disabled) { background: darken($blue, 8%); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.vd-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  color: #374151;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s;
+
+  &:hover { border-color: #9ca3af; }
+}
+
+// ===== MODAL RECAP =====
+.vd-modal-recap {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: $bg;
+  border-bottom: 1px solid $border;
+  padding: 14px 24px;
+}
+
+.vd-recap-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  padding: 0 16px;
+
+  &:first-child { padding-left: 0; }
+  &:last-child { padding-right: 0; }
+}
+
+.vd-recap-label {
+  font-size: 10px;
+  color: $muted;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.vd-recap-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.vd-recap-sep {
+  width: 1px;
+  height: 36px;
+  background: $border;
+  flex-shrink: 0;
+}
+
+// ===== MODAL FORM =====
+.vd-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.vd-input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid $border;
+  border-radius: $radius-sm;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+  background: white;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    border-color: $blue;
+    box-shadow: 0 0 0 3px rgba($blue, 0.1);
+  }
+}
+
+// ===== MOYEN DE PAIEMENT GRID =====
+.vd-moyen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 10px;
+}
+
+.vd-moyen-card {
+  border: 2px solid $border;
+  border-radius: $radius-sm;
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+
+  i { font-size: 20px; color: $muted; transition: color 0.2s; }
+  span { font-size: 11px; font-weight: 600; color: #374151; }
+
+  &:hover {
+    border-color: $blue;
+    background: rgba($blue, 0.03);
+    i { color: $blue; }
+  }
+
+  &.selected {
+    border-color: $blue;
+    background: rgba($blue, 0.06);
+    i { color: $blue; }
+    span { color: $blue; }
+  }
+}

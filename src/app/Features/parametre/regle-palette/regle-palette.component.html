@@ -30,6 +30,7 @@
           <th>Format</th>
           <th>Casiers / palette</th>
           <th>Type</th>
+          <th>Fournisseur</th>
           <th class="text-center">Actions</th>
         </tr>
       </ng-template>
@@ -46,6 +47,10 @@
               {{ row.type }}
             </span>
           </td>
+          <td>
+            <span *ngIf="row.fournisseur" class="vd-badge blue">{{ row.fournisseur.nom }}</span>
+            <span *ngIf="!row.fournisseur" class="text-muted" style="font-size:12px">—</span>
+          </td>
           <td class="text-center">
             <div class="d-flex justify-content-center gap-3">
               <i (click)="OnEdit(row)" style="cursor:pointer" class="fas fa-edit text-secondary"></i>
@@ -57,7 +62,7 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="4">
+          <td colspan="5">
             <div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucune règle trouvée</span></div>
           </td>
         </tr>
@@ -112,6 +117,20 @@
               [searchable]="true">
             </ng-select>
             <span class="rp-hint">Groupe d'articles (BIERE, EAU, SUCRERIE…)</span>
+          </div>
+
+          <div class="rp-field">
+            <label>Fournisseur</label>
+            <ng-select
+              [items]="fournisseurList"
+              bindLabel="nom"
+              bindValue="id"
+              placeholder="Tous les fournisseurs (optionnel)"
+              formControlName="fournisseurId"
+              [searchable]="true"
+              [clearable]="true">
+            </ng-select>
+            <span class="rp-hint">Laisser vide pour une règle générique</span>
           </div>
 
         </div>

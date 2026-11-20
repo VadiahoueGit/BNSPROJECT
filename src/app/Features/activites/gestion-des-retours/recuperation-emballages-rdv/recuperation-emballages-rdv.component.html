@@ -1,0 +1,127 @@
+<!-- Liste -->
+<div class="fn-card">
+  <div class="fn-topbar">
+    <div class="fn-topbar-left">
+      <div class="fn-title"><i class="fas fa-recycle"></i> Récupération emballages RDV</div>
+      <div class="fn-count">{{ totalPages }} récupération(s) issue(s) d'un RDV</div>
+    </div>
+  </div>
+
+  <div class="fn-filters">
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Recherche</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-search fn-filter-icon"></i>
+        <input class="fn-filter-input" (input)="onFilterGlobal($event)" placeholder="Commande, client, dépôt..." />
+      </div>
+    </div>
+  </div>
+
+  <p-table [styleClass]="'fn-ptable p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+           [totalRecords]="totalPages" [lazy]="true"
+           [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>N° commande</th>
+        <th>Client</th>
+        <th>Agent</th>
+        <th>Dépôt</th>
+        <th>Date récupération</th>
+        <th class="text-center">Emballages récupérés</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td style="font-weight:600; color:#0071c2">
+          {{ row?.commandeClient?.NumCommande || row?.commandeGratuite?.NumCommande || row?.venteChine?.numVenteChine || '—' }}
+        </td>
+        <td>{{ row.clientALivrer?.nomEtablissement || row.clientALivrer?.raisonSocial || '—' }}</td>
+        <td>{{ row.agentNom || '—' }}</td>
+        <td>{{ row.depot?.nomDepot || '—' }}</td>
+        <td style="color:#6b7280; font-size:12px">{{ row.createdAt | date:'dd/MM/yyyy' }}</td>
+        <td class="text-center">
+          <span class="fn-badge green">{{ row.emballagesRecuperes?.length || 0 }} article(s)</span>
+        </td>
+        <td class="text-center">
+          <button class="fn-action-btn view" (click)="OnView(row)" title="Voir"><i class="fas fa-eye"></i></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="7" style="text-align:center; padding:32px; color:#9ca3af; font-size:13px;">
+          <i class="fas fa-inbox me-2"></i>Aucun emballage récupéré issu d'un RDV pour le moment.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Modal -->
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div class="vd-modal-dialog wide">
+    <div class="vd-modal-header">
+      <div class="vd-mh-left">
+        <div class="vd-mh-icon green"><i class="fas fa-recycle"></i></div>
+        <div>
+          <div class="vd-mh-title">Emballages récupérés</div>
+          <div class="vd-mh-sub">
+            {{ updateData?.commandeClient?.NumCommande || updateData?.commandeGratuite?.NumCommande || updateData?.venteChine?.numVenteChine || '—' }}
+          </div>
+        </div>
+      </div>
+      <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="vd-modal-body">
+      <div class="vd-info-grid">
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-store me-1"></i>Client</div>
+          <div class="vd-info-value">{{ updateData.clientALivrer?.nomEtablissement || updateData.clientALivrer?.raisonSocial || '—' }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-warehouse me-1"></i>Dépôt</div>
+          <div class="vd-info-value">{{ updateData.depot?.nomDepot || '—' }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-calendar-check me-1"></i>Date récupération</div>
+          <div class="vd-info-value">{{ updateData?.createdAt | date:'dd/MM/yyyy' }}</div>
+        </div>
+      </div>
+
+      <div class="vd-card">
+        <div class="vd-card-header">
+          <div class="vd-card-icon green"><i class="fas fa-recycle"></i></div>
+          <div class="vd-section-label">Emballages</div>
+        </div>
+        <div class="vd-table-wrap">
+          <table class="vd-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Désignation</th>
+                <th class="text-center">Quantité récupérée</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of filteredArticles">
+                <td><span class="vd-badge gray">{{ item.produit?.code || item.productCode }}</span></td>
+                <td>{{ item.produit?.libelle || '—' }}</td>
+                <td class="text-center fw-bold" style="color:#1a9c4b">{{ item.quantity }}</td>
+              </tr>
+              <tr *ngIf="!filteredArticles?.length">
+                <td colspan="3"><div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucun emballage</span></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="vd-modal-footer">
+      <button type="button" class="vd-btn-outline" [disabled]="generatingPdf" (click)="genererPdf()"><i class="fas fa-file-pdf me-1"></i>{{ generatingPdf ? 'Génération...' : 'Générer le PDF' }}</button>
+      <button type="button" class="vd-btn-outline" (click)="OnCloseModal()">Fermer</button>
+    </div>
+  </div>
+</div>

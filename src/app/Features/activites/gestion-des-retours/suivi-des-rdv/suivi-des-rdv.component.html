@@ -1,218 +1,374 @@
-<div class="card">
+<!-- Dashboard -->
+<div class="fn-kpi-row">
+  <div class="fn-kpi blue">
+    <div class="fn-kpi-icon blue"><i class="fas fa-calendar-check"></i></div>
+    <div class="fn-kpi-body">
+      <div class="fn-kpi-label">RDV en attente</div>
+      <div class="fn-kpi-value blue">{{ nbRdvEnAttente }}</div>
+    </div>
+  </div>
+  <div class="fn-kpi orange">
+    <div class="fn-kpi-icon orange"><i class="fas fa-recycle"></i></div>
+    <div class="fn-kpi-body">
+      <div class="fn-kpi-label">Emballages attendus</div>
+      <div class="fn-kpi-value orange">{{ totalEmballagesAttendus | number:'1.0-0' }}</div>
+    </div>
+  </div>
+</div>
 
-  <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+<!-- Liste -->
+<div class="fn-card">
+  <div class="fn-topbar">
+    <div class="fn-topbar-left">
+      <div class="fn-title"><i class="fas fa-calendar-check"></i> Suivi des RDV</div>
+      <div class="fn-count">{{ totalPages }} résultat(s)</div>
+    </div>
+    <div class="fn-topbar-right">
+      <button class="vd-btn-primary" (click)="OnCreate()">
+        <i class="fas fa-plus me-1"></i> Créer un RDV
+      </button>
+    </div>
+  </div>
+
+  <div class="fn-filters">
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">N° commande</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-hashtag fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.numeroCommande" (keydown.enter)="filterGlobal()" placeholder="N° commande..." />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Agent</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-user fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.agent" (keydown.enter)="filterGlobal()" placeholder="Nom agent..." />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Client</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-store fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.client" (keydown.enter)="filterGlobal()" placeholder="Nom client..." />
+      </div>
+    </div>
+    <div class="fn-filter-item" *ngIf="isHote">
+      <div class="fn-filter-label">Dépôt</div>
+      <div class="fn-filter-wrap">
+        <ng-select [items]="depotList" bindLabel="nomDepot" bindValue="id" [(ngModel)]="filters.depotId"
+                   (change)="filterGlobal()" [searchable]="true" [clearable]="true"
+                   placeholder="Tous les dépôts"></ng-select>
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Date RDV du</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-calendar fn-filter-icon"></i>
+        <input class="fn-filter-input" type="date" [(ngModel)]="filters.dateDebut" (change)="filterGlobal()" />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">au</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-calendar fn-filter-icon"></i>
+        <input class="fn-filter-input" type="date" [(ngModel)]="filters.dateFin" (change)="filterGlobal()" />
+      </div>
+    </div>
+    <button class="fn-filter-btn" (click)="filterGlobal()"><i class="fas fa-search"></i> Rechercher</button>
+    <button class="fn-filter-btn secondary" *ngIf="hasActiveFilters" (click)="resetFilters()"><i class="fas fa-times"></i> Réinitialiser</button>
+  </div>
+
+  <p-table [styleClass]="'fn-ptable p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
            [totalRecords]="totalPages" [lazy]="true"
            [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
-
     <ng-template pTemplate="header">
       <tr>
-        <th>Numero de commande</th>
+        <th>N° commande</th>
         <th>Agent</th>
-        <th>Date Rdv</th>
+        <th>Date RDV</th>
         <th>Client</th>
-        <th>Dépot</th>
-        <!--                <th style="color: var(&#45;&#45;secondary-color);">Statut Rdv</th>-->
-        <th>Actions</th>
+        <th>Dépôt</th>
+        <th class="text-center">Actions</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-dataList>
+    <ng-template pTemplate="body" let-row>
       <tr>
-        <td>
-           <span class="ml-1 vertical-align-middle">
-            {{
-               dataList?.commandeClient?.NumCommande ||
-               dataList?.commandeGratuite?.NumCommande ||
-               dataList?.venteChine?.numVenteChine
-             }}
-          </span>
+        <td style="font-weight:600; color:#0071c2">
+          {{ row?.commandeClient?.NumCommande || row?.commandeGratuite?.NumCommande || row?.venteChine?.numVenteChine || '—' }}
         </td>
         <td>
           {{
-            (dataList.venteChine)
-              ? dataList.venteChine.commercial.nom + ' ' + dataList.venteChine.commercial.prenoms
-              : (dataList.transporteur?.nom && dataList.transporteur?.prenoms)
-                ? dataList.transporteur.nom + ' ' + dataList.transporteur.prenoms
+            row.venteChine
+              ? (row.venteChine.commercial.nom + ' ' + row.venteChine.commercial.prenoms)
+              : (row.transporteur?.nom && row.transporteur?.prenoms)
+                ? (row.transporteur.nom + ' ' + row.transporteur.prenoms)
                 : 'N/A'
           }}
         </td>
-        <td>
-                    <span class="ml-1 vertical-align-middle">
-                         {{ dataList.appointmentDate | date }}
-                    </span>
+        <td style="color:#6b7280; font-size:12px">{{ row.appointmentDate | date:'dd/MM/yyyy' }}</td>
+        <td>{{ row.clientALivrer?.nomEtablissement || row.clientALivrer?.raisonSocial || '—' }}</td>
+        <td>{{ row.depot?.nomDepot || '—' }}</td>
+        <td class="text-center">
+          <button class="fn-action-btn view" (click)="OnEdit(row)" title="Voir"><i class="fas fa-eye"></i></button>
+          <button *ngIf="estRdvManuel(row)" class="fn-action-btn delete ms-1" (click)="OnAnnulerRdv(row)" title="Annuler le RDV">
+            <i class="fas fa-ban"></i>
+          </button>
         </td>
-        <td>
-                    <span class="ml-1 vertical-align-middle">
-                         {{
-                        dataList.clientALivrer?.nomEtablissement ||
-                        dataList.clientALivrer?.raisonSocial
-                      }}
-                    </span>
-        </td>
-        <td>
-          {{ dataList?.depot?.nomDepot}}
-        </td>
-        <td>
-      <tr class="gap-3">
-        <td><span class="bui-icon-btn view" (click)="OnEdit(dataList)"><i class="fas fa-eye"></i></span></td>
-      </tr>
-
-      </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">Aucun élément trouvé.</td>
+        <td colspan="6" style="text-align:center; padding:32px; color:#9ca3af; font-size:13px;">
+          <i class="fas fa-inbox me-2"></i>Aucun RDV trouvé.
+        </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
-
+<!-- Modal -->
 <div *ngIf="isModalOpen" class="custom-modal">
   <div class="vd-modal-dialog wide">
     <div class="vd-modal-header">
       <div class="vd-mh-left">
         <div class="vd-mh-icon blue"><i class="fas fa-calendar-check"></i></div>
         <div>
-          <div class="vd-mh-title">RDV emballages</div>
-          <div class="vd-mh-sub">Emballages restant à récupérer</div>
+          <div class="vd-mh-title">{{ operation === 'create' ? 'Créer un RDV' : 'RDV emballages' }}</div>
+          <div class="vd-mh-sub">{{ operation === 'create' ? 'Planifier une récupération d\'emballages' : 'Emballages restant à récupérer' }}</div>
         </div>
       </div>
       <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
     </div>
+
     <div class="vd-modal-body">
-        <div class="row">
-          <fieldset class="row border my-1" *ngIf="operation == 'edit'">
-            <legend style="font-size: 14px" class="text-secondary">
-              Numero Commande : {{
-                updateData?.commandeClient?.NumCommande ||
-                updateData?.commandeGratuite?.NumCommande ||
-                updateData?.venteChine?.NumCommande
-              }} du
-              {{ updateData.createdAt | date }}
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Dépot : </strong>
-                <span>{{ updateData.depot?.nomDepot }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Motif : </strong>
-                <span>
-                 {{
-                    updateData?.returnType
-                  }}
-                </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Statut : </strong>
-                <span>
-                  {{
-                    updateData?.commandeClient?.statut ||
-                    updateData?.commandeGratuite?.statut ||
-                    updateData?.venteChine?.statut
-                  }}
-                </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Vente : </strong>
-                <span>
-                 {{
-                    updateData?.fromTo
-                  }}
-                </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Date de rendez-vous : </strong>
-                <span>
-                 {{
-                    updateData?.appointmentDate | date
-                  }}
-                </span>
-              </div>
-              <!--              <div class="col-md-4 text-bg-primary">-->
-              <!--                <strong>Montant à perçevoir: </strong>-->
-              <!--                <span>{{ updateData.transaction?.montantAPercevoir |currency:'XOF' }}</span>-->
-              <!--              </div>-->
-              <!--              <div class="col-md-4 text-bg-primary">-->
-              <!--                <strong>Montant perçu : </strong>-->
-              <!--                <span>{{ updateData.transaction?.montantPercu |currency:'XOF' }}</span>-->
-              <!--              </div>-->
+      <ng-container *ngIf="operation === 'create'">
+        <div class="vd-info-grid">
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-warehouse me-1"></i>Dépôt <span class="text-danger">*</span></div>
+            <ng-select [items]="depotList" bindLabel="nomDepot" bindValue="id"
+                       [(ngModel)]="rdvDepotId" [disabled]="!isHote"
+                       (change)="onDepotChange()" [searchable]="true" [clearable]="false"
+                       placeholder="Choisir un dépôt"></ng-select>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-store me-1"></i>Client (revendeur) <span class="text-danger">*</span></div>
+            <ng-select [items]="revendeurList" bindLabel="raisonSocial" bindValue="id"
+                       [(ngModel)]="rdvClientId" [disabled]="!rdvDepotId"
+                       [searchable]="true" [clearable]="false"
+                       placeholder="Choisir un client"></ng-select>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-calendar-alt me-1"></i>Date RDV <span class="text-danger">*</span></div>
+            <input type="date" class="vd-input" [(ngModel)]="rdvDate">
+          </div>
+        </div>
 
-            </div>
-          </fieldset>
-
-          <fieldset class="row border my-2" *ngIf="operation == 'edit'">
-            <legend style="font-size: 14px" class="text-secondary">
-              Informations du client
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Groupe de client :</strong>
-                <span>{{ updateData.clientALivrer?.groupeClient?.nomGroupe || updateData.clientALivrer?.GroupeClient?.nomGroupe }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Type de client :</strong>
-                <span>{{ updateData.clientALivrer?.role }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Propriétaire :</strong>
-                <span>{{ updateData.clientALivrer?.nomProprietaire }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Gérant :</strong>
-                <span>{{ updateData.clientALivrer?.nomGerant }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Établissement :</strong>
-                <span>{{
-                    updateData.clientALivrer?.nomEtablissement ||
-                    updateData.clientALivrer?.raisonSocial
-                  }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Contact Gérant :</strong>
-                <span>{{ updateData.clientALivrer?.contactGerant }}</span>
-              </div>
-              <div class="col-md-4 mb-4">
-                <strong>Téléphone proprietaire :</strong>
-                <span>{{ updateData.clientALivrer?.telephoneProprietaire }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset>
-            <legend style="font-size: 14px" class="text-secondary">
-              Emballages
-            </legend>
-            <table class="table table-bordered">
-              <thead class="table-success">
-              <tr>
-                <th scope="col">Code</th>
-                <th scope="col">Type</th>
-                <th scope="col">Désignation</th>
-                <th scope="col">Conditionnement</th>
-                <th scope="col">Quantité</th>
-              </tr>
+        <div class="vd-card">
+          <div class="vd-card-header">
+            <div class="vd-card-icon orange"><i class="fas fa-recycle"></i></div>
+            <div class="vd-section-label flex-grow-1">Emballages attendus</div>
+            <button type="button" class="vd-btn-outline" (click)="openPicker()">
+              <i class="fas fa-plus me-1"></i>Ajouter emballages
+            </button>
+          </div>
+          <div class="vd-table-wrap">
+            <table class="vd-table">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Type</th>
+                  <th>Désignation</th>
+                  <th class="text-center">Quantité</th>
+                  <th class="text-center">Action</th>
+                </tr>
               </thead>
               <tbody>
-              <tr *ngFor="let item of filteredArticles">
-                <td>{{ item.productCode }}</td>
-                <td>{{ item.typeArticle }}</td>
-                <td>{{ item.libelle }}</td>
-                <td>{{ item.condition }}</td>
-                <td>{{ item.quantity }}</td>
-              </tr>
+                <tr *ngFor="let item of selectedArticles">
+                  <td><span class="vd-badge gray">{{ item.code }}</span></td>
+                  <td>{{ item.type }}</td>
+                  <td>{{ item.libelle }}</td>
+                  <td class="text-center fw-bold">{{ item.quantite }}</td>
+                  <td class="text-center">
+                    <button type="button" class="fn-action-btn delete" (click)="removeArticle(item)" title="Retirer">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="selectedArticles.length === 0">
+                  <td colspan="5"><div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucun emballage ajouté</span></div></td>
+                </tr>
               </tbody>
             </table>
-          </fieldset>
-
+          </div>
         </div>
-      </div>
+      </ng-container>
 
-      <div class="vd-modal-footer">
-        <button (click)="OnCloseModal()" type="button" class="vd-btn-outline">Fermer</button>
-      </div>
+      <ng-container *ngIf="operation == 'edit'">
+        <div class="vd-info-grid">
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-hashtag me-1"></i>N° commande</div>
+            <div class="vd-info-value fw-bold" style="color:#0071c2">
+              {{ updateData?.commandeClient?.NumCommande || updateData?.commandeGratuite?.NumCommande || updateData?.venteChine?.numVenteChine || '—' }}
+            </div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-warehouse me-1"></i>Dépôt</div>
+            <div class="vd-info-value">{{ updateData.depot?.nomDepot || '—' }}</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-tag me-1"></i>Motif</div>
+            <div class="vd-info-value">{{ updateData?.returnType || '—' }}</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-circle me-1"></i>Statut</div>
+            <div class="vd-info-value">{{ updateData?.commandeClient?.statut || updateData?.commandeGratuite?.statut || updateData?.venteChine?.statut || '—' }}</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-exchange-alt me-1"></i>Vente</div>
+            <div class="vd-info-value">{{ updateData?.fromTo || '—' }}</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-calendar-alt me-1"></i>Date RDV</div>
+            <div class="vd-info-value">{{ updateData?.appointmentDate | date:'dd/MM/yyyy' }}</div>
+          </div>
+        </div>
+
+        <div class="vd-card">
+          <div class="vd-card-header">
+            <div class="vd-card-icon blue"><i class="fas fa-store"></i></div>
+            <div class="vd-section-label">Informations du client</div>
+          </div>
+          <div class="vd-info-grid">
+            <div class="vd-info-block">
+              <div class="vd-info-label">Groupe</div>
+              <div class="vd-info-value">{{ updateData.clientALivrer?.groupeClient?.nomGroupe || updateData.clientALivrer?.GroupeClient?.nomGroupe || '—' }}</div>
+            </div>
+            <div class="vd-info-block">
+              <div class="vd-info-label">Type</div>
+              <div class="vd-info-value">{{ updateData.clientALivrer?.role || '—' }}</div>
+            </div>
+            <div class="vd-info-block">
+              <div class="vd-info-label">Propriétaire</div>
+              <div class="vd-info-value">{{ updateData.clientALivrer?.nomProprietaire || '—' }}</div>
+            </div>
+            <div class="vd-info-block">
+              <div class="vd-info-label">Gérant</div>
+              <div class="vd-info-value">{{ updateData.clientALivrer?.nomGerant || '—' }}</div>
+            </div>
+            <div class="vd-info-block">
+              <div class="vd-info-label">Établissement</div>
+              <div class="vd-info-value">{{ updateData.clientALivrer?.nomEtablissement || updateData.clientALivrer?.raisonSocial || '—' }}</div>
+            </div>
+            <div class="vd-info-block">
+              <div class="vd-info-label">Contact gérant</div>
+              <div class="vd-info-value">{{ updateData.clientALivrer?.contactGerant || '—' }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="vd-card">
+          <div class="vd-card-header">
+            <div class="vd-card-icon orange"><i class="fas fa-recycle"></i></div>
+            <div class="vd-section-label">Emballages</div>
+          </div>
+          <div class="vd-table-wrap">
+            <table class="vd-table">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Type</th>
+                  <th>Désignation</th>
+                  <th>Conditionnement</th>
+                  <th class="text-center">Quantité</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of filteredArticles">
+                  <td><span class="vd-badge gray">{{ item.productCode }}</span></td>
+                  <td>{{ item.typeArticle }}</td>
+                  <td>{{ item.libelle }}</td>
+                  <td>{{ item.condition }}</td>
+                  <td class="text-center fw-bold">{{ item.quantity }}</td>
+                </tr>
+                <tr *ngIf="!filteredArticles?.length">
+                  <td colspan="5"><div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucun emballage</span></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="vd-modal-footer">
+      <button type="button" class="vd-btn-outline" (click)="OnCloseModal()">Fermer</button>
+      <button *ngIf="operation === 'edit' && estRdvManuel(updateData)" type="button" class="vd-btn-danger" (click)="OnAnnulerRdv(updateData)">
+        <i class="fas fa-ban me-1"></i> Annuler le RDV
+      </button>
+      <button *ngIf="operation === 'create'" type="button" class="vd-btn-primary"
+              [disabled]="!canSubmitRdv || isSubmittingRdv" (click)="submitCreateRdv()">
+        <i class="fas fa-check me-1"></i> Créer le RDV
+      </button>
+    </div>
   </div>
 </div>
 
-
+<!-- Sous-modal : ajout d'emballages/plastiques -->
+<div *ngIf="isPickerOpen" class="custom-modal" style="z-index:1060">
+  <div class="vd-modal-dialog">
+    <div class="vd-modal-header">
+      <div class="vd-mh-left">
+        <div class="vd-mh-icon orange"><i class="fas fa-recycle"></i></div>
+        <div>
+          <div class="vd-mh-title">Ajouter des emballages</div>
+          <div class="vd-mh-sub">Emballages et plastiques disponibles</div>
+        </div>
+      </div>
+      <button class="vd-mh-close" (click)="closePicker()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="vd-modal-body">
+      <div class="vd-search-wrap mb-3">
+        <i class="fas fa-search"></i>
+        <input type="text" class="vd-search-input" [(ngModel)]="pickerSearchTerm"
+               (input)="filterPicker()" placeholder="Rechercher un emballage ou un plastique...">
+      </div>
+      <div class="vd-table-wrap">
+        <table class="vd-table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Type</th>
+              <th>Désignation</th>
+              <th class="text-center">Quantité</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of filteredPickerList">
+              <td><span class="vd-badge gray">{{ item.code }}</span></td>
+              <td>{{ item.type }}</td>
+              <td>{{ item.libelle }}</td>
+              <td class="text-center">
+                <input type="number" class="vd-qty-input" style="width:80px" min="1"
+                       [(ngModel)]="pickerQuantites[item.code]"
+                       [disabled]="isArticleSelected(item.code)">
+              </td>
+              <td class="text-center">
+                <button type="button" class="vd-btn-outline" style="padding:4px 10px"
+                        [disabled]="isArticleSelected(item.code)"
+                        (click)="addArticleFromPicker(item)">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="!filteredPickerList?.length">
+              <td colspan="5"><div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucun résultat</span></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="vd-modal-footer">
+      <button type="button" class="vd-btn-primary" (click)="closePicker()">Terminer</button>
+    </div>
+  </div>
+</div>

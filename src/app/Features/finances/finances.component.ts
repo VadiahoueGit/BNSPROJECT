@@ -23,6 +23,16 @@ export class FinancesComponent {
       title: 'Caisse',
       url: 'feature/finances/caisse',
     },
+    {
+      image: 'assets/icon/compta.png',
+      title: 'Paiements BO',
+      url: 'feature/finances/paiement-bo',
+    },
+    {
+      image: 'assets/icon/currency.png',
+      title: 'Rapprochement SAP',
+      url: 'feature/finances/sap-rapprochement',
+    },
     // {
     //   image: 'assets/icon/store.png',
     //   title: 'Revendeurs',

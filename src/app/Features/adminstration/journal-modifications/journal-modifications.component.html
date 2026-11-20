@@ -1,0 +1,213 @@
+<div class="jm-card">
+  <div class="jm-topbar">
+    <div>
+      <div class="jm-title"><i class="fas fa-clipboard-list"></i> Journal des modifications</div>
+      <div class="jm-sub">Ce qui a changé dans le back-office et l'API, de la plus récente à la plus ancienne</div>
+    </div>
+    <div class="jm-topbar-right">
+      <div class="jm-counts">
+        <span><strong>{{ total }}</strong> modification(s) affichée(s)</span>
+        <span><i class="jm-dot ok"></i><strong>{{ nbDeployees }}</strong> déployée(s)</span>
+        <span><i class="jm-dot wait"></i><strong>{{ nbEnAttente }}</strong> en attente</span>
+      </div>
+      <button class="jm-btn-primary" (click)="OnOpenEnvoi()">
+        <i class="fas fa-envelope me-1"></i>Envoi par mail
+      </button>
+    </div>
+  </div>
+
+  <div class="jm-filters">
+    <div class="jm-filter-item">
+      <div class="jm-filter-label">Période</div>
+      <select class="jm-select" [(ngModel)]="selectedPeriode">
+        <option *ngFor="let p of periodeOptions" [value]="p">{{ p }}</option>
+      </select>
+    </div>
+    <div class="jm-filter-item">
+      <div class="jm-filter-label">Type</div>
+      <select class="jm-select" [(ngModel)]="selectedType">
+        <option *ngFor="let t of typeOptions" [value]="t">{{ t }}</option>
+      </select>
+    </div>
+    <div class="jm-filter-item">
+      <div class="jm-filter-label">Périmètre</div>
+      <select class="jm-select" [(ngModel)]="selectedPerimetre">
+        <option *ngFor="let p of perimetreOptions" [value]="p">{{ p }}</option>
+      </select>
+    </div>
+    <div class="jm-filter-item">
+      <div class="jm-filter-label">Statut</div>
+      <select class="jm-select" [(ngModel)]="selectedStatut">
+        <option *ngFor="let s of statutOptions" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+    <div class="jm-filter-item grow">
+      <div class="jm-filter-label">Recherche</div>
+      <div class="jm-search-wrap">
+        <i class="fas fa-search jm-search-icon"></i>
+        <input class="jm-search" type="text" [(ngModel)]="recherche"
+               placeholder="Module, fichier, description…" />
+      </div>
+    </div>
+    <button class="jm-reset" *ngIf="hasFiltres" (click)="resetFiltres()">
+      <i class="fas fa-times me-1"></i>Réinitialiser
+    </button>
+  </div>
+
+  <p-table [styleClass]="'jm-ptable p-datatable-sm'" [value]="modificationsFiltrees" dataKey="titre"
+           [rows]="15" [rowsPerPageOptions]="[15, 30, 50]" [paginator]="modificationsFiltrees.length > 15">
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width:110px">Date</th>
+        <th>Modification</th>
+        <th style="width:120px">Type</th>
+        <th style="width:120px">Périmètre</th>
+        <th style="width:180px">Module</th>
+        <th style="width:110px">Statut</th>
+        <th style="width:120px">Déployé le</th>
+        <th style="width:70px" class="text-center">Détail</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-m>
+      <tr>
+        <td class="jm-nowrap">{{ m.date | date: 'dd/MM/yyyy' }}</td>
+        <td class="jm-cell-titre">{{ m.titre }}</td>
+        <td>{{ m.type }}</td>
+        <td>{{ m.perimetre }}</td>
+        <td>{{ m.module }}</td>
+        <td>
+          <span class="jm-badge" [class.ok]="m.statut === 'Déployé'" [class.wait]="m.statut !== 'Déployé'">
+            {{ m.statut }}
+          </span>
+        </td>
+        <td class="jm-nowrap">{{ m.deployeLe ? (m.deployeLe | date: 'dd/MM/yyyy') : '—' }}</td>
+        <td class="text-center">
+          <button class="jm-action-btn" (click)="OnView(m)" title="Voir le détail">
+            <i class="fas fa-eye"></i>
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="8" class="jm-empty">
+          <i class="fas fa-inbox me-2"></i>Aucune modification ne correspond à ces filtres.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Envoi par mail : destinataires et déclencheurs -->
+<div *ngIf="isEnvoiModalOpen" class="jm-modal">
+  <div class="jm-modal-dialog">
+    <div class="jm-modal-header">
+      <div>
+        <div class="jm-modal-title">Envoi du journal par mail</div>
+        <div class="jm-modal-sub">
+          Les destinataires reçoivent les modifications, sans les demandes d'origine
+        </div>
+      </div>
+      <button class="jm-modal-close" (click)="OnCloseEnvoi()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="jm-modal-body">
+      <div class="jm-filter-label">Expéditeur</div>
+      <input class="jm-search" type="email" [(ngModel)]="config.expediteur"
+             [placeholder]="expediteurParDefaut + ' (adresse par défaut)'" />
+      <div class="jm-aide">
+        Par défaut : {{ expediteurParDefaut }}. Une adresse d'un autre domaine est souvent refusée
+        ou classée en spam par le serveur d'envoi.
+      </div>
+
+      <div class="jm-filter-label mt-3">Destinataires</div>
+      <div class="jm-adresse-ajout">
+        <input class="jm-search" type="email" [(ngModel)]="nouvelleAdresse"
+               (keydown.enter)="ajouterAdresse()" placeholder="adresse@exemple.com" />
+        <button class="jm-btn-outline" (click)="ajouterAdresse()">
+          <i class="fas fa-plus me-1"></i>Ajouter
+        </button>
+      </div>
+
+      <ul class="jm-adresses" *ngIf="config.destinataires.length">
+        <li *ngFor="let adresse of config.destinataires">
+          <span>{{ adresse }}</span>
+          <button class="jm-adresse-retirer" (click)="retirerAdresse(adresse)" title="Retirer">
+            <i class="fas fa-times"></i>
+          </button>
+        </li>
+      </ul>
+      <div class="jm-aucune-adresse" *ngIf="!config.destinataires.length">
+        Aucun destinataire enregistré pour l'instant.
+      </div>
+
+      <div class="jm-filter-label mt-3">Envois automatiques</div>
+      <label class="jm-check">
+        <input type="checkbox" [(ngModel)]="config.envoiApresDeploiement" />
+        <span>Après chaque mise en ligne — les modifications jamais annoncées sont envoyées au redémarrage de l'API</span>
+      </label>
+      <label class="jm-check">
+        <input type="checkbox" [(ngModel)]="config.envoiMensuel" />
+        <span>En fin de mois — récapitulatif des modifications du mois, le dernier jour à 18h</span>
+      </label>
+
+      <div class="jm-dernier-envoi" *ngIf="config.dernierEnvoi">
+        Dernier envoi : {{ config.dernierEnvoi | date: 'dd/MM/yyyy à HH:mm' }}
+      </div>
+    </div>
+
+    <div class="jm-modal-footer">
+      <button class="jm-btn-outline" (click)="OnCloseEnvoi()">Fermer</button>
+      <button class="jm-btn-outline" (click)="envoyerMaintenant()">
+        <i class="fas fa-paper-plane me-1"></i>Envoyer maintenant ({{ selectedPeriode | lowercase }})
+      </button>
+      <button class="jm-btn-primary" (click)="enregistrerConfiguration()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Fiche de détail -->
+<div *ngIf="isModalOpen" class="jm-modal">
+  <div class="jm-modal-dialog">
+    <div class="jm-modal-header">
+      <div>
+        <div class="jm-modal-title">{{ selection?.titre }}</div>
+        <div class="jm-modal-sub">
+          {{ selection?.type }} · {{ selection?.perimetre }} · {{ selection?.module }}
+        </div>
+      </div>
+      <button class="jm-modal-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="jm-modal-body">
+      <div class="jm-modal-row">
+        <span class="jm-modal-label">Date</span>
+        <span>{{ selection?.date | date: 'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="jm-modal-row">
+        <span class="jm-modal-label">Statut</span>
+        <span class="jm-badge" [class.ok]="selection?.statut === 'Déployé'" [class.wait]="selection?.statut !== 'Déployé'">
+          {{ selection?.statut }}
+        </span>
+      </div>
+      <div class="jm-modal-row">
+        <span class="jm-modal-label">Déployé le</span>
+        <span>{{ selection?.deployeLe ? (selection?.deployeLe | date: 'dd/MM/yyyy') : 'Pas encore déployé' }}</span>
+      </div>
+
+      <p class="jm-desc">{{ selection?.description }}</p>
+      <p class="jm-demande" *ngIf="selection?.demande">« {{ selection?.demande }} »</p>
+
+      <div class="jm-files-title" *ngIf="selection?.fichiers?.length">Fichiers touchés</div>
+      <ul class="jm-files" *ngIf="selection?.fichiers?.length">
+        <li *ngFor="let f of selection?.fichiers">{{ f }}</li>
+      </ul>
+    </div>
+
+    <div class="jm-modal-footer">
+      <button class="jm-btn-outline" (click)="OnCloseModal()">Fermer</button>
+    </div>
+  </div>
+</div>

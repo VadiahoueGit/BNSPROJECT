@@ -5,7 +5,7 @@
   </div>
   <div class="sk-hub-grid">
     <ng-container *ngFor="let item of ListItems">
-      <div *ngIf="hasPermission(item.perm)" class="sk-hub-card" (click)="displayItem(item)">
+      <div  class="sk-hub-card" (click)="displayItem(item)">
         <div class="sk-hub-card-icon">
           <img [src]="item.image" [alt]="item.title">
         </div>
@@ -16,4 +16,22 @@
       </div>
     </ng-container>
   </div>
+
+  <!-- Section réservée Admin / Super admin -->
+  <ng-container *ngIf="isAdminRole()">
+    <div class="sk-hub-header mt-4">
+      <h2 class="sk-hub-title" style="font-size:1rem">Administration</h2>
+    </div>
+    <div class="sk-hub-grid">
+      <div *ngFor="let item of adminItems" class="sk-hub-card" (click)="displayItem(item)">
+        <div class="sk-hub-card-icon">
+          <img [src]="item.image" [alt]="item.title">
+        </div>
+        <div class="sk-hub-card-body">
+          <span class="sk-hub-card-label">{{ item.title }}</span>
+        </div>
+        <i class="fas fa-chevron-right sk-hub-card-arrow"></i>
+      </div>
+    </div>
+  </ng-container>
 </div>

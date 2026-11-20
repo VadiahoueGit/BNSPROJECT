@@ -1,11 +1,12 @@
-<div class="bui-back mb-4" (click)="goBack()">
-  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
-  <h4 class="fw-bold mb-0">Caisse</h4>
+<div class="cai-back-row" (click)="goBack()">
+  <div class="cai-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="cai-back-title">Caisse</h4>
 </div>
 
-<div class="cc-tabs mb-3">
-  <button class="cc-tab-btn" [class.active]="activeTab === 'brouillard'" (click)="activeElement('brouillard')">Brouillard de caisse</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'comptes'" (click)="activeElement('comptes')">Comptes</button>
+<div class="cai-tabs mb-3">
+  <button class="cai-tab-btn" [class.active]="activeTab === 'brouillard'" (click)="activeElement('brouillard')">Brouillard de caisse</button>
+  <button class="cai-tab-btn" [class.active]="activeTab === 'comptes'" (click)="activeElement('comptes')">Comptes</button>
+  <button class="cai-tab-btn" [class.active]="activeTab === 'recouvrement'" (click)="activeElement('recouvrement')">Recouvrement</button>
 </div>
 
 <div *ngIf="activeTab === 'brouillard'">
@@ -14,4 +15,8 @@
 
 <div *ngIf="activeTab === 'comptes'">
   <app-comptes></app-comptes>
+</div>
+
+<div *ngIf="activeTab === 'recouvrement'">
+  <app-recouvrement></app-recouvrement>
 </div>

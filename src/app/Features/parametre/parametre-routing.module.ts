@@ -11,8 +11,13 @@ import { QuestionnaireVisiteComponent } from './questionnaire-visite/questionnai
 import { CommercialComponent } from './commercial/commercial.component';
 import { ListPrixComponent } from './list-prix/list-prix.component';
 import { MoyenDePaiementComponent } from './moyen-de-paiement/moyen-de-paiement.component';
+import { BanqueComponent } from './banque/banque.component';
+import { CompteComponent } from './compte/compte.component';
+import { TypeCompteComponent } from './type-compte/type-compte.component';
 import { DevisesComponent } from './devises/devises.component';
 import { ReglePaletteComponent } from './regle-palette/regle-palette.component';
+import { InfosEntrepriseComponent } from './infos-entreprise/infos-entreprise.component';
+import { SapConfigComponent } from './sap-config/sap-config.component';
 const routes: Routes = [
   { path: '', component: ParametreComponent },
   {
@@ -27,8 +32,13 @@ const routes: Routes = [
   { path: 'commercial', component: CommercialComponent },
   { path: 'typeprix', component: ListPrixComponent, resolve:{ArticleServiceService} },
   { path: 'moyen-paiement', component: MoyenDePaiementComponent, resolve:{ArticleServiceService} },
+  { path: 'banques', component: BanqueComponent },
+  { path: 'comptes', component: CompteComponent },
+  { path: 'type-comptes', component: TypeCompteComponent },
 
   { path: 'regle-palette', component: ReglePaletteComponent },
+  { path: 'infos-entreprise', component: InfosEntrepriseComponent },
+  { path: 'sap-config', component: SapConfigComponent },
   { path: 'questionnairevisite', component: QuestionnaireVisiteComponent },
   {
     path: 'users',

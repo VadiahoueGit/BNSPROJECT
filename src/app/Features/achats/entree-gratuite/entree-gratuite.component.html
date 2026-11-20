@@ -1,10 +1,10 @@
-<div class="bui-back mb-4" (click)="goBack()">
-  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
-  <h4 class="fw-bold mb-0">Entrée de gratuités</h4>
+<div class="eg-back-row" (click)="goBack()">
+  <div class="eg-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="eg-back-title">Entrée de gratuités</h4>
 </div>
 
-<div class="cc-tabs mb-3">
-  <button class="cc-tab-btn" [class.active]="activeTab === 'saisiecommande'" (click)="activeElement('saisiecommande')">Saisie commande</button>
+<div class="eg-tabs mb-3">
+  <button class="eg-tab-btn" [class.active]="activeTab === 'saisiecommande'" (click)="activeElement('saisiecommande')">Saisie commande</button>
 </div>
 
 <div *ngIf="activeTab === 'saisiecommande'">

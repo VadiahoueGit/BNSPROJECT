@@ -31,6 +31,7 @@ export class EmballageComponent {
   currentPage: number;
   rowsPerPage: any;
   totalPages: number;
+  filters: any = { libelle: '', code: '' };
   constructor(
     private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
@@ -84,6 +85,8 @@ export class EmballageComponent {
       paginate: true,
       page: page,
       limit: 8,
+      libelle: this.filters.libelle || '',
+      code: this.filters.code || '',
     };
     this._spinner.show();
     this.articleService.GetEmballageList(data).then((res: any) => {
@@ -96,10 +99,8 @@ export class EmballageComponent {
     });
   }
 
-  filterGlobal(event: any) {
-    const inputElement = event.target as HTMLInputElement;
-    const value = inputElement?.value || '';
-    this.dt2.filterGlobal(value, 'contains');
+  filterGlobal() {
+    this.GetEmballageList(1);
   }
   OnCloseModal() {
     this.isModalOpen = false;

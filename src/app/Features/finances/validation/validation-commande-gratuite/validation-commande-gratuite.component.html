@@ -1,63 +1,39 @@
-<div class="card">
-
-    <p-table
-      [styleClass]="'p-datatable-sm'"
-      #dt2
-      [value]="ListCommandeGratuites"
-      dataKey="id"
-      [rows]="8"
-    [totalRecords]="totalPages" [lazy]="true"
-
-      [rowsPerPageOptions]="[10, 25, 50]"
-      [paginator]="true"
-      (onPage)="onPage($event)"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th>N° commande</th>
-          <th>Etablissement</th>
-  <!--        <th style="color: var(&#45;&#45;secondary-color)">Depôt</th>-->
-          <th>Quantité</th>
-          <th>Statut</th>
-          <th>Actions</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-ListCommandeGratuites let-i="index">
-        <tr>
-          <td>
-            {{ ListCommandeGratuites.NumCommande }}
-          </td>
-
-          <td>
-            {{ ListCommandeGratuites.client.raisonSocial ? ListCommandeGratuites.client.raisonSocial : ListCommandeGratuites.client.nomEtablissement }}
-          </td>
-  <!--        <td>-->
-  <!--          {{ ListCommandeGratuites.revendeur.depot.nomDepot }}-->
-  <!--        </td>-->
-          <td>
-            <span class="ml-1 vertical-align-middle">
-  <!--            {{ ListCommandeGratuites.articles[i].quantite }}-->
-            </span>
-          </td>
-          <td>
-            <span class="ml-1 vertical-align-middle">
-                          {{ ListCommandeGratuites.statut }}
-                      </span>
-          </td>
-          <td class="text-center">
-          <div class="d-flex justify-content-center gap-2">
-            <span class="bui-icon-btn view" (click)="OnEdit(ListCommandeGratuites)"><i class="fas fa-eye"></i></span>
-          </div>
-        </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="5">Aucune commande trouvé.</td>
-        </tr>
-      </ng-template>
-    </p-table>
+<div class="fn-card">
+  <div class="fn-topbar">
+    <div class="fn-topbar-left">
+      <div class="fn-title"><i class="fas fa-gift"></i> Validation commandes gratuites</div>
+      <div class="fn-count">{{ ListCommandeGratuites?.length || 0 }} commande(s)</div>
+    </div>
   </div>
+
+  <p-table [styleClass]="'fn-ptable p-datatable-sm'" #dt2 [value]="ListCommandeGratuites" dataKey="id"
+    [rows]="8" [totalRecords]="totalPages" [lazy]="true" [rowsPerPageOptions]="[10,25,50]"
+    [paginator]="true" (onPage)="onPage($event)">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>N° Commande</th>
+        <th>Établissement</th>
+        <th>Type de prix</th>
+        <th>Statut</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-i="index">
+      <tr>
+        <td><span class="fn-badge blue">{{ row.NumCommande }}</span></td>
+        <td style="font-weight:600">{{ row.client?.raisonSocial || row.client?.nomEtablissement }}</td>
+        <td style="font-size:11px">{{ row.client?.typePrix?.libelle || '—' }}</td>
+        <td><span class="fn-badge" [ngClass]="row.statut === 'APPROUVE' ? 'green' : row.statut === 'EN_ATTENTE' ? 'orange' : 'gray'">{{ row.statut }}</span></td>
+        <td class="text-center">
+          <button class="fn-action-btn view" (click)="OnEdit(row)" title="Voir"><i class="fas fa-eye"></i></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="5" style="text-align:center; padding:32px; color:#9ca3af; font-size:13px;"><i class="fas fa-inbox me-2"></i>Aucune commande trouvée.</td></tr>
+    </ng-template>
+  </p-table>
+</div>
 
   <!-- Modal creation -->
   <!-- Modal -->
@@ -89,6 +65,10 @@
               <div class="col-md-4">
                 <strong>Type de client :</strong>
                 <span>{{updateData.client.role}}</span>
+              </div>
+              <div class="col-md-4">
+                <strong>Type de prix :</strong>
+                <span>{{ updateData.client?.typePrix?.libelle || '—' }}</span>
               </div>
               <div class="col-md-4">
                 <strong>Propriétaire :</strong>
@@ -247,91 +227,47 @@
     </div>
   </div>
 
-  <!--CHOIX ARTICLE-->
+  <!-- Choix article modal -->
   <div *ngIf="isChoiceModalOpen" class="custom-modal">
-    <div class="modal-dialog2 modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header d-flex align-items-center">
-          <div class="bui-modal-icon"><i class="fas fa-box-check text-primary fs-3"></i></div>
-          <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
-            Selection des articles
-          </h1>
+    <div class="vd-modal-dialog">
+      <div class="vd-modal-header">
+        <div class="vd-mh-left">
+          <div class="vd-mh-icon blue"><i class="fas fa-box-open"></i></div>
+          <div><div class="vd-mh-title">Sélection des articles</div></div>
         </div>
-
-        <div class="modal-body">
-          <form>
-            <div class="row">
-              <fieldset class="row border my-2">
-                <div class="p-3">
-                  <!-- Champ de recherche -->
-                  <input
-                    type="text"
-                    name="search"
-                    (input)="filterArticles()"
-                    [(ngModel)]="searchTerm"
-                    placeholder="Rechercher un produit"
-                    class="form-control mb-3"
-                  />
-                </div>
-                <div
-                  class="table-responsive"
-                  style="max-height: 200px; overflow-y: auto"
-                >
-                  <table class="table">
-                    <thead>
-                      <tr style="font-size: small">
-                        <th scope="col" class="text-secondary">Code</th>
-                        <th scope="col" class="text-secondary">Produits</th>
-                        <th scope="col" class="text-secondary">Disponibilité</th>
-                        <th scope="col" class="text-secondary text-center">
-                          Choix
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr
-                        *ngFor="let article of filteredArticleList ; let i = index"
-                        style="font-size: small"
-                      >
-                        <th scope="row">{{ article.code }}</th>
-                        <th scope="row">{{ article.libelle }}</th>
-                        <th scope="row">{{stocksDisponibles[article.liquide.id]}}</th>
-                        <td class="">
-                          <input
-                            type="checkbox"
-                            class="form-control-custom"
-                            [name]="'checkbox_' + i"
-                            [(ngModel)]="article.isChecked"
-                            (change)="onCheckboxChange(article)"
-                            [disabled]="stocksDisponibles[article.liquide.id] <=0"
-                          />
-
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </fieldset>
-            </div>
-          </form>
+      </div>
+      <div class="vd-modal-body">
+        <input type="text" name="search" (input)="filterArticles()" [(ngModel)]="searchTerm"
+          placeholder="Rechercher un produit" class="vd-input mb-3" />
+        <div style="max-height:220px; overflow-y:auto">
+          <table class="table table-sm">
+            <thead>
+              <tr style="font-size:11px">
+                <th>Code</th>
+                <th>Produits</th>
+                <th>Disponibilité</th>
+                <th class="text-center">Choix</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let article of filteredArticleList; let i = index" style="font-size:12px">
+                <td>{{ article.code }}</td>
+                <td>{{ article.libelle }}</td>
+                <td>{{ stocksDisponibles[article.liquide.id] }}</td>
+                <td class="text-center">
+                  <input type="checkbox" [name]="'checkbox_' + i" [(ngModel)]="article.isChecked"
+                    (change)="onCheckboxChange(article)" [disabled]="stocksDisponibles[article.liquide.id] <= 0" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div class="modal-footer gap-3 px-4y">
-          <button
-            (click)="OnCloseChoiceModal()"
-            type="button"
-            class="btn btn-secondary px-2"
-          >
-            Annuler
-          </button>
-          <button
-
-            type="submit"
-            (click)="onSubmitSelection()"
-            class="btn btn-primary px-2"
-          >
-            Valider
-          </button>
-        </div>
+      </div>
+      <div class="vd-modal-footer">
+        <button (click)="OnCloseChoiceModal()" type="button" class="vd-btn-outline">Annuler</button>
+        <button type="button" (click)="onSubmitSelection()" class="vd-btn-primary">
+          <i class="fas fa-check me-1"></i>Valider
+        </button>
       </div>
     </div>
   </div>

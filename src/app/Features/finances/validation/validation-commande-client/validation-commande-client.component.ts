@@ -7,7 +7,7 @@ import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { FinanceService } from 'src/app/core/finance.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
 import { ALERT_QUESTION } from 'src/app/Features/shared-component/utils';
-import {calculeDateEcheance, StatutCommande} from "../../../../utils/utils";
+import {calculeDateEcheance, StatutCommande, MOTIFS_REJET_COMMANDE} from "../../../../utils/utils";
 
 @Component({
   selector: 'app-validation-commande-client',
@@ -65,6 +65,7 @@ export class ValidationCommandeClientComponent {
   rowsPerPage: any;
   listRevendeurs: any[] = [];
   totalGlobalAfterRemise: number = 0;
+  montantRemise: number = 0;
   prixLiquideArticleSelected: any;
   prixEmballageArticleSelected: any;
   ListCommandeClient: any;
@@ -97,6 +98,9 @@ export class ValidationCommandeClientComponent {
       soldeLiquide: [{ value: '', disabled: true }],
       statutCompte: ['Ok'],
       fraisTransport: [0, Validators.required],
+      transportActif: [false],
+      montantTransportParCasier: [0],
+      nombreCasiersTransport: [0],
       articles: this.fb.array([]),
     });
 
@@ -204,7 +208,7 @@ export class ValidationCommandeClientComponent {
     this.articleId = data.id;
     this.isModalOpen = true;
     this.operation = 'edit';
-    console.log(this.isModalOpen);
+    this.cdr.detectChanges();
   }
   // calculeDateEcheance(date: string, delaiEnJours: number): string {
   //   const dateCreation = new Date(date);
@@ -235,8 +239,9 @@ export class ValidationCommandeClientComponent {
     const fraisTransport =
       this.commandClientForm.get('fraisTransport')?.value || 0;
 
+    this.montantRemise = this.totalLiquide * (remise / 100);
     this.totalGlobalAfterRemise =
-      this.totalGlobalBeforeRemise * (1 - remise / 100);
+      this.totalGlobalBeforeRemise - this.montantRemise;
 
     this.totalGlobal = this.totalGlobalAfterRemise + fraisTransport;
 
@@ -255,6 +260,32 @@ export class ValidationCommandeClientComponent {
     this.totalGlobal = this.totalGlobalAfterRemise + fraisTransport;
 
     console.log('Montant final après frais de transport :', this.totalGlobal);
+  }
+
+  onTransportChange() {
+    const transportActif = this.commandClientForm.get('transportActif')?.value;
+
+    if (!transportActif) {
+      this.commandClientForm.patchValue({
+        montantTransportParCasier: 0,
+        nombreCasiersTransport: 0,
+        fraisTransport: 0,
+      });
+      this.applyFraisTransport();
+      return;
+    }
+
+    const montantParCasier = this.commandClientForm.get('montantTransportParCasier')?.value || 0;
+    let nombreCasiers = this.commandClientForm.get('nombreCasiersTransport')?.value || 0;
+
+    if (nombreCasiers > this.totalQte) {
+      this.toastr.warning('Le nombre de casiers concernés par le transport ne peut pas dépasser le nombre total de casiers de la commande.');
+      nombreCasiers = this.totalQte;
+      this.commandClientForm.patchValue({ nombreCasiersTransport: nombreCasiers });
+    }
+
+    this.commandClientForm.patchValue({ fraisTransport: montantParCasier * nombreCasiers });
+    this.applyFraisTransport();
   }
 
   calculatePrix(data: any) {
@@ -277,6 +308,7 @@ export class ValidationCommandeClientComponent {
     this.totalQte += data.quantite;
 
     this.applyRemise();
+    this.onTransportChange();
     console.log(data, 'data article');
     data.oldQuantite = data.quantite;
     this.articles.push(
@@ -338,6 +370,9 @@ export class ValidationCommandeClientComponent {
       statutCompte: formData.statutCompte,
       numeroSAP: this.detailPointDevente.numeroSAP,
       fraisTransport: formData.fraisTransport,
+      transportActif: formData.transportActif,
+      montantTransportParCasier: formData.montantTransportParCasier,
+      nombreCasiersTransport: formData.nombreCasiersTransport,
       enCours: parseInt(formData.enCours),
       remise: formData.remise,
       articles: formData.articles,
@@ -377,7 +412,7 @@ export class ValidationCommandeClientComponent {
       numeroCommande: '',
       date: '',
       etablissement: '',
-      statut: StatutCommande.ATTENTE_VALIDATION,
+      statut: [StatutCommande.ATTENTE_VALIDATION, StatutCommande.REJETEE],
     };
     this._spinner.show();
     this.articleService.GetListCommandeClient(data).then((res: any) => {
@@ -426,12 +461,48 @@ export class ValidationCommandeClientComponent {
           } else {
             doApprouver();
           }
-        } else {
-          this.isModalOpen = false;
         }
       });
     }
   }
+
+  isRejetModalOpen = false;
+  commandeARejeter: any = null;
+  motifsRejet = MOTIFS_REJET_COMMANDE;
+  motifRejetChoisi: string = '';
+
+  OuvrirRejetCommande(data: any) {
+    this.commandeARejeter = data;
+    this.motifRejetChoisi = '';
+    this.isRejetModalOpen = true;
+  }
+
+  FermerRejetCommande() {
+    this.isRejetModalOpen = false;
+    this.commandeARejeter = null;
+  }
+
+  ConfirmerRejetCommande() {
+    if (!this.motifRejetChoisi) {
+      this.toastr.warning('Veuillez choisir un motif de rejet.');
+      return;
+    }
+    this._spinner.show();
+    this._financeService.RejeterCommandeClient(this.commandeARejeter.id, this.motifRejetChoisi).then((res: any) => {
+      this._spinner.hide();
+      if (res.statusCode === 200) {
+        this.toastr.success(res.message || 'Commande rejetée.');
+        this.FermerRejetCommande();
+        this.GetListCommandeClient(1);
+      } else {
+        this.toastr.error(res.message || 'Erreur lors du rejet.');
+      }
+    }, (error: any) => {
+      this._spinner.hide();
+      this.toastr.error(error?.error?.message || 'Erreur lors du rejet.');
+    });
+  }
+
   selectArticle() {
     if(this.commandClientForm.controls['clientId'].valid)
     {
@@ -443,6 +514,9 @@ export class ValidationCommandeClientComponent {
       }
       if (!this.commandClientForm.controls['remise'].value) {
         this.commandClientForm.patchValue({ remise: 0 });
+      }
+      if (!this.commandClientForm.controls['transportActif'].value) {
+        this.commandClientForm.patchValue({ transportActif: false, montantTransportParCasier: 0, nombreCasiersTransport: 0 });
       }
       this.cdr.detectChanges();
     }else{

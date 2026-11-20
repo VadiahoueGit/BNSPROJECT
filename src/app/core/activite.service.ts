@@ -316,6 +316,16 @@ export class ActiviteService {
   }
 
   //LIVRAISON
+  AjouterCommandesRegroupement(id: number, commandes: string[]) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.patch(`${this.apiUrl}/v1/regroupements/${id}/ajouter-commandes`, { commandes }, { headers }).subscribe(
+        (res: any) => resolve(res),
+        (err) => reject(err)
+      );
+    });
+  }
+
   CreationRegroupement(data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -341,7 +351,7 @@ export class ActiviteService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/regroupements?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&_t=${Date.now()}`,{headers}
+          `${this.apiUrl}/v1/regroupements?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&statut=${data.statut || ''}&dateDebut=${data.dateDebut || ''}&dateFin=${data.dateFin || ''}&numero=${encodeURIComponent(data.numero || '')}&conducteur=${encodeURIComponent(data.conducteur || '')}&depotId=${data.depotId || ''}&_t=${Date.now()}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -355,10 +365,21 @@ export class ActiviteService {
         );
     });
   }
-  GetRegroupementByCommandeId(commandeId: number) {
+
+  AnnulerRegroupement(id: number) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
-      this._http.get(`${this.apiUrl}/v1/regroupements/by-commande/${commandeId}`, { headers }).subscribe(
+      this._http.patch(`${this.apiUrl}/v1/regroupements/${id}/annuler`, {}, { headers }).subscribe(
+        (res: any) => resolve(res),
+        (err) => reject(err)
+      );
+    });
+  }
+
+  GetRegroupementByCommandeId(commandeId: number, type?: string) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.get(`${this.apiUrl}/v1/regroupements/by-commande/${commandeId}${type ? '?type=' + type : ''}`, { headers }).subscribe(
         (res: any) => resolve(res),
         (err) => reject(err)
       );
@@ -646,6 +667,23 @@ export class ActiviteService {
       );
     });
   }
+  AnnulerValidationRetourPlein(id: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.patch(`${this.apiUrl}/v1/retours-pleins/${id}/annuler-validation`, {}, {headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
   ValidateRetourById(id: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -687,9 +725,14 @@ export class ActiviteService {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
+      const filterParams =
+        `&statut=${encodeURIComponent(data.statut || '')}` +
+        `&numCommande=${encodeURIComponent(data.numCommande || '')}` +
+        `&dateDebut=${data.dateDebut || ''}` +
+        `&dateFin=${data.dateFin || ''}`;
       this._http
         .get(
-          `${this.apiUrl}/v1/retours/emballages?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+          `${this.apiUrl}/v1/retours/emballages?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}${filterParams}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -704,14 +747,67 @@ export class ActiviteService {
     });
   }
 
+  GetHistoriqueRetourEmballage(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http
+        .get(`${this.apiUrl}/v1/retours/emballages/${id}/historique`, { headers })
+        .subscribe(
+          (res: any) => resolve(res),
+          (err) => reject(err)
+        );
+    });
+  }
+
+  AnnulerRetourEmballage(id: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http
+        .put(`${this.apiUrl}/v1/retours/emballages/${id}/annuler`, {}, { headers })
+        .subscribe(
+          (res: any) => resolve(res),
+          (err) => reject(err)
+        );
+    });
+  }
+
   GetRetourList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      const filterParams =
+        `&numeroCommande=${encodeURIComponent(data.numeroCommande || '')}` +
+        `&agent=${encodeURIComponent(data.agent || '')}` +
+        `&client=${encodeURIComponent(data.client || '')}` +
+        `&depotId=${data.depotId || ''}` +
+        `&dateDebut=${data.dateDebut || ''}` +
+        `&dateFin=${data.dateFin || ''}`;
+      this._http
+        .get(
+          `${this.apiUrl}/v1/retours/rdv?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}${filterParams}`,{headers}
+        )
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+  GetEmballagesRecuperesDepuisRdv(data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/retours/rdv?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+          `${this.apiUrl}/v1/retours/rdv/recuperes?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -732,6 +828,57 @@ export class ActiviteService {
         Authorization: `Bearer ${this.token}`
       });
       this._http.post(`${this.apiUrl}/v1/return-article-inventories`,data,{headers}).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+  CreateRdvManuel(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/retours/rdv/manuel`, data, { headers }).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+  AnnulerRdvManuel(id: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.put(`${this.apiUrl}/v1/retours/rdv/manuel/${id}/annuler`, {}, { headers }).subscribe(
+        (res: any) => {
+          console.log(res);
+          resolve(res);
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        }
+      );
+    });
+  }
+  AnnulerInventaire(regroupementId: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+      this._http.post(`${this.apiUrl}/v1/return-article-inventories/regroupement/${regroupementId}/annuler`,{},{headers}).subscribe(
         (res: any) => {
           console.log(res);
           resolve(res);
@@ -768,7 +915,7 @@ export class ActiviteService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/retours/emballage/regroupement?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+          `${this.apiUrl}/v1/retours/emballage/regroupement?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}${data.statut ? '&statut=' + encodeURIComponent(data.statut) : ''}${data.dateDebut ? '&dateDebut=' + data.dateDebut : ''}${data.dateFin ? '&dateFin=' + data.dateFin : ''}${data.numero ? '&numero=' + encodeURIComponent(data.numero) : ''}${data.agent ? '&agent=' + encodeURIComponent(data.agent) : ''}${data.contact ? '&contact=' + encodeURIComponent(data.contact) : ''}${data.fonction ? '&fonction=' + encodeURIComponent(data.fonction) : ''}${data.depotId ? '&depotId=' + data.depotId : ''}${data.dateInventaire ? '&dateInventaire=' + data.dateInventaire : ''}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -780,6 +927,62 @@ export class ActiviteService {
             reject(err);
           }
         );
+    });
+  }
+
+  GetGroupDetail(regroupementId: number | null, transporteurId: number | null, commercialId: number | null) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.get(
+        `${this.apiUrl}/v1/retours/emballage/regroupement/detail?regroupementId=${regroupementId}&transporteurId=${transporteurId}&commercialId=${commercialId}`,
+        { headers }
+      ).subscribe((res: any) => resolve(res), (err: any) => reject(err));
+    });
+  }
+
+  GetRetourPleinRegroupementList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/retours-pleins/regroupement?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}${data.statut ? '&statut=' + encodeURIComponent(data.statut) : ''}${data.dateDebut ? '&dateDebut=' + data.dateDebut : ''}${data.dateFin ? '&dateFin=' + data.dateFin : ''}${data.numero ? '&numero=' + encodeURIComponent(data.numero) : ''}${data.agent ? '&agent=' + encodeURIComponent(data.agent) : ''}${data.depotId ? '&depotId=' + data.depotId : ''}`,
+          { headers }
+        )
+        .subscribe((res: any) => resolve(res), (err: any) => reject(err));
+    });
+  }
+
+  GetGroupDetailRetourPlein(regroupementId: number) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.get(
+        `${this.apiUrl}/v1/retours-pleins/regroupement/detail?regroupementId=${regroupementId}`,
+        { headers }
+      ).subscribe((res: any) => resolve(res), (err: any) => reject(err));
+    });
+  }
+
+  TerminerRegroupementRetourPlein(id: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.patch(`${this.apiUrl}/v1/retours-pleins/terminer-regroupement/${id}`, {}, { headers })
+        .subscribe((res: any) => resolve(res), (err: any) => reject(err));
+    });
+  }
+
+  CreateInventaireRetourPlein(regroupementId: any, inventories: any[]) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.post(`${this.apiUrl}/v1/retours-pleins/inventaire`, { regroupementId, inventories }, { headers })
+        .subscribe((res: any) => resolve(res), (err: any) => reject(err));
+    });
+  }
+
+  AnnulerInventaireRetourPlein(regroupementId: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.post(`${this.apiUrl}/v1/retours-pleins/inventaire/${regroupementId}/annuler`, {}, { headers })
+        .subscribe((res: any) => resolve(res), (err: any) => reject(err));
     });
   }
 
@@ -817,6 +1020,41 @@ export class ActiviteService {
           }
         }, error => {
           console.error('Erreur lors du téléchargement du PDF :', error);
+          reject(error);
+        });
+    });
+  }
+
+  GetRetourWithArtilesListAgentExcel(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`
+      });
+
+      this._http
+        .get(
+          `${this.apiUrl}/v1/regroupements/regroupe/regroupement_emballage/excel?regroupementId=${data.regroupementId}&transporteurId=${data.transporteurId}&role=${data.role}`,
+          { headers, responseType: 'blob' }
+        )
+        .subscribe(response => {
+          try {
+            const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const url = window.URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `Regroupement_${data.regroupementId}.xlsx`;
+            link.click();
+
+            setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+
+            resolve();
+          } catch (err) {
+            console.error('Erreur lors du téléchargement du fichier Excel :', err);
+            reject(err);
+          }
+        }, error => {
+          console.error('Erreur lors du téléchargement du fichier Excel :', error);
           reject(error);
         });
     });
@@ -886,6 +1124,16 @@ export class ActiviteService {
     });
   }
 
+  GetRaisonRetourPleinList() {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.get(`${this.apiUrl}/v1/raison-retour-plein?paginate=false`, { headers }).subscribe(
+        (res: any) => { resolve(res); },
+        (err) => { reject(err); }
+      );
+    });
+  }
+
   CreateRetourPlein(data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -909,7 +1157,7 @@ export class ActiviteService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/retours-pleins?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,{headers}
+          `${this.apiUrl}/v1/retours-pleins?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}${data.numRetour ? '&numRetour=' + encodeURIComponent(data.numRetour) : ''}${data.dateDebut ? '&dateDebut=' + data.dateDebut : ''}${data.dateFin ? '&dateFin=' + data.dateFin : ''}${data.client ? '&client=' + encodeURIComponent(data.client) : ''}${data.statut ? '&statut=' + encodeURIComponent(data.statut) : ''}${data.agent ? '&agent=' + encodeURIComponent(data.agent) : ''}${data.typeRetour ? '&typeRetour=' + encodeURIComponent(data.typeRetour) : ''}${data.depotId ? '&depotId=' + data.depotId : ''}`,{headers}
         )
         .subscribe(
           (res: any) => {
@@ -996,6 +1244,44 @@ export class ActiviteService {
         }, error => {
           console.error('Erreur lors du téléchargement du PDF :', error);
           reject(error);
+        });
+    });
+  }
+
+  GetBonLivraisonPdf(numCommande: string) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+        'Content-Type': 'application/json'
+      });
+      this._http
+        .post(
+          `${this.apiUrl}/v1/regroupements/${numCommande}/bon-livraison`,
+          {},
+          { headers, responseType: 'blob' }
+        )
+        .subscribe(response => {
+          try {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+            const newTab = window.open(url);
+            if (!newTab) throw new Error('Popup bloqué par le navigateur.');
+            setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+            resolve();
+          } catch (err) {
+            console.error('Erreur ouverture PDF :', err);
+            reject(err);
+          }
+        }, async (error) => {
+          console.error('Erreur téléchargement BL PDF :', error);
+          // Lire le message depuis le blob d'erreur
+          try {
+            const text = await (error.error as Blob).text();
+            const parsed = JSON.parse(text);
+            reject({ error: parsed });
+          } catch {
+            reject(error);
+          }
         });
     });
   }

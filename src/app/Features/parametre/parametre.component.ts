@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Route, Router } from '@angular/router';
-import {hasPermission} from "../../utils/utils";
+import {hasPermission, isAdminRole} from "../../utils/utils";
 
 @Component({
   selector: 'app-parametre',
@@ -98,6 +98,37 @@ export class ParametreComponent implements OnInit {
       title: 'Règles palette',
       url:'feature/parametre/regle-palette',
       perm:'param_devises'
+    },
+    {
+      image: 'assets/icon/wallet.png',
+      title: 'Banques',
+      url:'feature/parametre/banques',
+      perm:'param_banques'
+    },
+    {
+      image: 'assets/icon/wallet.png',
+      title: 'Comptes',
+      url:'feature/parametre/comptes',
+      perm:'param_comptes'
+    },
+    {
+      image: 'assets/icon/wallet.png',
+      title: 'Type de compte',
+      url:'feature/parametre/type-comptes',
+      perm:'param_type_comptes'
+    }
+  ]
+
+  adminItems = [
+    {
+      image: 'assets/icon/depot.png',
+      title: 'Infos entreprise',
+      url: 'feature/parametre/infos-entreprise',
+    },
+    {
+      image: 'assets/icon/currency.png',
+      title: 'Intégration SAP',
+      url: 'feature/parametre/sap-config',
     }
   ]
   constructor(private _router: Router) { }
@@ -110,4 +141,5 @@ export class ParametreComponent implements OnInit {
   }
 
   protected readonly hasPermission = hasPermission;
+  protected readonly isAdminRole = isAdminRole;
 }

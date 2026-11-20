@@ -1,254 +1,372 @@
-<div
-  class="gap-2 d-flex align-items-center mb-3"
-  style="cursor: pointer"
-  (click)="goBack()"
->
-  <i style="font-size: 18px" class="fas fw-bold fa-chevron-left me-2"></i>
+<!-- Back -->
+<div class="lv-back-row mb-4" (click)="goBack()">
+  <div class="lv-back-icon"><i class="fas fa-chevron-left"></i></div>
   <h4 class="fw-bold mb-0">Livraisons</h4>
 </div>
 
-<div class="card">
-  <div class="d-flex justify-content-end py-3">
-    <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
-      Faire un regroupement
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- LISTE REGROUPEMENTS                                            -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="lv-list-card">
+  <div class="lv-list-topbar mb-3">
+    <span class="lv-list-count">{{ totalPages }} regroupement(s)</span>
+    <button type="button" class="lv-btn-primary" (click)="OnCreate()">
+      <i class="fas fa-layer-group me-2"></i>Faire un regroupement
     </button>
   </div>
+
+  <!-- Filtres -->
+  <div class="lv-filters mb-3">
+    <div class="lv-filter-search">
+      <i class="fas fa-hashtag lv-filter-search-icon"></i>
+      <input type="text" class="lv-filter-search-input" placeholder="N° regroupement…"
+        [(ngModel)]="filterNumero" (keydown.enter)="filterGlobal()">
+    </div>
+    <div class="lv-filter-search">
+      <i class="fas fa-id-badge lv-filter-search-icon"></i>
+      <input type="text" class="lv-filter-search-input" placeholder="Conducteur…"
+        [(ngModel)]="filterConducteur" (keydown.enter)="filterGlobal()">
+    </div>
+    <ng-select [items]="depotList" bindLabel="nomDepot" bindValue="id" [(ngModel)]="filterDepotId"
+      (change)="filterGlobal()" [searchable]="isHote" [clearable]="isHote" [readonly]="!isHote"
+      placeholder="Tous les dépôts" class="lv-filter-select" style="min-width:200px"></ng-select>
+    <select class="lv-filter-select" [(ngModel)]="filterStatut" (change)="onFilterStatutChange()">
+      <option value="">Tous les statuts</option>
+      <option *ngFor="let s of statutOptions" [value]="s.value">{{ s.label }}</option>
+    </select>
+    <input type="date" class="lv-filter-select" [(ngModel)]="filterDateDebut" (change)="onFilterDateChange()">
+    <input type="date" class="lv-filter-select" [(ngModel)]="filterDateFin" (change)="onFilterDateChange()">
+    <button class="lv-filter-clear" style="background:none;border:none" (click)="filterGlobal()" title="Rechercher">
+      <i class="fas fa-search"></i>
+    </button>
+    <button *ngIf="hasActiveFilters" class="lv-filter-clear" (click)="resetFilters()">
+      <i class="fas fa-times me-1"></i>Réinitialiser
+    </button>
+  </div>
+
   <p-table
-    [styleClass]="'p-datatable-sm'"
+    [styleClass]="'lv-ptable p-datatable-sm'"
     #dt2
     [value]="listRegroupements"
     dataKey="id"
     [rows]="8"
-    [totalRecords]="totalPages" [lazy]="true"
+    [totalRecords]="totalPages"
+    [lazy]="true"
     [rowsPerPageOptions]="[10, 25, 50]"
     [paginator]="true"
     (onPage)="onPage($event)"
   >
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color)">N° Regroupement</th>
-        <th style="color: var(--secondary-color)">Nbre commandes</th>
-        <th style="color: var(--secondary-color)">Conducteur</th>
-        <th style="color: var(--secondary-color)">Montant (FCFA)</th>
-        <th style="color: var(--secondary-color)">Statut</th>
-        <th style="color: var(--secondary-color)">Actions</th>
+        <th>N° Regroupement</th>
+        <th class="text-center">Nbre commandes</th>
+        <th>Conducteur</th>
+        <th>Dépôt</th>
+        <th class="text-end">Montant (XOF)</th>
+        <th>Statut</th>
+        <th class="text-center">Actions</th>
       </tr>
     </ng-template>
+
     <ng-template pTemplate="body" let-dataList>
       <tr>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.numRegroupement }}
-          </span>
+        <td class="fw-semibold">{{ dataList.numRegroupement }}</td>
+        <td class="text-center">
+          <span class="lv-count-chip">{{ dataList.commandes.length }}</span>
         </td>
+        <td>{{ dataList.transporteur.nom }} {{ dataList.transporteur.prenoms }}</td>
+        <td>{{ dataList.depot?.nomDepot || '—' }}</td>
+        <td class="text-end fw-semibold">{{ getTotalGeneral(dataList.commandes) || 0 | number:'1.0-0' }}</td>
         <td>
-          {{ dataList.commandes.length }}
+          <span class="lv-badge" [ngClass]="{
+            'green':  dataList.statut === 'Livrée',
+            'orange': dataList.statut === 'En cours',
+            'red':    dataList.statut === 'Annulée',
+            'gray':   dataList.statut !== 'Livrée' && dataList.statut !== 'En cours' && dataList.statut !== 'Annulée'
+          }">{{ dataList.statut }}</span>
         </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList.transporteur.nom }}  {{ dataList.transporteur.prenoms }}
-          </span>
-        </td>
-        <td>
-          {{ getTotalGeneral(dataList.commandes) || 0 | number:'1.0-0' }}
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-             {{ dataList.statut }}
-          </span>
-        </td>
-
-        <td>
-          <tr class="d-flex justify-content-center gap-3">
-            <td>
-              <i
-                (click)="OnView(dataList)"
-                style="cursor: pointer"
-                class="fas fa-eye text-secondary"
-              ></i>
-            </td>
-          </tr>
+        <td class="text-center">
+          <button class="lv-action-btn" type="button" (click)="OnView(dataList)" title="Voir le détail">
+            <i class="fas fa-eye"></i>
+          </button>
+          <button *ngIf="dataList.statut !== 'Livrée' && dataList.statut !== 'Annulée'"
+            class="lv-action-btn" type="button" (click)="OnAnnulerRegroupement(dataList)" title="Annuler le regroupement">
+            <i class="fas fa-ban"></i>
+          </button>
         </td>
       </tr>
     </ng-template>
+
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">Aucune commande trouvé.</td>
+        <td colspan="7">
+          <div class="vd-empty">
+            <i class="fas fa-route"></i>
+            <span>Aucun regroupement trouvé.</span>
+          </div>
+        </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
-<!-- Modal creation -->
-<!-- Modal -->
-
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- MODAL CRÉATION REGROUPEMENT                                    -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div
-    class="modal-dialog modal-dialog-centered"
+  <div class="lv-modal-dialog lv-modal-xl">
+    <div class="lv-modal-content">
 
-  >
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Regroupement</h5>
-        <button type="button" class="btn-close" aria-label="Close"></button>
+      <!-- Header -->
+      <div class="lv-modal-header">
+        <div class="lv-modal-header-left">
+          <div class="lv-header-icon"><i class="fas fa-layer-group"></i></div>
+          <div>
+            <div class="lv-header-title">Nouveau regroupement</div>
+            <div class="lv-header-sub">Sélectionnez les commandes à regrouper</div>
+          </div>
+        </div>
+        <div class="lv-modal-header-right">
+          <button class="lv-close-btn" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+        </div>
       </div>
 
-      <div
-        class="modal-body"
-        style="padding: 20px; max-height: 70vh; overflow-y: auto"
-      >
-        <div class="row">
-          <div class="col-md-7">
-            <div class="row mb-3">
+      <!-- Body -->
+      <div class="lv-modal-body lv-modal-body-create">
+        <div class="lv-create-grid">
+
+          <!-- ── Panneau gauche : commandes ── -->
+          <div class="lv-create-left">
+
+            <!-- Filtres -->
+            <div class="lv-create-section-title mb-2">
+              <i class="fas fa-filter me-2"></i>Filtres
+              <button *ngIf="hasRegroupementFilters"
+                class="btn btn-sm btn-link text-decoration-none ms-2 p-0"
+                (click)="resetRegroupementFilters()">
+                <i class="fas fa-times me-1"></i>Réinitialiser
+              </button>
+            </div>
+            <div class="row g-2 mb-3">
               <div class="col-md-6">
-                <label for="zone" class="form-label">Zone de livraison*</label>
-                <ng-select
-                  class="form-control"
-                  [items]="listZone"
-                  bindLabel="nomZone"
-                  bindValue="id"
-                  [searchable]="true"
-                  (change)="onZoneChange($event)"
-                >
-                </ng-select>
+                <div class="lv-form-field">
+                  <label class="lv-form-label">Dépôt</label>
+                  <ng-select
+                    [items]="depotList"
+                    bindLabel="nomDepot"
+                    bindValue="id"
+                    [searchable]="isHote"
+                    [clearable]="isHote"
+                    [readonly]="!isHote"
+                    [(ngModel)]="regrpDepotId"
+                    [ngModelOptions]="{ standalone: true }"
+                    (change)="onRegroupementDepotChange()"
+                    placeholder="Tous les dépôts">
+                  </ng-select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="lv-form-field">
+                  <label class="lv-form-label">Zone de livraison</label>
+                  <ng-select
+                    [items]="listZoneFiltree"
+                    bindLabel="nomZone"
+                    bindValue="id"
+                    [multiple]="true"
+                    [closeOnSelect]="false"
+                    [searchable]="true"
+                    [(ngModel)]="regrpZoneIds"
+                    [ngModelOptions]="{ standalone: true }"
+                    (change)="applyRegroupementFilters()"
+                    placeholder="Toutes les zones">
+                  </ng-select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="lv-form-field">
+                  <label class="lv-form-label">Établissement</label>
+                  <input type="text"
+                    class="lv-filter-search-input"
+                    [(ngModel)]="regrpEtablissement"
+                    [ngModelOptions]="{ standalone: true }"
+                    (input)="applyRegroupementFilters()"
+                    placeholder="Rechercher…" />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="lv-form-field">
+                  <label class="lv-form-label">Date</label>
+                  <input type="date"
+                    class="lv-filter-search-input"
+                    [(ngModel)]="regrpDate"
+                    [ngModelOptions]="{ standalone: true }"
+                    (change)="applyRegroupementFilters()" />
+                </div>
               </div>
             </div>
-            <div
-              class="table-responsive"
-              style="max-height: 400px; overflow-y: auto"
-            >
-              <table class="table table-bordered table-hover">
-                <thead class="table-success">
-                <tr>
-                  <th>Commande</th>
-                  <th>Établissements</th>
-                  <th>Casier</th>
-                  <th>Zone livraison</th>
-                  <th>Date</th>
-                  <th>Actions</th>
-                </tr>
+
+            <div class="lv-create-section-title mb-2">
+              <i class="fas fa-clipboard-list me-2"></i>Commandes disponibles
+              <span class="lv-count-chip ms-2">{{ filteredList.length }}</span>
+            </div>
+            <div class="lv-commandes-table-wrap">
+              <table class="vd-table">
+                <thead>
+                  <tr>
+                    <th>N° Commande</th>
+                    <th>Établissement</th>
+                    <th class="text-center">Casiers</th>
+                    <th>Zone</th>
+                    <th>Date</th>
+                    <th class="text-center">Choix</th>
+                  </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let item of filteredList; let i = index">
-                  <td>{{ item.NumCommande }}</td>
-                  <td> {{ item.client.nomEtablissement ? item.client.nomEtablissement : item.client.raisonSocial}}
-                  </td>
-                  <td>{{ getTotalQuantite(item.articles) }}</td>
-                  <td>{{ item.client.zoneDeLivraison.nomZone }}</td>
-                  <td>{{ item.createdAt|date }}</td>
-                  <td class="">
-                    <input
-                      type="checkbox"
-                      class="form-control-custom"
-                      [disabled]="this.livraisonForm.controls['vehicule'].invalid"
-                      [name]="'checkbox_' + i"
-                      [(ngModel)]="item.isChecked"
-                      (change)="onCheckboxChange(item)"
-                    />
+                  <tr *ngFor="let item of filteredList; let i = index">
+                    <td class="fw-semibold">{{ item.NumCommande }}</td>
+                    <td>{{ item.client.nomEtablissement || item.client.raisonSocial }}</td>
+                    <td class="text-center">{{ getTotalQuantite(item.articles) }}</td>
+                    <td>{{ item.client.zoneDeLivraison.nomZone }}</td>
+                    <td>{{ item.createdAt | date:'dd/MM/yyyy' }}</td>
+                    <td class="text-center">
+                      <input type="checkbox"
+                        class="lv-checkbox"
+                        [disabled]="livraisonForm.controls['vehicule'].invalid"
+                        [name]="'checkbox_' + i"
+                        [(ngModel)]="item.isChecked"
+                        (change)="onCheckboxChange(item)">
+                    </td>
+                  </tr>
+                  <tr *ngIf="filteredList.length === 0">
+                    <td colspan="6">
+                      <div class="vd-empty">
+                        <i class="fas fa-inbox"></i>
+                        <span>Pas de commande en attente.</span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
 
-                  </td>
-                </tr>
-                <tr *ngIf="filteredList.length == 0" ><td colspan="6"><label class="text-center">Pas de commande en cours.</label></td></tr>
+          <!-- ── Panneau droit : infos regroupement ── -->
+          <div class="lv-create-right">
+
+            <!-- Transporteur & Véhicule -->
+            <div class="lv-create-section-title mb-2">
+              <i class="fas fa-truck me-2"></i>Informations transport
+            </div>
+            <form [formGroup]="livraisonForm" class="lv-transport-form mb-3">
+              <div class="lv-form-field mb-2">
+                <label class="lv-form-label">Transporteur</label>
+                <ng-select
+                  [items]="listTransporteurFiltre"
+                  bindLabel="displayName"
+                  formControlName="transporteur"
+                  bindValue="id"
+                  [searchable]="true"
+                  placeholder="Sélectionner…">
+                </ng-select>
+              </div>
+              <div class="lv-form-field">
+                <label class="lv-form-label">Véhicule</label>
+                <ng-select
+                  [items]="listVehiculeFiltre"
+                  (change)="onVehiculeChange($event)"
+                  bindLabel="displayName"
+                  formControlName="vehicule"
+                  bindValue="id"
+                  [searchable]="true"
+                  placeholder="Sélectionner…">
+                </ng-select>
+              </div>
+            </form>
+
+            <!-- Capacité -->
+            <div class="lv-create-section-title mb-2">
+              <i class="fas fa-weight-hanging me-2"></i>Capacité chargement
+            </div>
+            <div class="lv-capacity-card mb-3">
+              <div class="lv-capacity-row">
+                <span class="lv-capacity-label">Cargaison</span>
+                <span class="lv-capacity-value" [class.lv-capacity-over]="cargaison >= truckCapacity">
+                  {{ cargaison }} / {{ truckCapacity }}
+                </span>
+              </div>
+              <div class="lv-capacity-bar-wrap">
+                <div class="lv-capacity-bar-track">
+                  <div class="lv-capacity-bar-fill"
+                    [style.width.%]="truckCapacity > 0 ? (cargaison / truckCapacity * 100) : 0"
+                    [class.lv-capacity-full]="cargaison >= truckCapacity">
+                  </div>
+                </div>
+              </div>
+              <span class="lv-capacity-warning" *ngIf="cargaison >= truckCapacity">
+                <i class="fas fa-exclamation-triangle me-1"></i>Véhicule plein
+              </span>
+            </div>
+
+            <!-- Résumé chargement -->
+            <div class="lv-create-section-title mb-2">
+              <i class="fas fa-pallet me-2"></i>Résumé de chargement
+            </div>
+            <div class="lv-charge-table-wrap">
+              <table class="vd-table">
+                <thead>
+                  <tr>
+                    <th>Format</th>
+                    <th>Type</th>
+                    <th>Fournisseur</th>
+                    <th class="text-center">Palettes</th>
+                    <th class="text-center">Casiers</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor="let item of regroupementFinal | keyvalue">
+                    <tr *ngFor="let subItem of item.value">
+                      <td>{{ item.key }}</td>
+                      <td>{{ subItem.type }}</td>
+                      <td><span class="lv-badge blue">{{ subItem.fournisseurNom || '—' }}</span></td>
+                      <td class="text-center">{{ subItem.palettes }}</td>
+                      <td class="text-center fw-bold">{{ subItem.casier }}</td>
+                    </tr>
+                  </ng-container>
+                  <tr *ngIf="(regroupementFinal | keyvalue).length === 0">
+                    <td colspan="5">
+                      <div class="vd-empty" style="padding: 16px">
+                        <i class="fas fa-boxes"></i>
+                        <span>Aucune commande sélectionnée</span>
+                      </div>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
 
           </div>
-
-            <div class="col-md-5">
-              <div class="card">
-                <div class="card-header">
-                  <h6 class="mb-0">Informations sur le regroupement</h6>
-                </div>
-                <div class="card-body">
-                  <div class="row">
-                    <!-- Première colonne -->
-                    <div class="col-12">
-                      <form [formGroup]="livraisonForm">
-                        <div class="mb-3">
-                          <label for="transporteur" class="form-label">Transporteur</label>
-                          <ng-select
-                            class="form-control"
-                            [items]="listTransporteur"
-                            bindLabel="displayName"
-                            formControlName="transporteur"
-                            bindValue="id"
-                            [searchable]="true"
-                          >
-                          </ng-select>
-                        </div>
-                        <div class="mb-3">
-                          <label for="chauffeur" class="form-label">Véhicule</label>
-                          <ng-select
-                            class="form-control"
-                            [items]="listVehicule"
-                            (change)="onVehiculeChange($event)"
-                            bindLabel="displayName"
-                            formControlName="vehicule"
-                            bindValue="id"
-                            [searchable]="true"
-                          >
-                          </ng-select>
-                        </div>
-                      </form>
-
-                    </div>
-                  </div>
-                  <div class="row">
-                    <table class="table table-bordered table-hover">
-                      <thead class="table-success">
-                      <tr>
-                        <td colspan="1">
-                          <i class="fa-sharp fa-solid fa-truck-ramp-couch"></i>
-                        </td>
-                        <td colspan="2">{{ cargaison }} / {{ truckCapacity }}</td>
-                      </tr>
-                      <tr>
-                        <th>Format</th>
-                        <th>Type</th>
-                        <th>Palette</th>
-                        <th>Casier</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      <!-- Boucle sur chaque format -->
-                      <ng-container *ngFor="let item of regroupementFinal | keyvalue">
-                        <!-- Boucle sur chaque type d'article pour ce format -->
-                        <tr *ngFor="let subItem of item.value">
-                          <td>{{ item.key }}</td>
-                          <td>{{ subItem.type }}</td>
-                          <td>{{ subItem.palettes }}</td>
-                          <td>{{ subItem.casier }}</td>
-                        </tr>
-                      </ng-container>
-                      </tbody>
-                    </table>
-
-                  </div>
-                </div>
-              </div>
-            </div>
         </div>
       </div>
 
       <!-- Footer -->
-      <div class="modal-footer gap-3 px-4">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          (click)="OnCloseModal()"
-        >
-          Annuler
+      <div class="lv-modal-footer">
+        <button type="button" class="vd-btn-outline" (click)="OnCloseModal()">
+          <i class="fas fa-times me-1"></i>Annuler
         </button>
-        <button [disabled]="commandeList.length <=0 || cargaison >= truckCapacity || livraisonForm.invalid" type="submit" class="btn btn-primary" (click)="onSubmit()">
-          Valider
+        <button type="submit" class="lv-btn-submit"
+          [disabled]="commandeList.length <= 0 || cargaison >= truckCapacity || livraisonForm.invalid"
+          (click)="onSubmit()">
+          <i class="fas fa-check me-2"></i>Valider le regroupement
         </button>
       </div>
+
     </div>
   </div>
 </div>
 
-<!-- Modal détail -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- MODAL DÉTAIL REGROUPEMENT                                      -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
 <div *ngIf="isModalOpenDetail" class="custom-modal">
   <div class="lv-modal-dialog">
     <div class="lv-modal-content">
@@ -315,7 +433,13 @@
               </thead>
               <tbody>
                 <tr *ngFor="let retour of updateData?.commandes">
-                  <td class="lv-raison-cell">{{ retour?.clientInfo?.raisonSocial || retour?.clientInfo?.nomEtablissement }}</td>
+                  <td class="lv-raison-cell">
+                    {{ retour?.clientInfo?.raisonSocial || retour?.clientInfo?.nomEtablissement }}
+                    <button class="lv-action-btn ms-2" type="button" title="Imprimer bon de livraison"
+                      (click)="printBonLivraison(retour)">
+                      <i class="fas fa-file-pdf"></i>
+                    </button>
+                  </td>
                   <td class="text-center" *ngFor="let article of allArticles">
                     {{ getQuantity(retour, article.libelle) || '—' }}
                   </td>
@@ -348,6 +472,7 @@
                 <tr>
                   <th>Format</th>
                   <th>Type</th>
+                  <th>Fournisseur</th>
                   <th class="text-center">Palettes</th>
                   <th class="text-center">Casiers</th>
                 </tr>
@@ -357,6 +482,7 @@
                   <tr *ngFor="let subItem of item.value">
                     <td>{{ item.key }}</td>
                     <td>{{ subItem.type }}</td>
+                    <td><span class="vd-badge blue">{{ subItem.fournisseurNom || '—' }}</span></td>
                     <td class="text-center">{{ subItem.palettes }}</td>
                     <td class="text-center fw-bold">{{ subItem.casier }}</td>
                   </tr>
@@ -382,32 +508,72 @@
                   <th>Fin</th>
                   <th>Statut</th>
                   <th class="text-center">Signature</th>
+                  <th class="text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let retour of updateData?.livraisons">
-                  <td class="fw-600">{{ retour?.commande?.NumCommande }}</td>
-                  <td>{{ retour?.commande?.clientInfo?.raisonSocial || retour?.commande?.clientInfo?.nomEtablissement }}</td>
-                  <td>{{ retour?.dateLivraisonDebut | date:'dd/MM/yyyy HH:mm' }}</td>
-                  <td>{{ retour?.dateLivraisonFin | date:'dd/MM/yyyy HH:mm' }}</td>
-                  <td>
-                    <span class="lv-badge" [ngClass]="{
-                      'green':  retour?.commande?.statut === 'Livré',
-                      'orange': retour?.commande?.statut === 'En cours',
-                      'gray':   retour?.commande?.statut !== 'Livré' && retour?.commande?.statut !== 'En cours'
-                    }">{{ retour?.commande?.statut }}</span>
-                  </td>
-                  <td class="text-center">
-                    <span *ngIf="retour?.signatureClient" class="bui-icon-btn view"
-                      (click)="OnViewSign(retour.signatureClient)">
-                      <i class="fas fa-eye"></i>
-                    </span>
-                    <span *ngIf="!retour?.signatureClient" class="text-muted" style="font-size:12px">—</span>
-                  </td>
-                </tr>
-                <tr *ngIf="!updateData?.livraisons?.length">
-                  <td colspan="6">
-                    <div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucune livraison</span></div>
+                <ng-container *ngFor="let cmd of updateData?.commandes">
+                  <ng-container *ngIf="getLivraisonForCommande(cmd.numCommande) as livraison; else nonEntamee">
+                    <tr>
+                      <td class="fw-600">{{ cmd.numCommande }}</td>
+                      <td>{{ cmd.clientInfo?.raisonSocial || cmd.clientInfo?.nomEtablissement }}</td>
+                      <td>{{ livraison.dateLivraisonDebut | date:'dd/MM/yyyy HH:mm' }}</td>
+                      <td>{{ livraison.dateLivraisonFin | date:'dd/MM/yyyy HH:mm' }}</td>
+                      <td>
+                        <span class="lv-badge" [ngClass]="{
+                          'green':  cmd.statutCommande === 'Livré' || cmd.statutCommande === 'Commande Livrée',
+                          'orange': cmd.statutCommande === 'En cours',
+                          'gray':   cmd.statutCommande !== 'Livré' && cmd.statutCommande !== 'Commande Livrée' && cmd.statutCommande !== 'En cours'
+                        }">{{ cmd.statutCommande }}</span>
+                      </td>
+                      <td class="text-center">
+                        <span *ngIf="livraison.signatureClient" class="lv-action-btn"
+                          (click)="OnViewSign(livraison.signatureClient)" style="cursor:pointer">
+                          <i class="fas fa-eye"></i>
+                        </span>
+                        <span *ngIf="!livraison.signatureClient" class="text-muted" style="font-size:12px">—</span>
+                      </td>
+                      <td class="text-center">
+                        <button
+                          *ngIf="cmd.statutCommande !== 'Livré' && cmd.statutCommande !== 'Commande Livrée' && cmd.statutCommande !== 'Attente de Validation'"
+                          class="lv-action-btn"
+                          type="button"
+                          title="Retour plein"
+                          (click)="openRetourPleinCommandeModal(cmd)">
+                          <i class="fas fa-undo-alt"></i>
+                        </button>
+                        <span *ngIf="cmd.statutCommande === 'Livré' || cmd.statutCommande === 'Commande Livrée' || cmd.statutCommande === 'Retournée' || cmd.statutCommande === 'Attente de Validation'" class="text-muted" style="font-size:12px">—</span>
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <ng-template #nonEntamee>
+                    <tr style="opacity:.7">
+                      <td class="fw-600">{{ cmd.numCommande }}</td>
+                      <td>{{ cmd.clientInfo?.raisonSocial || cmd.clientInfo?.nomEtablissement }}</td>
+                      <td class="text-muted" style="font-size:12px">—</td>
+                      <td class="text-muted" style="font-size:12px">—</td>
+                      <td>
+                        <span *ngIf="cmd.statutCommande === 'Retournée'" class="lv-badge orange">Retournée</span>
+                        <span *ngIf="cmd.statutCommande !== 'Retournée'" class="lv-badge gray">Pas encore entamée</span>
+                      </td>
+                      <td class="text-center text-muted" style="font-size:12px">—</td>
+                      <td class="text-center">
+                        <button
+                          *ngIf="cmd.statutCommande !== 'Attente de Validation' && cmd.statutCommande !== 'Retournée' && cmd.statutCommande !== 'Livré' && cmd.statutCommande !== 'Commande Livrée'"
+                          class="lv-action-btn"
+                          type="button"
+                          title="Retour plein"
+                          (click)="openRetourPleinCommandeModal(cmd)">
+                          <i class="fas fa-undo-alt"></i>
+                        </button>
+                        <span *ngIf="cmd.statutCommande === 'Attente de Validation' || cmd.statutCommande === 'Retournée' || cmd.statutCommande === 'Livré' || cmd.statutCommande === 'Commande Livrée'" class="text-muted" style="font-size:12px">—</span>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </ng-container>
+                <tr *ngIf="!updateData?.commandes?.length">
+                  <td colspan="7">
+                    <div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucune commande</span></div>
                   </td>
                 </tr>
               </tbody>
@@ -419,7 +585,10 @@
 
       <!-- Footer -->
       <div class="lv-modal-footer">
-        <span></span>
+        <button *ngIf="updateData?.statut !== 'Livré' && updateData?.statut !== 'Livrée'" type="button" class="lv-btn-primary"
+          (click)="openAddCommandesModal(updateData)">
+          <i class="fas fa-plus me-2"></i>Ajouter des commandes
+        </button>
         <button type="button" class="vd-btn-outline" (click)="closeDetailModal()">
           <i class="fas fa-times me-1"></i>Fermer
         </button>
@@ -429,49 +598,181 @@
   </div>
 </div>
 
-
-
-<!-- Modal détail -->
-<!-- Modal -->
-<div *ngIf="isModalOpenSign" class="custom-modal">
-  <div
-    class="modal-dialog-sign modal-dialog-centered"
-    style=" max-width: 1200px"
-  >
-    <div class="modal-content">
-      <!-- Header -->
-      <div class="modal-header">
-        <h5 class="modal-title text-success">Signature</h5>
-        <button type="button" class="btn-close" aria-label="Close"></button>
-      </div>
-
-      <!-- Body -->
-      <div
-        class="modal-body"
-        style="padding: 20px; max-height: 70vh; overflow-y: auto"
-      >
-        <div class="row">
-          <!-- Regroupement et Zone -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- MODAL RETOUR PLEIN COMMANDE                                    -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div *ngIf="isModalRetourPleinCommande" class="custom-modal">
+  <div class="lv-sign-modal">
+    <div class="lv-modal-header">
+      <div class="lv-modal-header-left">
+        <div class="lv-header-icon"><i class="fas fa-undo-alt"></i></div>
+        <div>
+          <div class="lv-header-title">Retour plein</div>
+          <div class="lv-header-sub">{{ selectedCommandeRetour?.numCommande }}</div>
         </div>
-        <div class="col-md-12">
-          <div class="row">
-            <div class="container">
-              <img style="width:100%;height:100%" *ngIf="signature" [src]=signature alt="">
-            </div>
+      </div>
+      <div class="lv-modal-header-right">
+        <button class="lv-close-btn" (click)="closeRetourPleinCommandeModal()"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div class="lv-sign-body" style="padding: 1.5rem;">
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Motif du retour <span class="text-danger">*</span></label>
+        <select class="form-select" [(ngModel)]="selectedRaisonRetourId">
+          <option [ngValue]="null" disabled>-- Sélectionner un motif --</option>
+          <option *ngFor="let r of listRaisonsRetour" [ngValue]="r.id">{{ r.libelle }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="lv-modal-footer">
+      <button type="button" class="vd-btn-outline" (click)="closeRetourPleinCommandeModal()">
+        <i class="fas fa-times me-1"></i>Annuler
+      </button>
+      <button type="button" class="lv-btn-primary" (click)="submitRetourPleinCommande()" [disabled]="!selectedRaisonRetourId">
+        <i class="fas fa-check me-1"></i>Confirmer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- MODAL SIGNATURE                                                -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div *ngIf="isModalOpenSign" class="custom-modal">
+  <div class="lv-sign-modal">
+    <div class="lv-modal-header">
+      <div class="lv-modal-header-left">
+        <div class="lv-header-icon"><i class="fas fa-signature"></i></div>
+        <div class="lv-header-title">Signature client</div>
+      </div>
+      <div class="lv-modal-header-right">
+        <button class="lv-close-btn" (click)="closeDetailSign()"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div class="lv-sign-body">
+      <img *ngIf="signature" [src]="signature" alt="Signature" class="lv-sign-img">
+    </div>
+    <div class="lv-modal-footer">
+      <span></span>
+      <button type="button" class="vd-btn-outline" (click)="closeDetailSign()">
+        <i class="fas fa-times me-1"></i>Fermer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- MODAL AJOUTER COMMANDES AU REGROUPEMENT                        -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div *ngIf="isModalAddCommandesOpen" class="custom-modal">
+  <div class="lv-modal-dialog lv-modal-xl">
+    <div class="lv-modal-content">
+
+      <div class="lv-modal-header">
+        <div class="lv-modal-header-left">
+          <div class="lv-header-icon"><i class="fas fa-plus-circle"></i></div>
+          <div>
+            <div class="lv-header-title">Ajouter des commandes</div>
+            <div class="lv-header-sub">{{ selectedRegroupement?.numRegroupement }}</div>
           </div>
         </div>
+        <div class="lv-modal-header-right">
+          <button class="lv-close-btn" (click)="closeAddCommandesModal()"><i class="fas fa-times"></i></button>
+        </div>
       </div>
 
-      <!-- Table des commandes -->
-      <div class="modal-footer gap-3 px-4">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          (click)="closeDetailSign()"
-        >
-          Fermer
+      <div class="lv-modal-body">
+
+        <!-- Recherche -->
+        <div class="lv-add-search-wrap">
+          <i class="fas fa-search lv-add-search-icon"></i>
+          <input type="text" class="lv-add-search-input" placeholder="Rechercher par N° commande ou établissement…"
+            [(ngModel)]="searchTermAdd">
+        </div>
+
+        <!-- Capacité véhicule -->
+        <div class="lv-add-cap-card">
+          <div class="lv-capacity-row">
+            <span class="lv-capacity-label"><i class="fas fa-truck me-1"></i>Capacité véhicule — {{ selectedRegroupement?.vehicule?.marque }}</span>
+            <span class="lv-capacity-value" [class.lv-capacity-over]="addModalCargaisonActuelle + addModalCargaisonAjout >= addModalCapacite">
+              {{ addModalCargaisonActuelle + addModalCargaisonAjout }} / {{ addModalCapacite }} casiers
+            </span>
+          </div>
+          <div class="lv-capacity-bar-wrap">
+            <div class="lv-add-cap-track">
+              <div class="lv-add-cap-current"
+                [style.width.%]="addModalCapacite > 0 ? min100(addModalCargaisonActuelle / addModalCapacite * 100) : 0">
+              </div>
+              <div class="lv-add-cap-new"
+                [style.width.%]="addModalCapacite > 0 ? min100(addModalCargaisonAjout / addModalCapacite * 100) : 0"
+                [class.lv-capacity-full]="addModalCargaisonActuelle + addModalCargaisonAjout >= addModalCapacite">
+              </div>
+            </div>
+          </div>
+          <div class="lv-add-cap-legend">
+            <span><span class="lv-cap-dot blue"></span>Actuel : {{ addModalCargaisonActuelle }}</span>
+            <span><span class="lv-cap-dot green"></span>À ajouter : {{ addModalCargaisonAjout }}</span>
+            <span class="lv-capacity-warning" *ngIf="addModalCargaisonActuelle + addModalCargaisonAjout >= addModalCapacite">
+              <i class="fas fa-exclamation-triangle me-1"></i>Véhicule plein
+            </span>
+          </div>
+        </div>
+
+        <!-- Table commandes -->
+        <div class="lv-create-section-title mb-2">
+          <i class="fas fa-clipboard-list me-2"></i>Commandes disponibles
+          <span class="lv-count-chip ms-2">{{ filteredListAddDisplay.length }}</span>
+        </div>
+        <div class="lv-commandes-table-wrap">
+          <table class="vd-table">
+            <thead>
+              <tr>
+                <th>N° Commande</th>
+                <th>Établissement</th>
+                <th class="text-center">Casiers</th>
+                <th>Zone</th>
+                <th>Date</th>
+                <th class="text-center">Choix</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of filteredListAddDisplay">
+                <td class="fw-semibold">{{ item.NumCommande }}</td>
+                <td>{{ item.client?.nomEtablissement || item.client?.raisonSocial }}</td>
+                <td class="text-center">{{ getTotalQuantite(item.articles) }}</td>
+                <td>{{ item.client?.zoneDeLivraison?.nomZone }}</td>
+                <td>{{ item.createdAt | date:'dd/MM/yyyy' }}</td>
+                <td class="text-center">
+                  <input type="checkbox" class="lv-checkbox"
+                    [(ngModel)]="item.isCheckedAdd"
+                    [disabled]="!item.isCheckedAdd && addModalCapacite > 0 && (addModalCargaisonActuelle + addModalCargaisonAjout + getTotalQuantite(item.articles)) > addModalCapacite"
+                    (change)="onCheckboxAddChange(item)">
+                </td>
+              </tr>
+              <tr *ngIf="filteredListAddDisplay.length === 0">
+                <td colspan="6">
+                  <div class="vd-empty">
+                    <i class="fas fa-check-circle"></i>
+                    <span>{{ filteredListAdd.length === 0 ? 'Toutes les commandes sont déjà dans ce regroupement.' : 'Aucun résultat.' }}</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="lv-modal-footer">
+        <button type="button" class="vd-btn-outline" (click)="closeAddCommandesModal()">
+          <i class="fas fa-times me-1"></i>Annuler
+        </button>
+        <button type="button" class="lv-btn-submit"
+          [disabled]="commandesAAjouter.length === 0"
+          (click)="submitAjouterCommandes()">
+          <i class="fas fa-plus me-2"></i>Ajouter {{ commandesAAjouter.length > 0 ? '(' + commandesAAjouter.length + ')' : '' }}
         </button>
       </div>
+
     </div>
   </div>
 </div>

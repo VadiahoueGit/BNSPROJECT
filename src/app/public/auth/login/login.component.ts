@@ -5,7 +5,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { CoreServiceService } from 'src/app/core/core-service.service';
 import { LocalStorageService } from 'src/app/core/local-storage.service';
 import { storage_keys } from 'src/app/Features/shared-component/utils';
-import {SplashService} from "../../../core/splash.service";
+import { SplashService } from '../../../core/splash.service';
+import { ConfigService } from 'src/app/core/config-service.service';
 
 @Component({
   selector: 'app-login',
@@ -14,15 +15,36 @@ import {SplashService} from "../../../core/splash.service";
 })
 export class LoginComponent implements OnInit {
   public loginForm!: FormGroup;
-  isLoading:Boolean = false;
-  submitError:Boolean = false;
-  testVersion:boolean = false;
-  constructor(private _router: Router,
+  isLoading: Boolean = false;
+  submitError: Boolean = false;
+  testVersion: boolean = false;
+  showCompanyModal: boolean = false;
+  isSwitching: boolean = false;
+  loadingCompanies: boolean = false;
+  companies: { tenantId: string; nom: string; logoPath: string }[] = [];
+
+  showDepotHoteModal: boolean = false;
+  isCreatingDepot: boolean = false;
+  depotHoteForm = new FormGroup({
+    nomDepot:  new FormControl('', [Validators.required]),
+    gerant:    new FormControl('', [Validators.required]),
+    telephone: new FormControl('', [Validators.required]),
+  });
+  constructor(
+    private _router: Router,
     public splashService: SplashService,
-    private localstorage:LocalStorageService,
-    private _auth : CoreServiceService,
-    private _spinner :NgxSpinnerService
+    private localstorage: LocalStorageService,
+    private _auth: CoreServiceService,
+    private _spinner: NgxSpinnerService,
+    private configService: ConfigService,
   ) {}
+
+  getLogoUrl(logoPath: string): string {
+    if (!logoPath) return '';
+    if (logoPath.startsWith('http')) return logoPath;
+    const base = (this.configService.docUrl || '').replace(/\/$/, '');
+    return base + logoPath;
+  }
   ngOnInit(): void {
     // 🔍 Détection automatique de l’environnement
     const hostname = window.location.hostname.toLowerCase();
@@ -52,19 +74,59 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) {
       try {
         await this._auth.ToConnect(this.loginForm.value).then((res: any) => {
-          this.isLoading = false
-          console.log(res);
+          this.isLoading = false;
           if (res.access_token) {
-            this.localstorage.setItem(storage_keys.STOREToken,res.access_token)
-            this.localstorage.setItem(storage_keys.STOREUser,res.user)
-            this.splashService.show = true;
-            this._router.navigate(['feature']);
+            this.localstorage.setItem(storage_keys.STOREToken, res.access_token);
+            this.localstorage.setItem(storage_keys.STOREUser, res.user);
+            this.localstorage.setItem(storage_keys.STORETenant, res.user?.tenantId ?? 'db1');
+            const roleName = res.user?.role?.name || res.user?.role || '';
+            if (roleName === 'Super admin') {
+              this.loadingCompanies = true;
+              this.showCompanyModal = true;
+              this._auth.getCompanies().then((list: any[]) => {
+                this.companies = list;
+                this.loadingCompanies = false;
+              }).catch(() => { this.loadingCompanies = false; });
+            } else {
+              this.splashService.show = true;
+              this._router.navigate(['feature']);
+            }
           }
         });
       } catch (error) {
-        this.isLoading = false
+        this.isLoading = false;
         this.handleError(error);
       }
+    }
+  }
+
+  async selectCompany(tenantId: string) {
+    this.isSwitching = true;
+    try {
+      const res: any = await this._auth.switchCompany(tenantId);
+      this.localstorage.setItem(storage_keys.STOREToken, res.access_token);
+      this.localstorage.setItem(storage_keys.STORETenant, res.tenantId);
+      const hasDepots = await this._auth.checkHasDepots();
+      if (!hasDepots) {
+        this.isSwitching = false;
+        this.showCompanyModal = false;
+        this.showDepotHoteModal = true;
+      } else {
+        window.location.href = '/feature';
+      }
+    } catch (error) {
+      this.isSwitching = false;
+    }
+  }
+
+  async submitDepotHote() {
+    if (this.depotHoteForm.invalid) return;
+    this.isCreatingDepot = true;
+    try {
+      await this._auth.createDepotHote(this.depotHoteForm.value as any);
+      window.location.href = '/feature';
+    } catch (error) {
+      this.isCreatingDepot = false;
     }
   }
 

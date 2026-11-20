@@ -8,7 +8,7 @@ import { Location } from '@angular/common';
   styleUrls: ['./validation.component.scss']
 })
 export class ValidationComponent {
-  public activeTab: string = 'validationVenteChine';
+  public activeTab: string = 'validationCommandeClient';
   customers!: Customer[];
   loading: boolean = true;
   selected = [];

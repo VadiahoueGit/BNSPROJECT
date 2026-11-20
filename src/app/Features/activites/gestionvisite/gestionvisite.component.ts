@@ -99,8 +99,11 @@ export class GestionvisiteComponent {
     console.log(data);
     this.visiteId = data.id;
 
-    if(data.id == 1){
-      this.LoadRevendeur()
+    if (data.id == 1) {
+      this.LoadRevendeur();
+    } else {
+      this.revendeur = [];
+      this.filteredRevendeur = [];
     }
   }
   filterData(): void {
@@ -177,9 +180,17 @@ export class GestionvisiteComponent {
     console.log(this.VisiteForm.value);
     if (this.VisiteForm.valid) {
       // const formValues = this.ArticleForm.value;
+      const pdvIds = this.selectedItems
+        .filter((item: any) => item.nomEtablissement)
+        .map((item: any) => item.id);
+      const revendeurIds = this.selectedItems
+        .filter((item: any) => item.raisonSocial)
+        .map((item: any) => item.id);
+
       const formValues = {
         "commercialId": this.VisiteForm.value.commercialId,
-        "pointsDeVenteIds": this.VisiteForm.value.pointsDeVenteIds,
+        "pointsDeVenteIds": pdvIds,
+        "revendeurIds": revendeurIds,
         "dateDeVisite": this.VisiteForm.value.dateVisite,
         "repetitionDays": [this.VisiteForm.value.repetitionDays],
         "repetitionDuration": 12,

@@ -46,7 +46,11 @@ export class RapportViewerComponent implements OnInit {
     this.filtres['dateFin']   = this.toDateInput(today);
     this.config!.filtres.forEach(f => {
       if (!(f.key in this.filtres)) {
-        this.filtres[f.key] = f.type === 'select' || f.type === 'select-multi' ? null : '';
+        if (f.defaultValue !== undefined) {
+          this.filtres[f.key] = f.defaultValue;
+        } else {
+          this.filtres[f.key] = f.type === 'select' || f.type === 'select-multi' ? null : '';
+        }
       }
     });
   }
@@ -69,12 +73,16 @@ export class RapportViewerComponent implements OnInit {
 
     const dynamiques: ColonneConfig[] = Object.keys(this.data[0])
       .filter(k => !fixedSet.has(k) && !exclude.has(k))
-      .map(k => ({
-        key:   k,
-        label: k.replace(/_/g, ' '),
-        type:  'number' as const,
-        align: 'right'  as const,
-      }));
+      .map(k => {
+        const val = this.data[0][k];
+        const isNum = val !== null && val !== '' && !isNaN(Number(val));
+        return {
+          key:   k,
+          label: k.replace(/_/g, ' '),
+          type:  isNum ? 'number' as const : 'text' as const,
+          align: isNum ? 'right'  as const : 'left' as const,
+        };
+      });
 
     return [...fixed, ...dynamiques];
   }

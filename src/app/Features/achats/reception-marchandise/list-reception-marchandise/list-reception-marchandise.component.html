@@ -1,167 +1,90 @@
-<div class="card">
-  <!-- <div class="d-flex justify-content-end py-3">
-    <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">
-      Saisie d'emballage rendu
-    </button>
-  </div> -->
-  <div class="row d-flex justify-items-center">
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Numero reception :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.numeroReception"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Numero bon :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.numeroBonLivraison"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Date debut :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.dateDebut"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Date fin :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.dateFin"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
+<div class="lrm-card">
+  <div class="lrm-topbar">
+    <div>
+      <div class="lrm-card-title"><i class="fas fa-truck-loading"></i> Réceptions marchandise</div>
+      <div class="lrm-count">{{ dataList?.length || 0 }} réception(s)</div>
     </div>
   </div>
-  <p-table
-    [styleClass]="'p-datatable-sm'"
-    #dt2
-    [value]="dataList"
-    dataKey="id"
-    [rows]="8"
-    [totalRecords]="totalPages"
-    [lazy]="true"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [paginator]="true"
-    [globalFilterFields]="['plastiquenu.libelle', 'libelle']"
-    [globalFilterFields]="['plastiquenu.libelle', 'libelle']"
-    (onPage)="onPage($event)"
-  >
+
+  <!-- Filtres -->
+  <div class="bui-filter-bar mb-3">
+    <div class="bui-filter-field">
+      <label class="bui-filter-label">N° réception</label>
+      <input class="bui-filter-input" type="text" [(ngModel)]="filters.numeroReception" (keydown.enter)="filterGlobal()" placeholder="Rechercher..." />
+    </div>
+    <div class="bui-filter-field">
+      <label class="bui-filter-label">N° bon livraison</label>
+      <input class="bui-filter-input" type="text" [(ngModel)]="filters.numeroBonLivraison" (keydown.enter)="filterGlobal()" placeholder="Rechercher..." />
+    </div>
+    <div class="bui-filter-field">
+      <label class="bui-filter-label">N° commande</label>
+      <input class="bui-filter-input" type="text" [(ngModel)]="filters.numeroCommande" (keydown.enter)="filterGlobal()" placeholder="Rechercher..." />
+    </div>
+    <div class="bui-filter-field">
+      <label class="bui-filter-label">Date début</label>
+      <input class="bui-filter-input" type="text" [(ngModel)]="filters.dateDebut" (keydown.enter)="filterGlobal()" placeholder="jj/mm/aaaa" />
+    </div>
+    <div class="bui-filter-field">
+      <label class="bui-filter-label">Date fin</label>
+      <input class="bui-filter-input" type="text" [(ngModel)]="filters.dateFin" (keydown.enter)="filterGlobal()" placeholder="jj/mm/aaaa" />
+    </div>
+    <div class="bui-filter-field" style="align-self:flex-end">
+      <button class="vd-btn-primary" (click)="filterGlobal()"><i class="fas fa-search"></i> Rechercher</button>
+    </div>
+  </div>
+
+  <p-table [styleClass]="'lrm-ptable p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+           [totalRecords]="totalPages" [lazy]="true" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color)">Dépots</th>
-        <th style="color: var(--secondary-color)">N° réception</th>
-        <th style="color: var(--secondary-color)">N° bon livraison</th>
-        <th style="color: var(--secondary-color)">N° commande</th>
-        <th style="color: var(--secondary-color)">Date commande</th>
-        <th style="color: var(--secondary-color)">Type de commande</th>
-        <th style="color: var(--secondary-color)">Statut</th>
-        <!-- <th style="color: var(--secondary-color)">Actions</th> -->
+        <th>Dépôt</th>
+        <th>Revendeur</th>
+        <th>N° réception</th>
+        <th>N° bon livraison</th>
+        <th>N° commande</th>
+        <th>Date commande</th>
+        <th>Type</th>
+        <th>Statut</th>
+        <th class="text-center">Actions</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-dataList let-i="index">
+    <ng-template pTemplate="body" let-dataList>
       <tr>
+        <td>{{ dataList?.commande?.depot?.nomDepot ?? dataList?.commande?.revendeur?.depot?.nomDepot ?? dataList?.entreeGratuite?.depot?.nomDepot }}</td>
+        <td>{{ dataList?.commande?.revendeur?.raisonSocial || '-' }}</td>
+        <td><span class="fw-semibold">{{ dataList?.numeroReceptionCommande }}</span></td>
+        <td>{{ dataList?.numeroBonLivraison }}</td>
+        <td>{{ dataList?.commande?.NumCommande ?? dataList?.entreeGratuite?.NumEntreeGratuite }}</td>
+        <td>{{ (dataList?.commande?.dateCommande ?? dataList?.entreeGratuite?.dateReception) | date:'dd/MM/yyyy' }}</td>
+        <td>{{ dataList?.commande?.typeCommande ?? 'Entrée gratuite' }}</td>
         <td>
-           <span class="ml-1 vertical-align-middle">
-          {{ dataList?.commande?.depot?.nomDepot ?? dataList?.entreeGratuite?.depot?.nomDepot  }}
-           </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-          {{ dataList?.numeroReceptionCommande  }}
+          <span class="lrm-status-badge"
+            [ngClass]="{
+              'attente': dataList?.statut === 'EN_ATTENTE',
+              'partiel': dataList?.statut === 'PARTIELLEMENT_RENDU',
+              'traite':  dataList?.statut === 'TRAITE'
+            }">
+            {{ dataList?.statut === 'EN_ATTENTE' ? 'En attente'
+              : dataList?.statut === 'PARTIELLEMENT_RENDU' ? 'Partiellement rendu'
+              : dataList?.statut === 'TRAITE' ? 'Traité'
+              : dataList?.statut ?? 'En attente' }}
           </span>
         </td>
-
-        <td>
-          <span class="ml-1 vertical-align-middle">
-          {{ dataList?.numeroBonLivraison }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-          {{ dataList?.commande?.NumCommande ?? dataList?.entreeGratuite?.NumEntreeGratuite }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-          {{ dataList?.commande?.dateCommande ?? dataList?.entreeGratuite?.dateReception }}
-          </span>
-        </td>
-
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.commande?.typeCommande ?? 'Entree gratuite'}}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.commande?.statut ?? 'Reçue'}}
-          </span>
-        </td>
-        <td>
-          <tr class="d-flex justify-content-center gap-3">
-            <td>
-              <i
-                (click)="OnView(dataList)"
-                style="cursor: pointer"
-                class="fas fa-eye text-secondary"
-              ></i>
-            </td>
-            <!-- <td>
-                <i
-                  (click)="OnDelete(dataList?.id)"
-                  style="cursor: pointer"
-                  class="fas fa-trash-alt text-danger"
-                ></i>
-              </td> -->
-          </tr>
+        <td class="text-center">
+          <button class="lrm-action-btn view" (click)="OnView(dataList)" title="Voir le détail"><i class="fas fa-eye"></i></button>
+          <button class="lrm-action-btn print ms-1" (click)="imprimerBonLivraison(dataList)" title="Imprimer le bon de livraison"><i class="fas fa-print"></i></button>
         </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">Aucun emballage trouvé!</td>
+        <td colspan="9"><div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucune réception trouvée</span></div></td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
-<!-- Modal creation -->
-<!-- Modal -->
-
+<!-- Modal détail réception -->
 <div *ngIf="isModalOpen" class="custom-modal">
   <div class="vd-modal-dialog wide">
     <div class="vd-modal-header">
@@ -176,19 +99,22 @@
     </div>
 
     <div class="vd-modal-body">
-      <!-- Info commande -->
-      <div class="vd-info-grid">
+      <div class="vd-info-grid mb-3">
         <div class="vd-info-block">
           <div class="vd-info-label"><i class="fas fa-hashtag me-1"></i>N° Commande</div>
           <div class="vd-info-value">{{ updateData?.commande?.NumCommande ?? updateData?.entreeGratuite?.NumEntreeGratuite }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-file-alt me-1"></i>N° Bon de Livraison</div>
+          <div class="vd-info-value">{{ updateData?.numeroBonLivraison || '—' }}</div>
         </div>
         <div class="vd-info-block">
           <div class="vd-info-label"><i class="fas fa-calendar me-1"></i>Date commande</div>
           <div class="vd-info-value">{{ (updateData?.commande?.dateCommande ?? updateData?.entreeGratuite?.dateReception) | date:'dd/MM/yyyy' }}</div>
         </div>
         <div class="vd-info-block">
-          <div class="vd-info-label"><i class="fas fa-calendar-check me-1"></i>Livraison estimée</div>
-          <div class="vd-info-value">{{ updateData?.commande?.dateLivraisonEstimee ? (updateData?.commande?.dateLivraisonEstimee | date:'dd/MM/yyyy') : '—' }}</div>
+          <div class="vd-info-label"><i class="fas fa-calendar-check me-1"></i>Date d'échéance</div>
+          <div class="vd-info-value">{{ updateData?.commande?.dateEcheance ? (updateData?.commande?.dateEcheance | date:'dd/MM/yyyy') : '—' }}</div>
         </div>
         <div class="vd-info-block">
           <div class="vd-info-label"><i class="fas fa-tag me-1"></i>Type commande</div>
@@ -196,11 +122,22 @@
         </div>
         <div class="vd-info-block">
           <div class="vd-info-label"><i class="fas fa-circle me-1"></i>Statut</div>
-          <div class="vd-info-value">{{ updateData?.commande?.statut ?? 'Reçue' }}</div>
+          <div class="vd-info-value">
+            <span class="lrm-status-badge"
+              [ngClass]="{
+                'attente': updateData?.statut === 'EN_ATTENTE',
+                'partiel': updateData?.statut === 'PARTIELLEMENT_RENDU',
+                'traite':  updateData?.statut === 'TRAITE'
+              }">
+              {{ updateData?.statut === 'EN_ATTENTE' ? 'En attente'
+                : updateData?.statut === 'PARTIELLEMENT_RENDU' ? 'Partiellement rendu'
+                : updateData?.statut === 'TRAITE' ? 'Traité'
+                : updateData?.statut ?? 'En attente' }}
+            </span>
+          </div>
         </div>
       </div>
 
-      <!-- Articles reçus -->
       <div class="vd-card">
         <div class="vd-card-header">
           <div class="vd-card-icon green"><i class="fas fa-box"></i></div>
@@ -210,12 +147,9 @@
           <table class="vd-table">
             <thead>
               <tr>
-                <th>Emballage</th>
-                <th>Liquide</th>
-                <th class="text-center">Qté commandée</th>
-                <th class="text-center">Qté reçue</th>
-                <th class="text-center">Écart</th>
-                <th>Commentaire</th>
+                <th>Emballage</th><th>Liquide</th>
+                <th class="text-center">Qté commandée</th><th class="text-center">Qté reçue</th>
+                <th class="text-center">Écart</th><th>Commentaire</th>
               </tr>
             </thead>
             <tbody>
@@ -225,10 +159,9 @@
                 <td class="text-center">{{ item?.articleCommande ? item?.articleCommande?.quantiteAffectee : (item?.articleNonCommande ? '—' : item?.quantiteRecue) }}</td>
                 <td class="text-center fw-bold">{{ item?.quantiteRecue }}</td>
                 <td class="text-center">
-                  <span [ngClass]="{
-                    'vd-badge green': (item?.ecart ?? item?.articleCommande?.ecart) >= 0,
-                    'vd-badge red':   (item?.ecart ?? item?.articleCommande?.ecart) < 0
-                  }">{{ item?.ecart ?? item?.articleCommande?.ecart }}</span>
+                  <span [ngClass]="{'vd-badge green': (item?.ecart ?? item?.articleCommande?.ecart) >= 0, 'vd-badge red': (item?.ecart ?? item?.articleCommande?.ecart) < 0}">
+                    {{ item?.ecart ?? item?.articleCommande?.ecart }}
+                  </span>
                 </td>
                 <td>{{ item?.commentaireEcart ?? item?.articleCommande?.commentaireEcart }}</td>
               </tr>
@@ -240,7 +173,6 @@
         </div>
       </div>
 
-      <!-- Emballages rendus -->
       <div class="vd-card">
         <div class="vd-card-header">
           <div class="vd-card-icon orange"><i class="fas fa-recycle"></i></div>
@@ -250,15 +182,15 @@
           <table class="vd-table">
             <thead>
               <tr>
-                <th>Emballage</th>
-                <th class="text-right">Prix unitaire</th>
-                <th class="text-center">Quantité</th>
-                <th class="text-center">Écart</th>
+                <th>Emballage</th><th class="text-right">Prix unitaire</th>
+                <th class="text-center">Quantité</th><th class="text-center">Écart</th>
               </tr>
             </thead>
             <tbody>
               <ng-container *ngFor="let item of updateData?.emballagesRendus?.[0]?.articles">
-                <tr *ngIf="(item?.prixUnitaireEmballage > 0)">
+                <!-- Sur une entrée gratuite les prix sont nuls par nature : filtrer sur le prix
+                     masquait tous les emballages rendus de ces réceptions. -->
+                <tr *ngIf="item?.prixUnitaireEmballage > 0 || updateData?.entreeGratuite">
                   <td>{{ item?.emballage?.libelle }}</td>
                   <td class="text-right">{{ item?.prixUnitaireEmballage | number }}</td>
                   <td class="text-center fw-bold">{{ item?.quantite | number }}</td>
@@ -274,108 +206,39 @@
           </table>
         </div>
       </div>
+
+      <div class="vd-card" *ngIf="updateData?.historiqueRendus?.length">
+        <div class="vd-card-header">
+          <div class="vd-card-icon blue"><i class="fas fa-history"></i></div>
+          <div class="vd-section-label">Historique des retours</div>
+        </div>
+        <div class="vd-table-wrap">
+          <table class="vd-table">
+            <thead>
+              <tr>
+                <th>Date</th><th>N° retour</th><th>Emballage</th><th class="text-center">Quantité rendue</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let retour of updateData?.historiqueRendus">
+                <tr *ngFor="let art of retour?.articles">
+                  <td>{{ (retour?.dateRetour ?? retour?.createdAt) | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td>{{ retour?.numeroRetour }}</td>
+                  <td>{{ art?.emballage?.libelle }}</td>
+                  <td class="text-center fw-bold">{{ art?.quantite | number }}</td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
     <div class="vd-modal-footer">
       <button (click)="OnCloseModal()" type="button" class="vd-btn-outline">Fermer</button>
-    </div>
-  </div>
-
-  <!--CHOIX ARTICLE-->
-  <div *ngIf="isChoiceModalOpen" class="custom-modal">
-    <div class="modal-dialog2 modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header d-flex align-items-center">
-          <div
-            class="d-flex justify-content-center align-items-center"
-            style="
-              background-color: rgb(219, 255, 232);
-              border-radius: 3rem;
-              width: 3rem;
-              height: 3rem;
-            "
-          >
-            <i class="fas fa-box-check text-primary fs-3"></i>
-          </div>
-          <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
-            Selection des emballages
-          </h1>
-        </div>
-
-        <div class="modal-body">
-          <form>
-            <div class="row">
-              <fieldset class="row border my-2">
-                <div class="p-3">
-                  <!-- Champ de recherche -->
-                  <input
-                    type="text"
-                    name="search"
-                    (input)="filterArticles()"
-                    [(ngModel)]="searchTerm"
-                    placeholder="Rechercher un produit"
-                    class="form-control mb-3"
-                  />
-                </div>
-                <div
-                  class="table-responsive"
-                  style="max-height: 200px; overflow-y: auto"
-                >
-                  <table class="table">
-                    <thead>
-                      <tr style="font-size: small">
-                        <th scope="col" class="text-secondary">Code</th>
-                        <th scope="col" class="text-secondary">Produits</th>
-                        <th scope="col" class="text-secondary text-center">
-                          Choix
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr
-                        *ngFor="
-                          let article of filteredArticleList;
-                          let i = index
-                        "
-                        style="font-size: small"
-                      >
-                        <th scope="row">{{ article.code }}</th>
-                        <th scope="row">{{ article.libelle }}</th>
-
-                        <td class="">
-                          <input
-                            type="checkbox"
-                            class="form-control-custom"
-                            [name]="'checkbox_' + i"
-                            [(ngModel)]="article.isChecked"
-                            (change)="onCheckboxChange(article)"
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </fieldset>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer gap-3 px-4y">
-          <button
-            (click)="OnCloseChoiceModal()"
-            type="button"
-            class="btn btn-secondary px-2"
-          >
-            Annuler
-          </button>
-          <button
-            type="submit"
-            (click)="onSubmitSelection()"
-            class="btn btn-primary px-2"
-          >
-            Valider
-          </button>
-        </div>
-      </div>
+      <button type="button" (click)="OnAnnuler(updateData?.commande?.id ?? updateData?.entreeGratuite?.id)" class="vd-btn-danger">
+        <i class="fas fa-ban"></i> Annuler la commande
+      </button>
     </div>
   </div>
 </div>

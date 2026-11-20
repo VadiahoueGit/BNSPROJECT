@@ -1,86 +1,297 @@
-.bg-entry{
-  width: 100%;
-  color:green;
-  background-color: #bdffd3;
-  padding: 5px;
-  border-radius: 6px;
+$primary: #8dae56;
+$blue: #0071c2;
+$orange: #f59e0b;
+$red: #ef4444;
+$gray-border: #e5e7eb;
+$text-muted: #9ca3af;
+$gray-light: #f7fcff;
+
+// ── KPI Row ──────────────────────────────────────────────
+.cpt-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 16px;
 }
 
-.bg-out{
-  width: 100%;
-  color:red;
-  background-color: #ffbdbd;
-  padding: 5px;
-  border-radius: 6px;
-}
-
-.bg-simple{
-  width: 100%;
-  color: #003470;
-  background-color: #bdd4ff;
-  padding: 5px;
-  border-radius: 6px;
-}
-
-.modal-dialog{
-  max-width: 45em;
-  min-width: auto;
-}
-.profile-pic {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-}
-.img-thumbnail{
-  border:none;
-}
-span{
-  font-size: 11px;
-}
-.custom-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+.cpt-kpi {
+  background: white;
+  border-radius: 12px;
+  padding: 16px 20px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1050;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border: 1px solid $gray-border;
+  &.blue   { border-left: 4px solid $blue; }
+  &.green  { border-left: 4px solid $primary; }
+  &.orange { border-left: 4px solid $orange; }
 }
 
-.modal-dialog {
-  background-color: white;
-  border-radius: 0.3rem;
-  width: 65em;
-  max-width: 65em;
-  padding: 1rem;
+.cpt-kpi-icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+  &.blue   { background: rgba($blue,0.1);    color: $blue; }
+  &.green  { background: rgba($primary,0.12); color: $primary; }
+  &.orange { background: rgba($orange,0.12);  color: $orange; }
 }
 
-.modal-header, .modal-body, .modal-footer {
-  padding: 1rem;
+.cpt-kpi-body { display: flex; flex-direction: column; gap: 3px; }
+
+.cpt-kpi-label {
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px; color: $text-muted;
 }
 
-.btn-close {
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
-}
-.p-fluid .p-inputtext {
-  width: 8em !important;
-  height: 2.5rem;
+.cpt-kpi-value {
+  font-size: 18px; font-weight: 700;
+  &.blue   { color: $blue; }
+  &.green  { color: $primary; }
+  &.orange { color: $orange; }
 }
 
-.p-column-filter-menu-button {
-  display: none; /* Masquer l'icône de filtre */
+// ── Card principale ───────────────────────────────────────
+.cpt-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border: 1px solid $gray-border;
 }
 
-/* Ajuster l'espacement si nécessaire après suppression de l'icône */
-.p-column-filter {
-  padding-right: 0; /* Supprime l'espace réservé à l'icône */
-}
-.label-fixed-width {
-  min-width: 10px;
+.cpt-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid $gray-border;
 }
 
+.cpt-card-title {
+  font-size: 15px; font-weight: 700; color: #111827;
+}
+
+.cpt-count {
+  font-size: 12px; color: $text-muted; margin-top: 2px;
+}
+
+.cpt-filter-wrap {
+  position: relative; display: flex; align-items: center;
+  ::ng-deep .ng-select {
+    width: 240px;
+    .ng-select-container {
+      min-height: 34px; height: 34px;
+      border: 1.5px solid $gray-border !important;
+      border-radius: 8px;
+      padding-left: 20px;
+      font-size: 12px;
+      font-family: 'Poppins', sans-serif;
+      box-shadow: none !important;
+    }
+    &.ng-select-focused .ng-select-container {
+      border-color: $blue !important;
+      box-shadow: 0 0 0 3px rgba($blue, 0.08) !important;
+    }
+  }
+}
+
+.cpt-filter-icon {
+  position: absolute; left: 10px; z-index: 2; font-size: 11px; color: $text-muted; pointer-events: none;
+}
+
+.cpt-filter-input {
+  height: 34px;
+  border: 1.5px solid $gray-border;
+  border-radius: 8px;
+  padding: 0 12px 0 30px;
+  font-size: 12px;
+  width: 240px;
+  font-family: 'Poppins', sans-serif;
+  transition: border-color 0.15s;
+  &:focus { outline: none; border-color: $blue; box-shadow: 0 0 0 3px rgba($blue,0.08); }
+  &::placeholder { color: $text-muted; }
+}
+
+// ── Grille de cartes dépôt ────────────────────────────────
+.cpt-depot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.cpt-depot-card {
+  background: $gray-light;
+  border: 1px solid $gray-border;
+  border-radius: 12px;
+  padding: 16px;
+  transition: box-shadow 0.15s, transform 0.15s;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba($blue,0.1);
+    transform: translateY(-2px);
+  }
+}
+
+.cpt-depot-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.cpt-depot-icon {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  background: rgba($blue,0.1);
+  color: $blue;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0;
+}
+
+.cpt-depot-name {
+  font-size: 13px; font-weight: 700; color: #111827;
+  flex: 1;
+}
+
+.cpt-depot-eye {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid $gray-border;
+  background: white;
+  color: $text-muted;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+
+  &:hover {
+    background: $blue;
+    border-color: $blue;
+    color: white;
+    box-shadow: 0 2px 8px rgba($blue,0.3);
+  }
+}
+
+.cpt-depot-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.cpt-stat {
+  background: white;
+  border-radius: 8px;
+  padding: 8px 10px;
+  border: 1px solid $gray-border;
+}
+
+.cpt-stat-label {
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.4px;
+  color: $text-muted; margin-bottom: 3px;
+}
+
+.cpt-stat-value {
+  font-size: 11px; font-weight: 700;
+  &.blue   { color: $blue; }
+  &.green  { color: $primary; }
+  &.orange { color: $orange; }
+}
+
+.cpt-progress-track {
+  height: 6px;
+  background: rgba($gray-border, 1);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.cpt-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, $primary, $blue);
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+.cpt-progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: $text-muted;
+  .text-green { color: $primary; font-weight: 600; }
+}
+
+.cpt-empty {
+  grid-column: span 3;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 8px; padding: 40px 0;
+  color: $text-muted; font-size: 13px;
+  i { font-size: 28px; }
+}
+
+// ── Table modal ───────────────────────────────────────────
+::ng-deep .cpt-ptable {
+  .p-datatable-thead > tr > th {
+    background: $gray-light;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    color: $text-muted;
+    border-bottom: 1px solid $gray-border;
+    padding: 10px 12px;
+  }
+
+  .p-datatable-tbody > tr > td {
+    font-size: 13px; color: #374151;
+    padding: 10px 12px;
+    border-bottom: 1px solid $gray-border;
+  }
+
+  .p-datatable-tbody > tr:hover > td { background: rgba($blue,0.03); }
+
+  .p-paginator {
+    border-top: 1px solid $gray-border;
+    padding: 10px 0 0;
+    background: transparent;
+    font-size: 13px;
+  }
+}
+
+.cpt-sens-icon {
+  width: 30px; height: 30px;
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  &.green { background: rgba($primary,0.12); color: $primary; }
+  &.red   { background: rgba($red,0.1);      color: $red; }
+}
+
+.cpt-client  { font-weight: 600; font-size: 13px; color: #111827; }
+.cpt-motif   { font-size: 12px; color: #6b7280; }
+.cpt-date    { font-size: 12px; color: #6b7280; }
+
+.cpt-moyen {
+  display: inline-flex; align-items: center;
+  background: $gray-light; border: 1px solid $gray-border;
+  border-radius: 20px; padding: 2px 10px;
+  font-size: 11px; font-weight: 500; color: #374151;
+}
+
+.cpt-statut {
+  display: inline-block;
+  padding: 2px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+  &.green  { background: rgba($primary,0.12); color: darken($primary,15%); }
+  &.orange { background: rgba($orange,0.12);  color: darken($orange,15%); }
+  &.blue   { background: rgba($blue,0.1);     color: $blue; }
+  &:not(.green):not(.orange):not(.blue) { background: #f3f4f6; color: $text-muted; }
+}
+
+.cpt-montant {
+  font-size: 13px; font-weight: 700;
+  &.green { color: $primary; }
+  &.red   { color: $red; }
+}

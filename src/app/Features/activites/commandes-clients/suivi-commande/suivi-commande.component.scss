@@ -1,0 +1,14 @@
+$blue:#0071c2;$green:#16a34a;$red:#dc2626;$border:#e5e7eb;$muted:#9ca3af;$light:#f8fafc;
+.sc-card{background:white;border-radius:14px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid $border;}
+.sc-topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid $border;}
+.sc-card-title{font-size:15px;font-weight:700;color:#111827;i{color:$blue;margin-right:6px;}}
+.sc-count{font-size:12px;color:$muted;margin-top:2px;}
+::ng-deep .sc-ptable{
+  .p-datatable-thead>tr>th{background:$light;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:$muted;padding:10px 14px;border:none;border-bottom:2px solid $border;}
+  .p-datatable-tbody>tr>td{font-size:13px;color:#374151;padding:11px 14px;border-bottom:1px solid #f3f4f6;}
+  .p-datatable-tbody>tr:hover>td{background:#f0f7ff;}
+}
+.sc-action-btn{width:28px;height:28px;border-radius:7px;border:1.5px solid $border;background:white;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:all .15s;
+  &.edit{color:$green;&:hover{background:rgba($green,.1);border-color:$green;}}
+  &.del{color:$red;&:hover{background:rgba($red,.1);border-color:$red;}}
+}

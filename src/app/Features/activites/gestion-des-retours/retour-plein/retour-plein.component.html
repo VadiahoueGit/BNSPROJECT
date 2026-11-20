@@ -1,75 +1,129 @@
-<div class="card">
+<!-- Liste -->
+<div class="fn-card">
+  <div class="fn-topbar">
+    <div class="fn-topbar-left">
+      <div class="fn-title"><i class="fas fa-undo-alt"></i> Retours plein</div>
+      <div class="fn-count">{{ totalPages }} résultat(s)</div>
+    </div>
+  </div>
 
-  <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8" [totalRecords]="totalPages"
-           [lazy]="true" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
-
-        <ng-template pTemplate="header">
-            <tr>
-                <th>N° de retour</th>
-                <th>Agent</th>
-                <th>Client</th>
-              <th>Opération</th>
-                <th>Dépot</th>
-              <th>Statut</th>
-              <th>Date</th>
-                <th>Actions</th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-dataList>
-            <tr>
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                         {{ dataList.numRetour }}
-                    </span>
-                </td>
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                      {{ dataList.user?.nom +' '+dataList.user?.prenoms }}
-                    </span>
-                </td>
-              <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.client?.raisonSocial || 'NEANT' }}
-                    </span>
-              </td>
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.typeRetour}}
-                    </span>
-                </td>
-                <td>
-                  <span class="ml-1 vertical-align-middle">
-                         {{ dataList.depot?.nomDepot }}
-                    </span>
-                </td>
-              <td>
-                  <span class="ml-1 vertical-align-middle" [style.color]="
-                  dataList?.statut === 'Validé' ? 'green' :
-                  dataList?.statut === 'En attente' ? 'red' : 'black'
-                  ">
-                         {{ dataList.statut }}
-                    </span>
-              </td>
-              <td>
-                  <span class="ml-1 vertical-align-middle">
-                         {{ dataList.createdAt | date:'dd/MM/yyyy HH:mm' }}
-                    </span>
-              </td>
-                <td class="text-center">
-      <div class="d-flex justify-content-center gap-2">
-        <span class="bui-icon-btn view" (click)="OnEdit(dataList)"><i class="fas fa-eye"></i></span>
+  <div class="fn-filters">
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">N° retour</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-search fn-filter-icon"></i>
+        <input class="fn-filter-input" (input)="onFilterGlobal($event)" placeholder="Recherche..." />
       </div>
-    </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="5">Aucun élément trouvé.</td>
-            </tr>
-        </ng-template>
-    </p-table>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Agent</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-id-badge fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.agent" placeholder="Nom agent..." style="padding-left:28px" />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Client</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-user fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.client" placeholder="Nom du client..." style="padding-left:28px" />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Opération</div>
+      <div class="fn-filter-wrap">
+        <select class="fn-filter-input" [(ngModel)]="filters.typeRetour" style="padding-left:8px">
+          <option value="">Toutes les opérations</option>
+          <option value="COMMANDE_CLIENT">Commande client</option>
+          <option value="COMMANDE_GRATUITE">Commande gratuite</option>
+          <option value="VENTE_CHINE">Vente Chine</option>
+        </select>
+      </div>
+    </div>
+    <div class="fn-filter-item" *ngIf="isHote">
+      <div class="fn-filter-label">Dépôt</div>
+      <div class="fn-filter-wrap">
+        <ng-select [items]="depotList" bindLabel="nomDepot" bindValue="id" [(ngModel)]="filters.depotId"
+                   [searchable]="true" [clearable]="true" placeholder="Tous les dépôts"></ng-select>
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Statut</div>
+      <div class="fn-filter-wrap">
+        <select class="fn-filter-input" [(ngModel)]="filters.statut" style="padding-left:8px">
+          <option value="">Tous les statuts</option>
+          <option value="En attente">En attente</option>
+          <option value="Validé">Validé</option>
+          <option value="Refusé">Refusé</option>
+        </select>
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Date début</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-calendar fn-filter-icon"></i>
+        <input class="fn-filter-input" type="date" [(ngModel)]="filters.dateDebut" style="padding-left:28px" />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Date fin</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-calendar fn-filter-icon"></i>
+        <input class="fn-filter-input" type="date" [(ngModel)]="filters.dateFin" style="padding-left:28px" />
+      </div>
+    </div>
+    <div class="fn-filter-actions">
+      <button class="fn-btn-search" (click)="filterGlobal()"><i class="fas fa-search"></i> Rechercher</button>
+      <button class="fn-btn-reset" (click)="resetFilters()" title="Réinitialiser"><i class="fas fa-times"></i></button>
+    </div>
+  </div>
+
+  <p-table [styleClass]="'fn-ptable p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+           [totalRecords]="totalPages" [lazy]="true"
+           [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>N° de retour</th>
+        <th>Agent</th>
+        <th>Client</th>
+        <th>Opération</th>
+        <th>Dépôt</th>
+        <th>Statut</th>
+        <th>Date</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td style="font-weight:600; color:#0071c2">{{ row.numRetour }}</td>
+        <td>{{ (row.user?.nom || '') + ' ' + (row.user?.prenoms || '') }}</td>
+        <td>{{ row.client?.raisonSocial || 'NÉANT' }}</td>
+        <td>{{ row.typeRetour }}</td>
+        <td style="color:#6b7280">{{ row.depot?.nomDepot }}</td>
+        <td>
+          <span [ngClass]="{
+            'fn-badge green':  row.statut === 'Validé',
+            'fn-badge orange': row.statut === 'En attente',
+            'fn-badge gray':   row.statut !== 'Validé' && row.statut !== 'En attente'
+          }">{{ row.statut }}</span>
+        </td>
+        <td style="color:#6b7280; font-size:12px">{{ row.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td class="text-center">
+          <button class="fn-action-btn view" (click)="OnEdit(row)" title="Voir"><i class="fas fa-eye"></i></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="8" style="text-align:center; padding:32px; color:#9ca3af; font-size:13px;">
+          <i class="fas fa-inbox me-2"></i>Aucun retour trouvé.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>
 
+<!-- Modal -->
 <div *ngIf="isModalOpen" class="custom-modal">
   <div class="vd-modal-dialog wide">
     <div class="vd-modal-header">
@@ -77,7 +131,7 @@
         <div class="vd-mh-icon orange"><i class="fas fa-undo-alt"></i></div>
         <div>
           <div class="vd-mh-title">Détails récupération</div>
-          <div class="vd-mh-sub" *ngIf="operation == 'edit'">{{ updateData.commande?.numVenteChine || updateData.commande?.NumCommande || '' }} — {{ updateData.createdAt | date:'dd/MM/yyyy' }}</div>
+          <div class="vd-mh-sub" *ngIf="operation == 'edit'">N° {{ updateData.numRetour }} — {{ updateData.commande?.numVenteChine || updateData.commande?.NumCommande || '' }} — {{ updateData.createdAt | date:'dd/MM/yyyy' }}</div>
         </div>
       </div>
       <div class="vd-mh-right">
@@ -92,7 +146,6 @@
 
     <div class="vd-modal-body">
       <ng-container *ngIf="operation == 'edit'">
-        <!-- Info principale -->
         <div class="vd-info-grid">
           <div class="vd-info-block">
             <div class="vd-info-label"><i class="fas fa-warehouse me-1"></i>Dépôt</div>
@@ -112,7 +165,6 @@
           </div>
         </div>
 
-        <!-- Info client -->
         <div class="vd-card">
           <div class="vd-card-header">
             <div class="vd-card-icon blue"><i class="fas fa-store"></i></div>
@@ -135,7 +187,6 @@
         </div>
       </ng-container>
 
-      <!-- Articles retournés -->
       <div class="vd-card">
         <div class="vd-card-header">
           <div class="vd-card-icon orange"><i class="fas fa-boxes"></i></div>
@@ -166,7 +217,7 @@
                 <td class="text-center fw-bold">{{ item.quantite }}</td>
                 <td class="text-center">
                   <input type="number" class="form-control-custom text-center text-secondary"
-                    [(ngModel)]="item.quantiteReelle"
+                    [(ngModel)]="item.quantiteReelle" (ngModelChange)="onQuantiteReelleChange(item)"
                     [disabled]="updateData?.statut == 'Validé'"
                     [min]="0" style="width:70px">
                 </td>
@@ -184,7 +235,14 @@
 
     <div class="vd-modal-footer">
       <button type="button" class="vd-btn-outline" (click)="OnCloseModal()">Fermer</button>
-      <button *ngIf="updateData?.statut !== 'Validé'" type="button" class="vd-btn-success" (click)="ValidateReturn(updateData)">
+      <button *ngIf="updateData?.statut === 'Validé' && isAdmin()" type="button" class="vd-btn-danger"
+        title="Remet le retour en attente, restitue le crédit et le stock, pour permettre de resaisir l'inventaire"
+        (click)="AnnulerValidation(updateData)">
+        <i class="fas fa-undo"></i>Annuler la validation
+      </button>
+      <button *ngIf="updateData?.statut !== 'Validé'" type="button" class="vd-btn-success"
+        [disabled]="!isPhysiqueComplete" [title]="!isPhysiqueComplete ? 'Renseignez la quantité physique de tous les articles' : ''"
+        (click)="ValidateReturn(updateData)">
         <i class="fas fa-check"></i>Valider
       </button>
     </div>

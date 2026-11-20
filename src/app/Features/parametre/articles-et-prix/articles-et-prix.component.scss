@@ -1,18 +1,9 @@
-.nav-pills .nav-link.active, .nav-pills .show>.nav-link{
-    background-color: var(--primary-color) !important;
-    color:white;
+$blue:#0071c2;$border:#e5e7eb;
+.ap-back-row{display:flex;align-items:center;gap:12px;cursor:pointer;margin-bottom:20px;user-select:none;&:hover .ap-back-icon{background:rgba($blue,.15);}}
+.ap-back-icon{width:34px;height:34px;border-radius:50%;background:rgba($blue,.08);color:$blue;display:flex;align-items:center;justify-content:center;font-size:13px;transition:background .15s;}
+.ap-back-title{font-size:18px;font-weight:700;color:#111827;margin:0;}
+.ap-tabs{display:flex;gap:6px;flex-wrap:wrap;}
+.ap-tab-btn{height:34px;padding:0 16px;border:1.5px solid $border;border-radius:8px;background:white;font-size:13px;font-weight:500;color:#374151;cursor:pointer;transition:all .15s;
+  &.active{background:$blue;border-color:$blue;color:white;font-weight:600;}
+  &:hover:not(.active){border-color:$blue;color:$blue;}
 }
-
-.nav-link{
-    background-color: #fafafa;
-    border: 0.2px solid rgb(221, 219, 219);
-    color:  black;
-}
-
-.nav-link:hover{
-    cursor: pointer;
-    background-color: rgb(220, 255, 220);
-}
-.label-fixed-width {
-    min-width: 150px; 
-  }

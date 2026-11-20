@@ -1,6 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 /* Mandatory */
 
+@import 'app/design-system';
+
 body {
   background-color: #f7fcff;
   font-family: 'Poppins', sans-serif !important;
@@ -121,6 +123,10 @@ a {
 }
 
 // sweet alert style
+.swal2-container {
+  z-index: 9999 !important;
+}
+
 .swal2-popup {
   width: 23em;
 }
@@ -472,6 +478,35 @@ $vd-radius-sm: 8px;
   gap: 6px;
 
   &:hover { background: darken($vd-orange, 8%); transform: translateY(-1px); }
+}
+
+// --- Form helpers ---
+.vd-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.vd-input {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #1f2937;
+  background: white;
+  outline: none;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: #0071c2;
+    box-shadow: 0 0 0 3px rgba(#0071c2, 0.08);
+  }
 }
 
 // --- Cards & Tables ---
@@ -1074,6 +1109,12 @@ $bui-gray: #6c757d;
     color: $bui-gray;
     &:hover { background: $bui-gray; color: white; }
   }
+
+  &.print {
+    background: rgba(0, 113, 194, 0.1);
+    color: #0071c2;
+    &:hover { background: #0071c2; color: white; }
+  }
 }
 
 // --- Icône dans l'en-tête des modals ---
@@ -1088,6 +1129,212 @@ $bui-gray: #6c757d;
   flex-shrink: 0;
 }
 
+
+// =========================================================
+// FN — Finance screens shared design system
+// =========================================================
+$fn-primary: #8dae56;
+$fn-blue: #0071c2;
+$fn-orange: #f59e0b;
+$fn-red: #ef4444;
+$fn-gray-border: #e5e7eb;
+$fn-gray-light: #f7fcff;
+$fn-text-muted: #9ca3af;
+$fn-radius: 12px;
+$fn-radius-sm: 8px;
+
+// KPI row
+.fn-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.fn-kpi {
+  background: white;
+  border-radius: $fn-radius;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border: 1px solid $fn-gray-border;
+  &.green { border-left: 4px solid $fn-primary; }
+  &.blue  { border-left: 4px solid $fn-blue; }
+  &.orange{ border-left: 4px solid $fn-orange; }
+  &.red   { border-left: 4px solid $fn-red; }
+}
+.fn-kpi-icon {
+  width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 17px;
+  &.green { background: rgba($fn-primary, 0.12); color: $fn-primary; }
+  &.blue  { background: rgba($fn-blue, 0.1); color: $fn-blue; }
+  &.orange{ background: rgba($fn-orange, 0.12); color: $fn-orange; }
+  &.red   { background: rgba($fn-red, 0.1); color: $fn-red; }
+}
+.fn-kpi-body { display: flex; flex-direction: column; gap: 2px; }
+.fn-kpi-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: $fn-text-muted; }
+.fn-kpi-value {
+  font-size: 17px; font-weight: 700;
+  &.green { color: $fn-primary; }
+  &.blue  { color: $fn-blue; }
+  &.orange{ color: darken($fn-orange, 10%); }
+  &.red   { color: $fn-red; }
+}
+
+// Card
+.fn-card {
+  background: white;
+  border-radius: $fn-radius;
+  padding: 20px 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border: 1px solid $fn-gray-border;
+}
+
+// Topbar
+.fn-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid $fn-gray-border;
+  flex-wrap: wrap;
+}
+.fn-topbar-left { display: flex; flex-direction: column; gap: 3px; }
+.fn-title { font-size: 15px; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 8px; }
+.fn-count { font-size: 12px; color: $fn-text-muted; }
+
+// Filter row
+.fn-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  margin-bottom: 16px;
+}
+.fn-filter-item { display: flex; flex-direction: column; gap: 4px; }
+.fn-filter-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: $fn-text-muted; }
+.fn-filter-wrap { position: relative; display: flex; align-items: center; }
+.fn-filter-icon { position: absolute; left: 10px; color: $fn-text-muted; font-size: 11px; pointer-events: none; }
+.fn-filter-input {
+  height: 34px;
+  padding: 0 10px 0 30px;
+  border: 1.5px solid $fn-gray-border;
+  border-radius: $fn-radius-sm;
+  font-size: 12px;
+  color: #374151;
+  font-family: 'Poppins', sans-serif;
+  min-width: 160px;
+  transition: border-color 0.15s;
+  background: white;
+  &:focus { outline: none; border-color: $fn-blue; box-shadow: 0 0 0 3px rgba($fn-blue, 0.07); }
+  &::placeholder { color: $fn-text-muted; }
+  &:is(select) { padding-left: 10px; cursor: pointer; appearance: auto; }
+}
+
+.fn-filter-btn {
+  height: 34px;
+  padding: 0 16px;
+  border-radius: $fn-radius-sm;
+  border: none;
+  background: $fn-blue;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-end;
+  transition: background 0.15s;
+  &:hover { background: darken($fn-blue, 8%); }
+  &.secondary {
+    background: white;
+    color: #6b7280;
+    border: 1.5px solid $fn-gray-border;
+    &:hover { background: #f3f4f6; color: #374151; }
+  }
+}
+
+// P-Table overrides (fn-ptable class applied to [styleClass])
+.fn-ptable {
+  .p-datatable-thead > tr > th {
+    background: $fn-gray-light;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: $fn-text-muted;
+    border-bottom: 1px solid $fn-gray-border;
+    padding: 10px 12px;
+    white-space: nowrap;
+  }
+  .p-datatable-tbody > tr > td {
+    font-size: 12px;
+    color: #374151;
+    padding: 10px 12px;
+    border-bottom: 1px solid $fn-gray-border;
+    vertical-align: middle;
+  }
+  .p-datatable-tbody > tr:hover > td { background: rgba($fn-blue, 0.025); }
+  .p-paginator {
+    border-top: 1px solid $fn-gray-border;
+    padding: 8px 0 0;
+    background: transparent;
+    font-size: 12px;
+  }
+}
+
+// Badges
+.fn-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  &.green  { background: rgba($fn-primary, 0.12); color: darken($fn-primary, 12%); }
+  &.orange { background: rgba($fn-orange, 0.12); color: darken($fn-orange, 15%); }
+  &.blue   { background: rgba($fn-blue, 0.1); color: $fn-blue; }
+  &.red    { background: rgba($fn-red, 0.1); color: $fn-red; }
+  &.gray   { background: #f3f4f6; color: #6b7280; }
+}
+
+// Sens icon
+.fn-sens-icon {
+  width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 12px;
+  &.green { background: rgba($fn-primary, 0.12); color: $fn-primary; }
+  &.red   { background: rgba($fn-red, 0.1); color: $fn-red; }
+  &.orange{ background: rgba($fn-orange, 0.12); color: $fn-orange; }
+}
+
+// Amount display
+.fn-amount {
+  font-size: 12px; font-weight: 700;
+  &.green { color: $fn-primary; }
+  &.red   { color: $fn-red; }
+  &.orange{ color: darken($fn-orange, 10%); }
+}
+
+// Retard badge
+.fn-retard {
+  font-size: 11px; font-weight: 700;
+  &.overdue { color: $fn-red; }
+  &.ok      { color: $fn-primary; }
+}
+
+.fn-action-btn {
+  width: 28px; height: 28px; border-radius: 7px; border: 1.5px solid #e5e7eb;
+  background: white; display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 12px; transition: all 0.15s;
+  &.view  { color: $fn-primary; &:hover { background: rgba($fn-primary, 0.1); border-color: $fn-primary; } }
+  &.edit  { color: #16a34a;     &:hover { background: rgba(#16a34a, 0.1);     border-color: #16a34a; } }
+  &.del   { color: $fn-red;     &:hover { background: rgba($fn-red, 0.1);     border-color: $fn-red; } }
+}
 
 // --- ng-select panel compact (appendTo="body") ---
 ng-dropdown-panel.eg-select-panel,
@@ -1106,5 +1353,57 @@ ng-dropdown-panel.eg-select-panel,
   .ng-option {
     padding: 5px 10px !important;
     min-height: unset !important;
+  }
+}
+
+// ─── Filter bar global ────────────────────────────────────────────────────────
+.bui-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.bui-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  min-width: 160px;
+}
+
+.bui-filter-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.bui-filter-input {
+  height: 36px;
+  padding: 0 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'Poppins', sans-serif;
+  color: #1f2937;
+  background: #fff;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s;
+
+  &::placeholder {
+    color: #9ca3af;
+    font-size: 12px;
+  }
+
+  &:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
   }
 }

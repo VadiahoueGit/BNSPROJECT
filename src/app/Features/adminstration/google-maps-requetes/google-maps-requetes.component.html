@@ -1,0 +1,156 @@
+<div class="gm-card">
+  <div class="gm-topbar">
+    <div>
+      <div class="gm-title"><i class="fas fa-map-marked-alt"></i> Requêtes Google Maps</div>
+      <div class="gm-sub">Envoie un nombre choisi de requêtes à Google Maps (géocodage ou calcul d'itinéraire) et affiche le bilan. Chaque requête est décomptée et facturée sur le compte Google de la clé.</div>
+    </div>
+  </div>
+
+  <div class="gm-grid">
+    <!-- Paramètres -->
+    <div class="gm-panel">
+      <div class="gm-panel-title">Paramètres</div>
+
+      <div class="gm-field">
+        <label class="gm-label">Type de requête</label>
+        <div class="gm-choix">
+          <button type="button" [class.active]="typeRequete === 'inverse'" [disabled]="enCours" (click)="typeRequete = 'inverse'">
+            <i class="fas fa-crosshairs me-1"></i>Coordonnées → adresse
+          </button>
+          <button type="button" [class.active]="typeRequete === 'adresse'" [disabled]="enCours" (click)="typeRequete = 'adresse'">
+            <i class="fas fa-search-location me-1"></i>Adresse → coordonnées
+          </button>
+          <button type="button" [class.active]="typeRequete === 'itineraire'" [disabled]="enCours" (click)="typeRequete = 'itineraire'">
+            <i class="fas fa-route me-1"></i>Itinéraire
+          </button>
+        </div>
+        <div class="gm-aide" *ngIf="typeRequete === 'itineraire'">
+          Calcul d'itinéraire via la Routes API de Google (distance et durée). Le Navigation SDK n'existe que dans les apps mobiles et ne peut pas être appelé depuis le web.
+        </div>
+      </div>
+
+      <div class="gm-row" *ngIf="typeRequete === 'inverse' || typeRequete === 'itineraire'">
+        <div class="gm-field">
+          <label class="gm-label">{{ typeRequete === 'itineraire' ? 'Latitude départ' : 'Latitude' }}</label>
+          <input class="gm-input" type="number" step="0.0001" [(ngModel)]="latitude" [disabled]="enCours">
+        </div>
+        <div class="gm-field">
+          <label class="gm-label">{{ typeRequete === 'itineraire' ? 'Longitude départ' : 'Longitude' }}</label>
+          <input class="gm-input" type="number" step="0.0001" [(ngModel)]="longitude" [disabled]="enCours">
+        </div>
+      </div>
+
+      <ng-container *ngIf="typeRequete === 'itineraire'">
+        <div class="gm-row">
+          <div class="gm-field">
+            <label class="gm-label">Latitude arrivée</label>
+            <input class="gm-input" type="number" step="0.0001" [(ngModel)]="latitudeArrivee" [disabled]="enCours">
+          </div>
+          <div class="gm-field">
+            <label class="gm-label">Longitude arrivée</label>
+            <input class="gm-input" type="number" step="0.0001" [(ngModel)]="longitudeArrivee" [disabled]="enCours">
+          </div>
+        </div>
+        <div class="gm-field">
+          <label class="gm-label">Mode de déplacement</label>
+          <select class="gm-input" [(ngModel)]="modeDeplacement" [disabled]="enCours">
+            <option *ngFor="let m of MODES" [value]="m.valeur">{{ m.libelle }}</option>
+          </select>
+        </div>
+      </ng-container>
+
+      <div class="gm-field" *ngIf="typeRequete === 'adresse'">
+        <label class="gm-label">Adresse</label>
+        <input class="gm-input" type="text" [(ngModel)]="adresse" [disabled]="enCours">
+      </div>
+
+      <div class="gm-row">
+        <div class="gm-field">
+          <label class="gm-label">Quantité de requêtes *</label>
+          <input class="gm-input gm-input-fort" type="number" min="1" [max]="QUANTITE_MAX" [(ngModel)]="quantite" [disabled]="enCours">
+          <div class="gm-aide">Entre 1 et {{ QUANTITE_MAX }}. Confirmation demandée à partir de {{ SEUIL_CONFIRMATION }}.</div>
+        </div>
+        <div class="gm-field">
+          <label class="gm-label">Simultanées</label>
+          <input class="gm-input" type="number" min="1" [max]="PARALLELE_MAX" [(ngModel)]="parallele" [disabled]="enCours">
+          <div class="gm-aide">1 à {{ PARALLELE_MAX }} en même temps.</div>
+        </div>
+        <div class="gm-field">
+          <label class="gm-label">Délai (ms)</label>
+          <input class="gm-input" type="number" min="0" step="100" [(ngModel)]="delaiMs" [disabled]="enCours">
+          <div class="gm-aide">Pause après chaque requête.</div>
+        </div>
+      </div>
+
+      <div class="gm-field">
+        <label class="gm-label">Clé API</label>
+        <input class="gm-input gm-mono" type="text" [(ngModel)]="cle" [disabled]="enCours">
+        <div class="gm-aide">
+          Clé de l'application par défaut.
+          <a *ngIf="cle !== CLE_PAR_DEFAUT && !enCours" href="javascript:void(0)" (click)="cle = CLE_PAR_DEFAUT">Rétablir</a>
+        </div>
+      </div>
+
+      <div class="gm-actions">
+        <button class="gm-btn-primary" *ngIf="!enCours" (click)="OnLancer()">
+          <i class="fas fa-play me-1"></i>Lancer {{ quantite || 0 }} requête(s)
+        </button>
+        <button class="gm-btn-stop" *ngIf="enCours" (click)="OnArreter()" [disabled]="arretDemande">
+          <i class="fas fa-stop me-1"></i>{{ arretDemande ? 'Arrêt en cours…' : 'Arrêter' }}
+        </button>
+        <button class="gm-btn-secondary" (click)="OnReinitialiser()" [disabled]="enCours || !terminees">
+          <i class="fas fa-eraser me-1"></i>Effacer le bilan
+        </button>
+      </div>
+    </div>
+
+    <!-- Bilan -->
+    <div class="gm-panel">
+      <div class="gm-panel-title">Bilan</div>
+
+      <div *ngIf="!quantiteLancee" class="gm-vide">
+        <i class="fas fa-satellite-dish"></i>
+        Aucune requête envoyée pour l'instant.
+      </div>
+
+      <ng-container *ngIf="quantiteLancee">
+        <div class="gm-progress-head">
+          <span><strong>{{ terminees }}</strong> / {{ quantiteLancee }} requête(s)</span>
+          <span>{{ pourcentage }} %</span>
+        </div>
+        <div class="gm-progress"><div class="gm-progress-bar" [style.width.%]="pourcentage" [class.anim]="enCours"></div></div>
+
+        <div class="gm-kpis">
+          <div class="gm-kpi"><div class="gm-kpi-val ok">{{ statuts['OK'] || 0 }}</div><div class="gm-kpi-lbl">OK</div></div>
+          <div class="gm-kpi"><div class="gm-kpi-val ko">{{ terminees - (statuts['OK'] || 0) }}</div><div class="gm-kpi-lbl">Autres statuts</div></div>
+          <div class="gm-kpi"><div class="gm-kpi-val">{{ dureeMoyenneMs }} ms</div><div class="gm-kpi-lbl">Temps moyen</div></div>
+          <div class="gm-kpi"><div class="gm-kpi-val">{{ dureeEcouleeS | number:'1.1-1':'fr' }} s</div><div class="gm-kpi-lbl">Durée totale</div></div>
+        </div>
+        <div class="gm-minmax" *ngIf="terminees">Temps min {{ dureeMinMs }} ms · max {{ dureeMaxMs }} ms</div>
+
+        <div class="gm-statuts" *ngIf="statutsListe.length">
+          <span *ngFor="let s of statutsListe" class="gm-badge" [ngClass]="classeStatut(s.statut)">{{ s.statut }} : {{ s.nombre }}</span>
+        </div>
+
+        <div class="gm-erreur" *ngIf="messageErreurGoogle">
+          <i class="fas fa-exclamation-triangle me-1"></i>Message de Google : {{ messageErreurGoogle }}
+        </div>
+
+        <div class="gm-panel-title mt-3">Dernières réponses</div>
+        <table class="gm-table">
+          <thead>
+            <tr><th>#</th><th>Statut</th><th class="text-end">Temps</th><th>Résultat</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of derniersResultats">
+              <td>{{ r.numero }}</td>
+              <td><span class="gm-badge" [ngClass]="classeStatut(r.statut)">{{ r.statut }}</span></td>
+              <td class="text-end">{{ r.dureeMs }} ms</td>
+              <td class="gm-detail" [title]="r.detail">{{ r.detail || '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </ng-container>
+    </div>
+  </div>
+</div>

@@ -1,13 +1,14 @@
-<div class="bui-back mb-4" (click)="goBack()">
-  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
-  <h4 class="fw-bold mb-0">Réception marchandises</h4>
+<div class="rm-back-row" (click)="goBack()">
+  <div class="rm-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="rm-back-title">Réception marchandises</h4>
 </div>
 
-<div class="cc-tabs mb-3">
-  <button class="cc-tab-btn" [class.active]="activeTab === 'saisiecommande'" (click)="activeElement('saisiecommande')">Commandes</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'emballages'" (click)="activeElement('emballages')">Emballages</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'receptionmarchandise'" (click)="activeElement('receptionmarchandise')">Réception marchandises</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'entreegratuite'" (click)="activeElement('entreegratuite')">Entrée gratuite</button>
+<div class="rm-tabs mb-3">
+  <button class="rm-tab-btn" [class.active]="activeTab === 'saisiecommande'" (click)="activeElement('saisiecommande')">Commandes</button>
+  <button class="rm-tab-btn" [class.active]="activeTab === 'emballages'" (click)="activeElement('emballages')">Emballages</button>
+  <button class="rm-tab-btn" [class.active]="activeTab === 'receptionmarchandise'" (click)="activeElement('receptionmarchandise')">Réception marchandises</button>
+  <button class="rm-tab-btn" [class.active]="activeTab === 'entreegratuite'" (click)="activeElement('entreegratuite')">Entrée gratuite</button>
+  <button class="rm-tab-btn" [class.active]="activeTab === 'sortieemballage'" (click)="activeElement('sortieemballage')">Sortie emballage fournisseur</button>
 </div>
 
 <div *ngIf="activeTab === 'saisiecommande'">
@@ -24,4 +25,8 @@
 
 <div *ngIf="activeTab === 'entreegratuite'">
   <app-saisie-entree-gratuites [ListenMode]="true"></app-saisie-entree-gratuites>
+</div>
+
+<div *ngIf="activeTab === 'sortieemballage'">
+  <app-sortie-emballage-fournisseur></app-sortie-emballage-fournisseur>
 </div>

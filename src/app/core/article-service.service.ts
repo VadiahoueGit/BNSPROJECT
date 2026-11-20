@@ -116,7 +116,7 @@ export class ArticleServiceService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/categorie-product?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,
+          `${this.apiUrl}/v1/categorie-product?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&libelle=${data.libelle || ''}`,
           { headers }
         )
         .subscribe(
@@ -240,7 +240,7 @@ export class ArticleServiceService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/prix?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,
+          `${this.apiUrl}/v1/prix?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&libelle=${data.libelle || ''}${data.categorie ? '&categorie=' + encodeURIComponent(data.categorie) : ''}${data.quantite ? '&quantite=' + encodeURIComponent(data.quantite) : ''}${data.prixLiquide ? '&prixLiquide=' + encodeURIComponent(data.prixLiquide) : ''}${data.prixConsigne ? '&prixConsigne=' + encodeURIComponent(data.prixConsigne) : ''}${data.statut ? '&statut=' + encodeURIComponent(data.statut) : ''}`,
           { headers }
         )
         .subscribe(
@@ -408,7 +408,7 @@ export class ArticleServiceService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/group-article?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,
+          `${this.apiUrl}/v1/group-article?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&libelle=${data.libelle || ''}`,
           { headers }
         )
         .subscribe(
@@ -493,7 +493,7 @@ export class ArticleServiceService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/liquide?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,
+          `${this.apiUrl}/v1/liquide?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&libelle=${data.libelle || ''}&code=${data.code || ''}`,
           { headers }
         )
         .subscribe(
@@ -580,7 +580,7 @@ export class ArticleServiceService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/emballage?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,
+          `${this.apiUrl}/v1/emballage?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&libelle=${data.libelle || ''}&code=${data.code || ''}`,
           { headers }
         )
         .subscribe(
@@ -647,7 +647,7 @@ export class ArticleServiceService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/product?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,
+          `${this.apiUrl}/v1/product?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&libelle=${data.libelle || ''}&reference=${data.reference || ''}`,
           { headers }
         )
         .subscribe(
@@ -656,6 +656,163 @@ export class ArticleServiceService {
               this.ListArticles.next(res.data);
             }
             console.log(res);
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+  // ARTICLES INTERCHANGEABLES
+  GetListesInterchangeables() {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .get(`${this.apiUrl}/v1/article-interchangeable/listes`, { headers })
+        .subscribe(
+          (res: any) => {
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+  CreateListeInterchangeable(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .post(`${this.apiUrl}/v1/article-interchangeable/listes`, data, { headers })
+        .subscribe(
+          (res: any) => {
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+  UpdateListeInterchangeable(id: number, data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .put(`${this.apiUrl}/v1/article-interchangeable/listes/${id}`, data, { headers })
+        .subscribe(
+          (res: any) => {
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+  DeleteListeInterchangeable(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .delete(`${this.apiUrl}/v1/article-interchangeable/listes/${id}`, { headers })
+        .subscribe(
+          (res: any) => {
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+  // Emballages et plastiques ajoutables à une liste (dans aucune liste, du fournisseur de la liste)
+  GetArticlesDisponiblesInterchangeables(listeId: number) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .get(`${this.apiUrl}/v1/article-interchangeable/listes/${listeId}/disponibles`, { headers })
+        .subscribe(
+          (res: any) => {
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+  GetArticlesInterchangeablesList(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .get(
+          `${this.apiUrl}/v1/article-interchangeable?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&libelle=${data.libelle || ''}`,
+          { headers }
+        )
+        .subscribe(
+          (res: any) => {
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+  AddArticleInterchangeable(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .post(`${this.apiUrl}/v1/article-interchangeable`, data, { headers })
+        .subscribe(
+          (res: any) => {
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
+  DeleteArticleInterchangeable(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .delete(`${this.apiUrl}/v1/article-interchangeable/${id}`, { headers })
+        .subscribe(
+          (res: any) => {
             resolve(res);
           },
           (err) => {
@@ -1080,7 +1237,7 @@ export class ArticleServiceService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/movements/${data.productCode}/available-quantity-inventaire/${data.depotId}`,
+          `${this.apiUrl}/v1/movements/${data.productCode}/available-quantity-inventaire/${data.depotId}?dateInventaire=${data.dateInventaire || ''}`,
           { headers }
         )
         .subscribe(
@@ -1119,13 +1276,15 @@ export class ArticleServiceService {
     });
   }
 
-  GetStocksDetails() {
+  GetStocksDetails(date?: string) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`,
       });
+      let url = `${this.apiUrl}/v1/movements/stock-details`;
+      if (date) url += `?date=${encodeURIComponent(date)}`;
       this._http
-        .get(`${this.apiUrl}/v1/movements/stock-details`, { headers })
+        .get(url, { headers })
         .subscribe(
           (res: any) => {
             console.log(res);
@@ -1165,11 +1324,14 @@ export class ArticleServiceService {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`,
       });
+      let url = `${this.apiUrl}/v1/inventaire?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`;
+      if (data.depotId) url += `&depotId=${data.depotId}`;
+      if (data.code) url += `&code=${encodeURIComponent(data.code)}`;
+      if (data.inventeur) url += `&inventeur=${encodeURIComponent(data.inventeur)}`;
+      if (data.dateDebut) url += `&dateDebut=${encodeURIComponent(data.dateDebut)}`;
+      if (data.dateFin) url += `&dateFin=${encodeURIComponent(data.dateFin)}`;
       this._http
-        .get(
-          `${this.apiUrl}/v1/inventaire?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,
-          { headers }
-        )
+        .get(url, { headers })
         .subscribe(
           (res: any) => {
             console.log(res);
@@ -1207,9 +1369,18 @@ export class ArticleServiceService {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`,
       });
+      const filterParams =
+        `&depotId=${data.depotId || ''}` +
+        `&liquideId=${data.liquideId || ''}` +
+        `&emballageId=${data.emballageId || ''}` +
+        `&type=${data.type || ''}` +
+        `&dateDebut=${data.dateDebut || ''}` +
+        `&dateFin=${data.dateFin || ''}` +
+        `&code=${data.code || ''}` +
+        `&nature=${encodeURIComponent(data.nature || '')}`;
       this._http
         .get(
-          `${this.apiUrl}/v1/log-all/movements/log?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`,
+          `${this.apiUrl}/v1/log-all/movements/log?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}${filterParams}`,
           { headers }
         )
         .subscribe(
@@ -1233,7 +1404,7 @@ export class ArticleServiceService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/revendeur?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&raisonSocial=${data.raisonSociale}&nomProprietaire=${data.proprietaire}&groupeClient=${data.groupeClient}`,
+          `${this.apiUrl}/v1/revendeur?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&raisonSocial=${data.raisonSociale}&nomProprietaire=${data.proprietaire}&groupeClient=${data.groupeClient}&depotId=${data.depotId || ''}`,
           { headers }
         )
         .subscribe(
@@ -1372,6 +1543,26 @@ export class ArticleServiceService {
     });
   }
 
+  GetListCommandeGratuiteById(id: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.get(`${this.apiUrl}/v1/commandes-gratuites/${id}`, { headers }).subscribe(
+        (res: any) => resolve(res),
+        (err: any) => reject(err)
+      );
+    });
+  }
+
+  ApprouverCommandeGratuiteDepot(id: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.patch(`${this.apiUrl}/v1/commandes-gratuites/approuver/commandegratuit/${id}`, {}, { headers }).subscribe(
+        (res: any) => resolve(res),
+        (err: any) => reject(err)
+      );
+    });
+  }
+
   // COMMANDE CLIENT
 
   CreateCommandClient(data: any) {
@@ -1399,9 +1590,12 @@ export class ArticleServiceService {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`,
       });
+      const statutParam = Array.isArray(data.statut)
+        ? data.statut.map((s: string) => `statut=${encodeURIComponent(s)}`).join('&')
+        : `statut=${encodeURIComponent(data.statut || '')}`;
       this._http
         .get(
-          `${this.apiUrl}/v1/commandes-client?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&numeroCommande=${data.numeroCommande}&date=${data.date}&etablissement=${data.etablissement}&statut=${data.statut}`,
+          `${this.apiUrl}/v1/commandes-client?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&numeroCommande=${data.numeroCommande}&date=${data.date}&etablissement=${data.etablissement}&${statutParam}`,
           { headers }
         )
         .subscribe(
@@ -1500,6 +1694,20 @@ export class ArticleServiceService {
             console.log(err);
             reject(err);
           }
+        );
+    });
+  }
+
+  UpdateDateExpeditionCommandeFournisseur(id: number, dateExpedition: string) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .patch(`${this.apiUrl}/v1/commande-fournisseur/${id}/date-expedition`, { dateExpedition }, { headers })
+        .subscribe(
+          (res: any) => resolve(res),
+          (err) => reject(err)
         );
     });
   }
@@ -1675,6 +1883,48 @@ export class ArticleServiceService {
     });
   }
 
+  AnnulerCommandeClient(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .delete(`${this.apiUrl}/v1/commandes-client/annuler/${id}`, { headers })
+        .subscribe(
+          (res: any) => { resolve(res); },
+          (err) => { reject(err); }
+        );
+    });
+  }
+
+  AnnulerLivraisonCommandeClient(commandeClientId: number) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .patch(`${this.apiUrl}/v1/livraisons/annuler-pour-commande/${commandeClientId}`, {}, { headers })
+        .subscribe(
+          (res: any) => { resolve(res); },
+          (err) => { reject(err); }
+        );
+    });
+  }
+
+  AnnulerCommandeFournisseur(id: number) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .patch(`${this.apiUrl}/v1/commande-fournisseur/${id}/annuler`, {}, { headers })
+        .subscribe(
+          (res: any) => { resolve(res); },
+          (err) => { reject(err); }
+        );
+    });
+  }
+
   UpdateVente(id:any,data: any) {
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
@@ -1757,7 +2007,7 @@ export class ArticleServiceService {
       });
       this._http
         .get(
-          `${this.apiUrl}/v1/reception-commande-fournisseur?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&numeroReception=${data.numeroReception}&numeroBonLivraison=${data.numeroBonLivraison}&dateDebut=${data.dateDebut}&dateFin=${data.dateFin}`,
+          `${this.apiUrl}/v1/reception-commande-fournisseur?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}&numeroReception=${data.numeroReception}&numeroBonLivraison=${data.numeroBonLivraison}&numeroCommande=${data.numeroCommande || ''}&dateDebut=${data.dateDebut}&dateFin=${data.dateFin}${data.statuts ? data.statuts.map((s: string) => `&statuts=${s}`).join('') : ''}`,
           { headers }
         )
         .subscribe(
@@ -1766,6 +2016,36 @@ export class ArticleServiceService {
             // if (res.statusCode === 200) {
             //   this.ListRevendeurs.next(res.data);
             // }
+            resolve(res);
+          },
+          (err) => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+  ImprimerBonLivraisonReception(id: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${this.token}`,
+      });
+      this._http
+        .get(`${this.apiUrl}/v1/reception-commande-fournisseur/${id}/bon-livraison`, {
+          headers,
+          responseType: 'blob',
+        })
+        .subscribe(
+          (res: any) => {
+            const blob = new Blob([res], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+            const newTab = window.open(url);
+            if (!newTab) {
+              reject(new Error('Le popup a été bloqué par le navigateur.'));
+              return;
+            }
+            // Nettoyer l'URL après un certain temps pour éviter les fuites mémoire
+            setTimeout(() => window.URL.revokeObjectURL(url), 10000);
             resolve(res);
           },
           (err) => {
@@ -1920,4 +2200,39 @@ export class ArticleServiceService {
         );
     });
   }
+
+  // SORTIES EMBALLAGES FOURNISSEURS
+  CreateSortieEmballageFournisseur(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.post(`${this.apiUrl}/v1/sortie-emballage-fournisseur`, data, { headers }).subscribe(
+        (res: any) => resolve(res),
+        (err) => reject(err)
+      );
+    });
+  }
+
+  GetListSortieEmballageFournisseur(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.get(
+        `${this.apiUrl}/v1/sortie-emballage-fournisseur?page=${data.page}&limit=${data.limit}${data.fournisseurId ? '&fournisseurId=' + data.fournisseurId : ''}`,
+        { headers }
+      ).subscribe(
+        (res: any) => resolve(res),
+        (err) => reject(err)
+      );
+    });
+  }
+
+  EnregistrerRetourSortieEmballageFournisseur(id: number, data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.patch(`${this.apiUrl}/v1/sortie-emballage-fournisseur/${id}/retour`, data, { headers }).subscribe(
+        (res: any) => resolve(res),
+        (err) => reject(err)
+      );
+    });
+  }
+
 }

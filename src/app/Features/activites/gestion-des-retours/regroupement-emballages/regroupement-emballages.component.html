@@ -1,74 +1,68 @@
-<div class="card">
+<!-- Liste -->
+<div class="fn-card">
+  <div class="fn-topbar">
+    <div class="fn-topbar-left">
+      <div class="fn-title"><i class="fas fa-layer-group"></i> Regroupements emballages</div>
+      <div class="fn-count">{{ totalPages }} résultat(s)</div>
+    </div>
+  </div>
 
-  <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+  <div class="fn-filters">
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Recherche</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-search fn-filter-icon"></i>
+        <input class="fn-filter-input" (input)="onFilterGlobal($event)" placeholder="Agent, client, dépôt..." />
+      </div>
+    </div>
+  </div>
+
+  <p-table [styleClass]="'fn-ptable p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
            [totalRecords]="totalPages" [lazy]="true"
            [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
-
     <ng-template pTemplate="header">
       <tr>
         <th>Agent</th>
         <th>Client</th>
         <th>Opération</th>
-        <th>Dépot</th>
+        <th>Dépôt</th>
         <th>Type retour</th>
         <th>Véhicule</th>
-        <th>Actions</th>
+        <th class="text-center">Actions</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-dataList>
+    <ng-template pTemplate="body" let-row>
       <tr>
         <td>
-                    <span class="ml-1 vertical-align-middle">
-                    {{
-                        (dataList.venteChine)
-                          ? dataList.venteChine.commercial.nom + ' ' + dataList.venteChine.commercial.prenoms
-                          : (dataList.transporteur?.nom && dataList.transporteur?.prenoms)
-                            ? dataList.transporteur.nom + ' ' + dataList.transporteur.prenoms
-                            : 'N/A'
-                      }}
-
-                    </span>
+          {{
+            row.venteChine
+              ? (row.venteChine.commercial.nom + ' ' + row.venteChine.commercial.prenoms)
+              : (row.transporteur?.nom && row.transporteur?.prenoms)
+                ? (row.transporteur.nom + ' ' + row.transporteur.prenoms)
+                : 'N/A'
+          }}
         </td>
-        <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.clientALivrer?.nomEtablissement || dataList.clientALivrer?.raisonSocial }}
-                    </span>
-        </td>
-        <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.fromTo }}
-                    </span>
-        </td>
-        <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.depot?.nomDepot }}
-
-                    </span>
-        </td>
-        <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList?.returnType }}
-                    </span>
-        </td>
-        <td>
-          {{ dataList?.vehicule?.marque || dataList.venteChine.vehicule.marque }}
-        </td>
+        <td>{{ row.clientALivrer?.nomEtablissement || row.clientALivrer?.raisonSocial || '—' }}</td>
+        <td>{{ row.fromTo }}</td>
+        <td style="color:#6b7280">{{ row.depot?.nomDepot }}</td>
+        <td><span class="fn-badge blue">{{ row?.returnType }}</span></td>
+        <td>{{ row?.vehicule?.marque || row.venteChine?.vehicule?.marque || '—' }}</td>
         <td class="text-center">
-      <div class="d-flex justify-content-center gap-2">
-        <span class="bui-icon-btn view" (click)="OnEdit(dataList)"><i class="fas fa-eye"></i></span>
-      </div>
-    </td>
+          <button class="fn-action-btn view" (click)="OnEdit(row)" title="Voir"><i class="fas fa-eye"></i></button>
+        </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">Aucun élément trouvé.</td>
+        <td colspan="7" style="text-align:center; padding:32px; color:#9ca3af; font-size:13px;">
+          <i class="fas fa-inbox me-2"></i>Aucun regroupement trouvé.
+        </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
-
+<!-- Modal -->
 <div *ngIf="isModalOpen" class="custom-modal">
   <div class="vd-modal-dialog wide">
     <div class="vd-modal-header">
@@ -161,6 +155,29 @@
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <div class="vd-card" *ngIf="updateData?.interchanges?.length">
+        <div class="vd-card-header">
+          <div class="vd-card-icon blue"><i class="fas fa-arrows-rotate"></i></div>
+          <div class="vd-section-label">Interchanges</div>
+          <span class="vd-badge blue ms-2">{{ updateData.interchanges.length }}</span>
+        </div>
+        <div *ngFor="let ic of updateData.interchanges" class="vd-interchange-block">
+          <div class="vd-interchange-source">
+            <span class="vd-badge gray">{{ ic.codeEmballageSource }}</span>
+            <span class="vd-interchange-label">{{ ic.emballageSource?.libelle || ic.codeEmballageSource }}</span>
+            <span class="vd-interchange-qty">× {{ ic.quantiteRestante }}</span>
+            <i class="fas fa-arrow-right vd-interchange-arrow"></i>
+          </div>
+          <div class="vd-interchange-cibles">
+            <div class="vd-interchange-cible" *ngFor="let cible of ic.cibles">
+              <span class="vd-badge green">{{ cible.codeEmballageCible }}</span>
+              <span class="vd-interchange-label">{{ cible.emballageCible?.libelle || cible.codeEmballageCible }}</span>
+              <span class="vd-interchange-qty">× {{ cible.quantite }}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

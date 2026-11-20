@@ -33,7 +33,8 @@ export class SuiviComptesComponent {
   currentPage: number;
   rowsPerPage: any;
   totalPages: number;
-  dates:any
+  dates: any;
+  filters = { search: '', clientType: '' };
   constructor(
     private _financeService: FinanceService,
     private _articleService: ArticleServiceService,
@@ -122,23 +123,33 @@ export class SuiviComptesComponent {
     console.log(this.isModalOpen);
   }
   GetCreditList(page: number) {
-    let data = {
+    const data = {
       paginate: true,
-      page: page,
+      page,
       limit: 8,
+      search: this.filters.search || '',
+      clientType: this.filters.clientType || '',
     };
     this._spinner.show();
     this._financeService.GetCreditList(data).then((res: any) => {
-      console.log('GetCreditList:::>', res);
-      this.totalPages = res.total; // nombre total d’enregistrements
-      console.log('totalPages:::>', this.totalPages); // nombre total d’enregistrements
-
+      this.totalPages = res.total;
       this.dataList = res.data;
       this._spinner.hide();
     });
   }
+
+  applyFilters() {
+    this.currentPage = 1;
+    this.GetCreditList(1);
+  }
+
+  resetFilters() {
+    this.filters = { search: '', clientType: '' };
+    this.GetCreditList(1);
+  }
+
   onPage(event: any) {
-    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
+    this.currentPage = event.first / event.rows + 1;
     this.rowsPerPage = event.rows;
     this.GetCreditList(this.currentPage);
   }

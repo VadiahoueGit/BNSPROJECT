@@ -48,6 +48,20 @@ export class DashboardComponent implements OnInit {
   topCommerciaux: any = []
   today = new Date()
 
+  datePresets = [
+    { key: 'tout', label: 'Tout' },
+    { key: 'jour', label: "Aujourd'hui" },
+    { key: 'semaine', label: 'Cette semaine' },
+    { key: 'mois', label: 'Ce mois' },
+    { key: 'trimestre', label: 'Ce trimestre' },
+    { key: 'annee', label: 'Cette année' },
+  ];
+  selectedPreset: string = 'tout';
+  dateDebut: string | null = null;
+  dateFin: string | null = null;
+  customDateDebut: string | null = null;
+  customDateFin: string | null = null;
+
   constructor(public splashService: SplashService,private coreServices: CoreServiceService) {
     Object.assign(this, this.articles );
   }
@@ -63,18 +77,66 @@ export class DashboardComponent implements OnInit {
         // ici tu peux carrément retirer le composant si tu veux
       }, 4600); // durée = 4000 + 600 (transition)
     }
+    this.loadDashboard()
+  }
+
+  loadDashboard(): void {
     this.GetKpiCommande()
     this.GetBestSeller()
     this.GetTopClients()
     this.GetTopCommerciaux()
   }
 
+  selectDatePreset(key: string): void {
+    this.selectedPreset = key;
+    const today = new Date();
+    const toIso = (d: Date) => d.toISOString().slice(0, 10);
+
+    if (key === 'tout') {
+      this.dateDebut = null;
+      this.dateFin = null;
+    } else if (key === 'jour') {
+      this.dateDebut = toIso(today);
+      this.dateFin = toIso(today);
+    } else if (key === 'semaine') {
+      const jourSemaine = (today.getDay() + 6) % 7; // lundi = 0
+      const debut = new Date(today);
+      debut.setDate(today.getDate() - jourSemaine);
+      this.dateDebut = toIso(debut);
+      this.dateFin = toIso(today);
+    } else if (key === 'mois') {
+      this.dateDebut = toIso(new Date(today.getFullYear(), today.getMonth(), 1));
+      this.dateFin = toIso(today);
+    } else if (key === 'trimestre') {
+      const trimestreDebutMois = Math.floor(today.getMonth() / 3) * 3;
+      this.dateDebut = toIso(new Date(today.getFullYear(), trimestreDebutMois, 1));
+      this.dateFin = toIso(today);
+    } else if (key === 'annee') {
+      this.dateDebut = toIso(new Date(today.getFullYear(), 0, 1));
+      this.dateFin = toIso(today);
+    }
+
+    this.loadDashboard();
+  }
+
+  applyCustomRange(): void {
+    if (!this.customDateDebut || !this.customDateFin) return;
+    this.selectedPreset = 'custom';
+    this.dateDebut = this.customDateDebut;
+    this.dateFin = this.customDateFin;
+    this.loadDashboard();
+  }
+
+  private get dateRangeParams() {
+    return { dateDebut: this.dateDebut, dateFin: this.dateFin };
+  }
 
   GetBestSeller() {
     let data = {
       paginate: false,
       page: 1,
       limit: 8,
+      ...this.dateRangeParams,
     };
 
     this.coreServices.GetBestSeller(data).then((response: any) => {
@@ -101,7 +163,7 @@ export class DashboardComponent implements OnInit {
   }
 
   GetKpiCommande() {
-    this.coreServices.GetKpiCommande().then((response: any) => {
+    this.coreServices.GetKpiCommande(this.dateRangeParams).then((response: any) => {
       this.commandesFournisseur = response.data.commandesFournisseur;
       this.commandesClient = response.data.commandesClient;
       this.commandesGratuites = response.data.commandesGratuites;
@@ -111,14 +173,14 @@ export class DashboardComponent implements OnInit {
   }
 
   GetTopClients() {
-    const data = { paginate: false, page: 1, limit: 8 };
+    const data = { paginate: false, page: 1, limit: 8, ...this.dateRangeParams };
     this.coreServices.GetTopClients(data).then((response: any) => {
-      this.topClients = response.data || [];
+      this.topClients = Array.isArray(response.data) ? response.data : [];
     }).catch(() => { this.topClients = []; });
   }
 
   GetTopCommerciaux() {
-    const data = { paginate: false, page: 1, limit: 8 };
+    const data = { paginate: false, page: 1, limit: 8, ...this.dateRangeParams };
     this.coreServices.GetTopCommerciaux(data).then((response: any) => {
       this.topCommerciaux = response.data || [];
     }).catch(() => { this.topCommerciaux = []; });

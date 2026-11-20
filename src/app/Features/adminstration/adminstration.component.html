@@ -1,12 +1,22 @@
-<div class="bui-back mb-4" (click)="goBack()">
-  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
-  <h4 class="fw-bold mb-0">Administration</h4>
+<div class="adm-back-row" (click)="goBack()">
+  <div class="adm-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="adm-back-title">Administration</h4>
 </div>
 
-<div class="cc-tabs mb-3">
-  <button class="cc-tab-btn" [class.active]="activeTab === 'permission'" (click)="activeElement('permission')">Permissions</button>
+<div class="adm-tabs mb-3">
+  <button class="adm-tab-btn" [class.active]="activeTab === 'permission'" (click)="activeElement('permission')">Permissions</button>
+  <button class="adm-tab-btn" [class.active]="activeTab === 'journal'" (click)="activeElement('journal')">Journal des modifications</button>
+  <button class="adm-tab-btn" [class.active]="activeTab === 'googleMaps'" (click)="activeElement('googleMaps')">Requêtes Google Maps</button>
 </div>
 
 <div *ngIf="activeTab === 'permission'">
   <app-permission></app-permission>
+</div>
+
+<div *ngIf="activeTab === 'journal'">
+  <app-journal-modifications></app-journal-modifications>
+</div>
+
+<div *ngIf="activeTab === 'googleMaps'">
+  <app-google-maps-requetes></app-google-maps-requetes>
 </div>

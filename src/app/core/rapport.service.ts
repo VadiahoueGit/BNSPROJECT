@@ -35,4 +35,40 @@ export class RapportService {
         );
     });
   }
+
+  execQuery(query: string, params: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http
+        .post(`${this.apiUrl}/v1/rapport/query`, { query, params }, { headers })
+        .subscribe(
+          (res: any) => resolve(res),
+          (err) => { this._spinner.hide(); reject(err); }
+        );
+    });
+  }
+
+  getPerso(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.get(`${this.apiUrl}/v1/rapport/perso`, { headers })
+        .subscribe((res: any) => resolve(res), (err) => reject(err));
+    });
+  }
+
+  savePerso(titre: string, sql: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.post(`${this.apiUrl}/v1/rapport/perso`, { titre, sql }, { headers })
+        .subscribe((res: any) => resolve(res), (err) => reject(err));
+    });
+  }
+
+  deletePerso(id: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.delete(`${this.apiUrl}/v1/rapport/perso/${id}`, { headers })
+        .subscribe((res: any) => resolve(res), (err) => reject(err));
+    });
+  }
 }

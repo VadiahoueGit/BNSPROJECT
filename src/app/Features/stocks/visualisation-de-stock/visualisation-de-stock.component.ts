@@ -6,6 +6,7 @@ import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { ALERT_QUESTION } from '../../shared-component/utils';
 import { Location } from '@angular/common';
+import { CoreServiceService } from '../../../core/core-service.service';
 
 @Component({
   selector: 'app-visualisation-de-stock',
@@ -27,15 +28,53 @@ export class VisualisationDeStockComponent {
   rowsPerPage: any;
 
   dataList : any[] = [];
+  allDataList: any[] = [];
+  depotList: any[] = [];
+  selectedDepotId: any = null;
+  selectedDate: string = '';
+  now: string = new Date().toISOString().slice(0, 10);
   constructor(private articleService: ArticleServiceService, private _spinner:NgxSpinnerService,
     private toastr: ToastrService,
     private fb: FormBuilder,
     private location: Location,
+    private coreService: CoreServiceService,
   ) { }
 
   ngOnInit() {
-
     this.GetGroupeProduitList(1)
+    this.GetDepotList()
+  }
+
+  GetDepotList() {
+    this.coreService.GetDepotList({ paginate: false, page: 1, limit: 100 }).then((res: any) => {
+      this.depotList = res.data || [];
+    });
+  }
+
+  onDepotFilterChange() {
+    this.applyDepotFilter();
+  }
+
+  onDateFilterChange() {
+    this.GetGroupeProduitList(1);
+  }
+
+  resetDateFilter() {
+    this.selectedDate = '';
+    this.GetGroupeProduitList(1);
+  }
+
+  applyDepotFilter() {
+    if (!this.selectedDepotId) {
+      this.dataList = this.allDataList;
+      return;
+    }
+    this.dataList = this.allDataList
+      .map((item: any) => ({
+        ...item,
+        stockByDepot: item.stockByDepot.filter((d: any) => d.depotId === this.selectedDepotId),
+      }))
+      .filter((item: any) => item.stockByDepot.length > 0);
   }
 
   clear(table: Table) {
@@ -73,9 +112,9 @@ export class VisualisationDeStockComponent {
       limit:8
     }
     this._spinner.show()
-    this.articleService.GetStocksDetails().then((res: any) => {
+    this.articleService.GetStocksDetails(this.selectedDate).then((res: any) => {
       if(res.statusCode === 201) {
-        this.dataList = res.data.map((item: any) => {
+        this.allDataList = res.data.map((item: any) => {
           let code = item.code;
           if (code.startsWith('CAS')) {
             code = 'CCAS' + code.slice(3);
@@ -84,6 +123,7 @@ export class VisualisationDeStockComponent {
           }
           return { ...item, code };
         });
+        this.applyDepotFilter();
       }
 
       this._spinner.hide();

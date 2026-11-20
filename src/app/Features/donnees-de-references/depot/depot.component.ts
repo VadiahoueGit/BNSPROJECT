@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
 import { CoreServiceService } from 'src/app/core/core-service.service';
 import { UtilisateurResolveService } from 'src/app/core/utilisateur-resolve.service';
+import { FinanceService } from 'src/app/core/finance.service';
 import { ALERT_QUESTION } from '../../shared-component/utils';
 import { Location } from '@angular/common';
 
@@ -38,6 +39,7 @@ export class DepotComponent {
   dataListProfil: any;
   dataListUsers: any;
   dataListlocalite: any;
+  dataListCompte: any[] = [];
   currentPage: number;
   rowsPerPage: any;
   totalPages: any;
@@ -46,6 +48,7 @@ export class DepotComponent {
     private _userService: UtilisateurResolveService,
     private location: Location,
     private _coreService: CoreServiceService,
+    private _financeService: FinanceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
@@ -75,10 +78,23 @@ export class DepotComponent {
       latitude: [null, Validators.required],
       longitude: [null, Validators.required],
       zoneId: [null, Validators.required],
+      codeSAP: [null],
+      compteId: [null],
     });
 
     this.GetZoneList()
+    this.GetCompteList()
     this.GetDepotList(1);
+  }
+  GetCompteList() {
+    let data = {
+      paginate: false,
+      page: 1,
+      limit: 8,
+    };
+    this._financeService.GetCompteList(data).then((res: any) => {
+      this.dataListCompte = (res.data || []).map((c: any) => ({ ...c, label: `${c.compte} - ${c.libelle}` }));
+    });
   }
   goBack() {
     this.location.back()
@@ -196,6 +212,8 @@ export class DepotComponent {
       latitude: this.updateData.latitude,
       longitude: this.updateData.longitude,
       zoneId: this.updateData.zone.id,
+      codeSAP: this.updateData.codeSAP,
+      compteId: this.updateData.compte ? this.updateData.compte.id : null,
     });
   }
   OnDelete(Id: any) {

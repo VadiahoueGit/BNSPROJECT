@@ -21,6 +21,9 @@ export class PaiementGroupeComponent {
   operation: string = '';
   updateData: any = {};
   isEditMode: boolean = false;
+  soldePairMoyen: { libelle: string; montantAttendu: number; montantRecu: number | null; paiementIds: number[] }[] = [];
+  dateDebutModal: string = '';
+  dateFinModal: string = '';
   constructor(
     private articleService: ArticleServiceService,
     private financeService: FinanceService,
@@ -35,20 +38,84 @@ export class PaiementGroupeComponent {
   }
   OnEdit(data: any) {
     this.isEditMode = true;
-    console.log(data);
     this.updateData = data;
     this.updateData.transactions = this.updateData.transactions.filter((transaction: any) =>
       transaction.paiements.some((paiement: any) => paiement.statut === 'En attente')
     );
+    this.soldePairMoyen = this.buildSoldeParMoyen(this.updateData.transactions);
+    this.amountReal = this.soldePairMoyen.reduce((s, m) => s + (m.montantRecu || 0), 0);
     this.isModalOpen = true;
-    this.amountReal = this.calculerTotalPaiements(this.updateData?.transactions)
     this.operation = 'edit';
-    console.log(this.isModalOpen);
   }
   OnCloseModal() {
     this.isModalOpen = false;
-    console.log(this.isModalOpen);
+    this.dateDebutModal = '';
+    this.dateFinModal = '';
   }
+
+  get filteredTransactions(): any[] {
+    if (!this.updateData?.transactions) return [];
+    const debut = this.dateDebutModal ? new Date(this.dateDebutModal).setHours(0, 0, 0, 0) : null;
+    const fin = this.dateFinModal ? new Date(this.dateFinModal).setHours(23, 59, 59, 999) : null;
+    if (!debut && !fin) return this.updateData.transactions;
+    return this.updateData.transactions.filter((t: any) =>
+      (t.paiements || []).some((p: any) => {
+        const d = new Date(p.datePaiement).getTime();
+        return (!debut || d >= debut) && (!fin || d <= fin);
+      })
+    );
+  }
+
+  onDateFilterChange() {
+    this.soldePairMoyen = this.buildSoldeParMoyen(this.filteredTransactions);
+    this.amountReal = this.soldePairMoyen.reduce((s, m) => s + (m.montantRecu || 0), 0);
+  }
+  buildSoldeParMoyen(transactions: any[]): { libelle: string; montantAttendu: number; montantRecu: number | null; paiementIds: number[] }[] {
+    const map = new Map<string, { montant: number; ids: number[] }>();
+    for (const t of transactions) {
+      for (const p of (t.paiements || [])) {
+        if (p.statut !== 'Payé') {
+          const libelle = p.moyenPaiement?.libelle || 'Non défini';
+          if (!map.has(libelle)) map.set(libelle, { montant: 0, ids: [] });
+          const entry = map.get(libelle)!;
+          entry.montant += (p.montant || 0);
+          entry.ids.push(p.id);
+        }
+      }
+    }
+    return Array.from(map.entries()).map(([libelle, { montant, ids }]) => ({
+      libelle,
+      montantAttendu: montant,
+      montantRecu: null,
+      paiementIds: ids,
+    }));
+  }
+
+  onMontantRecuChange() {
+    this.amountReal = this.soldePairMoyen.reduce((s, m) => s + (m.montantRecu || 0), 0);
+  }
+
+  groupPaiements(paiements: any[]): any[] {
+    const map = new Map<string, any>();
+    for (const p of (paiements || [])) {
+      const key = p.moyenPaiement?.libelle || 'N/A';
+      if (map.has(key)) {
+        map.get(key).montant += (p.montant || 0);
+      } else {
+        map.set(key, { ...p, montant: p.montant || 0 });
+      }
+    }
+    return Array.from(map.values());
+  }
+
+  get totalAttendu(): number {
+    return this.soldePairMoyen.reduce((s, m) => s + m.montantAttendu, 0);
+  }
+
+  get ecart(): number {
+    return this.totalAttendu - this.amountReal;
+  }
+
   calculerTotalPaiements(transactions: any[]): number {
     let total = 0;
     for (const transaction of transactions) {
@@ -84,32 +151,22 @@ export class PaiementGroupeComponent {
     });
   }
 
-  ValiderPaiementGroup(item:any)
-  {
-    const interm: number[] = [];
-
-    item.forEach((transaction: any) => {
-      if (transaction.paiements && transaction.paiements.length > 0) {
-        transaction.paiements.forEach((paiement: any) => {
-          if (paiement.statut != 'Payé') { // ✅ uniquement si payé
-            interm.push(paiement.id);
-          }
-        });
-      }
-    });
-
-
+  ValiderUnType(type: { libelle: string; montantAttendu: number; montantRecu: number | null; paiementIds: number[] }) {
     const data = {
-      paiementIds: interm,
-      montantTotalRecu: this.amountReal,
+      paiementIds: type.paiementIds,
+      montantTotalRecu: type.montantRecu,
     };
     this._spinner.show();
     this.financeService.ValiderPaiementGroup(data).then((res: any) => {
-      if(res.statusCode === 200) {
-        this.toastr.success(res.message);
-        this.OnCloseModal()
-        this.GetPaiementAgentList(1)
-      }else{
+      if (res.statusCode === 200) {
+        this.toastr.success(`${type.libelle} soldé avec succès`);
+        this.soldePairMoyen = this.soldePairMoyen.filter(m => m.libelle !== type.libelle);
+        this.amountReal = this.soldePairMoyen.reduce((s, m) => s + (m.montantRecu || 0), 0);
+        if (this.soldePairMoyen.length === 0) {
+          this.OnCloseModal();
+          this.GetPaiementAgentList(1);
+        }
+      } else {
         this.toastr.error(res.message);
       }
       this._spinner.hide();

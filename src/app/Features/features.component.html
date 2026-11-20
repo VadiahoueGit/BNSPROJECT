@@ -4,12 +4,12 @@
   <aside class="sidebar" id="sidebar">
 
     <div class="sidebar-brand">
-      <img src="assets/image/armonyssansfond.png" class="sidebar-logo" />
-      <div class="sidebar-brand-name">Best Negoce Services</div>
-      <div class="sidebar-depot">
+      <img [src]="getLogoUrl(entrepriseConfig?.logoPath)" class="sidebar-logo" />
+      <div class="sidebar-brand-name">{{ entrepriseConfig?.nom || 'Aucune entreprise' }}</div>
+      <!-- <div class="sidebar-depot">
         <i class="fas fa-map-marker-alt"></i>
-        <span>{{ UserInfo.depot.nomDepot }}</span>
-      </div>
+        <span>{{  depotHoteNom || UserInfo?.depot?.nomDepot || '—' }}</span>
+      </div> -->
     </div>
 
     <nav class="sidebar-nav">
@@ -36,7 +36,7 @@
       <div class="top-nav-left">
         <div class="top-nav-depot">
           <i class="fas fa-warehouse"></i>
-          <span>{{ UserInfo.depot.nomDepot }}</span>
+          <span>{{  depotHoteNom || UserInfo?.depot?.nomDepot || '—' }}</span>
         </div>
       </div>
 

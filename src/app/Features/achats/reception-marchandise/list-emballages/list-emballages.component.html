@@ -1,365 +1,231 @@
-<div class="card">
-  <!-- <div class="d-flex justify-content-end py-3">
-  <button type="button" class="bui-btn-add" (click)="OnCreate()">Saisie d'emballage rendu</button>
-</div> -->
-  <div class="row d-flex justify-items-center">
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Numero reception :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.numeroReception"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Numero bon :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.numeroBonLivraison"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Date debut :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.dateDebut"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Date fin :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.dateFin"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
+<div class="le-card">
+  <div class="le-topbar">
+    <div>
+      <div class="le-card-title"><i class="fas fa-recycle"></i> Retours emballage</div>
+      <div class="le-count">{{ dataList?.length || 0 }} entrée(s)</div>
     </div>
   </div>
-  <p-table
-    [styleClass]="'p-datatable-sm'"
-    #dt2
-    [value]="dataList"
-    dataKey="id"
-    [rows]="8"
-    [totalRecords]="totalPages"
-    [lazy]="true"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [paginator]="true"
-    (onPage)="onPage($event)"
-  >
+
+  <!-- Filtres -->
+  <div class="bui-filter-bar mb-3">
+    <div class="bui-filter-field">
+      <label class="bui-filter-label">N° réception</label>
+      <input class="bui-filter-input" type="text" [(ngModel)]="filters.numeroReception" (keydown.enter)="filterGlobal()" placeholder="Rechercher..." />
+    </div>
+    <div class="bui-filter-field">
+      <label class="bui-filter-label">N° bon livraison</label>
+      <input class="bui-filter-input" type="text" [(ngModel)]="filters.numeroBonLivraison" (keydown.enter)="filterGlobal()" placeholder="Rechercher..." />
+    </div>
+    <div class="bui-filter-field">
+      <label class="bui-filter-label">Date début</label>
+      <input class="bui-filter-input" type="text" [(ngModel)]="filters.dateDebut" (keydown.enter)="filterGlobal()" placeholder="jj/mm/aaaa" />
+    </div>
+    <div class="bui-filter-field">
+      <label class="bui-filter-label">Date fin</label>
+      <input class="bui-filter-input" type="text" [(ngModel)]="filters.dateFin" (keydown.enter)="filterGlobal()" placeholder="jj/mm/aaaa" />
+    </div>
+    <div class="bui-filter-field" style="align-self:flex-end">
+      <button class="vd-btn-primary" (click)="filterGlobal()"><i class="fas fa-search"></i> Rechercher</button>
+    </div>
+  </div>
+
+  <p-table [styleClass]="'le-ptable p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+           [totalRecords]="totalPages" [lazy]="true" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
     <ng-template pTemplate="header">
       <tr>
-        <th>Dépots</th>
+        <th>Dépôt</th>
+        <th>Revendeur</th>
         <th>N° réception</th>
         <th>N° bon livraison</th>
         <th>N° commande</th>
         <th>Date commande</th>
-        <th>Type de commande</th>
+        <th>Type</th>
         <th>Statut</th>
-        <th>Actions</th>
+        <th class="text-center">Actions</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-dataList let-i="index">
+    <ng-template pTemplate="body" let-dataList>
       <tr>
+        <td>{{ dataList?.commande?.depot?.nomDepot ?? dataList?.commande?.revendeur?.depot?.nomDepot ?? dataList?.entreeGratuite?.depot?.nomDepot }}</td>
+        <td>{{ dataList?.commande?.revendeur?.raisonSocial || '-' }}</td>
+        <td><span class="fw-semibold">{{ dataList?.numeroReceptionCommande }}</span></td>
+        <td>{{ dataList?.numeroBonLivraison }}</td>
+        <td>{{ dataList?.commande?.NumCommande ?? dataList?.entreeGratuite?.NumEntreeGratuite }}</td>
+        <td>{{ (dataList?.commande?.dateCommande ?? dataList?.entreeGratuite?.dateReception) | date:'dd/MM/yyyy' }}</td>
+        <td>{{ dataList?.commande?.typeCommande ?? 'Entrée gratuite' }}</td>
         <td>
-           <span class="ml-1 vertical-align-middle">
-          {{ dataList?.commande?.depot?.nomDepot ?? dataList?.entreeGratuite?.depot?.nomDepot }}
-           </span>
-        </td>
-        <td>
-           <span class="ml-1 vertical-align-middle">
-          {{ dataList?.numeroReceptionCommande }}
-           </span>
-        </td>
-        <td>
-           <span class="ml-1 vertical-align-middle">
-          {{ dataList?.numeroBonLivraison }}
-           </span>
-        </td>
-        <td>
-           <span class="ml-1 vertical-align-middle">
-          {{ dataList?.commande?.NumCommande ?? dataList?.entreeGratuite?.NumEntreeGratuite }}
-           </span>
-        </td>
-
-        <td>
-           <span class="ml-1 vertical-align-middle">
-          {{ dataList?.commande?.dateCommande ?? dataList?.entreeGratuite?.dateReception }}
-           </span>
-        </td>
-
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.commande?.typeCommande ?? 'Entree gratuite'}}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.commande?.statut ?? 'Reçue'}}
+          <span class="le-status-badge"
+            [ngClass]="{
+              'attente': dataList?.statut === 'EN_ATTENTE',
+              'partiel': dataList?.statut === 'PARTIELLEMENT_RENDU',
+              'traite':  dataList?.statut === 'TRAITE'
+            }">
+            {{ dataList?.statut === 'EN_ATTENTE' ? 'En attente'
+              : dataList?.statut === 'PARTIELLEMENT_RENDU' ? 'Partiellement rendu'
+              : dataList?.statut === 'TRAITE' ? 'Traité'
+              : 'En attente' }}
           </span>
         </td>
         <td class="text-center">
-          <div class="d-flex justify-content-center gap-2">
-            <span class="bui-icon-btn view" (click)="OnEdit(dataList)"><i class="fas fa-eye"></i></span>
-          </div>
+          <button class="le-action-btn view" (click)="OnEdit(dataList)" title="Retour emballage"><i class="fas fa-eye"></i></button>
         </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">Aucun emballage trouvé!</td>
+        <td colspan="9">
+          <div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucun élément trouvé.</span></div>
+        </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
-<!-- Modal creation -->
-<!-- Modal -->
-
+<!-- Modal retour emballage -->
 <div *ngIf="isModalOpen" class="custom-modal">
   <div class="vd-modal-dialog wide">
     <div class="vd-modal-header">
       <div class="vd-mh-left">
         <div class="vd-mh-icon orange"><i class="fas fa-undo-alt"></i></div>
-        <div><div class="vd-mh-title">Retour emballage</div></div>
+        <div>
+          <div class="vd-mh-title">Retour emballage</div>
+          <div class="vd-mh-sub">N° {{ updateData?.numeroReceptionCommande }} — {{ updateData?.createdAt | date:'dd/MM/yyyy' }}</div>
+        </div>
       </div>
       <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
     </div>
+
     <div class="vd-modal-body">
-        <div>
-          <fieldset class="row border my-1">
-            <legend style="font-size: 14px" class="text-secondary">
-              Numero reception commande :
-              {{ updateData?.numeroReceptionCommande }} du
-              {{ updateData?.createdAt | date : "dd/MM/yyyy" }}
-            </legend>
-          </fieldset>
-
-          <fieldset class="row border my-2">
-            <legend style="font-size: 14px" class="text-secondary">
-              Information commande
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Date commande : </strong>
-                <span>{{ updateData?.commande?.dateCommande ??updateData?.entreeGratuite?.dateReception }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Date livraison estimée : </strong>
-                <span>{{ updateData?.commande?.dateLivraisonEstimee ??updateData?.entreeGratuite?.dateReception }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Statut : </strong>
-                <span>{{ updateData?.commande?.statut ??updateData?.entreeGratuite?.statut ?? 'Reçue' }}</span>
-              </div>
-            </div>
-          </fieldset>
+      <div class="vd-info-grid mb-3">
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-calendar me-1"></i>Date commande</div>
+          <div class="vd-info-value">{{ (updateData?.commande?.dateCommande ?? updateData?.entreeGratuite?.dateReception) | date:'dd/MM/yyyy' }}</div>
         </div>
-        <div class="p-2 mt-3">
-
-          <button
-          type="submit"
-          *ngIf="updateData?.emballagesRendus.length === 0"
-          (click)="selectArticle()"
-          class="btn btn-primary px-2 d-flex justify-content-end mb-2"
-        >
-          Ajouter
-        </button>
-          <div style="max-height: 350px; overflow-y: auto">
-
-            <table class="table table-bordered">
-              <thead class="table-light">
-                <tr>
-                  <th scope="col">Code</th>
-                  <th scope="col">Emballage</th>
-                  <th scope="col">Quantité</th>
-                  <!-- <th scope="col">Actions</th> -->
-                </tr>
-              </thead>
-              <tbody *ngIf="updateData?.emballagesRendus.length == 0">
-                <tr *ngFor="let data of emballagesrecues; let i = index">
-                  <td class="">
-                    <p>
-                      {{
-                        data.articleCommande ? data.articleCommande?.emballage?.code : data.emballage?.code ?? data?.articleEntree?.emballage?.code ?? data?.code
-                      }}
-                    </p>
-                  </td>
-                  <td class="">
-                    <p>
-                      {{
-                        data?.articleCommande ? data.articleCommande?.emballage?.libelle : data.emballage?.libelle ?? data?.articleEntree?.emballage?.libelle ?? data?.libelle
-                      }}
-                    </p>
-                  </td>
-                  <td >
-                    <p class="d-flex justify-content-between">
-                      <input
-                        type="number"
-                        class="form-control-custom"
-                        [(ngModel)]="data.quantiteRecue"
-                        [min]="0"
-                        value="0"
-                      />
-                      <button *ngIf="data.isNewAdd"
-                        type="button"
-                        class="btn btn-danger btn-sm ms-2"
-                        (click)="removeArticleEmballage(data)"
-                      >
-                        <i class="fas fa-trash"></i>
-                      </button>
-                    </p>
-                  </td>
-                </tr>
-              <tr *ngIf="emballagesrecues.length == 0">Pas d'emballage retourné</tr>
-              </tbody>
-              <tbody *ngIf="updateData?.emballagesRendus.length > 0">
-                <tr *ngFor="let data of emballagesRendus; let i = index">
-                  <td class="">
-                    <p>
-                      {{
-                        formatCode(data?.emballage?.code ?? data?.code)
-                      }}
-                    </p>
-                  </td>
-                  <td class="">
-                    <p>
-                      {{
-                        data?.emballage?.libelle ?? data?.articleEntree?.emballage?.libelle ?? data?.libelle
-                      }}
-                    </p>
-                  </td>
-                  <td>
-                    <p>
-                          {{data?.quantite}}
-                    </p>
-                  </td>
-                </tr>
-                <tr class="text-center" *ngIf="emballagesRendus.length == 0">Pas d'emballage retourné</tr>
-              </tbody>
-            </table>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-calendar-check me-1"></i>Date d'échéance</div>
+          <div class="vd-info-value">{{ (updateData?.commande?.dateEcheance ?? updateData?.entreeGratuite?.dateReception) | date:'dd/MM/yyyy' }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-file-alt me-1"></i>N° bon de livraison</div>
+          <div class="vd-info-value">{{ updateData?.numeroBonLivraison || '—' }}</div>
+        </div>
+        <div class="vd-info-block">
+          <div class="vd-info-label"><i class="fas fa-circle me-1"></i>Statut réception</div>
+          <div class="vd-info-value">
+            <span class="le-status-badge"
+              [ngClass]="{
+                'attente': updateData?.statut === 'EN_ATTENTE',
+                'partiel': updateData?.statut === 'PARTIELLEMENT_RENDU',
+                'traite':  updateData?.statut === 'TRAITE'
+              }">
+              {{ updateData?.statut === 'EN_ATTENTE' ? 'En attente'
+                : updateData?.statut === 'PARTIELLEMENT_RENDU' ? 'Partiellement rendu'
+                : updateData?.statut === 'TRAITE' ? 'Traité'
+                : updateData?.statut }}
+            </span>
           </div>
         </div>
       </div>
 
-      <div class="vd-modal-footer">
-        <button (click)="OnCloseModal()" type="button" class="vd-btn-outline">Annuler</button>
-        <button type="submit" *ngIf="updateData?.emballagesRendus.length === 0" (click)="onSubmit()" class="vd-btn-success">
-          <i class="fas fa-check"></i>Valider
-        </button>
+      <div class="vd-card">
+        <div class="vd-card-header">
+          <div class="vd-card-icon orange"><i class="fas fa-recycle"></i></div>
+          <div class="vd-section-label">Emballages à retourner</div>
+          <div class="ms-auto" *ngIf="updateData?.emballagesRendus?.length === 0">
+            <button type="button" class="vd-btn-outline" (click)="selectArticle()"><i class="fas fa-plus"></i> Ajouter</button>
+          </div>
+        </div>
+        <div class="vd-table-wrap">
+          <table class="vd-table">
+            <ng-container *ngIf="updateData?.emballagesRendus?.length === 0">
+              <thead>
+                <tr><th>Code</th><th>Emballage</th><th class="text-center">Quantité</th></tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of emballagesrecues; let i = index">
+                  <td>{{ data.articleCommande ? data.articleCommande?.emballage?.code : (data.emballage?.code ?? data?.articleEntree?.emballage?.code ?? data?.code) }}</td>
+                  <td>{{ data?.articleCommande ? data.articleCommande?.emballage?.libelle : (data.emballage?.libelle ?? data?.articleEntree?.emballage?.libelle ?? data?.libelle) }}</td>
+                  <td class="text-center">
+                    <div class="d-flex justify-content-center align-items-center gap-2">
+                      <input type="number" class="form-control-custom text-center" [(ngModel)]="data.quantiteRecue" [min]="0" style="width:70px" />
+                      <button *ngIf="data.isNewAdd" class="le-action-btn cancel" (click)="removeArticleEmballage(data)" title="Supprimer"><i class="fas fa-trash"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="!emballagesrecues?.length">
+                  <td colspan="3"><div class="vd-empty"><i class="fas fa-inbox"></i><span>Pas d'emballage</span></div></td>
+                </tr>
+              </tbody>
+            </ng-container>
+            <ng-container *ngIf="updateData?.emballagesRendus?.length > 0">
+              <thead>
+                <tr><th>Code</th><th>Emballage</th><th class="text-center">Quantité</th></tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of emballagesRendus; let i = index">
+                  <td>{{ formatCode(data?.emballage?.code ?? data?.code) }}</td>
+                  <td>{{ data?.emballage?.libelle ?? data?.articleEntree?.emballage?.libelle ?? data?.libelle }}</td>
+                  <td class="text-center fw-bold">{{ data?.quantite }}</td>
+                </tr>
+                <tr *ngIf="!emballagesRendus?.length">
+                  <td colspan="3"><div class="vd-empty"><i class="fas fa-inbox"></i><span>Pas d'emballage retourné</span></div></td>
+                </tr>
+              </tbody>
+            </ng-container>
+          </table>
+        </div>
       </div>
+    </div>
+
+    <div class="vd-modal-footer">
+      <button (click)="OnCloseModal()" type="button" class="vd-btn-outline">Fermer</button>
+      <button type="submit" *ngIf="updateData?.emballagesRendus?.length === 0" (click)="onSubmit()" class="vd-btn-success">
+        <i class="fas fa-check"></i> Valider
+      </button>
+    </div>
   </div>
 </div>
 
-<!--CHOIX ARTICLE-->
+<!-- Modal sélection emballage -->
 <div *ngIf="isChoiceModalOpen" class="custom-modal">
-  <div class="modal-dialog2 modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div class="bui-modal-icon"><i class="fas fa-box-check text-primary fs-3"></i></div>
-        <h1 class="modal-title fs-5 ms-3" id="staticBackdropLabel">
-          Selection des emballages
-        </h1>
+  <div class="vd-modal-dialog">
+    <div class="vd-modal-header">
+      <div class="vd-mh-left">
+        <div class="vd-mh-icon green"><i class="fas fa-boxes"></i></div>
+        <div><div class="vd-mh-title">Sélection des emballages</div></div>
       </div>
-
-      <div class="modal-body">
-        <form>
-          <div class="row">
-              <div class="p-3">
-                <!-- Champ de recherche -->
-                <input
-                  type="text"
-                  name="search"
-                  (input)="filterArticles()"
-                  [(ngModel)]="searchTerm"
-                  placeholder="Rechercher un produit"
-                  class="form-control mb-3"
-                />
-              </div>
-              <div
-                class="table-responsive"
-                style="max-height: 200px; overflow-y: auto"
-              >
-                <table class="table">
-                  <thead>
-                    <tr style="font-size: small">
-                      <th scope="col" class="text-secondary">Code</th>
-                      <th scope="col" class="text-secondary">Produits</th>
-                      <th scope="col" class="text-secondary text-center">
-                        Choix
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      *ngFor="let article of filteredArticleList; let i = index"
-                      style="font-size: small"
-                    >
-                      <th scope="row">{{ article.code }}</th>
-                      <th scope="row">{{ article.libelle }}</th>
-
-                      <td class="">
-                        <input
-                          type="checkbox"
-                          class="form-control-custom"
-                          [name]="'checkbox_' + i"
-                          [disabled]="article.stocksDisponibles === 0"
-                          [(ngModel)]="article.isChecked"
-                          (change)="onCheckboxChange(article)"
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-          </div>
-        </form>
+      <button class="vd-mh-close" (click)="OnCloseChoiceModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="vd-modal-body">
+      <input type="text" name="search" (ngModelChange)="filterArticles()" [(ngModel)]="searchTerm"
+             placeholder="Rechercher un emballage..." class="bui-filter-input w-100 mb-3" />
+      <div class="vd-table-wrap" style="max-height:260px;overflow-y:auto">
+        <table class="vd-table">
+          <thead>
+            <tr><th>Code</th><th>Emballage</th><th class="text-center">Stock dispo</th><th class="text-center">Choix</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let article of filteredArticleList; let i = index">
+              <td>{{ article.code }}</td>
+              <td>{{ article.libelle }}</td>
+              <td class="text-center">
+                <span [ngClass]="article.stocksDisponibles > 0 ? 'vd-badge green' : 'vd-badge red'">{{ article.stocksDisponibles ?? 0 }}</span>
+              </td>
+              <td class="text-center">
+                <input type="checkbox" [name]="'checkbox_' + i" [disabled]="article.stocksDisponibles === 0"
+                       [(ngModel)]="article.isChecked" (change)="onCheckboxChange(article)" />
+              </td>
+            </tr>
+            <tr *ngIf="!filteredArticleList?.length">
+              <td colspan="4"><div class="vd-empty"><i class="fas fa-inbox"></i><span>Aucun emballage</span></div></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <div class="modal-footer gap-3 px-4y">
-        <button
-          (click)="OnCloseChoiceModal()"
-          type="button"
-          class="btn btn-secondary px-2"
-        >
-          Fermer
-        </button>
-        <!-- <button
-          type="submit"
-          (click)="onSubmitSelection()"
-          class="btn btn-primary px-2"
-        >
-          Valider
-        </button> -->
-      </div>
+    </div>
+    <div class="vd-modal-footer">
+      <button (click)="OnCloseChoiceModal()" type="button" class="vd-btn-outline">Fermer</button>
+      <button type="button" (click)="onSubmitSelection()" class="vd-btn-success"><i class="fas fa-check"></i> Valider</button>
     </div>
   </div>
 </div>

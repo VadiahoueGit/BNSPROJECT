@@ -15,14 +15,7 @@ export class CorsMonitorService {
     this.apiUrl = this.configService.apiUrl
   }
 
-  playSound() {
-    const audio = new Audio();
-    audio.src = 'assets/sound/alarm.mp3';
-    audio.load();
-    audio.play();
-  }
   startMonitoring() {
-    // this.playSound()
     interval(60000)
       .pipe(
         switchMap(() =>
@@ -30,10 +23,9 @@ export class CorsMonitorService {
 
             catchError((error: HttpErrorResponse) => {
               if (error.status === 0) {
-                this.playSound()
                 console.error('⚠️ Probable erreur CORS détectée', error);
               }
-              return EMPTY; // évite l'arrêt du polling
+              return EMPTY;
             })
           )
         )

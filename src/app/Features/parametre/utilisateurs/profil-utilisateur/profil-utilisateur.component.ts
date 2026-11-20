@@ -36,8 +36,6 @@ export class ProfilUtilisateurComponent {
   currentPage: number;
   rowsPerPage: any;
   totalPages: number;
-  selectedItems: any = []
-  selectedItemsIds: any = []
   filteredPermissionList: any = []
   permissionList: any = []
   constructor(
@@ -71,60 +69,36 @@ export class ProfilUtilisateurComponent {
     this.dt2.filterGlobal(value, 'contains');
   }
 
-  toggleSelection(item: any): void {
-    console.log('item', item);
-
-    if (item.isChecked) {
-      this.selectedItems.push(item);
-      this.selectedItemsIds.push(item.id);
-    } else {
-      // Supprimer de selectedItems
-      const indexItem = this.selectedItems.findIndex(
-        (selected: any) => selected.id === item.id
-      );
-      if (indexItem !== -1) {
-        this.selectedItems.splice(indexItem, 1);
-      }
-
-      // Supprimer de selectedItemsIds
-      const indexId = this.selectedItemsIds.indexOf(item.id);
-      if (indexId !== -1) {
-        this.selectedItemsIds.splice(indexId, 1);
-      }
-    }
-
-    console.log('items', this.selectedItems);
-    // this.VisiteForm.controls['pointsDeVenteIds'].setValue(this.selectedItemsIds)
-  }
-
-
   filterData(): void {
     const query = this.searchForm.get('searchQuery')?.value;
 
     if (!query) {
-      // Si la recherche est vide, on réinitialise la liste filtrée à l'ensemble des points de vente
       this.filteredPermissionList = this.permissionList;
     } else {
-      // Sinon, on filtre les points de vente en fonction de la recherche (case insensitive)
       this.filteredPermissionList = this.permissionList.filter((item: any) =>
-        item.code.toLowerCase().includes(query.toLowerCase())
+        item.name.toLowerCase().includes(query.toLowerCase())
       );
     }
   }
-  AssignPermissions(roleId:number,item:any)
-  {
-    let data= {
+  AssignPermissions(roleId: number, permissions: any[]) {
+    let data = {
       roleId: roleId,
-      permissionIds:item
-    }
+      permissions: permissions.map((p: any) => ({
+        permissionId: p.id,
+        peutVoir: !!p.peutVoir,
+        peutCreer: !!p.peutCreer,
+        peutModifier: !!p.peutModifier,
+        peutSupprimer: !!p.peutSupprimer,
+      })),
+    };
     this._spinner.show();
-    this._userService.AssignPermissions(data).then((response:any) => {
+    this._userService.AssignPermissions(data).then((response: any) => {
       this._spinner.hide()
       if (response.statusCode === 200) {
         this.OnCloseModal();
         this.GetProfilList(1);
         this.ProfilForm.reset();
-      }else{
+      } else {
         this.toastr.error(response.message);
       }
     })
@@ -141,21 +115,29 @@ export class ProfilUtilisateurComponent {
     this._userService.GetPermissionsList(data).then((response: any) => {
       this._spinner.hide();
 
-      let existingPermissionIds: number[] = [];
-
-      // Si updateData et ses permissions existent, on récupère les IDs
-      if (this.updateData && this.updateData.permissions) {
-        existingPermissionIds = this.updateData.permissions.map((perm: any) => perm.id);
-        this.selectedItemsIds = [...existingPermissionIds];
-        console.log(this.selectedItemsIds);
+      // rolePermissions du rôle en cours d'édition : {permission: {id, ...}, peutVoir, peutCreer, peutModifier, peutSupprimer}
+      const existingByPermissionId = new Map<number, any>();
+      if (this.updateData?.rolePermissions) {
+        this.updateData.rolePermissions.forEach((rp: any) => {
+          if (rp.permission?.id) existingByPermissionId.set(rp.permission.id, rp);
+        });
       }
 
-      // Marque isChecked: true uniquement si la permission est déjà dans updateData
-      this.permissionList = response.data;
-      this.filteredPermissionList = this.permissionList.map((p: any) => ({
-        ...p,
-        isChecked: existingPermissionIds.includes(p.id)
-      }));
+      // permissionList porte les flags peut* : c'est la liste "source de vérité" envoyée à la
+      // sauvegarde. filteredPermissionList n'en est qu'une VUE filtrée (.filter, pas .map) —
+      // elle doit garder les mêmes références d'objet, sinon cocher une case dans la vue
+      // filtrée ne modifie qu'une copie et n'a aucun effet sur ce qui est réellement sauvegardé.
+      this.permissionList = (response.data || []).map((p: any) => {
+        const existing = existingByPermissionId.get(p.id);
+        return {
+          ...p,
+          peutVoir: !!existing?.peutVoir,
+          peutCreer: !!existing?.peutCreer,
+          peutModifier: !!existing?.peutModifier,
+          peutSupprimer: !!existing?.peutSupprimer,
+        };
+      });
+      this.filteredPermissionList = this.permissionList;
 
       this.cdr.detectChanges();
       console.log(this.filteredPermissionList);
@@ -170,6 +152,8 @@ export class ProfilUtilisateurComponent {
   OnCreate() {
     this.ProfilForm.reset();
     this.isEditMode = false;
+    this.updateData = null;
+    this.GetPermissionList(1);
     this.isModalOpen = true;
     this.operation = 'create';
     console.log(this.isModalOpen);
@@ -220,7 +204,9 @@ export class ProfilUtilisateurComponent {
         this._userService.UpdateProfil(this.articleId, formValues).then(
           (response: any) => {
             if (response.statusCode === 201) {
-              this.AssignPermissions(this.articleId,this.selectedItemsIds);
+              // this.permissionList (liste complète), pas filteredPermissionList qui peut être
+              // réduite par la recherche — sinon les permissions non affichées seraient effacées.
+              this.AssignPermissions(this.articleId,this.permissionList);
               this.toastr.success(response.message);
             }
           },
@@ -233,7 +219,7 @@ export class ProfilUtilisateurComponent {
         this._userService.CreateProfil(formValues).then(
           (response: any) => {
             if (response.statusCode === 201) {
-              this.AssignPermissions(response.data.id,this.selectedItemsIds);
+              this.AssignPermissions(response.data.id,this.permissionList);
               this.toastr.success(response.message);
             }
             console.log('Nouvel article créé avec succès', response);

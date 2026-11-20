@@ -1,193 +1,141 @@
-<div class="card">
-  <div class="row">
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Commande :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-      <i class="fas fa-search"></i>
-      <input class="w-100" style="border-radius: 7px;"
-             pInputText type="text"
-             [(ngModel)]="filters.commande"
-             (keydown.enter)="filterGlobal()"
-             placeholder="Recherche"/>
-    </span>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Agent :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-      <i class="fas fa-search"></i>
-      <input class="w-100" style="border-radius: 7px;"
-             pInputText type="text"
-             [(ngModel)]="filters.agent"
-             (keydown.enter)="filterGlobal()"
-             placeholder="Recherche"/>
-    </span>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Client :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-      <i class="fas fa-search"></i>
-      <input class="w-100" style="border-radius: 7px;"
-             pInputText type="text"
-             [(ngModel)]="filters.client"
-             (keydown.enter)="filterGlobal()"
-             placeholder="Recherche"/>
-    </span>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Statut :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-      <i class="fas fa-search"></i>
-      <input class="w-100" style="border-radius: 7px;"
-             pInputText type="text"
-             [(ngModel)]="filters.statut"
-             (keydown.enter)="filterGlobal()"
-             placeholder="Recherche"/>
-    </span>
+<!-- List -->
+<div class="fn-card">
+  <div class="fn-topbar">
+    <div class="fn-topbar-left">
+      <div class="fn-title"><i class="fas fa-clock"></i> Paiements en attente</div>
+      <div class="fn-count">{{ totalPages }} transaction(s)</div>
     </div>
   </div>
-  <p-table
-    [styleClass]="'p-datatable-sm'"
-    #dt2
-    [totalRecords]="totalPages" [lazy]="true"
-    [value]="dataList"
-    dataKey="id"
-    [rows]="8"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [paginator]="true"
-    (onPage)="onPage($event)"
-  >
+
+  <div class="fn-filters">
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Commande</div>
+      <div class="fn-filter-wrap"><i class="fas fa-search fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.commande" (keydown.enter)="filterGlobal()" placeholder="N° commande..." />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Agent</div>
+      <div class="fn-filter-wrap"><i class="fas fa-user fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.agent" (keydown.enter)="filterGlobal()" placeholder="Nom agent..." />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Client</div>
+      <div class="fn-filter-wrap"><i class="fas fa-store fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.client" (keydown.enter)="filterGlobal()" placeholder="Nom client..." />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Statut</div>
+      <div class="fn-filter-wrap"><i class="fas fa-filter fn-filter-icon"></i>
+        <select class="fn-filter-input" [(ngModel)]="filters.statut" (change)="filterGlobal()">
+          <option value="">Tous</option>
+          <option value="En attente">En attente</option>
+          <option value="En cours">En cours</option>
+          <option value="Partiellement reglé">Partiel</option>
+          <option value="Payé">Payé</option>
+        </select>
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Du</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-calendar fn-filter-icon"></i>
+        <input class="fn-filter-input" type="date" [(ngModel)]="filters.dateDebut" (change)="filterGlobal()" />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Au</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-calendar fn-filter-icon"></i>
+        <input class="fn-filter-input" type="date" [(ngModel)]="filters.dateFin" (change)="filterGlobal()" />
+      </div>
+    </div>
+    <button class="fn-filter-btn" (click)="filterGlobal()"><i class="fas fa-search"></i> Rechercher</button>
+    <button class="fn-filter-btn secondary" (click)="resetFilters()"><i class="fas fa-times"></i> Réinitialiser</button>
+  </div>
+
+  <p-table [styleClass]="'fn-ptable p-datatable-sm'" #dt2 [value]="dataList" dataKey="id"
+    [rows]="8" [totalRecords]="totalPages" [lazy]="true" [rowsPerPageOptions]="[10,25,50]"
+    [paginator]="true" (onPage)="onPage($event)">
     <ng-template pTemplate="header">
       <tr>
-        <th>Commandes</th>
+        <th>Commande</th>
         <th>Agent</th>
-        <th>Dépot</th>
+        <th>Dépôt</th>
         <th>Motif</th>
-        <th>Numéro SAP</th>
+        <th>N° SAP</th>
         <th>Client</th>
-        <th>Montant à verser</th>
-        <th>Montant versé</th>
+        <th>À verser</th>
+        <th>Versé</th>
         <th>Délai</th>
         <th>Retard</th>
-        <th>Date d'écheance</th>
-        <th>Date création</th>
+        <th>Échéance</th>
+        <th>Date</th>
         <th>Statut</th>
-<!--        <th style="color: var(&#45;&#45;secondary-color)">Actions</th>-->
+        <th class="text-center">Action</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-dataList>
+    <ng-template pTemplate="body" let-row>
       <tr>
+        <td style="font-size:11px; font-weight:600">
+          {{ row?.paiementsCommandeClient?.length ? row.paiementsCommandeClient[0]?.NumCommande
+             : row?.paiementsCommandeGratuit?.length ? row.paiementsCommandeGratuit[0]?.NumCommande
+             : row?.paiementsVente?.length ? row.paiementsVente[0]?.venteChine?.numVenteChine
+             : row?.returnStock?.venteChine ? row?.returnStock?.venteChine?.numVenteChine
+             : row?.returnStock?.commandeClient ? row?.returnStock?.commandeClient?.NumCommande
+             : row?.returnStock?.commandeGratuite ? row?.returnStock?.commandeGratuite?.NumCommande
+             : row?.paiementsCommandeFournisseur?.length ? row.paiementsCommandeFournisseur[0]?.NumCommande
+             : 'N/A' }}
+        </td>
+        <td style="font-size:11px">
+          <!-- L'agent affiché doit être celui qui a effectué CETTE transaction (vente, retour,
+               livraison...), pas l'agent commercial simplement rattaché au point de vente/client
+               (souvent celui qui l'a créé) : ce dernier n'est utilisé qu'en tout dernier recours,
+               si aucun agent d'action n'a pu être résolu. -->
+          {{ row?.venteAgent
+              ? ((row.venteAgent.nom || '') + ' ' + (row.venteAgent.prenoms || ''))
+              : row?.paiementsVente?.length
+                ? ((row.paiementsVente[0]?.commercial?.nom || '') + ' ' + (row.paiementsVente[0]?.commercial?.prenoms || ''))
+                : row?.returnStock?.venteChine
+                  ? ((row.returnStock.venteChine.commercial?.nom || '') + ' ' + (row.returnStock.venteChine.commercial?.prenoms || ''))
+                  : row?.transporteur
+                    ? ((row.transporteur.nom || '') + ' ' + (row.transporteur.prenoms || ''))
+                    : row?.client?.agentCommercial
+                      ? ((row.client.agentCommercial.nom || '') + ' ' + (row.client.agentCommercial.prenoms || ''))
+                      : '—' }}
+        </td>
+        <td style="font-size:11px">{{ row?.depot?.nomDepot }}</td>
+        <td><span class="fn-badge blue">{{ row?.motif }}</span></td>
+        <td style="font-size:11px">{{ row?.client?.numeroSAP?.numeroSAP || 'N/A' }}</td>
+        <td style="font-size:11px">{{ row?.client?.raisonSocial || row?.client?.nomEtablissement || row?.paiementsVente?.[0]?.pointdevente?.nomEtablissement || 'N/A' }}</td>
+        <td><span class="fn-amount">{{ row?.montantAPercevoir | number }}</span></td>
+        <td><span class="fn-amount green">{{ row?.montantPercu | number }}</span></td>
+        <td style="font-size:11px">{{ row?.credit?.delaiReglement || 0 }} j</td>
         <td>
-          <span class="ml-1 vertical-align-middle" style="font-size: 11px">
-            {{
-              dataList?.paiementsCommandeClient?.length
-                ? dataList.paiementsCommandeClient[0]?.NumCommande
-                : dataList?.paiementsCommandeGratuit?.length
-                  ? dataList.paiementsCommandeGratuit[0]?.NumCommande
-                  : dataList?.paiementsVente?.length
-                    ? dataList.paiementsVente[0]?.venteChine.numVenteChine
-                    : dataList?.returnStock?.venteChine
-                      ? dataList?.returnStock?.venteChine?.numVenteChine
-                      : dataList?.returnStock?.commandeClient
-                        ? dataList?.returnStock?.commandeClient?.NumCommande
-                        : dataList?.returnStock?.commandeGratuite
-                          ? dataList?.returnStock?.commandeGratuite?.NumCommande
-                          : dataList?.paiementsCommandeFournisseur?.length
-                            ? dataList.paiementsCommandeFournisseur[0]?.NumCommande
-                            : "N/A"
-            }}
+          <span class="fn-badge" [ngClass]="isDateEchue(row?.dateEchanceCalculer) ? 'red' : 'green'">
+            {{ getEcartEnJours(row?.dateEchanceCalculer) }}
           </span>
         </td>
+        <td [ngClass]="{'text-danger fw-bold': isDateEchue(row?.dateEchanceCalculer)}" style="font-size:11px">
+          {{ row?.dateEchanceCalculer | date:'dd/MM/yyyy' }}
+        </td>
+        <td style="color:#6b7280; font-size:11px">{{ row?.createdAt | date:'dd/MM/yyyy' }}</td>
         <td>
-          <span class="ml-1 vertical-align-middle">
-            {{
-              dataList?.paiementsCommandeClient?.length
-                ? (dataList?.transporteur?.nom || "N/A") +
-                " " +
-                (dataList?.transporteur?.prenoms || "N/A")
-                : dataList?.paiementsCommandeGratuit?.length
-                  ? (dataList?.transporteur?.nom || "N/A") +
-                  " " +
-                  (dataList?.transporteur?.prenoms || "N/A")
-                  : dataList?.paiementsVente?.length
-                    ? (dataList?.paiementsVente[0]?.commercial?.nom || "N/A") +
-                    " " +
-                    (dataList?.paiementsVente[0]?.commercial?.prenoms || "N/A")
-                    : dataList?.returnStock?.venteChine
-                      ? dataList?.returnStock?.venteChine?.commercial?.nom +
-                      dataList?.returnStock?.venteChine?.commercial?.prenoms : "N/A"
-            }}
-          </span>
-
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.depot?.nomDepot }}
+          <span class="fn-badge"
+            [ngClass]="{'green': row?.statut==='PAYE'||row?.statut==='Payé', 'orange': row?.statut==='EN_ATTENTE'||row?.statut==='PARTIELLEMENT_PAYE', 'gray': row?.statut!=='PAYE'&&row?.statut!=='Payé'&&row?.statut!=='EN_ATTENTE'&&row?.statut!=='PARTIELLEMENT_PAYE'}">
+            {{ row?.statut }}
           </span>
         </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.motif }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-             {{ dataList?.client?.numeroSAP?.numeroSAP }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-             {{
-              dataList?.client?.raisonSocial || dataList?.client?.nomEtablissement ||
-              dataList?.paiementsVente[0]?.pointdevente.nomEtablissement || "N/A"
-            }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.montantAPercevoir| number }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.montantPercu | number }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-             {{ dataList?.credit?.delaiReglement || 0 }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-             {{ getEcartEnJours(dataList?.dateEchanceCalculer) }}
-          </span>
-        </td>
-        <td [ngClass]="{'text-bg-danger': isDateEchue(dataList?.dateEchanceCalculer)}">
-          <span class="ml-1 vertical-align-middle">
-             {{ dataList?.dateEchanceCalculer | date: 'dd/MM/yyyy' }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.createdAt | date :"dd/MM/yyyy" }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.statut }}
-          </span>
-        </td>
-        <td class="text-center">
-          <div class="d-flex justify-content-center gap-2">
-            <span class="bui-icon-btn view" (click)="OnEdit(dataList)"><i class="fas fa-eye"></i></span>
-          </div>
+        <td class="text-center" style="white-space:nowrap">
+          <button class="fn-action-btn view me-1" title="Voir détails" (click)="OnEdit(row)"><i class="fas fa-eye"></i></button>
+          <button class="fn-action-btn view" title="Télécharger le reçu" (click)="downloadRecu(row)"><i class="fas fa-download"></i></button>
         </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="5">Aucun élément trouvé.</td>
-      </tr>
+      <tr><td colspan="14" style="text-align:center; padding:32px; color:#9ca3af; font-size:13px;"><i class="fas fa-inbox me-2"></i>Aucun paiement en attente.</td></tr>
     </ng-template>
   </p-table>
 </div>
@@ -204,663 +152,303 @@
         </div>
       </div>
       <div class="vd-mh-right">
-        <span [ngClass]="{'vd-statut-chip green': updateData?.statut === 'Payé', 'vd-statut-chip orange': updateData?.statut !== 'Payé'}">{{ updateData?.statut }}</span>
+        <span [ngClass]="{'vd-statut-chip green': updateData?.statut==='Payé', 'vd-statut-chip orange': updateData?.statut!=='Payé'}">{{ updateData?.statut }}</span>
         <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
       </div>
     </div>
     <div class="vd-modal-body" *ngIf="operation == 'edit'">
-        <ng-container *ngIf="updateData.motif == 'COMMANDE_REVENDEUR_FOURNISSEUR'">
-          <fieldset class="row border my-1">
-            <legend style="font-size: 14px" class="text-secondary">
-              Information de la Commande :
-              {{ updateData.paiementsCommandeClient[0]?.NumCommande }} du
-              {{ updateData.createdAt | date : "dd/MM/yyyy " }}
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Client: </strong>
-                <span>{{ updateData?.client?.raisonSocial }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Dépot: </strong>
-                <span>{{ updateData?.depot?.nomDepot }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-1">
-            <legend style="font-size: 14px" class="text-secondary">
-              Autres informations
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Statut: </strong>
-                <span>{{ updateData?.statut }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Motif : </strong>
-                <span>{{ updateData?.motif }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant à percevoir : </strong>
-                <span>{{ updateData?.montantAPercevoir | number }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant perçu : </strong>
-                <span>{{ updateData?.montantPercu | number }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant restant : </strong>
-                <span>{{ updateData?.montantRestant | number }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Délai : </strong>
-                <span>{{ updateData?.credit?.delaiReglement || "NA" }}Jours</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Date échéance : </strong>
-                <span>{{ updateData?.dateEchanceCalculer| date : "dd/MM/yyyy HH:mm" }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-2">
-            <legend class="fs-6 text-primary">Historique de paiement</legend>
-            <div
-              class="table-responsive"
-              style="max-height: 300px; overflow-y: auto"
-            >
-              <table class="table">
-                <thead>
-                <tr style="font-size: small">
-                  <th scope="col">Opérations</th>
-                  <th scope="col">Mode de paiement</th>
-                  <th scope="col">Montant versé</th>
-                  <th scope="col">Date de paiement</th>
-                  <th scope="col">
-                  <th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr
-                  style="font-size: small"
-                  *ngFor="let item of hstoriquePayment; let i = index "
-                >
-                  <td>{{ item.transaction.motif }}</td>
-                  <td>{{ item.moyenPaiement.libelle ? item.moyenPaiement.libelle : 'N/A' }}</td>
-                  <td>{{ item.montant | number }}</td>
-                  <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
-                  <td>
-                    <p class="text-success" *ngIf="item?.statut == Status.PAYE">Payé </p>
 
-                    <button
-                      *ngIf="item?.statut !== Status.PAYE"
-                      type="submit"
-                      class="btn btn-primary px-2"
-                      (click)="ValidatePaiement(item)"
-                    >
-                      Payer
-                    </button>
-                  </td>
-                </tr>
-                <!-- Ajoutez d'autres lignes si nécessaire -->
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
-          <!--          <fieldset class="row border my-2">-->
-          <!--            <legend class="fs-6 text-primary">Articles</legend>-->
-          <!--            <div-->
-          <!--              class="table-responsive"-->
-          <!--              style="max-height: 300px; overflow-y: auto"-->
-          <!--            >-->
-          <!--              <table class="table">-->
-          <!--                <thead>-->
-          <!--                <tr style="font-size: small">-->
-          <!--                  <th scope="col">Emballage</th>-->
-          <!--                  <th scope="col">Liquide</th>-->
-          <!--                  <th scope="col">Prix unitaire</th>-->
-          <!--                  <th scope="col">Quantité</th>-->
-          <!--                  &lt;!&ndash;                  <th scope="col">Montant total</th>&ndash;&gt;-->
-          <!--                </tr>-->
-          <!--                </thead>-->
-          <!--                <tbody>-->
-          <!--                <tr-->
-          <!--                  style="font-size: small"-->
-          <!--                  *ngFor="-->
-          <!--                      let item of updateData?.paiementsCommandeFournisseur[0]-->
-          <!--                        ?.articles;-->
-          <!--                      let i = index-->
-          <!--                    "-->
-          <!--                >-->
-          <!--                  <td>{{ item.emballage.libelle }}</td>-->
-          <!--                  <td>{{ item.liquide.libelle }}</td>-->
-          <!--                  <td>{{ item.prixUnitaireLiquide }}</td>-->
-          <!--                  <td>{{ item.quantite }}</td>-->
-          <!--                  &lt;!&ndash;                  <td>{{ item.montantTotal| number }}</td>&ndash;&gt;-->
-          <!--                </tr>-->
-          <!--                &lt;!&ndash; Ajoutez d'autres lignes si nécessaire &ndash;&gt;-->
-          <!--                </tbody>-->
-          <!--              </table>-->
-          <!--            </div>-->
-          <!--          </fieldset>-->
-        </ng-container>
-        <ng-container *ngIf="updateData.motif == 'COMMANDE CLIENT' || updateData.motif == 'COMMANDE GRATUITE'">
-          <fieldset class="row border my-1">
-            <legend style="font-size: 14px" class="text-secondary">
-              Information de la Commande :
-              {{ updateData.paiementsCommandeClient[0]?.NumCommande }} du
-              {{ updateData.createdAt | date : "dd/MM/yyyy " }}
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Client: </strong>
-                <span>{{ updateData?.client?.raisonSocial }}</span>
-              </div>
-              <!--              <div class="col-md-4">-->
-              <!--                <strong>Localité: </strong>-->
-              <!--                <span>{{ updateData?.client?.localite.nomLocalite }}</span>-->
-              <!--              </div>-->
-              <div class="col-md-4">
-                <strong>Dépot: </strong>
-                <span>{{ updateData?.depot?.nomDepot }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-1">
-            <legend style="font-size: 14px" class="text-secondary">
-              Informations regroupement
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Numéro : </strong>
-                <span>{{ updateData?.regroupement?.numRegroupement }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Transporteur : </strong>
-                <span
-                >{{ updateData?.transporteur?.nom }}
-                  {{ updateData?.transporteur?.prenoms }}</span
-                >
-              </div>
-              <div class="col-md-4">
-                <strong>Téléphone : </strong>
-                <span>{{ updateData?.regroupement?.telephone }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-1">
-            <legend style="font-size: 14px" class="text-secondary">
-              Informations véhicule
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Immatriculation: </strong>
-                <span>{{ updateData?.vehicule?.immatriculation }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Marque : </strong>
-                <span>{{ updateData?.vehicule?.marque }} </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Capacité : </strong>
-                <span>{{ updateData?.vehicule?.capacite }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Disponible : </strong>
-                <span>{{
-                    updateData?.vehicule?.disponible == true ? "OUI" : "NON"
-                  }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-1">
-            <legend style="font-size: 14px" class="text-secondary">
-              Autres informations
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Statut: </strong>
-                <span>{{ updateData?.statut }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Motif : </strong>
-                <span>{{ updateData?.motif }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant à percevoir : </strong>
-                <span>{{ updateData?.montantAPercevoir | number }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant perçu : </strong>
-                <span>{{ updateData?.montantPercu | number }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant restant : </strong>
-                <span>{{ updateData?.montantRestant | number }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Délai : </strong>
-                <span>{{ updateData?.credit?.delaiReglement || "NA" }}Jours</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Date échéance : </strong>
-                <span>{{ updateData?.dateEchanceCalculer| date : "dd/MM/yyyy HH:mm" }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-2">
-            <legend class="fs-6 text-primary">Historique de paiement</legend>
-            <div
-              class="table-responsive"
-              style="max-height: 300px; overflow-y: auto"
-            >
-              <table class="table">
-                <thead>
-                <tr style="font-size: small">
-                  <th scope="col">Opérations</th>
-                  <th scope="col">Mode de paiement</th>
-                  <th scope="col">Montant versé</th>
-                  <th scope="col">Date de paiement</th>
-                  <th scope="col">
-                  <th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr
-                  style="font-size: small"
-                  *ngFor="let item of hstoriquePayment; let i = index "
-                >
-                  <td>{{ item.transaction.motif }}</td>
-                  <td>{{ item.moyenPaiement.libelle ? item.moyenPaiement.libelle : 'N/A' }}</td>
-                  <td>{{ item.montant | number }}</td>
-                  <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
-                  <td class="row">
-                    <p class="text-success" *ngIf="item?.statut == Status.PAYE && item?.typePaiement == 'NORMAL'">Payé</p>
-                    <p class="text-success" *ngIf="item?.statut == Status.PAYE && item?.typePaiement == 'AVANCE'">Payé en avance</p>
-                    <button
-                      *ngIf="item?.statut !== Status.PAYE"
-                      type="submit"
-                      class="btn btn-primary px-2"
-                      (click)="ValidatePaiement(item)"
-                    >
-                      Payer
-                    </button>
-                  </td>
-                </tr>
-                <!-- Ajoutez d'autres lignes si nécessaire -->
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
-          <!--          <fieldset class="row border my-2">-->
-          <!--            <legend class="fs-6 text-primary">Articles</legend>-->
-          <!--            <div-->
-          <!--              class="table-responsive"-->
-          <!--              style="max-height: 300px; overflow-y: auto"-->
-          <!--            >-->
-          <!--              <table class="table">-->
-          <!--                <thead>-->
-          <!--                <tr style="font-size: small">-->
-          <!--                  <th scope="col">Emballage</th>-->
-          <!--                  <th scope="col">Liquide</th>-->
-          <!--                  <th scope="col">Prix unitaire</th>-->
-          <!--                  <th scope="col">Quantité</th>-->
-          <!--                  &lt;!&ndash;                    <th scope="col">Montant total</th>&ndash;&gt;-->
-          <!--                </tr>-->
-          <!--                </thead>-->
-          <!--                <tbody>-->
-          <!--                <tr-->
-          <!--                  style="font-size: small"-->
-          <!--                  *ngFor="-->
-          <!--                      let item of updateData?.paiementsCommandeClient[0]-->
-          <!--                        ?.articles;-->
-          <!--                      let i = index-->
-          <!--                    "-->
-          <!--                >-->
-          <!--                  <td>{{ item.emballage.libelle }}</td>-->
-          <!--                  <td>{{ item.liquide.libelle }}</td>-->
-          <!--                  <td>{{ item.prixUnitaireLiquide }}</td>-->
-          <!--                  <td>{{ item.quantite }}</td>-->
-          <!--                  &lt;!&ndash;                    <td>{{ item.montantTotal| number }}</td>&ndash;&gt;-->
-          <!--                </tr>-->
-          <!--                &lt;!&ndash; Ajoutez d'autres lignes si nécessaire &ndash;&gt;-->
-          <!--                </tbody>-->
-          <!--              </table>-->
-          <!--            </div>-->
-          <!--          </fieldset>-->
-        </ng-container>
-        <ng-container *ngIf="updateData.motif == 'VENTE CHINE'">
-          <fieldset class="row border my-1">
-            <legend style="font-size: 14px" class="text-secondary">
-              Information de la vente du {{ updateData?.paiementsVente[0].dateVente }}
-            </legend>
-
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Client: </strong>
-                <span>{{
-                    updateData?.paiementsVente[0].pointdevente?.nomEtablissement
-                  }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Dépot: </strong>
-                <span>{{ updateData?.depot?.nomDepot }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-1">
-            <legend style="font-size: 14px" class="text-secondary">
-              Informations commercial
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Commercial: </strong>
-                <span
-                >{{ updateData?.paiementsVente[0]?.commercial?.nom }}
-                  {{ updateData?.paiementsVente[0]?.commercial?.prenoms }}</span
-                >
-              </div>
-              <div class="col-md-4">
-                <strong>Rôle : </strong>
-                <span>{{
-                    updateData?.paiementsVente[0]?.commercial?.role
-                  }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Téléphone : </strong>
-                <span>{{
-                    updateData?.paiementsVente[0]?.commercial?.telephone
-                  }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-1">
-            <legend style="font-size: 14px" class="text-secondary">
-              Autres informations
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Statut: </strong>
-                <span>{{ updateData?.statut }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Motif : </strong>
-                <span>{{ updateData?.motif }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant à percevoir : </strong>
-                <span>{{ updateData?.montantAPercevoir | number }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant perçu : </strong>
-                <span>{{ updateData?.montantPercu | number }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant restant : </strong>
-                <span>{{ updateData?.montantRestant| number }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Délai : </strong>
-                <span>{{ updateData?.credit?.delaiReglement || "NA" }}Jours</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Date échéance : </strong>
-                <span>{{ updateData?.dateEchanceCalculer| date : "dd/MM/yyyy HH:mm" }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-2">
-            <legend class="fs-6 text-primary">Historique de paiement</legend>
-            <div
-              class="table-responsive"
-              style="max-height: 300px; overflow-y: auto"
-            >
-              <table class="table">
-                <thead>
-                <tr style="font-size: small">
-                  <th scope="col">Opérations</th>
-                  <th scope="col">Mode de paiement</th>
-                  <th scope="col">Montant versé</th>
-                  <th scope="col">Date de paiement</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr
-                  style="font-size: small"
-                  *ngFor="let item of hstoriquePayment; let i = index "
-                >
-                  <td>{{ item.transaction.motif }}</td>
-                  <td>{{ item.moyenPaiement.libelle ? item.moyenPaiement.libelle : 'N/A' }}</td>
-                  <td>{{ item.montant | number }}</td>
-                  <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
+      <ng-container *ngIf="updateData.motif == 'COMMANDE_REVENDEUR_FOURNISSEUR'">
+        <div class="mb-3">
+          <div class="vd-section-title">Commande · {{ updateData?.paiementsCommandeClient?.[0]?.NumCommande }} · {{ updateData.createdAt | date:'dd/MM/yyyy' }}</div>
+          <div class="vd-info-grid">
+            <div class="vd-info-block"><div class="vd-info-label">Client</div><div class="vd-info-value">{{ updateData?.client?.raisonSocial }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Dépôt</div><div class="vd-info-value">{{ updateData?.depot?.nomDepot }}</div></div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="vd-section-title">Financier</div>
+          <div class="vd-info-grid">
+            <div class="vd-info-block"><div class="vd-info-label">Statut</div><div class="vd-info-value">{{ updateData?.statut }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">À percevoir</div><div class="vd-info-value">{{ updateData?.montantAPercevoir | number }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Perçu</div><div class="vd-info-value">{{ updateData?.montantPercu | number }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Restant</div><div class="vd-info-value">{{ updateData?.montantRestant | number }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Délai</div><div class="vd-info-value">{{ updateData?.credit?.delaiReglement || 'NA' }} j</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Date échéance</div><div class="vd-info-value">{{ updateData?.dateEchanceCalculer | date:'dd/MM/yyyy' }}</div></div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="vd-section-title">Historique</div>
+          <div class="vd-table-wrap" style="max-height:220px; overflow-y:auto">
+            <table class="vd-table">
+              <thead><tr><th>Opération</th><th>Moyen</th><th>Montant</th><th>Date</th><th>Statut</th><th></th></tr></thead>
+              <tbody>
+                <tr *ngFor="let item of hstoriquePayment">
+                  <td>{{ item?.transaction?.motif }}</td><td>{{ item?.moyenPaiement?.libelle || 'N/A' }}</td>
+                  <td>{{ item.montant | number }}</td><td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
                   <td>
-                    <p class="text-success" *ngIf="item?.statut == Status.PAYE">Payé</p>
-                    <button
-                      *ngIf="item?.statut !== Status.PAYE"
-                      type="submit"
-                      class="btn btn-primary px-2"
-                      (click)="ValidatePaiement(item)"
-                    >
-                      Payer
-                    </button>
+                    <span *ngIf="item?.statut=='Annulé'" class="fn-badge red">Annulé</span>
+                    <span *ngIf="item?.statut==Status.PAYE" class="fn-badge green">Payé</span>
+                    <span *ngIf="item?.statut!==Status.PAYE && item?.statut!=='Annulé'" class="fn-badge orange">{{ item?.statut }}</span>
+                  </td>
+                  <td style="white-space:nowrap">
+                    <button *ngIf="item?.statut!==Status.PAYE && item?.statut!=='Annulé'" class="btn btn-sm btn-primary px-2 me-1" (click)="ValidatePaiement(item)">Payer</button>
+                    <button *ngIf="item?.statut!=='Annulé'" class="btn btn-sm btn-danger px-2" (click)="AnnulerTransaction(item)"><i class="fas fa-times"></i></button>
                   </td>
                 </tr>
-                <!-- Ajoutez d'autres lignes si nécessaire -->
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
-          <!--          <fieldset class="row border my-2">-->
-          <!--            <legend class="fs-6 text-primary">Articles</legend>-->
-          <!--            <div-->
-          <!--              class="table-responsive"-->
-          <!--              style="max-height: 300px; overflow-y: auto"-->
-          <!--            >-->
-          <!--              <table class="table">-->
-          <!--                <thead>-->
-          <!--                <tr style="font-size: small">-->
-          <!--                  <th scope="col">Emballage</th>-->
-          <!--                  <th scope="col">Liquide</th>-->
-          <!--                  <th scope="col">Prix unitaire</th>-->
-          <!--                  <th scope="col">Quantité</th>-->
-          <!--                  <th scope="col">Montant total</th>-->
-          <!--                </tr>-->
-          <!--                </thead>-->
-          <!--                <tbody>-->
-          <!--                <tr-->
-          <!--                  style="font-size: small"-->
-          <!--                  *ngFor="-->
-          <!--                      let item of updateData?.paiementsVente[0]?.articles;-->
-          <!--                      let i = index-->
-          <!--                    "-->
-          <!--                >-->
-          <!--                  <td>{{ item.emballage.libelle }}</td>-->
-          <!--                  <td>{{ item.liquide.libelle }}</td>-->
-          <!--                  <td>{{ item.prixUnitaire }}</td>-->
-          <!--                  <td>{{ item.quantite }}</td>-->
-          <!--                  <td>{{ item.montantTotal| number }}</td>-->
-          <!--                </tr>-->
-          <!--                &lt;!&ndash; Ajoutez d'autres lignes si nécessaire &ndash;&gt;-->
-          <!--                </tbody>-->
-          <!--              </table>-->
-          <!--            </div>-->
-          <!--          </fieldset>-->
-        </ng-container>
-        <ng-container *ngIf="updateData.motif == 'CONSIGNE' || updateData.motif == 'ECART RETOUR PLEIN'">
-          <fieldset class="row border my-1">
-            <legend style="font-size: 14px" class="text-secondary">
-              Informationde la Commande :
-              {{ updateData.paiementsCommandeGratuit[0]?.NumCommande }} du
-              {{ updateData.createdAt | date : "dd/MM/yyyy HH:mm" }}
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Payeur: </strong>
-                <span>{{ updateData?.client?.raisonSocial || updateData?.client?.nom+' '+updateData?.client?.prenoms }}</span>
-              </div>
-              <!--              <div class="col-md-4">-->
-              <!--                <strong>Localité: </strong>-->
-              <!--                <span>{{ updateData?.client?.localite.nomLocalite }}</span>-->
-              <!--              </div>-->
-              <div class="col-md-4">
-                <strong>Dépot: </strong>
-                <span>{{ updateData?.depot?.nomDepot }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-1"  *ngIf="updateData.motif == 'CONSIGNE' ">
-            <legend style="font-size: 14px" class="text-secondary">
-              Informations regroupement
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Numéro : </strong>
-                <span>{{ updateData?.regroupement?.numRegroupement }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Transporteur : </strong>
-                <span
-                >{{ updateData?.transporteur?.nom }}
-                  {{ updateData?.transporteur?.prenoms }}</span
-                >
-              </div>
-              <div class="col-md-4">
-                <strong>Téléphone : </strong>
-                <span>{{ updateData?.regroupement?.telephone }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-1"  *ngIf="updateData.motif == 'CONSIGNE' "  >
-            <legend style="font-size: 14px" class="text-secondary">
-              Informations véhicule
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Immatriculation: </strong>
-                <span>{{ updateData?.vehicule?.immatriculation }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Marque : </strong>
-                <span>{{ updateData?.vehicule?.marque }} </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Capacité : </strong>
-                <span>{{ updateData?.vehicule?.capacite }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Disponible : </strong>
-                <span>{{
-                    updateData?.vehicule?.disponible == true ? "OUI" : "NON"
-                  }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-1">
-            <legend style="font-size: 14px" class="text-secondary">
-              Autres informations
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Statut: </strong>
-                <span>{{ updateData?.statut }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Motif : </strong>
-                <span>{{ updateData?.motif }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant à percevoir : </strong>
-                <span>{{ updateData?.montantAPercevoir| number }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant perçu : </strong>
-                <span>{{ updateData?.montantPercu| number }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant restant : </strong>
-                <span>{{ updateData?.montantRestant | number }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Délai : </strong>
-                <span>{{ updateData?.credit?.delaiReglement || "NA" }}Jours</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Date échéance : </strong>
-                <span>{{ updateData?.dateEchanceCalculer| date : "dd/MM/yyyy HH:mm" }}</span>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="row border my-2" >
-            <legend class="fs-6 text-primary">Historique de paiement</legend>
-            <div
-              class="table-responsive"
-              style="max-height: 300px; overflow-y: auto"
-            >
-              <table class="table">
-                <thead>
-                <tr style="font-size: small">
-                  <th scope="col">Opérations</th>
-                  <th scope="col">Mode de paiement</th>
-                  <th scope="col">Montant versé</th>
-                  <th scope="col">Date de paiement</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr
-                  style="font-size: small"
-                  *ngFor="let item of hstoriquePayment; let i = index "
-                >
-                  <td>{{ item.transaction.motif }}</td>
-                  <td>{{ item.moyenPaiement.libelle ? item.moyenPaiement.libelle : 'N/A' }}</td>
-                  <td>{{ item.montant | number }}</td>
-                  <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
-                  <td>
-                    <p class="text-success" *ngIf="item?.statut == Status.PAYE">Payé</p>
-                    <button
-                      *ngIf="item?.statut !== Status.PAYE"
-                      type="submit"
-                      class="btn btn-primary px-2"
-                      (click)="ValidatePaiement(item)"
-                    >
-                      Payer
-                    </button>
-                  </td>
-                </tr>
-                <!-- Ajoutez d'autres lignes si nécessaire -->
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
-        </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </ng-container>
 
-        <fieldset  *ngIf="updateData.motif == 'CONSIGNE'">
-          <legend style="font-size: 14px" class="text-secondary">
-            Emballages
-          </legend>
-          <table class="table table-bordered">
-            <thead class="table-success">
-            <tr>
-              <th scope="col">Code</th>
-              <th scope="col">Type</th>
-              <th scope="col">Désignation</th>
-              <th scope="col">Coût unitaire</th>
-              <th scope="col">Quantité</th>
-            </tr>
+      <ng-container *ngIf="updateData.motif == 'COMMANDE CLIENT' || updateData.motif == 'COMMANDE GRATUITE'">
+        <div class="mb-3">
+          <div class="vd-section-title">Commande · {{ updateData?.paiementsCommandeClient?.[0]?.NumCommande }} · {{ updateData.createdAt | date:'dd/MM/yyyy' }}</div>
+          <div class="vd-info-grid">
+            <div class="vd-info-block"><div class="vd-info-label">Client</div><div class="vd-info-value">{{ updateData?.client?.raisonSocial }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Dépôt</div><div class="vd-info-value">{{ updateData?.depot?.nomDepot }}</div></div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="vd-section-title">Regroupement</div>
+          <div class="vd-info-grid">
+            <div class="vd-info-block"><div class="vd-info-label">Numéro</div><div class="vd-info-value">{{ updateData?.regroupement?.numRegroupement }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Transporteur</div><div class="vd-info-value">{{ updateData?.transporteur?.nom }} {{ updateData?.transporteur?.prenoms }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Téléphone</div><div class="vd-info-value">{{ updateData?.regroupement?.telephone }}</div></div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="vd-section-title">Véhicule</div>
+          <div class="vd-info-grid">
+            <div class="vd-info-block"><div class="vd-info-label">Immatriculation</div><div class="vd-info-value">{{ updateData?.vehicule?.immatriculation }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Marque</div><div class="vd-info-value">{{ updateData?.vehicule?.marque }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Disponible</div><div class="vd-info-value">{{ updateData?.vehicule?.disponible ? 'OUI' : 'NON' }}</div></div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="vd-section-title">Financier</div>
+          <div class="vd-info-grid">
+            <div class="vd-info-block"><div class="vd-info-label">Statut</div><div class="vd-info-value">{{ updateData?.statut }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">À percevoir</div><div class="vd-info-value">{{ updateData?.montantAPercevoir | number }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Perçu</div><div class="vd-info-value">{{ updateData?.montantPercu | number }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Restant</div><div class="vd-info-value">{{ updateData?.montantRestant | number }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Délai</div><div class="vd-info-value">{{ updateData?.credit?.delaiReglement || 'NA' }} j</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Date échéance</div><div class="vd-info-value">{{ updateData?.dateEchanceCalculer | date:'dd/MM/yyyy' }}</div></div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="vd-section-title">Historique</div>
+          <div class="vd-table-wrap" style="max-height:220px; overflow-y:auto">
+            <table class="vd-table">
+              <thead><tr><th>Opération</th><th>Moyen</th><th>Montant</th><th>Date</th><th>Statut</th><th></th></tr></thead>
+              <tbody>
+                <tr *ngFor="let item of hstoriquePayment">
+                  <td>{{ item?.transaction?.motif }}</td><td>{{ item?.moyenPaiement?.libelle || 'N/A' }}</td>
+                  <td>{{ item.montant | number }}</td><td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td>
+                    <span *ngIf="item?.statut=='Annulé'" class="fn-badge red">Annulé</span>
+                    <span *ngIf="item?.statut==Status.PAYE && item?.typePaiement=='NORMAL'" class="fn-badge green">Payé</span>
+                    <span *ngIf="item?.statut==Status.PAYE && item?.typePaiement=='AVANCE'" class="fn-badge blue">Avance</span>
+                    <span *ngIf="item?.statut!==Status.PAYE && item?.statut!=='Annulé'" class="fn-badge orange">{{ item?.statut }}</span>
+                  </td>
+                  <td style="white-space:nowrap">
+                    <button *ngIf="item?.statut!==Status.PAYE && item?.statut!=='Annulé'" class="btn btn-sm btn-primary px-2 me-1" (click)="ValidatePaiement(item)">Payer</button>
+                    <button *ngIf="item?.statut!=='Annulé'" class="btn btn-sm btn-danger px-2" (click)="AnnulerTransaction(item)"><i class="fas fa-times"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="updateData.motif == 'VENTE CHINE'">
+
+        <!-- Infos vente + commercial -->
+        <div class="vc-info-row">
+          <div class="vc-info-block">
+            <div class="vc-block-header"><i class="fas fa-store"></i> Vente</div>
+            <div class="vc-block-line"><span class="vc-label">Client</span><span class="vc-value">{{ updateData?.paiementsVente?.[0]?.pointdevente?.nomEtablissement || '—' }}</span></div>
+            <div class="vc-block-line"><span class="vc-label">Dépôt</span><span class="vc-value">{{ updateData?.depot?.nomDepot || '—' }}</span></div>
+            <div class="vc-block-line"><span class="vc-label">Date</span><span class="vc-value">{{ updateData?.paiementsVente?.[0]?.dateVente | date:'dd/MM/yyyy' }}</span></div>
+          </div>
+          <div class="vc-info-block agent">
+            <div class="vc-block-header"><i class="fas fa-user-tie"></i> Commercial</div>
+            <div class="vc-agent-row">
+              <div class="vc-avatar">{{ (updateData?.paiementsVente?.[0]?.commercial?.nom || '?')[0] }}{{ (updateData?.paiementsVente?.[0]?.commercial?.prenoms || '')[0] }}</div>
+              <div>
+                <div class="vc-agent-name">{{ updateData?.paiementsVente?.[0]?.commercial?.nom }} {{ updateData?.paiementsVente?.[0]?.commercial?.prenoms }}</div>
+                <div class="vc-agent-sub"><i class="fas fa-tag me-1"></i>{{ updateData?.paiementsVente?.[0]?.commercial?.role }}</div>
+                <div class="vc-agent-sub"><i class="fas fa-phone me-1"></i>{{ updateData?.paiementsVente?.[0]?.commercial?.telephone }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI financiers -->
+        <div class="vc-kpi-row">
+          <div class="vc-kpi">
+            <div class="vc-kpi-label"><i class="fas fa-file-invoice-dollar me-1"></i>Statut</div>
+            <div class="vc-kpi-value small">
+              <span class="vc-statut-chip" [ngClass]="{'green': updateData?.statut==='Payé', 'orange': updateData?.statut!=='Payé'}">{{ updateData?.statut }}</span>
+            </div>
+          </div>
+          <div class="vc-kpi blue">
+            <div class="vc-kpi-label">À percevoir</div>
+            <div class="vc-kpi-value">{{ updateData?.montantAPercevoir | number }} <span class="vc-kpi-unit">FCFA</span></div>
+          </div>
+          <div class="vc-kpi green">
+            <div class="vc-kpi-label">Perçu</div>
+            <div class="vc-kpi-value">{{ updateData?.montantPercu | number }} <span class="vc-kpi-unit">FCFA</span></div>
+          </div>
+          <div class="vc-kpi" [ngClass]="updateData?.montantRestant > 0 ? 'orange' : 'green'">
+            <div class="vc-kpi-label">Restant</div>
+            <div class="vc-kpi-value">{{ updateData?.montantRestant | number }} <span class="vc-kpi-unit">FCFA</span></div>
+          </div>
+          <div class="vc-kpi">
+            <div class="vc-kpi-label"><i class="fas fa-clock me-1"></i>Délai</div>
+            <div class="vc-kpi-value">{{ updateData?.credit?.delaiReglement || '—' }} <span class="vc-kpi-unit">j</span></div>
+          </div>
+          <div class="vc-kpi" [ngClass]="isDateEchue(updateData?.dateEchanceCalculer) ? 'red' : ''">
+            <div class="vc-kpi-label"><i class="fas fa-calendar-alt me-1"></i>Échéance</div>
+            <div class="vc-kpi-value small">{{ updateData?.dateEchanceCalculer | date:'dd/MM/yyyy' }}</div>
+          </div>
+        </div>
+
+        <!-- Historique des paiements -->
+        <div class="vc-section-header">
+          <span><i class="fas fa-history me-2"></i>Historique des paiements</span>
+          <span class="vc-hist-count">{{ filteredHistorique.length }} / {{ hstoriquePayment.length }}</span>
+        </div>
+
+        <div class="vc-filter-panel">
+          <div class="vc-filter-search-row">
+            <div class="vc-filter-search-wrap">
+              <i class="fas fa-search vc-filter-search-icon"></i>
+              <input class="vc-filter-search-input" [(ngModel)]="vcFilters.search" placeholder="Rechercher par réf., montant, moyen de paiement..." />
+              <button class="vc-filter-search-clear" *ngIf="vcFilters.search" (click)="vcFilters.search=''"><i class="fas fa-times"></i></button>
+            </div>
+            <button class="vc-filter-reset-all" *ngIf="vcFilters.statut || vcFilters.type || vcFilters.search" (click)="vcFilters = { statut: '', type: '', search: '' }">
+              <i class="fas fa-rotate-left me-1"></i>Tout effacer
+            </button>
+          </div>
+          <div class="vc-filter-pills-row">
+            <div class="vc-filter-group">
+              <span class="vc-filter-group-label"><i class="fas fa-circle-dot me-1"></i>Statut</span>
+              <button class="vc-pill" [ngClass]="{'active': vcFilters.statut===''}" (click)="vcFilters.statut=''">Tous</button>
+              <button class="vc-pill orange" [ngClass]="{'active': vcFilters.statut==='En attente'}" (click)="vcFilters.statut='En attente'"><i class="fas fa-clock me-1"></i>En attente</button>
+              <button class="vc-pill green"  [ngClass]="{'active': vcFilters.statut==='Payé'}"       (click)="vcFilters.statut='Payé'"><i class="fas fa-check me-1"></i>Payé</button>
+              <button class="vc-pill blue"   [ngClass]="{'active': vcFilters.statut==='En cours'}"   (click)="vcFilters.statut='En cours'"><i class="fas fa-spinner me-1"></i>En cours</button>
+              <button class="vc-pill red"    [ngClass]="{'active': vcFilters.statut==='Annulé'}"     (click)="vcFilters.statut='Annulé'"><i class="fas fa-ban me-1"></i>Annulé</button>
+            </div>
+            <div class="vc-filter-divider"></div>
+            <div class="vc-filter-group">
+              <span class="vc-filter-group-label"><i class="fas fa-tag me-1"></i>Type</span>
+              <button class="vc-pill" [ngClass]="{'active': vcFilters.type===''}"       (click)="vcFilters.type=''">Tous</button>
+              <button class="vc-pill blue"   [ngClass]="{'active': vcFilters.type==='NORMAL'}" (click)="vcFilters.type='NORMAL'">Normal</button>
+              <button class="vc-pill orange" [ngClass]="{'active': vcFilters.type==='AVANCE'}" (click)="vcFilters.type='AVANCE'">Avance</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="vc-table-wrap">
+          <table class="vc-table">
+            <thead>
+              <tr><th>Réf.</th><th>Moyen</th><th>Type</th><th>Montant</th><th>Date</th><th>Statut</th><th></th></tr>
             </thead>
             <tbody>
-            <tr *ngFor="let item of filteredArticles">
-              <td>{{ item.productCode }}</td>
-              <td>{{ item.category }}</td>
-              <td>{{ item.libelle }}</td>
-              <td>{{ item.prixUnitaire }}</td>
-              <td>{{ item.quantity }}</td>
-            </tr>
+              <tr *ngFor="let item of filteredHistorique" [ngClass]="{'vc-row-annule': item?.statut==='Annulé'}">
+                <td class="vc-ref">{{ item?.numPaiement || '—' }}</td>
+                <td>{{ item?.moyenPaiement?.libelle || 'N/A' }}</td>
+                <td><span class="vc-type-chip" [ngClass]="item?.typePaiement==='AVANCE' ? 'avance' : 'normal'">{{ item?.typePaiement }}</span></td>
+                <td class="vc-amount">{{ item.montant | number }}</td>
+                <td class="vc-date">{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>
+                  <span *ngIf="item?.statut==='Annulé'" class="vc-badge red">Annulé</span>
+                  <span *ngIf="item?.statut===Status.PAYE && item?.typePaiement==='NORMAL'" class="vc-badge green">Payé</span>
+                  <span *ngIf="item?.statut===Status.PAYE && item?.typePaiement==='AVANCE'" class="vc-badge blue">Avance</span>
+                  <span *ngIf="item?.statut!==Status.PAYE && item?.statut!=='Annulé'" class="vc-badge orange">{{ item?.statut }}</span>
+                </td>
+                <td class="vc-actions">
+                  <button *ngIf="item?.statut!==Status.PAYE && item?.statut!=='Annulé'" class="vc-btn pay" (click)="ValidatePaiement(item)"><i class="fas fa-check me-1"></i>Payer</button>
+                  <button *ngIf="item?.statut!=='Annulé'" class="vc-btn cancel" (click)="AnnulerTransaction(item)"><i class="fas fa-times"></i></button>
+                </td>
+              </tr>
+              <tr *ngIf="!filteredHistorique?.length">
+                <td colspan="7" class="vc-empty">
+                  <i class="fas fa-inbox me-2"></i>
+                  {{ hstoriquePayment?.length ? 'Aucun résultat pour ces filtres' : 'Aucun paiement enregistré' }}
+                </td>
+              </tr>
             </tbody>
           </table>
-        </fieldset>
+        </div>
+      </ng-container>
 
-      </div>
-      <div class="vd-modal-footer">
-        <button (click)="OnCloseModal()" type="button" class="vd-btn-outline">Fermer</button>
-      </div>
+      <ng-container *ngIf="updateData.motif == 'CONSIGNE' || updateData.motif == 'ECART RETOUR PLEIN'">
+        <div class="mb-3">
+          <div class="vd-section-title">Commande · {{ updateData?.paiementsCommandeGratuit?.[0]?.NumCommande }} · {{ updateData.createdAt | date:'dd/MM/yyyy HH:mm' }}</div>
+          <div class="vd-info-grid">
+            <div class="vd-info-block"><div class="vd-info-label">Payeur</div><div class="vd-info-value">{{ updateData?.client?.raisonSocial || updateData?.client?.nom+' '+updateData?.client?.prenoms }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Dépôt</div><div class="vd-info-value">{{ updateData?.depot?.nomDepot }}</div></div>
+          </div>
+        </div>
+        <div class="mb-3" *ngIf="updateData.motif == 'CONSIGNE'">
+          <div class="vd-section-title">Regroupement</div>
+          <div class="vd-info-grid">
+            <div class="vd-info-block"><div class="vd-info-label">Numéro</div><div class="vd-info-value">{{ updateData?.regroupement?.numRegroupement }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Transporteur</div><div class="vd-info-value">{{ updateData?.transporteur?.nom }} {{ updateData?.transporteur?.prenoms }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Téléphone</div><div class="vd-info-value">{{ updateData?.regroupement?.telephone }}</div></div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="vd-section-title">Financier</div>
+          <div class="vd-info-grid">
+            <div class="vd-info-block"><div class="vd-info-label">Statut</div><div class="vd-info-value">{{ updateData?.statut }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">À percevoir</div><div class="vd-info-value">{{ updateData?.montantAPercevoir | number }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Perçu</div><div class="vd-info-value">{{ updateData?.montantPercu | number }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Restant</div><div class="vd-info-value">{{ updateData?.montantRestant | number }}</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Délai</div><div class="vd-info-value">{{ updateData?.credit?.delaiReglement || 'NA' }} j</div></div>
+            <div class="vd-info-block"><div class="vd-info-label">Date échéance</div><div class="vd-info-value">{{ updateData?.dateEchanceCalculer | date:'dd/MM/yyyy' }}</div></div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="vd-section-title">Historique</div>
+          <div class="vd-table-wrap" style="max-height:220px; overflow-y:auto">
+            <table class="vd-table">
+              <thead><tr><th>Opération</th><th>Moyen</th><th>Montant</th><th>Date</th><th>Statut</th><th></th></tr></thead>
+              <tbody>
+                <tr *ngFor="let item of hstoriquePayment">
+                  <td>{{ item?.transaction?.motif }}</td><td>{{ item?.moyenPaiement?.libelle || 'N/A' }}</td>
+                  <td>{{ item.montant | number }}</td><td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td>
+                    <span *ngIf="item?.statut=='Annulé'" class="fn-badge red">Annulé</span>
+                    <span *ngIf="item?.statut==Status.PAYE" class="fn-badge green">Payé</span>
+                    <span *ngIf="item?.statut!==Status.PAYE && item?.statut!=='Annulé'" class="fn-badge orange">{{ item?.statut }}</span>
+                  </td>
+                  <td style="white-space:nowrap">
+                    <button *ngIf="item?.statut!==Status.PAYE && item?.statut!=='Annulé'" class="btn btn-sm btn-primary px-2 me-1" (click)="ValidatePaiement(item)">Payer</button>
+                    <button *ngIf="item?.statut!=='Annulé'" class="btn btn-sm btn-danger px-2" (click)="AnnulerTransaction(item)"><i class="fas fa-times"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mb-3" *ngIf="updateData.motif == 'CONSIGNE'">
+          <div class="vd-section-title">Emballages</div>
+          <div class="vd-table-wrap">
+            <table class="vd-table">
+              <thead><tr><th>Code</th><th>Type</th><th>Désignation</th><th>Coût unitaire</th><th>Quantité</th></tr></thead>
+              <tbody><tr *ngFor="let item of filteredArticles"><td>{{ item.productCode }}</td><td>{{ item.category }}</td><td>{{ item.libelle }}</td><td>{{ item.prixUnitaire }}</td><td>{{ item.quantity }}</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+    <div class="vd-modal-footer">
+      <button (click)="OnCloseModal()" type="button" class="vd-btn-outline">Fermer</button>
+    </div>
   </div>
 </div>

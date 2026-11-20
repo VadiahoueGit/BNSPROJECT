@@ -1,11 +1,11 @@
-<div class="bui-back mb-4" (click)="goBack()">
-  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
-  <h4 class="fw-bold mb-0">Commandes gratuites</h4>
+<div class="cgt-back-row" (click)="goBack()">
+  <div class="cgt-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="cgt-back-title">Commandes gratuites</h4>
 </div>
 
-<div class="cc-tabs mb-3">
-  <button class="cc-tab-btn" [class.active]="activeTab === 'saisiecommande'" (click)="activeElement('saisiecommande')">Saisie commande</button>
-  <button class="cc-tab-btn" [class.active]="activeTab === 'suivicommmande'" (click)="activeElement('suivicommmande')">Suivi commande</button>
+<div class="cgt-tabs mb-3">
+  <button class="cgt-tab-btn" [class.active]="activeTab === 'saisiecommande'" (click)="activeElement('saisiecommande')">Saisie commande</button>
+  <button class="cgt-tab-btn" [class.active]="activeTab === 'suivicommmande'" (click)="activeElement('suivicommmande')">Suivi commande</button>
 </div>
 
 <div *ngIf="activeTab === 'saisiecommande'">

@@ -5,10 +5,10 @@ import {ToastrService} from 'ngx-toastr';
 import {Table} from 'primeng/table';
 import {ArticleServiceService} from 'src/app/core/article-service.service';
 import {CoreServiceService} from 'src/app/core/core-service.service';
-import {ALERT_QUESTION} from 'src/app/Features/shared-component/utils';
+import {ALERT_QUESTION, ALERT_INFO} from 'src/app/Features/shared-component/utils';
 import {ActiviteService} from "../../../../core/activite.service";
 import {data} from "jquery";
-import {Status} from "../../../../utils/utils";
+import {Status, isDepotHote} from "../../../../utils/utils";
 
 @Component({
   selector: 'app-list-des-receptions-emballages',
@@ -32,16 +32,30 @@ export class ListDesReceptionsEmballagesComponent {
   ramassageList: any[] = [];
   regroupementTable: any[] = [];
   regroupementFinal: {
-    [key: string]: Array<{ type: string; palettes: number; casier: number; totalQuantite: number }>
+    [key: string]: Array<{ type: string; palettes: number; casier: number; totalQuantite: number; fournisseurNom?: string | null }>
   } = {};
   result: { palettes: number; casier: number } | null = null;
-  casiersPerPalette: Record<number, { casiers: number; type: string }[]> = {};
-  currentPage: number;
+  casiersPerPalette: Record<number, { casiers: number; type: string; fournisseurId: number | null; fournisseurNom: string | null }[]> = {};
+  currentPage: number = 1;
   rowsPerPage: any;
+  searchTerm: string = '';
+
+  filters: any = { numero: '', agent: '', contact: '', fonction: '', statut: '', dateDebut: '', dateFin: '', dateInventaire: '', depotId: null };
+  isHote = isDepotHote();
+  depotList: any[] = [];
+
+  // ===== Ajout manuel d'un article absent des quantités théoriques =====
+  isAddArticleOpen = false;
+  articlePickerList: any[] = [];
+  filteredArticlePickerList: any[] = [];
+  articlePickerSearch = '';
+  selectedArticleToAdd: any = null;
+  newArticleQuantite: number | null = null;
 
   constructor(
     private _activite: ActiviteService,
     private _coreService: CoreServiceService,
+    private articleService: ArticleServiceService,
     private _spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private toastr: ToastrService
@@ -51,6 +65,14 @@ export class ListDesReceptionsEmballagesComponent {
   ngOnInit() {
     this.GetRetourList(1);
     this.LoadCasiersPerPalette();
+    this.loadDepotList();
+  }
+
+  loadDepotList() {
+    if (!this.isHote) return;
+    this._coreService.GetDepotList({ paginate: false, page: 1, limit: 0 }).then((res: any) => {
+      this.depotList = res.data || [];
+    });
   }
 
   LoadCasiersPerPalette() {
@@ -60,16 +82,42 @@ export class ListDesReceptionsEmballagesComponent {
         if (!this.casiersPerPalette[regle.format]) {
           this.casiersPerPalette[regle.format] = [];
         }
-        this.casiersPerPalette[regle.format].push({ casiers: regle.casiers, type: regle.type });
+        this.casiersPerPalette[regle.format].push({ casiers: regle.casiers, type: regle.type, fournisseurId: regle.fournisseur?.id ?? null, fournisseurNom: regle.fournisseur?.nom ?? null });
       });
     });
   }
 
+  findRegle(format: number, type: string, fournisseurId?: number): { casiers: number; fournisseurNom: string | null } {
+    const rules = this.casiersPerPalette[format] ?? [];
+    let rule: any = null;
+    if (fournisseurId) {
+      rule = rules.find((r: any) => r.type === type && r.fournisseurId === fournisseurId);
+    }
+    if (!rule) rule = rules.find((r: any) => r.type === type && !r.fournisseurId);
+    if (!rule) rule = rules.find((r: any) => r.type === type);
+    return { casiers: rule?.casiers ?? 0, fournisseurNom: rule?.fournisseurNom ?? null };
+  }
 
-  onFilterGlobal(event: Event) {
-    const inputElement = event.target as HTMLInputElement;
-    const value = inputElement.value;
-    this.dt2.filterGlobal(value, 'contains');
+
+  filterGlobal() {
+    this.resetPaginator();
+    this.GetRetourList(1);
+  }
+
+  resetFilters() {
+    this.filters = { numero: '', agent: '', contact: '', fonction: '', statut: '', dateDebut: '', dateFin: '', dateInventaire: '', depotId: null };
+    this.resetPaginator();
+    this.GetRetourList(1);
+  }
+
+  get hasActiveFilters(): boolean {
+    return !!(this.filters.numero || this.filters.agent || this.filters.contact || this.filters.fonction
+      || this.filters.statut || this.filters.dateDebut || this.filters.dateFin
+      || this.filters.dateInventaire || this.filters.depotId);
+  }
+
+  resetPaginator() {
+    if (this.dt2) this.dt2.first = 0;
   }
 
   clear(table: Table) {
@@ -82,15 +130,25 @@ export class ListDesReceptionsEmballagesComponent {
   }
 
   OnEdit(data: any) {
-    console.log(data);
-    this.updateData = data;
-    this.dates = this.getFirstAndLastDate(this.updateData.retours)
-    this.extractAllArticles(this.updateData.retours)
-    if (this.updateData.inventaires.length > 0) {
-      this.preloadInventaire(this.updateData.inventaires);
-    }
-
-    this.isModalOpen = true;
+    this.console.log(data)
+    this.updateData = { ...data, retours: [] };
+    this._spinner.show();
+    const key = data._groupKey ?? {};
+    this._activite.GetGroupDetail(key.regId ?? null, key.transporteurId ?? null, key.commercialId ?? null)
+      .then((res: any) => {
+        this.updateData = { ...data, retours: res.data?.retours ?? [] };
+        this.dates = this.getFirstAndLastDate(this.updateData.retours);
+        this.extractAllArticles(this.updateData.retours);
+        if (this.updateData.inventaires?.length > 0) {
+          this.preloadInventaire(this.updateData.inventaires);
+        }
+        this._spinner.hide();
+        this.isModalOpen = true;
+      })
+      .catch(() => {
+        this._spinner.hide();
+        this.isModalOpen = true;
+      });
   }
 
   get filteredArticles() {
@@ -99,10 +157,7 @@ export class ListDesReceptionsEmballagesComponent {
   calculate(commande: any): void {
     console.log('Commande:', commande);
 
-    // ✅ Ne réinitialise pas `regroupementFinal` complètement pour ne pas écraser les données existantes
-    if (!this.regroupementFinal) {
-      this.regroupementFinal = {};
-    }
+    this.regroupementFinal = {};
     this.result = {palettes: 0, casier: 0};
 
     const articlesParFormatEtType = commande.articles.reduce((acc: any, article: any) => {
@@ -140,33 +195,27 @@ export class ListDesReceptionsEmballagesComponent {
           0
         );
 
-        const paletteInfos = this.casiersPerPalette[format];
-        if (!paletteInfos || paletteInfos.length === 0) {
-          console.warn(`Format invalide ou non trouvé : ${format}`);
+        const fournisseurId = articles[0]?.produit?.fournisseur?.id ?? undefined;
+        const regle = this.findRegle(format, type, fournisseurId);
+        if (!regle.casiers) {
+          console.warn(`Aucune règle palette pour format ${format} / type ${type}`);
           return;
         }
 
-        paletteInfos.forEach(({casiers, type: paletteType}) => {
-          if (paletteType === type) {
-            const palettes = Math.floor(totalCasiers / casiers);
-            const casier = totalCasiers % casiers;
+        const palettes = Math.floor(totalCasiers / regle.casiers);
+        const casier = totalCasiers % regle.casiers;
 
-            // ✅ Vérifie si ce format et type existent déjà dans regroupementFinal
-            if (!this.regroupementFinal[format]) {
-              this.regroupementFinal[format] = [];
-            }
+        if (!this.regroupementFinal[format]) {
+          this.regroupementFinal[format] = [];
+        }
 
-            const existingEntry = this.regroupementFinal[format].find((entry: any) => entry.type === type);
-            if (existingEntry) {
-              // 🔄 Additionne les nouvelles valeurs sans écraser l'existant
-              existingEntry.palettes += palettes;
-              existingEntry.casier += casier;
-            } else {
-              // ➕ Ajoute un nouvel article s'il n'existe pas encore
-              this.regroupementFinal[format].push({type, palettes, casier, totalQuantite: 0});
-            }
-          }
-        });
+        const existingEntry = this.regroupementFinal[format].find((entry: any) => entry.type === type);
+        if (existingEntry) {
+          existingEntry.palettes += palettes;
+          existingEntry.casier += casier;
+        } else {
+          this.regroupementFinal[format].push({ type, palettes, casier, totalQuantite: 0, fournisseurNom: regle.fournisseurNom });
+        }
       });
     });
 // Recalcul de la cargaison après modification de regroupementFinal
@@ -243,6 +292,24 @@ export class ListDesReceptionsEmballagesComponent {
     }
   }
 
+  ExportExcel(item: any) {
+    this._spinner.show();
+    const params = {
+      "regroupementId": item.regroupementId,
+      "transporteurId": item.transporteur ? item.transporteur.id : item.commercial.id,
+      "role": item.transporteur ? item.transporteur.role : item.commercial.role
+    }
+    this._activite.GetRetourWithArtilesListAgentExcel(params).then(
+      () => {
+        this._spinner.hide();
+      },
+      (error: any) => {
+        this._spinner.hide();
+        this.toastr.info(error.error.message);
+      }
+    );
+  }
+
   getFirstAndLastDate<T extends { createdAt: string }>(items: T[]): { firstDate: Date, lastDate: Date } | null {
     if (!items || items.length === 0) {
       return null;
@@ -254,15 +321,24 @@ export class ListDesReceptionsEmballagesComponent {
     return { firstDate, lastDate };
   }
 
-  GetRetourList(page: number): Promise<void> {
-    let data = {
+  GetRetourList(page: number = 1): Promise<void> {
+    this.currentPage = page;
+    const data = {
       paginate: true,
-      page: page,
+      page,
       limit: 8,
+      numero: this.filters.numero || '',
+      agent: this.filters.agent || '',
+      contact: this.filters.contact || '',
+      fonction: this.filters.fonction || '',
+      statut: this.filters.statut || '',
+      dateDebut: this.filters.dateDebut || '',
+      dateFin: this.filters.dateFin || '',
+      dateInventaire: this.filters.dateInventaire || '',
+      depotId: this.filters.depotId || '',
     };
     this._spinner.show();
     return this._activite.GetRetourWithArtilesListAgent(data).then((res: any) => {
-      console.log('retour list:::>', res);
       this.dataList = res.data;
       this.totalPages = res.total;
       this._spinner.hide();
@@ -270,9 +346,102 @@ export class ListDesReceptionsEmballagesComponent {
   }
 
 
-  TerminerInventaire(datas: any, items: any) {
+  // ===== Ajout manuel d'un article (emballage/plastique) absent des quantités théoriques =====
+  // Le magasinier peut trouver physiquement un emballage/plastique qui ne figurait dans AUCUN
+  // bordereau de retour de ce regroupement (donc absent de allArticles, quantité théorique
+  // inexistante). On l'ajoute comme une colonne à part, avec expectedQuantity = receivedQuantity
+  // au moment de l'enregistrement (voir TerminerInventaire) : il n'y a rien à comparer pour un
+  // article qui n'était pas attendu, donc pas d'écart à générer, et le stock est bien crédité de
+  // la quantité trouvée (le backend crédite le stock sur expectedQuantity, cf.
+  // retour-article-inventaire.service.ts).
+  get canAddArticle(): boolean {
+    return this.updateData?.inventaires?.length === 0 && this.updateData?.regroupementStatut === 'Inventaire';
+  }
+
+  openAddArticle() {
+    this.isAddArticleOpen = true;
+    this.selectedArticleToAdd = null;
+    this.newArticleQuantite = null;
+    this.articlePickerSearch = '';
+    if (this.articlePickerList.length === 0) {
+      this.loadArticlePickerList();
+    } else {
+      this.filterArticlePicker();
+    }
+  }
+
+  closeAddArticle() {
+    this.isAddArticleOpen = false;
+  }
+
+  loadArticlePickerList() {
+    this._spinner.show();
+    Promise.all([
+      this.articleService.GetEmballageList({ paginate: false, page: 1, limit: 0 }),
+      this.articleService.GetPlastiqueNuList({ paginate: false, page: 1, limit: 0 }),
+    ]).then(([emballageRes, plastiqueRes]: any[]) => {
+      const emballages = (emballageRes.data || []).map((e: any) => ({ code: e.code, libelle: e.libelle, type: 'Emballage' }));
+      const plastiques = (plastiqueRes.data || []).map((p: any) => ({ code: p.code, libelle: p.libelle, type: 'Plastique' }));
+      this.articlePickerList = [...emballages, ...plastiques];
+      this.filterArticlePicker();
+    }).finally(() => this._spinner.hide());
+  }
+
+  filterArticlePicker() {
+    const term = (this.articlePickerSearch || '').toLowerCase().trim();
+    const existingCodes = new Set((this.allArticles || []).map((a: any) => a.codeEmballage));
+    this.filteredArticlePickerList = this.articlePickerList.filter((a: any) =>
+      !existingCodes.has(a.code) &&
+      (!term || (a.code || '').toLowerCase().includes(term) || (a.libelle || '').toLowerCase().includes(term))
+    );
+  }
+
+  confirmAddArticle() {
+    if (!this.selectedArticleToAdd) {
+      this.toastr.warning('Sélectionnez un article.');
+      return;
+    }
+    if (this.newArticleQuantite === null || this.newArticleQuantite === undefined || Number(this.newArticleQuantite) <= 0) {
+      this.toastr.warning('Saisissez une quantité valide.');
+      return;
+    }
+    const item = this.selectedArticleToAdd;
+    this.allArticles.push({
+      libelle: item.libelle,
+      codeEmballage: item.code,
+      expectedQuantity: 0,
+      receivedQuantity: Number(this.newArticleQuantite),
+      interchangeDetails: [],
+      hasInterchange: false,
+      isManual: true,
+    });
+    this.isAddArticleOpen = false;
+  }
+
+  removeManualArticle(article: any) {
+    this.allArticles = this.allArticles.filter((a: any) => a !== article);
+  }
+
+  private calculerTotalEcart(articles: any[]): number {
+    return (articles || []).reduce((s: number, a: any) => {
+      const ecart = Number(a.receivedQuantity || 0) - Number(a.expectedQuantity || 0);
+      return s + Math.abs(ecart) * Number(a.prixUnitaire || 0);
+    }, 0);
+  }
+
+  async TerminerInventaire(datas: any, items: any) {
+    // Pour les articles ajoutés manuellement (isManual), il n'y a pas de quantité théorique à
+    // proprement parler : on aligne expectedQuantity sur la quantité physique saisie juste avant
+    // l'enregistrement (qui a pu être modifiée depuis l'ajout), pour ne pas générer d'écart
+    // fictif et pour que le stock soit correctement crédité (le backend crédite sur
+    // expectedQuantity).
+    items.forEach((article: any) => {
+      if (article.isManual) {
+        article.expectedQuantity = Number(article.receivedQuantity) || 0;
+      }
+    });
     const iteration = items.map((article: any) => {
-      const {libelle, ...rest} = article; // on extrait libelle et garde le reste
+      const {libelle, isManual, ...rest} = article; // on extrait libelle et garde le reste
       return {
         ...rest,
         regroupementEmballageId: datas.regroupementId
@@ -282,6 +451,16 @@ export class ListDesReceptionsEmballagesComponent {
     const data = {
       "inventories": iteration
     }
+
+    const totalEcart = this.calculerTotalEcart(items);
+    if (totalEcart > 0) {
+      await ALERT_INFO(
+        'info',
+        'Écart détecté',
+        `La quantité physique saisie ne correspond pas à la quantité théorique pour un ou plusieurs articles. Écart estimé : ${totalEcart.toLocaleString()} FCFA. Un écart de paiement sera créé pour ce montant à la validation.`,
+      );
+    }
+
     ALERT_QUESTION(
       'warning',
       'Attention !',
@@ -293,10 +472,8 @@ export class ListDesReceptionsEmballagesComponent {
         this._activite.TerminerInventaire(data).then((res: any) => {
           console.log('validation inventaire:::>', res);
           this._spinner.hide();
-          this.GetRetourList(1);
-          const match = this.dataList.find((item:any) => item.id === datas.id);
-          this.OnEdit(match);
-          this.isModalOpen = false
+          this.isModalOpen = false;
+          this.GetRetourList(this.currentPage);
           this.toastr.success(res.message);
         })
       } else {
@@ -304,6 +481,36 @@ export class ListDesReceptionsEmballagesComponent {
       }
     });
 
+  }
+
+  async AnnulerInventaire(data: any) {
+    const totalEcart = this.calculerTotalEcart(this.allArticles);
+    if (totalEcart > 0) {
+      await ALERT_INFO(
+        'info',
+        'Écart détecté sur cet inventaire',
+        `Cet inventaire a généré un écart d'environ ${totalEcart.toLocaleString()} FCFA. L'annulation supprimera cet écart (et annulera tout paiement enregistré contre lui) et restituera le crédit et le stock. Le regroupement repassera en attente pour resaisie de l'inventaire.`,
+      );
+    }
+
+    ALERT_QUESTION(
+      'warning',
+      'Attention !',
+      "Voulez-vous annuler cet inventaire ? Le stock, le crédit client et le statut des retours seront restaurés."
+    ).then((res) => {
+      if (res.isConfirmed == true) {
+        this._spinner.show();
+        this._activite.AnnulerInventaire(data.regroupementId).then((res: any) => {
+          this._spinner.hide();
+          this.isModalOpen = false;
+          this.GetRetourList(this.currentPage);
+          this.toastr.success(res.message);
+        }, (error: any) => {
+          this._spinner.hide();
+          this.toastr.error(error?.error?.message || "Erreur lors de l'annulation de l'inventaire.");
+        });
+      }
+    });
   }
 
   TerminerRegroupement(data: any) {
@@ -317,13 +524,11 @@ export class ListDesReceptionsEmballagesComponent {
         this._activite.TerminerRegroupement(data.regroupementId).then((res: any) => {
           console.log('validation retour:::>', res);
           this._spinner.hide();
-          this.GetRetourList(1).then(() => {
-            // Ici, this.dataList est prêt
-            const match = this.dataList.find((item: any) => item.regroupementId === data.regroupementId);
-            console.log('match:', match);
-            this.OnEdit(match);
-          });
-
+          // Rafraîchit la liste en arrière-plan (page courante) et rouvre directement le même
+          // regroupement (déjà connu via `data`, pas besoin de le rechercher dans la page
+          // courante — avec la pagination serveur il pourrait ne plus s'y trouver).
+          this.GetRetourList(this.currentPage);
+          this.OnEdit(data);
 
           this.toastr.success(res.message);
         })
@@ -346,7 +551,7 @@ export class ListDesReceptionsEmballagesComponent {
         this._activite.ValidateRetourById(id).then((res: any) => {
           console.log('validation retour:::>', res);
           this._spinner.hide();
-          this.GetRetourList(1);
+          this.GetRetourList(this.currentPage);
 
           this.OnCloseModal();
 
@@ -359,9 +564,8 @@ export class ListDesReceptionsEmballagesComponent {
   }
 
   onPage(event: any) {
-    this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
-    this.GetRetourList(this.currentPage);
+    this.GetRetourList(event.first / event.rows + 1);
   }
 
 
@@ -370,10 +574,17 @@ export class ListDesReceptionsEmballagesComponent {
 
     data.forEach((retour: any) => {
 
+      // Codes sources des interchanges de ce retour (pour ne pas les exclure même si prixUnitaire === 0)
+      const interchangeSourceCodes = new Set<string>(
+        (retour.interchanges ?? [])
+          .map((inter: any) => inter.codeEmballageSource)
+          .filter(Boolean)
+      );
+
       // ---------------- ARTICLES ----------------
       retour.articles?.forEach((article: any) => {
 
-        if (article.prixUnitaire === 0) return;
+        if (article.prixUnitaire === 0 && !interchangeSourceCodes.has(article.productCode)) return;
 
         const code = article.productCode;
         console.log(article.interchangeDetails);
@@ -384,11 +595,13 @@ export class ListDesReceptionsEmballagesComponent {
             codeEmballage: code,
             expectedQuantity: 0,
             interchangeDetails: [],
-            hasInterchange: false
+            hasInterchange: false,
+            prixUnitaire: 0,
           });
         }
 
         articleMap.get(code).expectedQuantity += article.quantity;
+        if (article.prixUnitaire) articleMap.get(code).prixUnitaire = Number(article.prixUnitaire);
       });
 
       // ---------------- INTERCHANGES ----------------
@@ -519,6 +732,25 @@ export class ListDesReceptionsEmballagesComponent {
     return total;
   }
 
+  getRemainingQuantity(retour: any, article: any): number {
+    let base = 0;
+    retour.articles?.forEach((a: any) => {
+      if (a.productCode === article.codeEmballage) {
+        base += a.quantity;
+      }
+    });
+    if (!retour?.interchanges) return base;
+    let outTotal = 0;
+    retour.interchanges.forEach((inter: any) => {
+      if (inter.codeEmballageSource === article.codeEmballage) {
+        inter.cibles?.forEach((cible: any) => {
+          outTotal += cible.quantite ?? 0;
+        });
+      }
+    });
+    return Math.max(0, base - outTotal);
+  }
+
   preloadInventaire(inventaires: any) {
 
     for (const inv of inventaires) {
@@ -537,6 +769,11 @@ export class ListDesReceptionsEmballagesComponent {
     }
 
     return total;
+  }
+
+  get inventaireComplet(): boolean {
+    return this.allArticles?.length > 0 &&
+      this.allArticles.every((a: any) => a.receivedQuantity !== null && a.receivedQuantity !== undefined);
   }
 
   protected readonly Status = Status;

@@ -1,18 +1,57 @@
-<div class="card">
-
-  <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8" [totalRecords]="totalPages"
-           [lazy]="true"
-           [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" [globalFilterFields]="['code', 'libelle']"
-           [globalFilterFields]="['code', 'libelle']" (onPage)="onPage($event)">
-    <ng-template pTemplate="caption">
-      <div class=" d-flex justify-content-between py-3">
-                <span class="p-input-icon-left ml-auto d-flex align-items-center">
-                    <i class="fas fa-search"></i>
-                    <input pInputText type="text" (input)="filterGlobal($event)" placeholder="Recherche"/>
-                </span>
-        <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer un prix</button>
+<div class="cc-list-card">
+  <div class="cc-list-topbar">
+    <span class="cc-list-count">{{ totalPages }} prix</span>
+    <button class="cc-btn-primary" type="button" (click)="OnCreate()">
+      <i class="fas fa-plus me-2"></i>Créer un prix
+    </button>
+  </div>
+  <div class="cc-filters">
+    <div class="cc-filter-item">
+      <span class="cc-filter-label">Produit</span>
+      <div class="cc-filter-input-wrap">
+        <i class="fas fa-search cc-filter-icon"></i>
+        <input class="cc-filter-input" type="text" [(ngModel)]="filters.libelle" (keydown.enter)="filterGlobal()" placeholder="Recherche…">
       </div>
-    </ng-template>
+    </div>
+    <div class="cc-filter-item">
+      <span class="cc-filter-label">Catégorie</span>
+      <select class="cc-filter-input" style="padding-left:10px" [(ngModel)]="filters.categorie">
+        <option value="">Toutes les catégories</option>
+        <option *ngFor="let t of dataListTypesPrix" [value]="t.libelle">{{ t.libelle }}</option>
+      </select>
+    </div>
+    <div class="cc-filter-item" style="min-width:100px">
+      <span class="cc-filter-label">Quantité</span>
+      <input class="cc-filter-input" style="padding-left:10px" type="number" [(ngModel)]="filters.quantite" (keydown.enter)="filterGlobal()" placeholder="Qté">
+    </div>
+    <div class="cc-filter-item" style="min-width:120px">
+      <span class="cc-filter-label">Prix liquide</span>
+      <input class="cc-filter-input" style="padding-left:10px" type="number" [(ngModel)]="filters.prixLiquide" (keydown.enter)="filterGlobal()" placeholder="0">
+    </div>
+    <div class="cc-filter-item" style="min-width:120px">
+      <span class="cc-filter-label">Prix consigné</span>
+      <input class="cc-filter-input" style="padding-left:10px" type="number" [(ngModel)]="filters.prixConsigne" (keydown.enter)="filterGlobal()" placeholder="0">
+    </div>
+    <div class="cc-filter-item">
+      <span class="cc-filter-label">Statuts</span>
+      <select class="cc-filter-input" style="padding-left:10px" [(ngModel)]="filters.statut">
+        <option value="">Tous les statuts</option>
+        <option value="En attente de validation">En attente de validation</option>
+        <option value="Prix validé">Prix validé</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button class="cc-btn-search" type="button" (click)="filterGlobal()">
+        <i class="fas fa-search me-1"></i> Rechercher
+      </button>
+      <button class="cc-btn-reset" type="button" *ngIf="hasActiveFilters" (click)="resetFilters()" title="Réinitialiser">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <p-table [styleClass]="'cc-ptable p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8" [totalRecords]="totalPages"
+           [lazy]="true" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
     <ng-template pTemplate="header">
       <tr>
         <th style="color: var(--secondary-color);">Produit</th>
@@ -69,81 +108,57 @@
   </p-table>
 </div>
 
-<!-- Modal creation -->
-<!-- Modal -->
+<!-- Modal création / modification -->
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div class="modal-dialog  modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div class="d-flex justify-content-center align-items-center"
-             style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
-          <i class="fas fa-box-check text-primary fs-3"></i>
+  <div class="cp-modal">
+    <div class="cp-modal-header">
+      <div class="cp-modal-icon"><i class="fas fa-tags"></i></div>
+      <h5 class="cp-modal-title">
+        {{ operation === 'create' ? 'Nouveau prix' : 'Modifier le prix' }}
+      </h5>
+      <button class="cp-modal-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="cp-modal-body">
+      <form [formGroup]="prixForm">
+        <div class="cp-grid">
+          <div class="cp-field" style="grid-column: span 2">
+            <label class="cp-field-label">Produit *</label>
+            <ng-select [items]="dataListProduits" bindLabel="libelle" bindValue="id"
+              formControlName="ProduitId" [searchable]="true" placeholder="Rechercher un produit…">
+            </ng-select>
+          </div>
+
+          <div class="cp-field" style="grid-column: span 2">
+            <label class="cp-field-label">Type de prix *</label>
+            <ng-select [items]="dataListTypesPrix" bindLabel="libelle" bindValue="id"
+              formControlName="PrixId" [searchable]="true" placeholder="Rechercher un type de prix…">
+            </ng-select>
+          </div>
+
+          <div class="cp-field">
+            <label class="cp-field-label">Prix liquide *</label>
+            <input class="cp-field-input" type="number" formControlName="PrixLiquide" placeholder="0" />
+          </div>
+
+          <div class="cp-field">
+            <label class="cp-field-label">Prix consigné *</label>
+            <input class="cp-field-input" type="number" formControlName="PrixConsigne" placeholder="0" />
+          </div>
+
+          <div class="cp-field">
+            <label class="cp-field-label">Quantité *</label>
+            <input class="cp-field-input" type="number" formControlName="Quantite" placeholder="0" />
+          </div>
         </div>
-        <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création d'un
-          prix</h1>
-        <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification du
-          prix</h1>
-      </div>
+      </form>
+    </div>
 
-      <div class="modal-body">
-        <form [formGroup]="prixForm">
-          <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
-            <div class="d-flex align-items-center">
-              <label for="produitId" class="form-label me-1 label-fixed-width">Produit</label>
-              <p class="text-danger mb-0">*</p>
-            </div>
-            <select class="form-control form-select form-select-sm" formControlName="ProduitId"
-                    aria-label=".form-select-sm example">
-              <option value="" disabled selected>Choisir le produit</option>
-              <option [value]="item.id" *ngFor="let item of dataListProduits">{{ item.libelle }}</option>
-            </select>
-
-          </div>
-          <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
-            <div class="d-flex align-items-center">
-              <label for="prixId" class="form-label me-1 label-fixed-width">Nom du prix</label>
-              <p class="text-danger mb-0">*</p>
-            </div>
-
-            <select class=" form-control form-select form-select-sm" formControlName="PrixId"
-                    aria-label=".form-select-sm example">
-              <option value="" disabled selected>Choisir le nom du prix</option>
-              <option [value]="item.id" *ngFor="let item of dataListTypesPrix">{{ item.libelle }}</option>
-
-            </select>
-          </div>
-          <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
-            <div class="d-flex align-items-center">
-              <label for="PrixLiquide" class="form-label me-1 label-fixed-width">Prix liquide</label>
-              <p class="text-danger mb-0">*</p>
-            </div>
-            <input type="number" class="form-control" formControlName="PrixLiquide" id="PrixLiquide"
-                   placeholder="Entrez prix liquide ">
-          </div>
-          <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
-            <div class="d-flex align-items-center">
-              <label for="prixConsigne" class="form-label me-1 label-fixed-width">Prix consigne</label>
-              <p class="text-danger mb-0">*</p>
-            </div>
-            <input type="number" class="form-control" formControlName="PrixConsigne" id="prixConsigne"
-                   placeholder="Entrez prix de la consigne ">
-          </div>
-          <div class="mb-3 d-flex justify-content-around align-items-center gap-3">
-            <div class="d-flex align-items-center">
-              <label for="quantite" class="form-label me-1 label-fixed-width">Quantité</label>
-              <p class="text-danger mb-0">*</p>
-            </div>
-            <input type="number" class="form-control" formControlName="Quantite" id="quantite"
-                   placeholder="Entrez la quantité ">
-          </div>
-
-
-        </form>
-      </div>
-      <div class="modal-footer gap-3 px-4">
-        <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-        <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
-      </div>
+    <div class="cp-modal-footer">
+      <button class="cp-btn-secondary" (click)="OnCloseModal()">Annuler</button>
+      <button class="cp-btn-submit" [disabled]="prixForm.invalid" (click)="onSubmit()">
+        <i class="fas fa-check"></i> {{ operation === 'create' ? 'Créer' : 'Enregistrer' }}
+      </button>
     </div>
   </div>
 </div>

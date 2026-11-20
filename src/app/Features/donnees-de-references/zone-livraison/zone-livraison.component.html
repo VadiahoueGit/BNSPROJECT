@@ -1,98 +1,87 @@
-<div class="gap-2 d-flex align-items-center mb-3" style="cursor: pointer;" (click)="goBack()">
-    <i style="font-size: 18px; " class="fas fw-bold fa-chevron-left me-2 "></i>
-    <h4 class="fw-bold mb-0">Zones de livraison</h4>
+<div class="zl-header">
+  <div class="zl-title">
+    <button class="zl-back-btn" (click)="goBack()"><i class="fas fa-chevron-left"></i></button>
+    <h4>Zones de livraison</h4>
   </div>
-<div class="card">
-    <div class=" d-flex justify-content-end py-3">
-        <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer une zone de livraison</button>
-    </div>
-    <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" [totalRecords]="totalPages" [lazy]="true" dataKey="id" [rows]="8"
-        [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
-
-        <ng-template pTemplate="header">
-            <tr>
-                <th style="color: var(--secondary-color);">Zone</th>
-                <th style="color: var(--secondary-color);">Localité</th>
-                <th style="color: var(--secondary-color);">Actions</th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-dataList>
-            <tr>
-
-                <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.nomZone }}
-                    </span>
-                </td>
-                <td>
-                    {{ dataList.localite.nomLocalite }}
-                </td>
-
-                <td>
-            <tr class="d-flex justify-content-center gap-3">
-                <td><i (click)="OnEdit(dataList)" style="cursor: pointer;" class="fas fa-edit text-secondary"></i></td>
-
-                <td><i (click)="OnDelete(dataList.id)" style="cursor: pointer;"
-                        class="fas fa-trash-alt text-danger"></i>
-                </td>
-            </tr>
-
-            </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="5">Aucune zone trouvée.</td>
-            </tr>
-        </ng-template>
-    </p-table>
+  <button class="zl-btn-primary" (click)="OnCreate()">
+    <i class="fas fa-plus"></i> Nouvelle zone
+  </button>
 </div>
 
-
-<!-- Modal creation -->
-<!-- Modal -->
-<div *ngIf="isModalOpen" class="custom-modal">
-    <div class="modal-dialog  modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header d-flex align-items-center">
-                <div class="d-flex justify-content-center align-items-center"
-                    style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
-                    <i class="fas fa-box-check text-primary fs-3"></i>
-                </div>
-                <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création
-                    d'une zone de livraison</h1>
-                <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification d'une zone de livraison</h1>
-            </div>
-            <div class="modal-body">
-                <form [formGroup]="zoneForm">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="nomZone" class="form-label">Zone <span
-                                        class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="nomZone" formControlName="nomZone"
-                                    placeholder="Entrez la zone">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="localite" class="form-label">Localité <span
-                                        class="text-danger">*</span></label>
-                                        <select class="form-control form-select form-select-sm" formControlName="localite" aria-label=".form-select-sm example">
-                                            <option value="" disabled selected>Choisir le localité</option>
-                                            <option [value]="item.id" *ngFor="let item of dataListlocalite">{{item.nomLocalite}}</option>
-                                          </select>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-
-            <div class="modal-footer gap-3 px-4">
-                <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-                <button type="submit" (click)="onSubmit()" class="btn btn-primary px-2">Valider</button>
-            </div>
-        </div>
+<div class="zl-card">
+  <div class="zl-topbar">
+    <div>
+      <div class="zl-card-title"><i class="fas fa-route"></i> Liste des zones de livraison</div>
+      <div class="zl-count">{{ dataList.length }} résultat(s)</div>
     </div>
+  </div>
+
+  <p-table [styleClass]="'zl-ptable p-datatable-sm'" [value]="dataList" dataKey="id"
+           [totalRecords]="totalPages" [lazy]="true" [rows]="8"
+           [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Zone</th>
+        <th>Localité</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td><span class="zl-name">{{ row.nomZone }}</span></td>
+        <td>
+          <span class="zl-loc-badge"><i class="fas fa-map-marker-alt"></i>{{ row.localite.nomLocalite }}</span>
+        </td>
+        <td class="text-center">
+          <div style="display:flex;gap:6px;justify-content:center">
+            <button class="zl-action-btn edit" (click)="OnEdit(row)" title="Modifier"><i class="fas fa-edit"></i></button>
+            <button class="zl-action-btn del" (click)="OnDelete(row.id)" title="Supprimer"><i class="fas fa-trash"></i></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="3" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">
+          <i class="fas fa-route" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i>
+          Aucune zone trouvée.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<div *ngIf="isModalOpen" class="custom-modal">
+  <div class="zl-modal">
+    <div class="zl-modal-header">
+      <div class="zl-modal-icon"><i class="fas fa-route"></i></div>
+      <h5 class="zl-modal-title">
+        {{ operation === 'create' ? 'Nouvelle zone de livraison' : 'Modifier la zone de livraison' }}
+      </h5>
+      <button class="zl-modal-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="zl-modal-body">
+      <form [formGroup]="zoneForm">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px">
+          <div class="zl-field">
+            <label class="zl-field-label">Zone *</label>
+            <input class="zl-field-input" formControlName="nomZone" placeholder="Entrez la zone" />
+          </div>
+          <div class="zl-field">
+            <label class="zl-field-label">Localité *</label>
+            <select class="zl-field-select" formControlName="localite">
+              <option value="" disabled selected>Choisir la localité</option>
+              <option [value]="item.id" *ngFor="let item of dataListlocalite">{{ item.nomLocalite }}</option>
+            </select>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="zl-modal-footer">
+      <button class="zl-btn-secondary" (click)="OnCloseModal()">Annuler</button>
+      <button class="zl-btn-submit" (click)="onSubmit()">
+        <i class="fas fa-check"></i> {{ operation === 'create' ? 'Créer' : 'Enregistrer' }}
+      </button>
+    </div>
+  </div>
 </div>

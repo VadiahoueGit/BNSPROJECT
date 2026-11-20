@@ -1,138 +1,205 @@
-<div class="card">
-  <div class=" d-flex justify-content-end py-3">
-    <button type="button" class="btn btn-secondary px-4" (click)="OnCreate()">Créer une visite</button>
+<!-- Calendrier -->
+<div class="gv-card mb-4">
+  <div class="gv-card-toolbar">
+    <div class="gv-toolbar-left">
+      <i class="fas fa-calendar-alt gv-toolbar-icon"></i>
+      <span class="gv-toolbar-title">Calendrier des visites</span>
+    </div>
+    <button class="gv-btn-create" type="button" (click)="OnCreate()">
+      <i class="fas fa-plus me-2"></i>Créer une visite
+    </button>
   </div>
   <mwl-calendar-month-view [locale]="'fr'" [viewDate]="viewDate" [events]="events">
   </mwl-calendar-month-view>
 </div>
 
-<!-- Modal creation -->
-<!-- Modal -->
+<!-- ══════════════════════════════════════
+     MODAL CRÉATION / MODIFICATION
+══════════════════════════════════════ -->
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div class="modal-dialog  modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div class="d-flex justify-content-center align-items-center"
-             style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
-          <i class="fas fa-box-check text-primary fs-3"></i>
+  <div class="gv-modal">
+
+    <!-- Header -->
+    <div class="gv-modal-header">
+      <div class="gv-modal-header-left">
+        <div class="gv-modal-icon">
+          <i class="fas fa-calendar-plus"></i>
         </div>
-        <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Création
-          de visite</h1>
-        <h1 *ngIf="operation == 'edit'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification de
-          la visite</h1>
+        <div>
+          <h5 class="gv-modal-title">
+            {{ operation === 'create' ? 'Créer une visite' : 'Modifier la visite' }}
+          </h5>
+          <span class="gv-modal-subtitle">Planifiez une visite commerciale</span>
+        </div>
       </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-8">
-          <form [formGroup]="VisiteForm">
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label for="format" class="form-label">Type visite <span
-                      class="text-danger">*</span></label>
-                    <ng-select class="form-control" [items]="typeVisite" bindLabel="libelle" bindValue="id"
-                               formControlName="typeVisite" [searchable]="true">
-                    </ng-select>
-                  </div>
-                  <div class="mb-3">
-                    <label for="format" class="form-label">Vehicule <span
-                      class="text-danger">*</span></label>
-                    <ng-select class="form-control" [multiple]="false"  [items]="vehicules"
-                               bindLabel="marque" bindValue="id" formControlName="vehiculeId"
-                               [searchable]="true">
-                    </ng-select>
-                  </div>
-                  <div class="mb-3">
-                    <label  class="form-label" for="day">Choisir un jour  <span
-                      class="text-danger">*</span></label>
-                    <select formControlName="repetitionDays" class="form-control" id="day">
-                      <option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</option>
-                    </select>
-                  </div>
-<!--                  <div class="form-check form-switch mb-3">-->
-<!--                    <label for="format" class="form-label">Repeter :<span-->
-<!--                      class="text-danger">*</span></label>-->
-<!--                    <input class="form-check-input" type="checkbox" role="switch" formControlName="IsRepetitive"  />-->
-<!--                  </div>-->
-                </div>
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label for="format" class="form-label">Commercial <span
-                      class="text-danger">*</span></label>
-                    <ng-select class="form-control" [items]="commerciaux" bindLabel="fullLabel" bindValue="id"
-                             (change)="LoadPdv($event);"  formControlName="commercialId" [searchable]="true">
-                    </ng-select>
-                  </div>
-                  <div class="mb-3">
-                    <label for="format" class="form-label">Date de visite <span
-                      class="text-danger">*</span></label>
-                    <input type="date" class="form-control" formControlName="dateVisite"/>
-                  </div>
-                  <div class="mb-3">
-                    <label for="format" class="form-label">Nombre de mois<span
-                      class="text-danger">*</span></label>
-                    <input type="number" class="form-control" formControlName="repetitionDuration" />
-                  </div>
-                </div>
-              </div>
-          </form>
+      <button class="gv-close-btn" type="button" (click)="OnCloseModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="gv-modal-body">
+
+      <!-- Section : Paramètres -->
+      <div class="gv-section-label">
+        <i class="fas fa-sliders-h me-2"></i>Paramètres de la visite
+      </div>
+
+      <form [formGroup]="VisiteForm">
+        <div class="gv-form-grid">
+
+          <div class="gv-field">
+            <label class="gv-label">Type de visite <span class="req">*</span></label>
+            <ng-select class="gv-select" [items]="typeVisite" bindLabel="libelle" bindValue="id"
+                       (change)="loadClient($event)"
+                       formControlName="typeVisite" [searchable]="true" placeholder="Sélectionner…">
+            </ng-select>
           </div>
-          <div class="col-4">
-            <div class="col-md-12">
-              <div class="mb-3">
-                <form [formGroup]="searchForm">
-                  <label for="format" class="form-label">Point de vente <span class="text-danger">*</span></label>
-                  <input type="text" placeholder="Recherche" class="form-control w-70" formControlName="searchQuery"
-                         (input)="filterData()"/>
-                </form>
-                <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
-                  <table class="table">
-                    <tbody>
-                    <tr *ngFor="let item of filteredPointDeVente; let i = index" style="font-size: small;">
-                      <td><input type="checkbox" [name]="'checkbox_' + i" [(ngModel)]="item.isChecked"
-                                 (change)="toggleSelectionPdv(item)"></td>
-                      <td>{{ item.nomEtablissement }}</td>
-                    </tr>
-                    </tbody>
-                  </table>
-                </div>
+
+          <div class="gv-field">
+            <label class="gv-label">Commercial <span class="req">*</span></label>
+            <ng-select class="gv-select" [items]="commerciaux" bindLabel="fullLabel" bindValue="id"
+                       (change)="LoadPdv($event)" formControlName="commercialId"
+                       [searchable]="true" placeholder="Sélectionner…">
+            </ng-select>
+          </div>
+
+          <div class="gv-field">
+            <label class="gv-label">Véhicule <span class="req">*</span></label>
+            <ng-select class="gv-select" [items]="vehicules" bindLabel="marque" bindValue="id"
+                       formControlName="vehiculeId" [searchable]="true" placeholder="Sélectionner…">
+            </ng-select>
+          </div>
+
+          <div class="gv-field">
+            <label class="gv-label">Date de visite <span class="req">*</span></label>
+            <div class="gv-input-icon">
+              <i class="fas fa-calendar"></i>
+              <input type="date" class="gv-input" formControlName="dateVisite"/>
+            </div>
+          </div>
+
+          <div class="gv-field">
+            <label class="gv-label">Jour de répétition <span class="req">*</span></label>
+            <div class="gv-input-icon">
+              <i class="fas fa-repeat"></i>
+              <select formControlName="repetitionDays" class="gv-input">
+                <option value="" disabled selected>Choisir un jour…</option>
+                <option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="gv-field">
+            <label class="gv-label">Durée (mois)</label>
+            <div class="gv-input-icon">
+              <i class="fas fa-clock"></i>
+              <input type="number" class="gv-input" formControlName="repetitionDuration" placeholder="12"/>
+            </div>
+          </div>
+
+        </div>
+      </form>
+
+      <!-- Section : Points de vente -->
+      <div class="gv-section-label mt-4">
+        <i class="fas fa-store me-2"></i>Points de vente
+        <span class="gv-pdv-count" *ngIf="selectedItems.length">{{ selectedItems.length }} sélectionné{{ selectedItems.length > 1 ? 's' : '' }}</span>
+      </div>
+
+      <div class="gv-pdv-layout">
+
+        <!-- Liste de recherche -->
+        <div class="gv-pdv-search-panel">
+          <div class="gv-search-wrap">
+            <i class="fas fa-search gv-search-icon"></i>
+            <form [formGroup]="searchForm">
+              <input type="text" class="gv-search-input" placeholder="Rechercher un point de vente…"
+                     formControlName="searchQuery" (input)="filterData()"/>
+            </form>
+          </div>
+          <div class="gv-pdv-list">
+            <!-- Empty state -->
+            <div *ngIf="!filteredPointDeVente?.length && !filteredRevendeur?.length" class="gv-pdv-empty">
+              <i class="fas fa-store-slash"></i>
+              <span>{{ VisiteForm.get('commercialId')?.value ? 'Aucun résultat' : 'Sélectionnez un commercial' }}</span>
+            </div>
+
+            <!-- Séparateur PDV (si les deux listes sont présentes) -->
+            <div *ngIf="filteredPointDeVente?.length && filteredRevendeur?.length" class="gv-list-group-header">
+              <i class="fas fa-store me-1"></i>Points de vente
+            </div>
+
+            <!-- Points de vente -->
+            <label *ngFor="let item of filteredPointDeVente; let i = index"
+                   class="gv-pdv-item" [class.checked]="item.isChecked">
+              <input type="checkbox" [name]="'pdv_' + i" [(ngModel)]="item.isChecked"
+                     (change)="toggleSelectionPdv(item)" hidden/>
+              <div class="gv-pdv-check">
+                <i class="fas fa-check" *ngIf="item.isChecked"></i>
               </div>
+              <div class="gv-pdv-info">
+                <span class="gv-pdv-name">{{ item.nomEtablissement }}</span>
+                <span class="gv-pdv-zone" *ngIf="item.zoneDeLivraison?.nomZone">{{ item.zoneDeLivraison.nomZone }}</span>
+              </div>
+            </label>
+
+            <!-- Séparateur Revendeurs -->
+            <div *ngIf="filteredRevendeur?.length" class="gv-list-group-header gv-list-group-revendeur">
+              <i class="fas fa-handshake me-1"></i>Revendeurs
+            </div>
+
+            <!-- Revendeurs -->
+            <label *ngFor="let item of filteredRevendeur; let i = index"
+                   class="gv-pdv-item" [class.checked]="item.isChecked">
+              <input type="checkbox" [name]="'rev_' + i" [(ngModel)]="item.isChecked"
+                     (change)="toggleSelectionRevendeur(item)" hidden/>
+              <div class="gv-pdv-check">
+                <i class="fas fa-check" *ngIf="item.isChecked"></i>
+              </div>
+              <div class="gv-pdv-info">
+                <span class="gv-pdv-name">{{ item.raisonSocial }}</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Sélectionnés -->
+        <div class="gv-pdv-selected-panel">
+          <div class="gv-selected-header">
+            <i class="fas fa-check-circle me-2"></i>Sélectionnés
+          </div>
+          <div *ngIf="!selectedItems.length" class="gv-pdv-empty">
+            <i class="fas fa-hand-pointer"></i>
+            <span>Aucun point de vente sélectionné</span>
+          </div>
+          <div class="gv-selected-list">
+            <div *ngFor="let item of selectedItems" class="gv-selected-chip">
+              <div class="gv-chip-info">
+                <span class="gv-chip-name">{{ item.nomEtablissement || item.raisonSocial }}</span>
+                <span class="gv-chip-contact" *ngIf="item.contactGerant">{{ item.contactGerant }}</span>
+              </div>
+              <button class="gv-chip-remove" type="button" (click)="removeItem(item)">
+                <i class="fas fa-times"></i>
+              </button>
             </div>
           </div>
         </div>
-          <div class="table-responsive" style="max-height: 220px; overflow-y: auto;">
-            <table class="table">
-              <thead>
-              <tr style="font-size: small;">
-                <th scope="col">Point de vente</th>
-                <th scope="col">Contact</th>
-                <th scope="col">Zone de livraison</th>
-                <th scope="col">Action</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr *ngFor="let item of selectedItems" style="font-size: small;">
-                <th scope="row">{{ item.nomEtablissement }}</th>
-                <td>{{ item.contactGerant }}</td>
-                <td>{{ item.zoneDeLivraison.nomZone }}</td>
-                <td>
 
-                  <button class="btn btn-danger" (click)="removeItem(item)"><i class="fas fa-trash"></i></button>
-                </td>
-              </tr>
-              <!-- Ajoutez d'autres lignes si nécessaire -->
-              </tbody>
-            </table>
-          </div>
-      </div>
-
-
-      <div class="modal-footer gap-3 px-4">
-        <button (click)="OnCloseModal()" type="button" class="btn btn-secondary px-2">Annuler</button>
-        <button [disabled]="VisiteForm.invalid" type="submit" class="btn btn-primary px-2" (click)="onSubmit()">
-          Valider
-        </button>
       </div>
     </div>
+
+    <!-- Footer -->
+    <div class="gv-modal-footer">
+      <button type="button" class="gv-btn-cancel" (click)="OnCloseModal()">
+        <i class="fas fa-times me-2"></i>Annuler
+      </button>
+      <button type="submit" class="gv-btn-submit"
+              [disabled]="VisiteForm.invalid || selectedItems.length === 0"
+              (click)="onSubmit()">
+        <i class="fas fa-check me-2"></i>{{ operation === 'create' ? 'Créer la visite' : 'Enregistrer' }}
+      </button>
+    </div>
+
   </div>
 </div>

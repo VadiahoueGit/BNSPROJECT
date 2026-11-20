@@ -1,130 +1,207 @@
-<div class="card">
-  <div class="row">
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Commande :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-      <i class="fas fa-search"></i>
-      <input class="w-100" style="border-radius: 7px;"
-             pInputText type="text"
-             [(ngModel)]="filters.commande"
-             (keydown.enter)="filterGlobal()"
-             placeholder="Recherche"/>
-    </span>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Agent :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-      <i class="fas fa-search"></i>
-      <input class="w-100" style="border-radius: 7px;"
-             pInputText type="text"
-             [(ngModel)]="filters.agent"
-             (keydown.enter)="filterGlobal()"
-             placeholder="Recherche"/>
-    </span>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Client :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-      <i class="fas fa-search"></i>
-      <input class="w-100" style="border-radius: 7px;"
-             pInputText type="text"
-             [(ngModel)]="filters.client"
-             (keydown.enter)="filterGlobal()"
-             placeholder="Recherche"/>
-    </span>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Statut :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-      <i class="fas fa-search"></i>
-      <input class="w-100" style="border-radius: 7px;"
-             pInputText type="text"
-             [(ngModel)]="filters.statut"
-             (keydown.enter)="filterGlobal()"
-             placeholder="Recherche"/>
-    </span>
+<!-- Filters + Table -->
+<div class="fn-card">
+  <div class="fn-topbar">
+    <div class="fn-topbar-left">
+      <div class="fn-title"><i class="fas fa-balance-scale"></i> Écarts de paiement</div>
+      <div class="fn-count">{{ totalItems }} écart(s) — {{ allGroups.length }} agent(s)</div>
     </div>
   </div>
 
-  <p-table
-    [styleClass]="'p-datatable-sm'"
-    #dt2
-    [value]="dataList"
-    dataKey="id"
-    [rows]="8"
-    [totalRecords]="totalPages" [lazy]="true"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [paginator]="true"
-    (onPage)="onPage($event)"
-  >
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Motif</th>
-        <th>Agent</th>
-        <th>Rôle</th>
-        <th>Montant à verser</th>
-        <th>Montant versé</th>
-        <th>Montant dû</th>
-        <th>Date création</th>
-        <th>Statut</th>
-        <th>Actions</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-dataList>
-      <tr>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.motif }}
-          </span>
-        </td>
-        <td>
-          {{
-            dataList?.encaisseurCommercial.nom+' '+dataList?.encaisseurCommercial.prenoms|| 'N/A'
-          }}
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{  dataList?.encaisseurCommercial.role}}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.montantAttendu | number }}
-          </span>
-        </td>
-        <td>
-          {{ dataList?.montantRecu | number }}
-        </td>
-        <td>
-          {{ dataList?.montantEcart | number }}
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.dateCreation | date : "dd/MM/yyyy" }}
-          </span>
-        </td>
-        <td>
-          <span class="ml-1 vertical-align-middle">
-            {{ dataList?.statut }}
-          </span>
-        </td>
-        <td class="text-center">
-      <div class="d-flex justify-content-center gap-2">
-        <span class="bui-icon-btn view" (click)="OnEdit(dataList)"><i class="fas fa-eye"></i></span>
+  <div class="fn-filters">
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Motif</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-search fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.commande" (keydown.enter)="filterGlobal()" placeholder="Motif..." />
       </div>
-    </td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Agent</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-user fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.agent" (keydown.enter)="filterGlobal()" placeholder="Nom agent..." />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Statut</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-filter fn-filter-icon"></i>
+        <select class="fn-filter-input" [(ngModel)]="filters.statut" (change)="filterGlobal()">
+          <option value="">Tous</option>
+          <option value="NON_PAYE">Non payé</option>
+          <option value="PAYE_PARTIEL">Payé partiellement</option>
+        </select>
+      </div>
+    </div>
+    <button class="fn-search-btn" (click)="filterGlobal()">
+      <i class="fas fa-search"></i> Rechercher
+    </button>
+  </div>
+
+  <!-- Table -->
+  <table class="fn-table">
+    <thead>
       <tr>
-        <td colspan="5">Aucun élément trouvé.</td>
+        <th>Rôle</th>
+        <th>À verser</th>
+        <th>Versé</th>
+        <th>Dû</th>
+        <th>Date</th>
+        <th>Statut</th>
+        <th class="text-center">Action</th>
       </tr>
-    </ng-template>
-  </p-table>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let group of displayedGroups">
+
+        <!-- Niveau 1 : Agent -->
+        <tr class="fn-group-header" (click)="toggleGroup(group.agentNom)" style="cursor:pointer">
+          <td colspan="7">
+            <i class="fas fn-chevron me-2"
+              [class.fa-chevron-down]="!isAgentCollapsed(group)"
+              [class.fa-chevron-right]="isAgentCollapsed(group)"></i>
+            <i class="fas fa-user-circle me-2" style="color:#0071c2"></i>
+            <strong>{{ group.agentNom }}</strong>
+            <span class="fn-group-count">
+              {{ group.totalRows }} écart(s) — {{ group.motifGroups.length }} motif(s) —
+              dû : <strong>{{ group.totalEcart | number }} FCFA</strong>
+            </span>
+          </td>
+        </tr>
+
+        <ng-container *ngIf="!isAgentCollapsed(group)">
+          <ng-container *ngFor="let mg of group.motifGroups">
+
+            <!-- Niveau 2 : Motif -->
+            <tr class="fn-motif-header" (click)="toggleMotif(group.agentNom, mg.motif)" style="cursor:pointer">
+              <td colspan="6">
+                <i class="fas fn-chevron me-2"
+                  [class.fa-chevron-down]="!isMotifCollapsed(group.agentNom, mg.motif)"
+                  [class.fa-chevron-right]="isMotifCollapsed(group.agentNom, mg.motif)"></i>
+                <i class="fas fa-tag me-1" style="color:#f59e0b; font-size:10px"></i>
+                <span style="font-weight:600">{{ mg.motif }}</span>
+                <span class="fn-group-count">
+                  {{ mg.rows.length }} ligne(s) — dû : <strong>{{ mg.totalEcart | number }} FCFA</strong>
+                </span>
+              </td>
+              <td class="text-center" style="width:90px">
+                <button class="fn-solder-btn"
+                  [disabled]="!hasPositiveEcarts(mg)"
+                  [class.fn-solder-disabled]="!hasPositiveEcarts(mg)"
+                  (click)="$event.stopPropagation(); openSolderModal(mg)">
+                  <i class="fas fa-check-double me-1"></i>Solder
+                </button>
+              </td>
+            </tr>
+
+            <!-- Niveau 3 : Lignes -->
+            <ng-container *ngIf="!isMotifCollapsed(group.agentNom, mg.motif)">
+              <tr *ngFor="let row of mg.rows" class="fn-data-row">
+                <td>
+                  <span class="fn-badge blue">{{ group.role }}</span>
+                  <span *ngIf="row.motifRef" class="fn-ref-badge ms-1">{{ row.motifRef }}</span>
+                </td>
+                <td><span class="fn-amount">{{ row?.montantAttendu | number }} <small style="color:#9ca3af;font-weight:400">FCFA</small></span></td>
+                <td><span class="fn-amount green">{{ row?.montantRecu | number }}</span></td>
+                <td>
+                  <span class="fn-amount"
+                    [ngClass]="row?.montantEcart > 0 ? 'blue' : row?.montantEcart < 0 ? 'red' : 'green'">
+                    {{ row?.montantEcart | number }}
+                  </span>
+                </td>
+                <td style="color:#6b7280; font-size:11px">{{ row?.dateCreation | date:'dd/MM/yyyy' }}</td>
+                <td>
+                  <span class="fn-badge"
+                    [ngClass]="{
+                      'green':  row?.statut === 'PAYE_TOTAL',
+                      'orange': row?.statut === 'NON_PAYE' || row?.statut === 'PAYE_PARTIEL',
+                      'gray':   row?.statut !== 'PAYE_TOTAL' && row?.statut !== 'NON_PAYE' && row?.statut !== 'PAYE_PARTIEL'
+                    }">
+                    {{ row?.statut === 'NON_PAYE' ? 'Non payé' : row?.statut === 'PAYE_PARTIEL' ? 'Partiel' : row?.statut === 'PAYE_TOTAL' ? 'Payé' : row?.statut }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <button class="fn-action-btn view" (click)="OnEdit(row)"><i class="fas fa-eye"></i></button>
+                </td>
+              </tr>
+            </ng-container>
+
+          </ng-container>
+        </ng-container>
+
+      </ng-container>
+
+      <tr *ngIf="allGroups.length === 0">
+        <td colspan="7" style="text-align:center; padding:32px; color:#9ca3af; font-size:13px;">
+          <i class="fas fa-inbox me-2"></i>Aucun écart trouvé.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Pagination sur les agents -->
+  <div class="fn-pagination" *ngIf="allGroups.length > groupsPerPage">
+    <span class="fn-page-info">
+      Agents {{ (currentPage - 1) * groupsPerPage + 1 }}–{{ currentPage * groupsPerPage > allGroups.length ? allGroups.length : currentPage * groupsPerPage }} sur {{ allGroups.length }}
+    </span>
+    <button class="fn-page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <span class="fn-page-num">Page {{ currentPage }} / {{ totalPages }}</span>
+    <button class="fn-page-btn" [disabled]="currentPage >= totalPages" (click)="goToPage(currentPage + 1)">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
 </div>
 
-<!-- Modal creation -->
-<!-- Modal -->
+<!-- Modal soldage par motif -->
+<div *ngIf="solderModalOpen" class="custom-modal">
+  <div class="vd-modal-dialog">
+    <div class="vd-modal-header">
+      <div class="vd-mh-left">
+        <div class="vd-mh-icon orange"><i class="fas fa-check-double"></i></div>
+        <div>
+          <div class="vd-mh-title">Solder le motif</div>
+          <div class="vd-mh-sub">{{ solderMotifGroup?.motif }}</div>
+        </div>
+      </div>
+      <button class="vd-mh-close" (click)="closeSolderModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="vd-modal-body" style="font-size:12px">
+      <div class="row mb-3">
+        <div class="col-6">
+          <span style="color:#6b7280">Lignes concernées</span><br>
+          <strong>{{ solderMotifGroup?.rows?.length }}</strong>
+        </div>
+        <div class="col-6">
+          <span style="color:#6b7280">Total dû</span><br>
+          <strong style="color:#dc2626">{{ solderMotifGroup?.totalEcart | number }} FCFA</strong>
+        </div>
+      </div>
+      <div class="mb-2" style="font-size:11px; color:#6b7280">
+        Le montant est distribué séquentiellement sur les lignes (ligne 1 d'abord, puis la suivante, etc.).
+      </div>
+      <div class="d-flex align-items-center gap-2 mt-3">
+        <label style="font-weight:600; white-space:nowrap; font-size:12px">Montant à payer</label>
+        <input type="number" class="form-control" [(ngModel)]="solderAmount"
+          [max]="solderMotifGroup?.totalEcart ?? 0"
+          style="max-width:160px; height:38px" />
+        <span style="font-weight:600; color:#6b7280">FCFA</span>
+      </div>
+    </div>
+    <div class="vd-modal-footer">
+      <button (click)="closeSolderModal()" type="button" class="vd-btn-outline">Annuler</button>
+      <button type="button" class="vd-btn-warning"
+        [disabled]="!solderAmount || +solderAmount <= 0"
+        (click)="confirmerSoldage()">
+        <i class="fas fa-check"></i>
+        {{ +solderAmount >= (solderMotifGroup?.totalEcart || 0) ? 'Solder totalement' : 'Paiement partiel' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal validation -->
 <div *ngIf="isModalOpen" class="custom-modal">
   <div class="vd-modal-dialog wide">
     <div class="vd-modal-header">
@@ -137,95 +214,75 @@
       </div>
       <button class="vd-mh-close" (click)="OnCloseModal()"><i class="fas fa-times"></i></button>
     </div>
-    <div class="vd-modal-body" *ngIf="operation == 'edit'">
-        <ng-container>
-          <fieldset class="row border my-1">
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Créancier: </strong>
-                <span>{{updateData.encaisseurCommercial ?  updateData.encaisseurCommercial?.nom+' '+updateData.encaisseurCommercial?.prenoms
-                  : updateData.encaisseurTransporteur?.nom+' '+updateData.encaisseurTransporteur?.prenoms}}
-                  </span>
-              </div>
-              <div class="col-md-4">
-                <strong>Poste: </strong>
-                <span>{{ updateData?.encaisseurCommercial ? 'Commercial' : 'Transporteur' }}</span>
-              </div>
+    <div class="vd-modal-body" *ngIf="operation == 'edit'" style="font-size:11px">
+      <ng-container>
+        <fieldset class="row border my-1">
+          <div class="row">
+            <div class="col-md-4">
+              <strong>Créancier: </strong>
+              <span>{{updateData.encaisseurCommercial
+                ? updateData.encaisseurCommercial?.nom+' '+updateData.encaisseurCommercial?.prenoms
+                : updateData.encaisseurTransporteur?.nom+' '+updateData.encaisseurTransporteur?.prenoms}}</span>
             </div>
-          </fieldset>
-          <fieldset class="row border my-1">
-            <legend style="font-size: 14px" class="text-secondary">
-              Autres informations
-            </legend>
-            <div class="row">
-              <div class="col-md-4">
-                <strong>Motif : </strong>
-                <span>{{ updateData?.motif }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant à percevoir : </strong>
-                <span>{{ updateData?.montantAttendu| currency:'XOF' }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant perçu : </strong>
-                <span>{{ updateData?.montantRecu| currency:'XOF' }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Total créance reglée : </strong>
-                <span>{{ updateData?.montantPaye | currency:'XOF' }}</span>
-              </div>
-              <div class="col-md-4">
-                <strong>Montant restant : </strong>
-                <span>{{ updateData?.montantEcart | currency:'XOF' }}</span>
-              </div>
+            <div class="col-md-4">
+              <strong>Poste: </strong>
+              <span>{{ updateData?.encaisseurCommercial ? 'Commercial' : 'Transporteur' }}</span>
             </div>
-          </fieldset>
-          <fieldset class="row border my-2" >
-            <legend class="fs-6 text-primary">Historique de paiement</legend>
-            <div
-              class="table-responsive"
-              style="max-height: 300px; overflow-y: auto"
-            >
-              <table class="table">
-                <thead>
-                <tr style="font-size: small">
-                  <th scope="col">Numero de paiement</th>
-                  <th scope="col">Montant versé</th>
-                  <th scope="col">Date de paiement</th>
+          </div>
+        </fieldset>
+        <fieldset class="row border my-1">
+          <legend style="font-size: 11px" class="text-secondary">Autres informations</legend>
+          <div class="row">
+            <div class="col-md-4"><strong>Motif : </strong><span>{{ updateData?.motif }}</span></div>
+            <div class="col-md-4"><strong>Montant à percevoir : </strong><span>{{ updateData?.montantAttendu | currency:'XOF' }}</span></div>
+            <div class="col-md-4"><strong>Montant perçu : </strong><span>{{ updateData?.montantRecu | currency:'XOF' }}</span></div>
+            <div class="col-md-4"><strong>Total créance réglée : </strong><span>{{ updateData?.montantPaye | currency:'XOF' }}</span></div>
+            <div class="col-md-4">
+              <strong>Montant restant : </strong>
+              <span [style.color]="updateData?.montantEcart < 0 ? '#dc2626' : updateData?.montantEcart > 0 ? '#0071c2' : ''">
+                {{ updateData?.montantEcart | currency:'XOF' }}
+              </span>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset class="row border my-2">
+          <legend style="font-size:11px" class="text-primary">Historique de paiement</legend>
+          <div class="table-responsive" style="max-height: 300px; overflow-y: auto">
+            <table class="table">
+              <thead>
+                <tr style="font-size: 10px">
+                  <th>Numero de paiement</th>
+                  <th>Montant versé</th>
+                  <th>Date de paiement</th>
                 </tr>
-                </thead>
-                <tbody>
-                <tr
-                  style="font-size: small"
-                  *ngFor="let item of updateData.historiquePaiement; let i = index "
-                >
+              </thead>
+              <tbody>
+                <tr style="font-size: 10px" *ngFor="let item of updateData.historiquePaiement">
                   <td>{{ item.numeroPaiement }}</td>
                   <td>{{ item.montantPaye | number }}</td>
                   <td>{{ item.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
                 </tr>
-                <tr *ngIf="updateData.historiquePaiement.length == 0" style="font-size: small" class="w-100 d-flex justify-content-center">
-                  <label class="text-gray">Aucun paiement</label>
+                <tr *ngIf="!updateData.historiquePaiement?.length" style="font-size: 10px">
+                  <td colspan="3" class="text-center text-muted">Aucun paiement</td>
                 </tr>
-                <!-- Ajoutez d'autres lignes si nécessaire -->
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
-        </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </fieldset>
+      </ng-container>
+    </div>
+    <div class="vd-modal-footer">
+      <div class="d-flex align-items-center gap-2 me-auto">
+        <input style="width:120px !important; height:38px" type="number" name="search"
+          [(ngModel)]="amountReal" class="form-control" placeholder="Montant" />
+        <span style="font-size:13px; font-weight:600; color:#6b7280">FCFA</span>
       </div>
-
-      <div class="vd-modal-footer">
-        <div class="d-flex align-items-center gap-2 me-auto">
-          <input style="width:120px !important; height:40px" type="number" name="search"
-            [(ngModel)]="amountReal" class="form-control" placeholder="Montant" />
-          <span style="font-size:13px; font-weight:600; color:#6b7280">FCFA</span>
-        </div>
-        <button (click)="OnCloseModal()" type="button" class="vd-btn-outline">Annuler</button>
-        <button type="button" class="vd-btn-warning"
-          [disabled]="!amountReal || +amountReal <= 0"
-          (click)="ValidatePaiement()">
-          <i class="fas fa-check"></i>Payer
-        </button>
-      </div>
+      <button (click)="OnCloseModal()" type="button" class="vd-btn-outline">Annuler</button>
+      <button type="button" class="vd-btn-warning"
+        [disabled]="!amountReal || +amountReal <= 0 || updateData?.montantEcart < 0"
+        (click)="ValidatePaiement()">
+        <i class="fas fa-check"></i> Payer
+      </button>
+    </div>
   </div>
 </div>

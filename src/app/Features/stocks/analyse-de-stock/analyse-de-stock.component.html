@@ -1,9 +1,9 @@
-<div class="bui-back mb-4" (click)="goBack()">
-  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
-  <h4 class="fw-bold mb-0">Analyse de stock</h4>
+<div class="sk-back-row" (click)="goBack()">
+  <div class="sk-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="sk-back-title">Analyse de stock</h4>
 </div>
 
-<div class="card">
+<div class="sk-card">
   <p-table [styleClass]="'p-datatable-sm'" #dt [value]="dataList" dataKey="id"
            [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true"
            [globalFilterFields]="['date', 'partenaire', 'articles', 'magasin']"

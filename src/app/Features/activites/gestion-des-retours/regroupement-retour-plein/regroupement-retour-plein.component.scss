@@ -1,0 +1,86 @@
+// La classe globale .vd-total-row (src/styles.scss) est définie ailleurs comme une barre de
+// totaux en flex (display:flex), pour un usage générique hors tableau. Ici elle est réutilisée
+// sur un vrai <tr> de tableau (ligne "Total théorique") : sans cet override, le <tr> hérite de
+// display:flex et sort complètement de la mise en page de colonnes du tableau — ses <td> ne
+// partagent plus la largeur des colonnes des autres lignes, et les valeurs affichées se
+// retrouvent visuellement décalées par rapport aux bons en-têtes d'articles. Même correctif déjà
+// appliqué sur list-des-receptions-emballages.component.scss pour la même raison.
+tr.vd-total-row {
+  display: table-row;
+}
+
+// La barre de scroll horizontale du tableau se trouvait auparavant tout en bas du contenu
+// naturel du tableau (max-height:360px fixe) : dans une modal dont le corps (.vd-modal-body)
+// scrolle lui-même verticalement, il fallait d'abord scroller la modal entière pour l'atteindre
+// — elle n'était pas "fixe" dans le cadre visible. On restructure donc en flex pour que le
+// tableau prenne tout l'espace vertical RESTANT du corps de la modal (au lieu d'une hauteur
+// fixe), avec son propre scroll interne : ainsi le cadre du tableau (et sa barre horizontale)
+// reste toujours entièrement visible sans avoir à scroller la modal. Scopé à ce composant
+// uniquement, pour ne pas affecter les autres écrans qui utilisent .vd-modal-body/.vd-card.
+.vd-modal-body {
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.vd-card {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+// Barre de scroll horizontale ET verticale toujours visibles sur le tableau "Inventaire des
+// retours" : sans ce style explicite, macOS/certains navigateurs affichent une barre "overlay"
+// invisible tant qu'on ne scrolle pas activement, ce qui la rend indiscernable sur ce tableau
+// large (beaucoup de colonnes d'articles). Scopé à ce composant uniquement (pas dans
+// design-system.scss) pour ne pas affecter les autres tableaux de l'app qui utilisent la même
+// classe .vd-table-wrap.
+.vd-table-wrap {
+  flex: 1;
+  min-height: 200px;
+  scrollbar-width: auto; // Firefox
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #f7fcff;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #c5cbd3;
+    border-radius: 5px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: #a8b0bb;
+  }
+
+  // En-tête et colonne "Raison Sociale" fixes : le tableau est large (une colonne par article,
+  // scroll horizontal) et peut compter beaucoup de retours (scroll vertical) — sans repère fixe
+  // on perd de vue le nom du client en scrollant horizontalement, et les libellés d'articles en
+  // scrollant verticalement. Chaque cellule fixe reçoit un fond opaque explicite (le CSS
+  // `background` n'est pas hérité par défaut) pour ne pas laisser transparaître les cellules qui
+  // défilent en dessous.
+  .vd-table {
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    th:first-child, td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      background: #fff;
+      box-shadow: 4px 0 6px -4px rgba(0, 0, 0, 0.12);
+    }
+    thead th:first-child {
+      z-index: 3;
+    }
+    // "Total physique" est toujours la dernière ligne du tableau (voir le template) : sa
+    // colonne fixe doit reprendre le même fond que le reste de la ligne.
+    tbody tr:last-child td:first-child {
+      background: rgba(0, 113, 194, 0.04);
+    }
+  }
+}

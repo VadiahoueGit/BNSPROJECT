@@ -162,6 +162,26 @@ export class VehiculesComponent implements AfterViewInit {
     this.operation = 'edit';
     console.log(this.isModalOpen);
   }
+  OnLiberer(row: any) {
+    ALERT_QUESTION(
+      'warning',
+      'Libérer ce véhicule ?',
+      'À utiliser uniquement si le véhicule est resté indisponible alors qu\'il ne devrait plus l\'être (livraison ou retour plein non finalisé correctement).'
+    ).then((res) => {
+      if (res.isConfirmed == true) {
+        this._spinner.show();
+        this._logistiqueService.LibererVehicule(row.id).then((res: any) => {
+          this.GetVehiculeList(this.currentPage || 1);
+          this.toastr.success(res.message);
+          this._spinner.hide();
+        }, (error: any) => {
+          this._spinner.hide();
+          this.toastr.error(error?.error?.message || 'Erreur lors de la libération du véhicule.');
+        });
+      }
+    });
+  }
+
   OnDelete(Id: any) {
     ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous supprimer?').then(
       (res) => {

@@ -1,16 +1,65 @@
-<div class="bui-back mb-4" (click)="goBack()">
-  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
-  <h4 class="fw-bold mb-0">Suivi inventaire</h4>
+<div class="sk-back-row" (click)="goBack()">
+  <div class="sk-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="sk-back-title">Suivi inventaire</h4>
 </div>
 
-<div class="card">
+<div class="sk-card">
+  <div class="sk-filters">
+    <div class="sk-filter-item">
+      <div class="sk-filter-label">Dépôt</div>
+      <div class="sk-filter-wrap">
+        <i class="fas fa-warehouse sk-filter-icon"></i>
+        <ng-select [items]="depotList" bindLabel="nomDepot" bindValue="id" [(ngModel)]="filters.depotId"
+                   (change)="filterGlobal()" [searchable]="true" [clearable]="true"
+                   placeholder="Tous les dépôts"></ng-select>
+      </div>
+    </div>
+    <div class="sk-filter-item">
+      <div class="sk-filter-label">Code inventaire</div>
+      <div class="sk-filter-wrap">
+        <i class="fas fa-barcode sk-filter-icon"></i>
+        <input type="text" class="sk-filter-date" [(ngModel)]="filters.code"
+               (keydown.enter)="filterGlobal()" placeholder="Rechercher un code..." />
+      </div>
+    </div>
+    <div class="sk-filter-item">
+      <div class="sk-filter-label">Inventeur</div>
+      <div class="sk-filter-wrap">
+        <i class="fas fa-user sk-filter-icon"></i>
+        <input type="text" class="sk-filter-date" [(ngModel)]="filters.inventeur"
+               (keydown.enter)="filterGlobal()" placeholder="Nom de l'inventeur..." />
+      </div>
+    </div>
+    <div class="sk-filter-item">
+      <div class="sk-filter-label">Date début</div>
+      <div class="sk-filter-wrap">
+        <i class="fas fa-calendar sk-filter-icon"></i>
+        <input type="date" class="sk-filter-date" [(ngModel)]="filters.dateDebut" (change)="filterGlobal()" />
+      </div>
+    </div>
+    <div class="sk-filter-item">
+      <div class="sk-filter-label">Date fin</div>
+      <div class="sk-filter-wrap">
+        <i class="fas fa-calendar sk-filter-icon"></i>
+        <input type="date" class="sk-filter-date" [(ngModel)]="filters.dateFin" (change)="filterGlobal()" />
+      </div>
+    </div>
+    <button class="sk-filter-reset" (click)="filterGlobal()">
+      <i class="fas fa-search me-1"></i>Rechercher
+    </button>
+    <button class="sk-filter-reset" *ngIf="hasActiveFilters" (click)="resetFilters()">
+      <i class="fas fa-times me-1"></i>Réinitialiser
+    </button>
+  </div>
+
   <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id"
            [rows]="8" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true"
+           [lazy]="true" [totalRecords]="totalRecords"
            (onPage)="onPage($event)">
     <ng-template pTemplate="caption">
       <div class="bui-caption">
         <div></div>
-        <button type="button" class="bui-btn-add" (click)="OnCreate()">
+        <button type="button" class="sk-btn-add" (click)="OnCreate()">
           <i class="fas fa-plus me-2"></i>Nouvel inventaire
         </button>
       </div>
@@ -34,12 +83,12 @@
         <td>{{ dataList.createdAt | date:'dd/MM/yyyy' }}</td>
         <td class="text-center">
           <div style="display:flex;justify-content:center;gap:6px">
-            <span class="bui-icon-btn view" (click)="OnViewInventaire(dataList)" title="Voir">
+            <button class="sk-action-btn view" (click)="OnViewInventaire(dataList)" title="Voir">
               <i class="fas fa-eye"></i>
-            </span>
-            <span class="bui-icon-btn delete" (click)="OnDelete(dataList.id)" title="Supprimer">
+            </button>
+            <button class="sk-action-btn delete" (click)="OnDelete(dataList.id)" title="Supprimer">
               <i class="fas fa-trash-alt"></i>
-            </span>
+            </button>
           </div>
         </td>
       </tr>

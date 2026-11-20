@@ -4,8 +4,10 @@ import {NgxSpinnerService} from 'ngx-spinner';
 import {ToastrService} from 'ngx-toastr';
 import {ArticleServiceService} from '../../../core/article-service.service';
 import {ActiviteService} from '../../../core/activite.service';
+import {ConfigService} from '../../../core/config-service.service';
 import {UtilisateurResolveService} from '../../../core/utilisateur-resolve.service';
 import {CoreServiceService} from '../../../core/core-service.service';
+import {FinanceService} from '../../../core/finance.service';
 import {LogistiqueService} from '../../../core/logistique.service';
 import {ALERT_QUESTION} from '../../shared-component/utils';
 import {StatutCommande} from "../../../utils/utils";
@@ -58,7 +60,9 @@ export class VentechinepageComponent {
   dataListCommercial: any;
   dataListCamion: any;
   depotId: number = 0;
+  selectedCommercialTypePrix: string = 'PRIX DETAIL AIRSI';
   updateData: any = {};
+  filters = { commercial: '', localite: '', statut: '', numVenteChine: '' };
   venteId: any = 0;
   now: any =  new Date().toISOString().substring(0, 10);
   public activeTab: string = 'detail';
@@ -73,6 +77,8 @@ export class VentechinepageComponent {
   totalQteVendue = 0
   totalQteRestant = 0
   allArticle: any = [];
+  docUrl: string;
+
   constructor(
     private activite:ActiviteService,
     private cdr: ChangeDetectorRef,
@@ -82,9 +88,12 @@ export class VentechinepageComponent {
     private logistiqueService: LogistiqueService,
     private coreService: CoreServiceService,
     private utilisateurService: UtilisateurResolveService,
+    private _financeService: FinanceService,
+    private _config: ConfigService,
     private toastr: ToastrService,
     private fb: FormBuilder
   ) {
+    this.docUrl = this._config.docUrl;
   }
 
   ngOnInit() {
@@ -110,7 +119,17 @@ export class VentechinepageComponent {
 
 
   getFilteredArticles(data: any): any[] {
-    return data.articles?.filter((a: any) => a.prixUnitaire > 0) || [];
+    const articles = data.articles?.filter((a: any) => a.prixUnitaire > 0) || [];
+    const map = new Map<string, any>();
+    for (const a of articles) {
+      const key = a.productCode || a.libelle;
+      if (map.has(key)) {
+        map.get(key).quantity += Number(a.quantity || 0);
+      } else {
+        map.set(key, { ...a, quantity: Number(a.quantity || 0) });
+      }
+    }
+    return Array.from(map.values());
   }
   isFormMode(): boolean {
     return ['create', 'edit', 'update'].includes(this.operation);
@@ -153,6 +172,7 @@ export class VentechinepageComponent {
 
   updateGoods(data: any,operation:string) {
     this.depotId = data.commercial.depot.id;
+    this.selectedCommercialTypePrix = data.commercial?.typePrix?.libelle || 'PRIX DETAIL AIRSI';
     this.GetArticleList(1);
     this.operation = 'update';
     this.newCommande = this.updateData.articles
@@ -345,8 +365,9 @@ export class VentechinepageComponent {
   }
   async getLocalPriceFree(item:any) {
     console.log(item);
-    this.prixLiquideFree[item.id] = item.prixUnitaireLiquide;
-    this.prixEmballageFree[item.id] = item.prixUnitaireEmballage;
+    // Un article gratuit ne coûte rien au client : ne pas pré-remplir avec le prix catalogue.
+    this.prixLiquideFree[item.id] = 0;
+    this.prixEmballageFree[item.id] = 0;
     this.calculatePrixFree(item);
 
   }
@@ -382,6 +403,8 @@ export class VentechinepageComponent {
   }
   onCommercialChange(selectedItem: any): void {
     console.log('Élément sélectionné :', selectedItem);
+    this.selectedCommercialTypePrix = selectedItem?.typePrix?.libelle || 'PRIX DETAIL AIRSI';
+    console.log('[VENTE CHINE] Type prix actif du commercial :', this.selectedCommercialTypePrix);
     this.depotId = selectedItem.depot.id;
     this.GetArticleList(1);
   }
@@ -783,11 +806,56 @@ export class VentechinepageComponent {
   OnDelete(id: number) {
   }
 
+  ImprimerBL(data: any) {
+    this._spinner.show();
+    this._financeService.GenererBLVenteChine(data.id).then((res: any) => {
+      this._spinner.hide();
+      if (res?.data?.bonLivraison) {
+        window.open(this.docUrl + '/' + res.data.bonLivraison, '_blank');
+      } else {
+        this.toastr.error('Impossible de générer le bon de livraison.');
+      }
+    }).catch(() => {
+      this._spinner.hide();
+      this.toastr.error('Erreur lors de la génération du bon de livraison.');
+    });
+  }
+
+  ImprimerBLVente(vente: any) {
+    this._spinner.show();
+    this._financeService.GenererBLVente(vente.id).then((res: any) => {
+      this._spinner.hide();
+      if (res?.data?.bonLivraison) {
+        window.open(this.docUrl + '/' + res.data.bonLivraison, '_blank');
+      } else {
+        this.toastr.error('Impossible de générer le bon de livraison.');
+      }
+    }).catch(() => {
+      this._spinner.hide();
+      this.toastr.error('Erreur lors de la génération du bon de livraison.');
+    });
+  }
+
+  filterList() { this.GetVenteChineList(1); }
+
+  getStatutClass(statut: string): string {
+    if (!statut) return 'gray';
+    const s = statut.toLowerCase();
+    if (s.includes('approuv') || s.includes('livr') || s.includes('valid')) return 'green';
+    if (s.includes('attente') || s.includes('planif')) return 'orange';
+    if (s.includes('annul') || s.includes('non approuv')) return 'red';
+    return 'blue';
+  }
+
   async GetVenteChineList(page: number) {
-    let data = {
+    let data: any = {
       paginate: true,
       page: page,
       limit: 8,
+      commercial: this.filters.commercial || '',
+      localite: this.filters.localite || '',
+      statut: this.filters.statut || '',
+      numVenteChine: this.filters.numVenteChine || '',
     };
     console.log('getVenteChineList', data);
     this._spinner.show();
@@ -1058,11 +1126,11 @@ export class VentechinepageComponent {
     try {
       // Attendre la réponse de la promesse
       const response: any = await this.articleService.GetPrixByProduit(data);
-      const prixDetail = response.data.find((item: any) => item.libelle === 'PRIX DETAIL');
-
-      console.log(prixDetail);
-      // Vérifier si le statusCode est 200
-      if (prixDetail.prix.length > 0) {
+      console.log('[VENTE CHINE] Tous les types de prix disponibles pour l\'article', item.id, ':', response.data?.map((p: any) => p.libelle));
+      const prixDetail = response.data.find((p: any) => p.libelle === this.selectedCommercialTypePrix)
+                      || response.data.find((p: any) => p.libelle === 'PRIX DETAIL AIRSI');
+      console.log('[VENTE CHINE] Type prix utilisé :', prixDetail?.libelle ?? 'introuvable');
+      if (prixDetail?.prix?.length > 0) {
         this.prixLiquide[item.id] = prixDetail.prix[0].PrixLiquide;
         this.prixEmballage[item.id] = prixDetail.prix[0].PrixConsigne;
         console.log('prixByArticle', this.prixLiquide[item.id]);
@@ -1082,11 +1150,9 @@ export class VentechinepageComponent {
     try {
       // Attendre la réponse de la promesse
       const response: any = await this.articleService.GetPrixByProduit(data);
-      const prixDetail = response.data.find((item: any) => item.libelle === 'PRIX DETAIL');
-
-      console.log(prixDetail);
-      // Vérifier si le statusCode est 200
-      if (prixDetail.prix.length > 0) {
+      const prixDetail = response.data.find((p: any) => p.libelle === this.selectedCommercialTypePrix)
+                      || response.data.find((p: any) => p.libelle === 'PRIX DETAIL AIRSI');
+      if (prixDetail?.prix?.length > 0) {
         this.prixLiquideFree[item.id] = 0;
         this.prixEmballageFree[item.id] = prixDetail.prix[0].PrixConsigne;
         console.log('prixByArticle', this.prixEmballageFree[item.id]);

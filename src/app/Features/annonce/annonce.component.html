@@ -122,12 +122,12 @@
             <td class="an-cell-date">{{ item.createdAt | date:'dd/MM/yyyy' }}</td>
             <td class="text-center">
               <div class="an-actions">
-                <span class="bui-icon-btn view" (click)="OnView(item)" title="Voir">
+                <button class="an-action-btn view" (click)="OnView(item)" title="Voir">
                   <i class="fas fa-eye"></i>
-                </span>
-                <span class="bui-icon-btn delete" (click)="DeleteAnnonce(item.id)" title="Supprimer">
+                </button>
+                <button class="an-action-btn delete" (click)="DeleteAnnonce(item.id)" title="Supprimer">
                   <i class="fas fa-trash-alt"></i>
-                </span>
+                </button>
               </div>
             </td>
           </tr>

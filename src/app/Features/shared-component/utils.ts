@@ -65,5 +65,6 @@ export async function ALERT_INFO(_icon:'info',_title:string,_text:string){
     STOREUser:"BNS-User",
     STORENotification:"BNS-Notification",
     STORERefreshToken:"BNS-RefreshToken",
-    STORETimer:"BNS-Timer"
+    STORETimer:"BNS-Timer",
+    STORETenant:"BNS-Tenant",
   }

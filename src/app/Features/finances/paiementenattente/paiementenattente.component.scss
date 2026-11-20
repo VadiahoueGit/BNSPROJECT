@@ -1,60 +1,277 @@
-
-.custom-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1050;
+::ng-deep .fn-ptable {
+  .p-datatable-thead > tr > th {
+    background: #f7fcff; font-size: 9px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px; color: #9ca3af;
+    border-bottom: 1px solid #e5e7eb; padding: 8px 10px; white-space: nowrap;
+  }
+  .p-datatable-tbody > tr > td {
+    font-size: 10px; color: #374151; padding: 8px 10px;
+    border-bottom: 1px solid #e5e7eb; vertical-align: middle;
+  }
+  .p-datatable-tbody > tr:hover > td { background: rgba(0,113,194,0.025); }
+  .p-paginator { border-top: 1px solid #e5e7eb; padding: 6px 0 0; background: transparent; font-size: 10px; }
 }
 
-.modal-dialog2 {
-  background-color: white;
-  border-radius: 0.3rem;
-  width: 45em;
-  padding: 1rem;
+.vd-modal-dialog {
+  fieldset { font-size: 11px; }
+  legend { font-size: 11px !important; }
+  strong { font-size: 11px; }
+  span { font-size: 11px; }
+  .table { font-size: 10px; }
+  .table th, .table td { padding: 4px 6px; font-size: 10px; }
+  .badge { font-size: 9px; }
+  .btn-sm { font-size: 10px; padding: 2px 6px; }
 }
 
-.modal-dialog {
-  background-color: white;
-  border-radius: 0.3rem;
-  width: 90%;
-  padding: 1rem;
+// ── VENTE CHINE ──────────────────────────────────────────────
+$vc-blue: #0071c2;
+$vc-green: #8dae56;
+$vc-orange: #f59e0b;
+$vc-red: #ef4444;
+$vc-border: #e5e7eb;
+$vc-bg: #f7fcff;
+$vc-muted: #9ca3af;
+
+.vc-info-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
-strong,span{
-  font-size: 13px;
+.vc-info-block {
+  background: $vc-bg;
+  border-radius: 10px;
+  padding: 12px 14px;
+  border: 1px solid $vc-border;
+
+  &.agent { background: rgba($vc-blue, 0.04); border-color: rgba($vc-blue, 0.15); }
 }
 
-.modal-header, .modal-body, .modal-footer {
-  padding: 1rem;
+.vc-block-header {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.5px; color: $vc-muted; margin-bottom: 8px;
+  i { color: $vc-blue; }
 }
 
-.btn-close {
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
+.vc-block-line {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 3px 0; border-bottom: 1px dashed $vc-border;
+  &:last-child { border-bottom: none; }
 }
-.p-fluid .p-inputtext {
-  width: 8em !important;
-  height: 2.5rem;
+.vc-label { font-size: 10px; color: $vc-muted; font-weight: 500; }
+.vc-value  { font-size: 11px; font-weight: 600; color: #374151; }
+
+.vc-agent-row { display: flex; align-items: center; gap: 12px; }
+.vc-avatar {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, $vc-blue, rgba($vc-blue, 0.6));
+  color: white; font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  text-transform: uppercase;
+}
+.vc-agent-name { font-size: 12px; font-weight: 700; color: #111827; }
+.vc-agent-sub  { font-size: 10px; color: $vc-muted; margin-top: 2px; i { color: $vc-blue; } }
+
+// KPI row
+.vc-kpi-row {
+  display: grid; grid-template-columns: repeat(6, 1fr);
+  gap: 8px; margin-bottom: 12px;
 }
 
-.p-column-filter-menu-button {
-  display: none; /* Masquer l'icône de filtre */
+.vc-kpi {
+  background: $vc-bg; border: 1px solid $vc-border;
+  border-radius: 10px; padding: 10px 12px;
+
+  &.blue   { background: rgba($vc-blue,   0.07); border-color: rgba($vc-blue,   0.2); }
+  &.green  { background: rgba($vc-green,  0.08); border-color: rgba($vc-green,  0.2); }
+  &.orange { background: rgba($vc-orange, 0.08); border-color: rgba($vc-orange, 0.2); }
+  &.red    { background: rgba($vc-red,    0.07); border-color: rgba($vc-red,    0.2); }
 }
 
-/* Ajuster l'espacement si nécessaire après suppression de l'icône */
-.p-column-filter {
-  padding-right: 0; /* Supprime l'espace réservé à l'icône */
+.vc-kpi-label {
+  font-size: 9px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.4px; color: $vc-muted; margin-bottom: 5px;
 }
-.label-fixed-width {
-  min-width: 10px;
+.vc-kpi-value {
+  font-size: 14px; font-weight: 700; color: #111827;
+  &.small { font-size: 11px; }
 }
-.modal-footer {
-  padding: 0.5rem;
+.vc-kpi-unit { font-size: 9px; font-weight: 400; color: $vc-muted; }
+
+.vc-statut-chip {
+  display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600;
+  &.green  { background: rgba($vc-green, 0.12); color: darken($vc-green, 10%); }
+  &.orange { background: rgba($vc-orange,0.12); color: darken($vc-orange,10%); }
+}
+
+// Section header
+.vc-section-header {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.5px; color: #6b7280; padding: 8px 0 6px;
+  border-bottom: 2px solid $vc-border; margin-bottom: 8px;
+  i { color: $vc-blue; }
+}
+.vc-hist-count {
+  font-size: 10px; font-weight: 600; color: $vc-blue;
+  background: rgba($vc-blue, 0.1); padding: 2px 8px; border-radius: 20px;
+  text-transform: none; letter-spacing: 0;
+}
+
+// ── Panneau de filtres ──────────────────────────────────────
+.vc-filter-panel {
+  background: $vc-bg;
+  border: 1px solid $vc-border;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.vc-filter-search-row {
+  display: flex; align-items: center; gap: 8px;
+}
+
+.vc-filter-search-wrap {
+  position: relative; flex: 1; display: flex; align-items: center;
+}
+.vc-filter-search-icon {
+  position: absolute; left: 10px; font-size: 10px; color: $vc-muted; pointer-events: none;
+}
+.vc-filter-search-input {
+  width: 100%; height: 32px; border: 1.5px solid $vc-border; border-radius: 8px;
+  padding: 0 30px 0 28px; font-size: 10px; color: #374151; background: white;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  &:focus { outline: none; border-color: $vc-blue; box-shadow: 0 0 0 3px rgba($vc-blue, 0.08); }
+  &::placeholder { color: $vc-muted; }
+}
+.vc-filter-search-clear {
+  position: absolute; right: 8px; background: none; border: none;
+  color: $vc-muted; font-size: 9px; cursor: pointer; padding: 0 2px;
+  &:hover { color: $vc-red; }
+}
+
+.vc-filter-reset-all {
+  height: 32px; padding: 0 12px; border-radius: 8px; border: 1.5px solid rgba($vc-red, 0.25);
+  background: rgba($vc-red, 0.06); color: $vc-red; font-size: 10px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: all 0.15s;
+  &:hover { background: $vc-red; color: white; border-color: $vc-red; }
+}
+
+.vc-filter-pills-row {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+}
+
+.vc-filter-divider {
+  width: 1px; height: 20px; background: $vc-border; flex-shrink: 0;
+}
+
+.vc-filter-group {
+  display: flex; align-items: center; gap: 5px; flex-wrap: wrap;
+}
+
+.vc-filter-group-label {
+  font-size: 9px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.4px; color: $vc-muted; margin-right: 2px;
+  i { color: $vc-blue; }
+}
+
+.vc-pill {
+  height: 24px; padding: 0 10px; border-radius: 20px; cursor: pointer;
+  font-size: 9px; font-weight: 600; border: 1.5px solid $vc-border;
+  background: white; color: #6b7280; transition: all 0.15s;
+  display: inline-flex; align-items: center;
+
+  &:hover { border-color: #9ca3af; color: #374151; }
+
+  &.active {
+    border-color: #6b7280; background: #6b7280; color: white;
+  }
+
+  &.green {
+    &:hover { border-color: $vc-green; color: darken($vc-green, 5%); background: rgba($vc-green, 0.06); }
+    &.active { border-color: $vc-green; background: $vc-green; color: white; }
+  }
+  &.blue {
+    &:hover { border-color: $vc-blue; color: $vc-blue; background: rgba($vc-blue, 0.06); }
+    &.active { border-color: $vc-blue; background: $vc-blue; color: white; }
+  }
+  &.orange {
+    &:hover { border-color: $vc-orange; color: darken($vc-orange, 10%); background: rgba($vc-orange, 0.06); }
+    &.active { border-color: $vc-orange; background: $vc-orange; color: white; }
+  }
+  &.red {
+    &:hover { border-color: $vc-red; color: $vc-red; background: rgba($vc-red, 0.06); }
+    &.active { border-color: $vc-red; background: $vc-red; color: white; }
+  }
+}
+
+// Table historique
+.vc-table-wrap { border-radius: 10px; border: 1px solid $vc-border; overflow: hidden; }
+
+.vc-table {
+  width: 100%; border-collapse: collapse;
+
+  thead tr {
+    background: $vc-bg;
+    th {
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.4px; color: $vc-muted; padding: 8px 10px;
+      border-bottom: 1px solid $vc-border; white-space: nowrap;
+    }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid $vc-border;
+    transition: background 0.15s;
+    &:last-child { border-bottom: none; }
+    &:hover { background: rgba($vc-blue, 0.025); }
+    &.vc-row-annule { opacity: 0.55; }
+
+    td {
+      font-size: 10px; color: #374151; padding: 7px 10px;
+      vertical-align: middle;
+    }
+  }
+}
+
+.vc-ref   { font-family: monospace; font-size: 9px; color: $vc-muted; }
+.vc-amount{ font-weight: 700; color: #111827; }
+.vc-date  { color: $vc-muted; font-size: 9px; white-space: nowrap; }
+.vc-empty { text-align: center; padding: 20px; color: $vc-muted; font-size: 11px; }
+
+.vc-type-chip {
+  display: inline-block; padding: 1px 7px; border-radius: 20px;
+  font-size: 9px; font-weight: 600;
+  &.normal { background: rgba($vc-blue,  0.1); color: $vc-blue; }
+  &.avance { background: rgba($vc-orange,0.1); color: darken($vc-orange, 10%); }
+}
+
+.vc-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 20px;
+  font-size: 9px; font-weight: 600;
+  &.green  { background: rgba($vc-green, 0.12); color: darken($vc-green, 10%); }
+  &.blue   { background: rgba($vc-blue,  0.1);  color: $vc-blue; }
+  &.orange { background: rgba($vc-orange,0.12); color: darken($vc-orange, 10%); }
+  &.red    { background: rgba($vc-red,   0.1);  color: $vc-red; }
+}
+
+.vc-actions { display: flex; gap: 5px; align-items: center; }
+
+.vc-btn {
+  height: 26px; border-radius: 6px; border: none; cursor: pointer;
+  font-size: 10px; font-weight: 600; padding: 0 10px;
+  display: flex; align-items: center; gap: 4px;
+  transition: all 0.15s;
+
+  &.pay {
+    background: rgba($vc-blue, 0.1); color: $vc-blue;
+    &:hover { background: $vc-blue; color: white; }
+  }
+  &.cancel {
+    width: 26px; padding: 0; justify-content: center;
+    background: rgba($vc-red, 0.08); color: $vc-red;
+    &:hover { background: $vc-red; color: white; }
+  }
 }

@@ -1,298 +1,332 @@
-<div class="card">
-  <div class="row">
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Commercial :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.commercialNomPrenom"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
+<!-- ══════════════════════════════════════
+     LISTE DES VISITES PROGRAMMÉES
+══════════════════════════════════════ -->
+<div class="pv-card">
+
+  <!-- Toolbar filtres -->
+  <div class="pv-toolbar">
+    <div class="pv-toolbar-left">
+      <i class="fas fa-calendar-alt pv-toolbar-icon"></i>
+      <span class="pv-toolbar-title">Visites programmées</span>
     </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Date debut :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.dateDebut"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-      <span>Date Fin :</span>
-      <span class="p-input-icon-left w-100 d-flex align-items-center">
-        <i class="fas fa-search"></i>
-        <input
-          class="w-100"
-          style="border-radius: 7px"
-          pInputText
-          type="text"
-          [(ngModel)]="filters.dateFin"
-          (keydown.enter)="filterGlobal()"
-          placeholder="Recherche"
-        />
-      </span>
+    <div class="pv-filters">
+      <div class="pv-filter-field">
+        <label class="pv-filter-label">Commercial</label>
+        <div class="pv-input-wrap">
+          <i class="fas fa-user"></i>
+          <input type="text" class="pv-input" placeholder="Rechercher…"
+                 [(ngModel)]="filters.commercialNomPrenom" (keydown.enter)="filterGlobal()"/>
+        </div>
+      </div>
+      <div class="pv-filter-field">
+        <label class="pv-filter-label">Date début</label>
+        <div class="pv-input-wrap">
+          <i class="fas fa-calendar"></i>
+          <input type="text" class="pv-input" placeholder="jj/mm/aaaa"
+                 [(ngModel)]="filters.dateDebut" (keydown.enter)="filterGlobal()"/>
+        </div>
+      </div>
+      <div class="pv-filter-field">
+        <label class="pv-filter-label">Date fin</label>
+        <div class="pv-input-wrap">
+          <i class="fas fa-calendar-check"></i>
+          <input type="text" class="pv-input" placeholder="jj/mm/aaaa"
+                 [(ngModel)]="filters.dateFin" (keydown.enter)="filterGlobal()"/>
+        </div>
+      </div>
+      <button class="pv-btn-filter" type="button" (click)="filterGlobal()">
+        <i class="fas fa-search me-2"></i>Filtrer
+      </button>
     </div>
   </div>
-  <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="10" [paginator]="true"
-           [totalRecords]="totalPages" [lazy]="true"
-           (onPage)="onPage($event)">
+
+  <!-- Table -->
+  <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id"
+           [rows]="8" [paginator]="true" [totalRecords]="totalPages"
+           [lazy]="true" (onPage)="onPage($event)">
 
     <ng-template pTemplate="header">
       <tr>
-        <th style="color: var(--secondary-color);">Commercial</th>
-        <th style="color: var(--secondary-color);">Telephone</th>
-        <th style="color: var(--secondary-color);">Email</th>
-        <th style="color: var(--secondary-color);">Depot</th>
-        <th style="color: var(--secondary-color);">Actions</th>
+        <th>Commercial</th>
+        <th>Téléphone</th>
+        <th>Email</th>
+        <th>Dépôt</th>
+        <th class="text-center">Actions</th>
       </tr>
     </ng-template>
+
     <ng-template pTemplate="body" let-dataList>
       <tr>
         <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.nom }} {{ dataList.prenoms }}
-                    </span>
+          <div class="pv-commercial">
+            <div class="pv-avatar">{{ dataList.nom?.charAt(0) }}</div>
+            <div>
+              <div class="pv-com-name">{{ dataList.nom }} {{ dataList.prenoms }}</div>
+            </div>
+          </div>
         </td>
-        <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.telephone }}
-                    </span>
+        <td><span class="pv-text">{{ dataList.telephone }}</span></td>
+        <td><span class="pv-text">{{ dataList.email }}</span></td>
+        <td><span class="pv-depot">{{ dataList.depot }}</span></td>
+        <td class="text-center">
+          <button class="pv-action-btn" type="button" title="Voir les détails"
+                  (click)="ViewDetails(dataList)">
+            <i class="fas fa-eye"></i>
+          </button>
         </td>
-        <td>
-          {{ dataList.email }}
-        </td>
-        <td>
-                    <span class="ml-1 vertical-align-middle">
-                        {{ dataList.depot}}
-                    </span>
-        </td>
-        <td>
-      <tr class=" gap-3">
-        <td><i style="cursor: pointer;" (click)="ViewDetails(dataList)" class="fas fa-eye text-secondary"></i></td>
-      </tr>
-
-      </td>
       </tr>
     </ng-template>
+
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">Aucun article trouvé.</td>
+        <td colspan="5">
+          <div class="pv-empty">
+            <i class="fas fa-calendar-times"></i>
+            <span>Aucune visite programmée trouvée</span>
+          </div>
+        </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
-<!-- Modal detail -->
-<!-- Modal -->
+<!-- ══════════════════════════════════════
+     MODAL
+══════════════════════════════════════ -->
 <div *ngIf="isModalOpen" class="custom-modal">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex align-items-center">
-        <div class="d-flex justify-content-center align-items-center"
-             style="background-color: rgb(219, 255, 232); border-radius: 3rem; width: 3rem; height: 3rem;">
-          <i class="fas fa-box-check text-primary fs-3"></i>
+  <div class="pv-modal">
+
+    <!-- Header -->
+    <div class="pv-modal-header">
+      <div class="pv-modal-header-left">
+        <div class="pv-modal-icon">
+          <i [class]="operation === 'create' ? 'fas fa-edit' : 'fas fa-route'"></i>
         </div>
-        <h1 *ngIf="operation == 'create'" class="modal-title fs-5 ms-3" id="staticBackdropLabel">Modification
-          de visite</h1>
-        <h1 *ngIf="operation == 'edit'"class="modal-title fs-5 ms-3" id="staticBackdropLabel">Détails de la visite</h1>
+        <div>
+          <h5 class="pv-modal-title">
+            {{ operation === 'create' ? 'Modifier la planification' : 'Visites programmées' }}
+          </h5>
+          <span class="pv-modal-subtitle" *ngIf="operation === 'edit'">
+            {{ updateData?.nom }} {{ updateData?.prenoms }}
+          </span>
+          <span class="pv-modal-subtitle" *ngIf="operation === 'create'">
+            Modifier les paramètres de la visite
+          </span>
+        </div>
+      </div>
+      <button class="pv-close-btn" type="button" (click)="OnCloseModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- ── MODE DETAIL ── -->
+    <div class="pv-modal-body" *ngIf="operation === 'edit'">
+
+      <!-- Infos commercial -->
+      <div class="pv-section-label">
+        <i class="fas fa-user-tie me-2"></i>Informations du commercial
+      </div>
+      <div class="pv-info-grid">
+        <div class="pv-info-block">
+          <div class="pv-info-label"><i class="fas fa-user me-1"></i>Nom & prénoms</div>
+          <div class="pv-info-value">{{ updateData?.nom }} {{ updateData?.prenoms }}</div>
+        </div>
+        <div class="pv-info-block">
+          <div class="pv-info-label"><i class="fas fa-phone me-1"></i>Téléphone</div>
+          <div class="pv-info-value">{{ updateData?.telephone }}</div>
+        </div>
+        <div class="pv-info-block">
+          <div class="pv-info-label"><i class="fas fa-envelope me-1"></i>Email</div>
+          <div class="pv-info-value">{{ updateData?.email }}</div>
+        </div>
       </div>
 
-      <div class="modal-body" *ngIf="operation == 'edit'" style="max-height: 500px;  overflow-y: auto">
-        <fieldset class="row border my-2">
-          <legend style="font-size: 14px" class="text-secondary">
-            Informations du commercial
-          </legend>
-          <div class="row">
-            <div class="col-md-4">
-              <strong>Nom & prénoms :</strong>
-              <span>{{
-                  updateData?.nom+' '+updateData?.prenoms
-                }}</span>
-            </div>
-            <div class="col-md-4">
-              <strong>Téléphone :</strong>
-              <span>{{ updateData.telephone }}</span>
-            </div>
-            <div class="col-md-4">
-              <strong>Email :</strong>
-              <span>{{ updateData?.email }}</span>
-            </div>
-          </div>
-
-        </fieldset>
-
-        <fieldset class="row border my-2" *ngIf="operation == 'edit'">
-          <legend style="font-size: 14px" class="text-secondary">
-            Informations planifications
-          </legend>
-          <div class="row">
-            <div class="col">
-              <table class="table table-bordered table-hover" style="max-height: 300px; overflow-y: auto;">
-                <thead class="table-success">
-                <tr>
-                  <th>Type</th>
-                  <th>Jours</th>
-                  <th>Points de ventes</th>
-                  <th>Vehicules</th>
-                  <th>Date début</th>
-                </tr>
-                </thead>
-                <tbody>
-                <ng-container *ngFor="let visite of updateData.visites">
-                  <ng-container *ngFor="let point of visite.pointsDeVente; let i = index">
-                    <tr>
-                      <!-- Afficher le jour seulement une fois, avec rowspan -->
-                      <td *ngIf="i === 0" [attr.rowspan]="visite.pointsDeVente.length">
-                        {{ visite.typeVisite.libelle }}
-                      </td>
-                      <td *ngIf="i === 0" [attr.rowspan]="visite.pointsDeVente.length">
-                        {{ visite.repetitionDays[0] }}
-                      </td>
-                      <td>{{ point.nomEtablissement }}</td>
-                      <td *ngIf="i === 0" [attr.rowspan]="visite.pointsDeVente.length">
-                        {{ visite.vehicule?.marque}} - {{ visite.vehicule?.immatriculation}}
-                      </td>
-                      <td *ngIf="i === 0" [attr.rowspan]="visite.pointsDeVente.length">
-                        <div class="d-flex flex-column gap-3">
-                          <span>{{ visite.dateDebut}}</span>
-                          <div class=" gap-3 d-flex flex-row">
-                            <button class="btn btn-secondary" (click)="onEdit(visite)">
-                              <i class="fa fa-edit"></i>
-                            </button>
-                            <button class="btn btn-danger" (click)="onDelete(visite)">
-                              <i class="fa fa-trash"></i>
-                            </button>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  </ng-container>
-                </ng-container>
-                </tbody>
-              </table>
-
-            </div>
-          </div>
-
-        </fieldset>
-
+      <!-- Planifications -->
+      <div class="pv-section-label mt-4">
+        <i class="fas fa-calendar-week me-2"></i>Planifications
+        <span class="pv-count">{{ updateData?.visites?.length || 0 }}</span>
       </div>
 
-      <div class="modal-body" *ngIf="operation == 'create'"  style="max-height: 500px;  overflow-y: auto">
-        <div class="row">
-          <div class="col-8">
-            <form [formGroup]="VisiteForm">
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label for="format" class="form-label">Type visite <span
-                      class="text-danger">*</span></label>
-                    <ng-select class="form-control" [items]="typeVisite" bindLabel="libelle" bindValue="id"
-                               formControlName="typeVisite" [searchable]="true">
-                    </ng-select>
-                  </div>
-                  <div class="mb-3">
-                    <label for="format" class="form-label">Vehicule <span
-                      class="text-danger">*</span></label>
-                    <ng-select class="form-control" [multiple]="false"  [items]="vehicules"
-                               bindLabel="marque" bindValue="id" formControlName="vehiculeId"
-                               [searchable]="true">
-                    </ng-select>
-                  </div>
-                  <div class="mb-3">
-                    <label  class="form-label" for="day">Choisir un jour  <span
-                      class="text-danger">*</span></label>
-                    <select formControlName="repetitionDays" class="form-control" id="day">
-                      <option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label for="format" class="form-label">Commercial <span
-                      class="text-danger">*</span></label>
-                    <ng-select class="form-control" [items]="commerciaux" bindLabel="fullLabel" bindValue="id"
-                               (change)="LoadPdv($event);"  formControlName="commercialId" [searchable]="true">
-                    </ng-select>
-                  </div>
-                  <div class="mb-3">
-                    <label for="format" class="form-label">Date de visite <span
-                      class="text-danger">*</span></label>
-                    <input type="date" class="form-control" formControlName="dateVisite"/>
-                  </div>
-                  <div class="mb-3">
-                    <label for="format" class="form-label">Nombre de mois<span
-                      class="text-danger">*</span></label>
-                    <input type="number" class="form-control" formControlName="repetitionDuration" />
-                  </div>
-                </div>
+      <div class="pv-visite-list">
+        <div *ngFor="let visite of updateData?.visites; let vi = index" class="pv-visite-item">
+
+          <!-- Header visite -->
+          <div class="pv-visite-header" (click)="visite._open = !visite._open">
+            <div class="pv-visite-header-left">
+              <div class="pv-visite-index">{{ vi + 1 }}</div>
+              <span class="pv-type-badge">{{ visite.typeVisite?.libelle }}</span>
+              <span class="pv-day-chip">
+                <i class="fas fa-repeat me-1"></i>{{ visite.repetitionDays?.[0] }}
+              </span>
+            </div>
+            <div class="pv-visite-header-right">
+              <span class="pv-vehicle-label">
+                <i class="fas fa-car me-1"></i>{{ visite.vehicule?.marque }} · {{ visite.vehicule?.immatriculation }}
+              </span>
+              <div class="pv-visite-actions">
+                <button class="pv-btn-edit" type="button" title="Modifier" (click)="$event.stopPropagation(); onEdit(visite)">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="pv-btn-delete" type="button" title="Supprimer" (click)="$event.stopPropagation(); onDelete(visite)">
+                  <i class="fas fa-trash"></i>
+                </button>
               </div>
-            </form>
-          </div>
-          <div class="col-4">
-            <div class="col-md-12">
-              <div class="mb-3">
-                <form [formGroup]="searchForm">
-                  <label for="format" class="form-label">Point de vente <span class="text-danger">*</span></label>
-                  <input type="text" placeholder="Recherche" class="form-control w-70" formControlName="searchQuery"
-                         (input)="filterData()"/>
-                </form>
-                <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
-                  <table class="table">
-                    <tbody>
-                    <tr *ngFor="let item of filteredPointDeVente; let i = index" style="font-size: small;">
-                      <td><input type="checkbox" [name]="'checkbox_' + i" [(ngModel)]="item.isChecked"
-                                 (change)="toggleSelection(item)"></td>
-                      <td>{{ item.nomEtablissement }}</td>
-                    </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              <i class="fas" [ngClass]="visite._open ? 'fa-chevron-up' : 'fa-chevron-down'" style="color:#a0aec0;font-size:.75rem"></i>
             </div>
           </div>
-        </div>
-        <div class="table-responsive" style="max-height: 220px; overflow-y: auto;">
-          <table class="table">
-            <thead>
-            <tr style="font-size: small;">
-              <th scope="col">Point de vente</th>
-              <th scope="col">Contact</th>
-              <th scope="col">Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let item of selectedItems" style="font-size: small;">
-              <th scope="row">{{ item.nomEtablissement }}</th>
-              <td>{{ item.contactGerant }}</td>
-              <td>
 
-                <button class="btn btn-danger" (click)="removeItem(item)"><i class="fas fa-trash"></i></button>
-              </td>
-            </tr>
-            <!-- Ajoutez d'autres lignes si nécessaire -->
-            </tbody>
-          </table>
-        </div>
-      </div>
+          <!-- PDVs -->
+          <div class="pv-visite-body" *ngIf="visite._open">
+            <div class="pv-pdv-chips">
+              <span *ngFor="let pdv of visite.pointsDeVente" class="pv-pdv-chip">
+                <i class="fas fa-store me-1"></i>{{ pdv.nomEtablissement }}
+              </span>
+            </div>
+            <div class="pv-date-row">
+              <i class="fas fa-calendar-day me-1"></i>
+              <span>Date de début : <strong>{{ visite.dateDebut }}</strong></span>
+            </div>
+          </div>
 
-      <div class="modal-footer gap-3 px-4">
-        <button (click)="OnCloseModal()" class="btn btn-primary px-2">Fermer</button>
-        <button *ngIf="operation=='create'" (click)="onValidate()" class="btn btn-secondary px-2">Valider</button>
+        </div>
       </div>
     </div>
+
+    <!-- ── MODE FORMULAIRE (edit→create) ── -->
+    <div class="pv-modal-body" *ngIf="operation === 'create'">
+
+      <div class="pv-section-label">
+        <i class="fas fa-sliders-h me-2"></i>Paramètres de la visite
+      </div>
+
+      <form [formGroup]="VisiteForm">
+        <div class="pv-form-grid">
+
+          <div class="pv-field">
+            <label class="pv-label">Type de visite <span class="req">*</span></label>
+            <ng-select class="pv-select" [items]="typeVisite" bindLabel="libelle" bindValue="id"
+                       formControlName="typeVisite" [searchable]="true" placeholder="Sélectionner…">
+            </ng-select>
+          </div>
+
+          <div class="pv-field">
+            <label class="pv-label">Commercial <span class="req">*</span></label>
+            <ng-select class="pv-select" [items]="commerciaux" bindLabel="fullLabel" bindValue="id"
+                       (change)="LoadPdv($event)" formControlName="commercialId"
+                       [searchable]="true" placeholder="Sélectionner…">
+            </ng-select>
+          </div>
+
+          <div class="pv-field">
+            <label class="pv-label">Véhicule <span class="req">*</span></label>
+            <ng-select class="pv-select" [items]="vehicules" bindLabel="marque" bindValue="id"
+                       formControlName="vehiculeId" [searchable]="true" placeholder="Sélectionner…">
+            </ng-select>
+          </div>
+
+          <div class="pv-field">
+            <label class="pv-label">Date de visite <span class="req">*</span></label>
+            <div class="pv-input-icon">
+              <i class="fas fa-calendar"></i>
+              <input type="date" class="pv-inp" formControlName="dateVisite"/>
+            </div>
+          </div>
+
+          <div class="pv-field">
+            <label class="pv-label">Jour de répétition <span class="req">*</span></label>
+            <div class="pv-input-icon">
+              <i class="fas fa-repeat"></i>
+              <select formControlName="repetitionDays" class="pv-inp">
+                <option value="" disabled>Choisir un jour…</option>
+                <option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="pv-field">
+            <label class="pv-label">Durée (mois)</label>
+            <div class="pv-input-icon">
+              <i class="fas fa-clock"></i>
+              <input type="number" class="pv-inp" formControlName="repetitionDuration" placeholder="12"/>
+            </div>
+          </div>
+
+        </div>
+      </form>
+
+      <!-- PDVs -->
+      <div class="pv-section-label mt-4">
+        <i class="fas fa-store me-2"></i>Points de vente
+        <span class="pv-count" *ngIf="selectedItems.length">{{ selectedItems.length }} sélectionné{{ selectedItems.length > 1 ? 's' : '' }}</span>
+      </div>
+
+      <div class="pv-pdv-layout">
+
+        <!-- Recherche -->
+        <div class="pv-pdv-search-panel">
+          <div class="pv-search-wrap">
+            <i class="fas fa-search pv-search-icon"></i>
+            <form [formGroup]="searchForm">
+              <input type="text" class="pv-search-input" placeholder="Rechercher un point de vente…"
+                     formControlName="searchQuery" (input)="filterData()"/>
+            </form>
+          </div>
+          <div class="pv-pdv-scroll">
+            <div *ngIf="!filteredPointDeVente?.length" class="pv-empty-pdv">
+              <i class="fas fa-store-slash"></i>
+              <span>{{ VisiteForm.get('commercialId')?.value ? 'Aucun résultat' : 'Sélectionnez un commercial' }}</span>
+            </div>
+            <label *ngFor="let item of filteredPointDeVente; let i = index"
+                   class="pv-pdv-item" [class.checked]="item.isChecked">
+              <input type="checkbox" [name]="'cb_' + i" [(ngModel)]="item.isChecked"
+                     (change)="toggleSelection(item)" hidden/>
+              <div class="pv-pdv-check">
+                <i class="fas fa-check" *ngIf="item.isChecked"></i>
+              </div>
+              <div class="pv-pdv-info">
+                <span class="pv-pdv-name">{{ item.nomEtablissement }}</span>
+                <span class="pv-pdv-zone" *ngIf="item.zoneDeLivraison?.nomZone">{{ item.zoneDeLivraison.nomZone }}</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Sélectionnés -->
+        <div class="pv-pdv-selected-panel">
+          <div class="pv-selected-header">
+            <i class="fas fa-check-circle me-2"></i>Sélectionnés
+          </div>
+          <div *ngIf="!selectedItems.length" class="pv-empty-pdv">
+            <i class="fas fa-hand-pointer"></i>
+            <span>Aucun point de vente sélectionné</span>
+          </div>
+          <div class="pv-selected-list">
+            <div *ngFor="let item of selectedItems" class="pv-selected-chip">
+              <div class="pv-chip-info">
+                <span class="pv-chip-name">{{ item.nomEtablissement }}</span>
+                <span class="pv-chip-contact" *ngIf="item.contactGerant">{{ item.contactGerant }}</span>
+              </div>
+              <button class="pv-chip-remove" type="button" (click)="removeItem(item)">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="pv-modal-footer">
+      <button type="button" class="pv-btn-cancel" (click)="OnCloseModal()">
+        <i class="fas fa-times me-2"></i>Fermer
+      </button>
+      <button *ngIf="operation === 'create'" type="button" class="pv-btn-submit"
+              [disabled]="VisiteForm.invalid || selectedItems.length === 0"
+              (click)="onValidate()">
+        <i class="fas fa-check me-2"></i>Enregistrer
+      </button>
+    </div>
+
   </div>
 </div>

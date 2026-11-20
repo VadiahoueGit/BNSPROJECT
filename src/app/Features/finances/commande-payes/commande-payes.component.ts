@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Table } from 'primeng/table';
 import { ArticleServiceService } from 'src/app/core/article-service.service';
 import { ALERT_QUESTION } from '../../shared-component/utils';
-import {calculeDateEcheance, Status} from "../../../utils/utils";
+import {calculeDateEcheance, isAdminRole, Status} from "../../../utils/utils";
 import {FinanceService} from "../../../core/finance.service";
 
 @Component({
@@ -19,7 +19,9 @@ export class CommandePayesComponent {
     commande: '',
     agent: '',
     client: '',
-    statut: ''
+    statut: '',
+    dateDebut: '',
+    dateFin: '',
   };
   statuses!: any[];
   hstoriquePayment:any []
@@ -91,12 +93,22 @@ export class CommandePayesComponent {
       this.filters.commande,
       this.filters.agent,
       this.filters.client,
-      this.filters.statut
+      this.filters.statut,
+      this.filters.dateDebut,
+      this.filters.dateFin
     );
   }
 
+  resetFilters() {
+    this.filters = { commande: '', agent: '', client: '', statut: '', dateDebut: '', dateFin: '' };
+    this.filterGlobal();
+  }
 
-  GetPaiementList(page: number,numeroCommande?: string,agent?: string,clientNom?: string,statut?: string) {
+  get hasActiveFilters(): boolean {
+    return !!(this.filters.commande || this.filters.agent || this.filters.client || this.filters.statut || this.filters.dateDebut || this.filters.dateFin);
+  }
+
+  GetPaiementList(page: number,numeroCommande?: string,agent?: string,clientNom?: string,statut?: string,dateDebut?: string,dateFin?: string) {
     let data = {
       paginate: true,
       page: page,
@@ -104,7 +116,9 @@ export class CommandePayesComponent {
       numeroCommande: numeroCommande || '',
       agent:agent || '',
       clientNom: clientNom || '',
-      statut:statut || ''
+      statut:statut || '',
+      dateDebut: dateDebut || '',
+      dateFin: dateFin || '',
     };
     this._spinner.show();
     this.financeService.GetPaiementListPaye(data).then((res: any) => {
@@ -126,7 +140,15 @@ export class CommandePayesComponent {
   onPage(event: any) {
     this.currentPage = event.first / event.rows + 1; // Calculer la page actuelle (1-based index)
     this.rowsPerPage = event.rows;
-    this.GetPaiementList(this.currentPage)
+    this.GetPaiementList(
+      this.currentPage,
+      this.filters.commande,
+      this.filters.agent,
+      this.filters.client,
+      this.filters.statut,
+      this.filters.dateDebut,
+      this.filters.dateFin
+    );
   }
   loadArticleDetails(): void {
 
@@ -139,6 +161,46 @@ export class CommandePayesComponent {
       this.hstoriquePayment = res.data
       console.log('data:::>', res);
       this._spinner.hide();
+    });
+  }
+
+  isAdmin(): boolean {
+    return isAdminRole();
+  }
+
+  OnAnnulerPaiement(row: any) {
+    ALERT_QUESTION(
+      'warning',
+      'Annuler ce paiement ?',
+      'La commande repassera en attente de paiement. Cette action est irréversible.'
+    ).then((res) => {
+      if (res.isConfirmed) {
+        this._spinner.show();
+        this.financeService.RevenirEnAttente(row.id).then((result: any) => {
+          this._spinner.hide();
+          this.toastr.success(result.message);
+          this.OnCloseModal();
+          this.GetPaiementList(1);
+        }).catch((err: any) => {
+          this._spinner.hide();
+          this.toastr.error(err?.error?.message || "Erreur lors de l'annulation.");
+        });
+      }
+    });
+  }
+
+  downloadRecu(row: any) {
+    this.financeService.getRecuPaiement(row.id).then((blob: Blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `recu-${row.numTransaction || row.id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }).catch(() => {
+      this.toastr.error('Erreur lors du téléchargement du reçu');
     });
   }
 

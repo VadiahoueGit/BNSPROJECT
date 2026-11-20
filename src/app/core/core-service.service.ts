@@ -89,6 +89,46 @@ export class CoreServiceService {
     })
   }
 
+  async getCompanies(): Promise<any> {
+    await this.initializeApiUrl();
+    const token = this.localstorage.getItem(storage_keys.STOREToken);
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return new Promise((resolve: any, reject: any) => {
+      this._http.get(`${this.apiUrl}/v1/auth/companies`, { headers })
+        .subscribe((res: any) => resolve(res), err => reject(err));
+    });
+  }
+
+  async checkHasDepots(): Promise<boolean> {
+    await this.initializeApiUrl();
+    const token = this.localstorage.getItem(storage_keys.STOREToken);
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return new Promise((resolve) => {
+      this._http.get<any>(`${this.apiUrl}/v1/depot/has-depots`, { headers })
+        .subscribe((res: any) => resolve(res?.hasDepots ?? false), () => resolve(true));
+    });
+  }
+
+  async createDepotHote(data: { nomDepot: string; gerant: string; telephone: string }): Promise<any> {
+    await this.initializeApiUrl();
+    const token = this.localstorage.getItem(storage_keys.STOREToken);
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return new Promise((resolve: any, reject: any) => {
+      this._http.post(`${this.apiUrl}/v1/depot/init-hote`, data, { headers })
+        .subscribe((res: any) => resolve(res), err => reject(err));
+    });
+  }
+
+  async switchCompany(tenantId: string): Promise<any> {
+    await this.initializeApiUrl();
+    const token = this.localstorage.getItem(storage_keys.STOREToken);
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return new Promise((resolve: any, reject: any) => {
+      this._http.post(`${this.apiUrl}/v1/auth/switch-company`, { tenantId }, { headers })
+        .subscribe((res: any) => resolve(res), err => reject(err));
+    });
+  }
+
   async GetNotifiaction(data: any) {
     await this.initializeApiUrl();
     const headers = new HttpHeaders({
@@ -685,16 +725,16 @@ export class CoreServiceService {
     });
   }
   //DASHBOARD
-  async GetKpiCommande() {
+  async GetKpiCommande(data: any = {}) {
     await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
+      const dateParams = this.buildDateParams(data);
       this._http
         .get(
-          `${this.apiUrl}/v1/kpi-commande
-          `, { headers }
+          `${this.apiUrl}/v1/kpi-commande${dateParams ? '?' + dateParams.slice(1) : ''}`, { headers }
         )
         .subscribe(
           (res: any) => {
@@ -715,9 +755,10 @@ export class CoreServiceService {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${this.token}`
       });
+      const dateParams = this.buildDateParams(data);
       this._http
         .get(
-          `${this.apiUrl}/v1/kpi-commande/top-articles?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`, { headers }
+          `${this.apiUrl}/v1/kpi-commande/top-articles?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}${dateParams}`, { headers }
         )
         .subscribe(
           (res: any) => {
@@ -736,8 +777,9 @@ export class CoreServiceService {
     await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      const dateParams = this.buildDateParams(data);
       this._http
-        .get(`${this.apiUrl}/v1/kpi-commande/top-clients?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`, { headers })
+        .get(`${this.apiUrl}/v1/kpi-commande/top-clients?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}${dateParams}`, { headers })
         .subscribe({ next: (res: any) => resolve(res), error: (err) => reject(err) });
     });
   }
@@ -746,8 +788,23 @@ export class CoreServiceService {
     await this.initializeApiUrl();
     return new Promise((resolve: any, reject: any) => {
       const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      const dateParams = this.buildDateParams(data);
       this._http
-        .get(`${this.apiUrl}/v1/kpi-commande/top-commerciaux?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}`, { headers })
+        .get(`${this.apiUrl}/v1/kpi-commande/top-commerciaux?paginate=${data.paginate}&page=${data.page}&limit=${data.limit}${dateParams}`, { headers })
+        .subscribe({ next: (res: any) => resolve(res), error: (err) => reject(err) });
+    });
+  }
+
+  private buildDateParams(data: any): string {
+    if (!data?.dateDebut && !data?.dateFin) return '';
+    return `&dateDebut=${data.dateDebut ?? ''}&dateFin=${data.dateFin ?? ''}`;
+  }
+
+  async GetFournisseurList() {
+    await this.initializeApiUrl();
+    return new Promise((resolve: any, reject: any) => {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this._http.get(`${this.apiUrl}/v1/fournisseurs?paginate=false`, { headers })
         .subscribe({ next: (res: any) => resolve(res), error: (err) => reject(err) });
     });
   }

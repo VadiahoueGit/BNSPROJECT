@@ -56,6 +56,10 @@ export class ListeCommandesMarchandisesComponent {
   depotId: any = 0;
   totalPages: any;
   docUrl = ''
+  filters = {
+    numero: '',
+    typeCommande: '',
+  };
   public dataSendedToReceptionMarchandiseRequest = {
     commandeId: 0,
     numeroBonLivraison: '',
@@ -141,6 +145,26 @@ export class ListeCommandesMarchandisesComponent {
     });
   }
 
+  filterGlobal() {
+    this.GetListCommandeFournisseurs(1, this.filters.numero, undefined, this.filters.typeCommande);
+  }
+
+  onDateExpeditionChange(commande: any, event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this._spinner.show();
+    this.articleService.UpdateDateExpeditionCommandeFournisseur(commande.id, value).then(
+      (res: any) => {
+        commande.dateExpedition = value;
+        this._spinner.hide();
+        this.toastr.success(res.message || 'Date d\'expédition mise à jour.');
+      },
+      (err: any) => {
+        this._spinner.hide();
+        this.toastr.error(err?.error?.message || 'Erreur lors de la mise à jour de la date d\'expédition.');
+      }
+    );
+  }
+
   onFilterGlobal(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
@@ -171,10 +195,10 @@ export class ListeCommandesMarchandisesComponent {
   }
 
   selectArticle() {
+    this.filterArticles();
     this.isEditMode = false;
     this.isChoiceModalOpen = true;
     this.operation = 'create';
-    console.log(this.isModalOpen);
   }
 
   OnEdit(data: any) {
@@ -193,6 +217,10 @@ export class ListeCommandesMarchandisesComponent {
   }
 
   onSubmit(): void {
+    if (!this.dataSendedToReceptionMarchandiseRequest.numeroBonLivraison?.trim()) {
+      this.toastr.warning('Veuillez renseigner le numéro de bon de livraison avant de valider.');
+      return;
+    }
     const payload = {
       commandeId: this.dataSendedToReceptionMarchandiseRequest.commandeId,
       numeroBonLivraison:
@@ -200,21 +228,24 @@ export class ListeCommandesMarchandisesComponent {
       typeSource: TypeSource.COMMANDE,
       scanBonLivraison: this.updateData.bonLivraison || '',
       articlesRecus: this.articlesRecues.map((article: any) => {
-        const prixSousDistributeur = article.prix?.find(
-          (p: any) => p.typePrix?.libelle === 'PRIX S/DISTRIBUTEUR'
-        );
+        let prixLiquide = parseInt(article?.prixUnitaireLiquide ?? 0);
+        let prixEmballage = parseInt(article?.prixUnitaireEmballage ?? 0);
+
+        if (article?.new && article?.prix?.length) {
+          const prixMatch = article.prix.find(
+            (p: any) => !p.IsDeleted && p.typePrix?.libelle === 'PRIX ACHAT'
+          ) ?? article.prix.find((p: any) => !p.IsDeleted);
+          prixLiquide = parseInt(prixMatch?.PrixLiquide ?? 0);
+          prixEmballage = parseInt(prixMatch?.PrixConsigne ?? 0);
+        }
+
         return {
           articleCommandeId: !article?.new ? article?.id : null,
           quantiteRecue: article?.quantiteAffectee,
           liquideId: article?.liquide?.id,
-          emballageId:
-            article?.liquide?.emballage?.id ?? article?.emballage?.id,
-          prixUnitaireLiquide: parseInt(
-            prixSousDistributeur?.PrixLiquide ?? article?.prixUnitaireLiquide
-          ),
-          prixUnitaireEmballage: parseInt(
-            prixSousDistributeur?.PrixConsigne ?? article?.prixUnitaireEmballage
-          ),
+          emballageId: article?.liquide?.emballage?.id ?? article?.emballage?.id,
+          prixUnitaireLiquide: prixLiquide,
+          prixUnitaireEmballage: prixEmballage,
           commentaireEcart: article.commentaireEcart || '',
         };
       }),
@@ -299,20 +330,18 @@ export class ListeCommandesMarchandisesComponent {
   }
 
   filterArticles(): void {
-    console.log(this.searchTerm);
+    const libellesDejaPresents = new Set(
+      (this.articlesRecues ?? []).map((a: any) => a.liquide?.libelle ?? a.libelle)
+    );
+    const base = this.dataListLiquides.filter((a: any) => !libellesDejaPresents.has(a.libelle));
     if (this.searchTerm) {
-      this.filteredArticleList = this.dataListLiquides.filter(
-        (article: any) =>
-          article.libelle
-            .toLowerCase()
-            .includes(this.searchTerm.toLowerCase()) ||
-          article.reference
-            .toLowerCase()
-            .includes(this.searchTerm.toLowerCase())
+      const term = this.searchTerm.toLowerCase();
+      this.filteredArticleList = base.filter((article: any) =>
+        (article.libelle || '').toLowerCase().includes(term) ||
+        (article.reference || '').toLowerCase().includes(term)
       );
-      console.log(this.filteredArticleList);
     } else {
-      this.filteredArticleList = [...this.dataListLiquides];
+      this.filteredArticleList = base;
     }
   }
 
@@ -340,6 +369,27 @@ export class ListeCommandesMarchandisesComponent {
 
   imprimer(path:any) {
     window.open(this.docUrl+path, '_blank');
+  }
+
+  OnAnnuler(id: number) {
+    ALERT_QUESTION('warning', 'Attention !', 'Voulez-vous annuler cette commande ?').then(
+      (res: any) => {
+        if (res.isConfirmed) {
+          this._spinner.show();
+          this.articleService.AnnulerCommandeFournisseur(id).then(
+            (response: any) => {
+              this._spinner.hide();
+              this.toastr.success(response.message);
+              this.GetListCommandeFournisseurs(this.currentPage);
+            },
+            (error: any) => {
+              this._spinner.hide();
+              this.toastr.error(error.error?.message || 'Erreur lors de l\'annulation');
+            }
+          );
+        }
+      }
+    );
   }
 
   OnDelete(Id: any) {

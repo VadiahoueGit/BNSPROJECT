@@ -110,6 +110,28 @@
     </div>
   </div>
 
+  <!-- Filtre de période -->
+  <div class="db-date-filter">
+    <button
+      *ngFor="let preset of datePresets"
+      type="button"
+      class="db-date-filter-btn"
+      [class.active]="selectedPreset === preset.key"
+      (click)="selectDatePreset(preset.key)">
+      {{ preset.label }}
+    </button>
+
+    <div class="db-date-custom" [class.active]="selectedPreset === 'custom'">
+      <i class="fas fa-calendar-alt"></i>
+      <input type="date" class="db-date-input" [(ngModel)]="customDateDebut" [max]="customDateFin" placeholder="Du" />
+      <span class="db-date-sep">—</span>
+      <input type="date" class="db-date-input" [(ngModel)]="customDateFin" [min]="customDateDebut" placeholder="Au" />
+      <button type="button" class="db-date-apply-btn" [disabled]="!customDateDebut || !customDateFin" (click)="applyCustomRange()" title="Appliquer l'intervalle">
+        <i class="fas fa-check"></i>
+      </button>
+    </div>
+  </div>
+
   <!-- KPI Row 1 -->
   <div class="db-kpi-grid">
 
@@ -168,8 +190,11 @@
         <i class="fas fa-truck"></i>
       </div>
       <div class="db-kpi-body">
-        <div class="db-kpi-value">{{ commandesFournisseur.total || 0 }}</div>
-        <div class="db-kpi-label">Commandes fournisseur</div>
+        <div class="db-kpi-value">
+          {{ commandesFournisseur.attente || 0 }}
+          <span class="db-kpi-of">/ {{ commandesFournisseur.total || 0 }}</span>
+        </div>
+        <div class="db-kpi-label">Commandes fournisseur en attente</div>
       </div>
       <div class="db-kpi-trend teal-bg"></div>
     </div>
@@ -179,8 +204,11 @@
         <i class="fas fa-gift"></i>
       </div>
       <div class="db-kpi-body">
-        <div class="db-kpi-value">{{ commandesGratuites.total || 0 }}</div>
-        <div class="db-kpi-label">Commandes gratuites</div>
+        <div class="db-kpi-value">
+          {{ commandesGratuites.attente || 0 }}
+          <span class="db-kpi-of">/ {{ commandesGratuites.total || 0 }}</span>
+        </div>
+        <div class="db-kpi-label">Commandes gratuites en attente</div>
       </div>
       <div class="db-kpi-trend red-bg"></div>
     </div>
@@ -264,9 +292,9 @@
                 {{ i + 1 }}
               </span>
             </td>
-            <td class="db-article-name">{{ item.raisonSocial || item.nomEtablissement || item.nom }}</td>
-            <td class="text-end db-qty">{{ item.totalCommandes || item.nbCommandes || 0 }}</td>
-            <td class="text-end db-qty">{{ (item.montantTotal || 0) | number:'1.0-0' }}</td>
+            <td class="db-article-name">{{ item.raisonSociale || item.nomEtablissement || item.nom }}</td>
+            <td class="text-end db-qty">{{ item.nbCommandes || item.totalCommandes || 0 }}</td>
+            <td class="text-end db-qty">{{ (item.totalMontant || item.montantTotal || 0) | number:'1.0-0' }}</td>
           </tr>
         </tbody>
       </table>

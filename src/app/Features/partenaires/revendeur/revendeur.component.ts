@@ -49,6 +49,7 @@ export class RevendeurComponent {
     groupeClient:'',
     proprietaire: '',
     raisonSociale: '',
+    depotId: null,
   };
   @ViewChild('dt') dt!: Table;
   totalPages: number;
@@ -65,6 +66,7 @@ export class RevendeurComponent {
   ngOnInit(): void {
     this.revendeurForm = this.fb.group({
       isAssocie: [null],
+      isAirsi: [false],
       parentRevendeurId: [null],
       typePrixId: [null],
       groupeClientId: [null, Validators.required],
@@ -99,7 +101,7 @@ export class RevendeurComponent {
       this.ListGroupesArticles = res;
     });
 
-    // this.GetLocaliteList();
+    this.coreService.GetLocaliteList({});
     this.GetDepotList();
     this.GetZoneList();
     this.GetListTypePrix(1)
@@ -138,6 +140,7 @@ export class RevendeurComponent {
   OnEdit(data: any) {
     this.isEditMode = true;
     console.log(data);
+    this.revendeurForm.enable();
     this.updateData = data;
     this.id = data.id;
     this.isModalOpen = true;
@@ -181,17 +184,18 @@ export class RevendeurComponent {
   loadClientDetails(): void {
     this.revendeurForm.patchValue({
       isAssocie: this.updateData.isAssocie,
+      isAirsi: this.updateData.isAirsi ?? false,
       typePrixId:this.updateData.typePrix?.id,
-      groupeClientId: this.updateData.groupeClient.id,
+      groupeClientId: this.updateData.groupeClient?.id,
       numeroRegistre: this.updateData.numeroRegistre,
       raisonSocial: this.updateData.raisonSocial,
       contact: this.updateData.contact,
       longitude: this.updateData.longitude,
       latitude: this.updateData.latitude,
       telephone: this.updateData.telephone,
-      localiteId: this.updateData.localite.id,
-      depotId: this.updateData.depot.id,
-      zoneDeLivraisonId: this.updateData.zoneDeLivraison.id,
+      localiteId: this.updateData.localite?.id,
+      depotId: this.updateData.depot?.id,
+      zoneDeLivraisonId: this.updateData.zoneDeLivraison?.id,
       nomProprietaire: this.updateData.nomProprietaire,
       telephoneProprietaire: this.updateData.telephoneProprietaire,
       nomGerant: this.updateData.nomGerant,
@@ -201,9 +205,9 @@ export class RevendeurComponent {
       familleProduitId: this.updateData.familleProduitId,
     });
     console.log(this.revendeurForm);
-    if (this.updateData.numeroSAP != "")
+    if (this.updateData.numeroSAPCode != null && this.updateData.numeroSAPCode !== "")
     {
-      this.numeroSap = this.updateData.numeroSAP;
+      this.numeroSap = this.updateData.numeroSAPCode;
     }
   }
 
@@ -237,7 +241,8 @@ export class RevendeurComponent {
       1,
       this.filters.proprietaire,
       this.filters.groupeClient,
-      this.filters.raisonSociale
+      this.filters.raisonSociale,
+      this.filters.depotId
     );
   }
   OnCloseDetailModal() {
@@ -409,7 +414,7 @@ export class RevendeurComponent {
     });
   }
 
-  GetRevendeurList(page: number, proprietaire?: string,groupeClient?: string, raisonSociale?: string) {
+  GetRevendeurList(page: number, proprietaire?: string, groupeClient?: string, raisonSociale?: string, depotId?: number) {
     let data = {
       paginate: true,
       page: page,
@@ -417,6 +422,7 @@ export class RevendeurComponent {
       proprietaire: proprietaire || '',
       groupeClient: groupeClient || '',
       raisonSociale: raisonSociale || '',
+      depotId: depotId || null,
     };
     this._spinner.show();
     this._articleService.GetListRevendeur(data).then((res: any) => {
@@ -502,6 +508,10 @@ export class RevendeurComponent {
       }
     );
   }
+
+  get validesCount(): number  { return this.dataList.filter((r: any) => r.isValide && !r.isAssocie).length; }
+  get associesCount(): number { return this.dataList.filter((r: any) => r.isAssocie).length; }
+  get enAttenteCount(): number { return this.dataList.filter((r: any) => !r.isValide && !r.isAssocie).length; }
 
   protected readonly event = event;
 }

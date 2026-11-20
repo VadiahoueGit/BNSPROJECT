@@ -1,69 +1,115 @@
-<div class="card">
+<!-- Dashboard -->
+<div class="fn-kpi-row">
+  <div class="fn-kpi blue">
+    <div class="fn-kpi-icon blue"><i class="fas fa-box-open"></i></div>
+    <div class="fn-kpi-body">
+      <div class="fn-kpi-label">Réceptions</div>
+      <div class="fn-kpi-value blue">{{ nbReceptions }}</div>
+    </div>
+  </div>
+  <div class="fn-kpi green">
+    <div class="fn-kpi-icon green"><i class="fas fa-recycle"></i></div>
+    <div class="fn-kpi-body">
+      <div class="fn-kpi-label">Emballages reçus</div>
+      <div class="fn-kpi-value green">{{ totalEmballagesRecus | number:'1.0-0' }}</div>
+    </div>
+  </div>
+</div>
 
-  <p-table [styleClass]="'p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
+<!-- Liste -->
+<div class="fn-card">
+  <div class="fn-topbar">
+    <div class="fn-topbar-left">
+      <div class="fn-title"><i class="fas fa-box-open"></i> Réceptions emballages</div>
+      <div class="fn-count">{{ totalPages }} résultat(s)</div>
+    </div>
+  </div>
+
+  <div class="fn-filters">
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">N° commande</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-hashtag fn-filter-icon"></i>
+        <input class="fn-filter-input" [(ngModel)]="filters.numCommande" (keydown.enter)="filterList()" placeholder="N° commande..." />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Statut</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-filter fn-filter-icon"></i>
+        <select class="fn-filter-input" [(ngModel)]="filters.statut" (change)="filterList()">
+          <option value="">Tous</option>
+          <option *ngFor="let s of statutOptions" [value]="s.value">{{ s.label }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Date début</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-calendar fn-filter-icon"></i>
+        <input type="date" class="fn-filter-input" [(ngModel)]="filters.dateDebut" (change)="filterList()" />
+      </div>
+    </div>
+    <div class="fn-filter-item">
+      <div class="fn-filter-label">Date fin</div>
+      <div class="fn-filter-wrap">
+        <i class="fas fa-calendar fn-filter-icon"></i>
+        <input type="date" class="fn-filter-input" [(ngModel)]="filters.dateFin" (change)="filterList()" />
+      </div>
+    </div>
+    <button class="fn-filter-btn" (click)="filterList()"><i class="fas fa-search me-1"></i>Rechercher</button>
+    <button class="fn-filter-btn secondary" (click)="resetFilters()"><i class="fas fa-times me-1"></i>Réinitialiser</button>
+  </div>
+
+  <p-table [styleClass]="'fn-ptable p-datatable-sm'" #dt2 [value]="dataList" dataKey="id" [rows]="8"
            [totalRecords]="totalPages" [lazy]="true"
            [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true" (onPage)="onPage($event)">
-
     <ng-template pTemplate="header">
       <tr>
-        <th>N° commandes</th>
-        <th>Clients</th>
-        <th>Chauffeurs</th>
+        <th>N° commande</th>
+        <th>Client</th>
+        <th>Chauffeur</th>
         <th>Date</th>
-        <th scope="col">Depot</th>
-        <th>Actions</th>
+        <th>Dépôt</th>
+        <th>Statut</th>
+        <th class="text-center">Actions</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-dataList>
+    <ng-template pTemplate="body" let-row>
       <tr>
-        <td>
-                      <span class="ml-1 vertical-align-middle">
-                        {{ dataList.commandeClient?.NumCommande || dataList.commandeGratuite?.NumCommande || dataList.venteChine?.numVenteChine }}
-                    </span>
+        <td style="font-weight:600; color:#0071c2">
+          {{ row.commandeClient?.NumCommande || row.commandeGratuite?.NumCommande || row.venteChine?.numVenteChine || '—' }}
         </td>
+        <td>{{ row.clientALivrer?.raisonSocial || row.clientALivrer?.nomEtablissement || '—' }}</td>
         <td>
-                   <span class="ml-1 vertical-align-middle">
-                         {{ dataList.clientALivrer.raisonSocial || dataList.clientALivrer.nomEtablissement }}
-                    </span>
+          {{
+            row.venteChine
+              ? (row.venteChine.commercial?.nom + ' ' + row.venteChine.commercial?.prenoms)
+              : (row.transporteur?.nom && row.transporteur?.prenoms)
+                ? (row.transporteur.nom + ' ' + row.transporteur.prenoms)
+                : 'N/A'
+          }}
         </td>
-        <td>
-                     <span class="ml-1 vertical-align-middle">
-                         {{
-                         (dataList.venteChine)
-                           ? dataList.venteChine.commercial?.nom + ' ' + dataList.venteChine.commercial?.prenoms
-                           : (dataList.transporteur?.nom && dataList.transporteur?.prenoms)
-                             ? dataList.transporteur.nom + ' ' + dataList.transporteur.prenoms
-                             : 'N/A'
-                       }}
-
-                       </span>
+        <td style="color:#6b7280; font-size:12px">{{ row.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ row.depot?.nomDepot || '—' }}</td>
+        <td><span class="fn-badge" [ngClass]="getStatutClass(row.status)">{{ row.status || '—' }}</span></td>
+        <td class="text-center">
+          <button class="fn-action-btn view" (click)="OnEdit(row)" title="Voir"><i class="fas fa-eye"></i></button>
+          <button class="fn-action-btn del" (click)="OnAnnuler(row)" title="Annuler — réaffecter en RDV"><i class="fas fa-rotate-left"></i></button>
         </td>
-        <td>
-                      <span class="ml-1 vertical-align-middle">
-                         {{ dataList.createdAt |date }}
-                    </span>
-        </td>
-        <td>
-                      <span class="ml-1 vertical-align-middle">
-                          {{ dataList.depot?.nomDepot }}
-                    </span>
-        </td>
-        <td>
-      <tr class=" gap-3">
-        <td><span class="bui-icon-btn view" (click)="OnEdit(dataList)"><i class="fas fa-eye"></i></span></td>
-      </tr>
-
-      </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">Aucun élément trouvé.</td>
+        <td colspan="6" style="text-align:center; padding:32px; color:#9ca3af; font-size:13px;">
+          <i class="fas fa-inbox me-2"></i>Aucune réception trouvée.
+        </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
+<!-- Modal -->
 <div *ngIf="isModalOpen" class="custom-modal">
   <div class="vd-modal-dialog">
     <div class="vd-modal-header">
@@ -72,7 +118,7 @@
         <div>
           <div class="vd-mh-title">Détails récupération</div>
           <div class="vd-mh-sub" *ngIf="operation == 'edit'">
-            {{ updateData.commandeClient?.NumCommande || updateData.commandeGratuite?.NumCommande || updateData.venteChine?.NumCommande }} — {{ updateData.createdAt | date:'dd/MM/yyyy' }}
+            {{ updateData.commandeClient?.NumCommande || updateData.commandeGratuite?.NumCommande || updateData.venteChine?.NumCommande }} — {{ updateData.createdAt | date:'dd/MM/yyyy HH:mm' }}
           </div>
         </div>
       </div>
@@ -97,6 +143,12 @@
           <div class="vd-info-block">
             <div class="vd-info-label"><i class="fas fa-circle me-1"></i>Statut commande</div>
             <div class="vd-info-value">{{ updateData?.commandeClient?.statut || updateData?.commandeGratuite?.statut || updateData?.venteChine?.statut || '—' }}</div>
+          </div>
+          <div class="vd-info-block">
+            <div class="vd-info-label"><i class="fas fa-flag me-1"></i>Statut retour</div>
+            <div class="vd-info-value">
+              <span class="fn-badge" [ngClass]="getStatutClass(updateData?.status)">{{ updateData?.status || '—' }}</span>
+            </div>
           </div>
         </div>
 
@@ -157,10 +209,12 @@
 
     <div class="vd-modal-footer">
       <button type="button" class="vd-btn-outline" (click)="OnCloseModal()">Fermer</button>
+      <button type="button" class="vd-btn-outline" style="color:#dc2626;border-color:#dc2626" (click)="OnAnnuler(updateData)" *ngIf="operation == 'edit'">
+        <i class="fas fa-rotate-left me-1"></i> Annuler la réception
+      </button>
+      <button type="button" class="vd-btn-primary" (click)="genererPdf()">
+        <i class="fas fa-file-pdf me-1"></i> Télécharger PDF
+      </button>
     </div>
   </div>
 </div>
-
-
-
-

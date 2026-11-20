@@ -158,7 +158,7 @@ export class ListEmballagesComponent {
 
     // Formattage des codes et marquage isNewAdd
     articlesRecus.forEach((article:any) => {
-      const emballage = article.articleEntree?.emballage;
+      const emballage = article.articleEntree?.emballage ?? article.articleCommande?.emballage ?? article.emballage;
       if (emballage?.code) {
         emballage.code = this.formatCode(emballage.code);
       }
@@ -190,30 +190,31 @@ export class ListEmballagesComponent {
     // -------------------------------
     const totauxRecus = new Map<string, any>();
     (this.updateData.articlesRecus ?? []).forEach((article:any) => {
-      const code = article.articleEntree?.emballage?.code ?? article.articleCommande?.emballage?.code ;
+      const code = article.articleEntree?.emballage?.code ?? article.articleCommande?.emballage?.code ?? article.emballage?.code;
       if (!code) return;
 
       if (!totauxRecus.has(code)) {
         totauxRecus.set(code, {
           code: code,
-          libelle: article.articleEntree?.emballage.libelle  || article.articleCommande?.emballage?.libelle,
-          quantite: article.articleEntree?.quantite  || article.articleCommande?.quantite,
-          quantiteRecue: article.quantiteRecue ?? article.articleEntree?.quantite ?? article.articleCommande?.quantite, // valeur initiale
-          prixUnitaireLiquide: article.articleEntree?.prixUnitaireLiquide   || article.articleCommande?.prixUnitaireLiquide,
-          prixUnitaireEmballage: article.articleEntree?.prixUnitaireEmballage  || article.articleCommande?.prixUnitaireEmballage,
-          montantLiquide: article.articleEntree?.montantLiquide  || article.articleCommande?.montantLiquide,
-          montantEmballage: article.articleEntree?.montantEmballage  || article.articleCommande?.montantEmballage,
-          createdAt: article.articleEntree?.createdAt   || article.articleCommande?.createdAt ,
-          updatedAt: article.articleEntree?.updatedAt  || article.articleCommande?.updatedAt ,
-          emballage: article.articleEntree?.emballage  || article.articleCommande?.emballage,
-          liquide: article.articleEntree?.liquide  || article.articleCommande?.liquide,
-          groupearticle: article.articleEntree?.groupearticle  || article.articleCommande?.groupearticle,
+          libelle: article.articleEntree?.emballage?.libelle || article.articleCommande?.emballage?.libelle || article.emballage?.libelle,
+          quantite: article.articleEntree?.quantite || article.articleCommande?.quantite || article.quantite,
+          quantiteRecue: article.quantiteRecue ?? article.articleEntree?.quantite ?? article.articleCommande?.quantite ?? article.quantite,
+          prixUnitaireLiquide: article.articleEntree?.prixUnitaireLiquide || article.articleCommande?.prixUnitaireLiquide || article.prixUnitaireLiquide,
+          prixUnitaireEmballage: article.articleEntree?.prixUnitaireEmballage || article.articleCommande?.prixUnitaireEmballage || article.prixUnitaireEmballage,
+          montantLiquide: article.articleEntree?.montantLiquide || article.articleCommande?.montantLiquide || article.montantLiquide,
+          montantEmballage: article.articleEntree?.montantEmballage || article.articleCommande?.montantEmballage || article.montantEmballage,
+          createdAt: article.articleEntree?.createdAt || article.articleCommande?.createdAt || article.createdAt,
+          updatedAt: article.articleEntree?.updatedAt || article.articleCommande?.updatedAt || article.updatedAt,
+          emballage: article.articleEntree?.emballage || article.articleCommande?.emballage || article.emballage,
+          liquide: article.articleEntree?.liquide || article.articleCommande?.liquide || article.liquide,
+          groupearticle: article.articleEntree?.groupearticle || article.articleCommande?.groupearticle || article.groupearticle,
         });
       } else {
-        totauxRecus.get(code).quantite += article.articleEntree?.quantite  || article.articleCommande?.quantite;
+        totauxRecus.get(code).quantite += article.articleEntree?.quantite || article.articleCommande?.quantite || article.quantite || 0;
+        totauxRecus.get(code).quantiteRecue += article.quantiteRecue ?? article.articleEntree?.quantite ?? article.articleCommande?.quantite ?? article.quantite ?? 0;
       }
     });
-    this.emballagesrecues = Array.from(totauxRecus.values()).filter((a:any) => Number(a.prixUnitaireEmballage) > 0);;
+    this.emballagesrecues = Array.from(totauxRecus.values());
 
     if (this.updateData.emballagesRendus.length > 0) {
       const mapRendus = new Map<string, any>();
@@ -234,7 +235,7 @@ export class ListEmballagesComponent {
       });
       this.emballagesRendus = Array.from(mapRendus.values());
       console.log('Emballages rendus:', this.emballagesRendus);
-      this.emballagesRendus = this.emballagesRendus.filter((a:any) => Number(a.prixUnitaireEmballage) > 0)
+      this.emballagesRendus = this.emballagesRendus.filter((a:any) => Number(a.prixUnitaireEmballage) > 0);
 
 
     }
@@ -304,17 +305,19 @@ export class ListEmballagesComponent {
 
           const codeFormate = this.formatCode(article.emballage.code);
 
+          const prixUnitaireEmballage = article.prix.find((p: any) => Number(p.PrixConsigne) > 0)?.PrixConsigne ?? 0;
+
           return {
             ...article.emballage,
             code: codeFormate,
             PrixSousDepot: prixSousDepot?.PrixConsigne ?? 0,
+            prixUnitaireEmballage,
             stocksDisponibles: quantite ?? 0
           };
         })
       );
 
-      // ❌ Exclusion des emballages avec PrixSousDepot = 0
-      const articlesValides = emballagesAvecPrix.filter(e => e.PrixSousDepot > 0);
+      const articlesValides = emballagesAvecPrix;
 
       // 🔁 Détection des doublons
       const codes = articlesValides.map((e) => e.code);
@@ -333,8 +336,9 @@ export class ListEmballagesComponent {
 
       this.dataListLiquides = Array.from(uniques.values());
       this.filteredArticleList = this.dataListLiquides;
+console.log('emballages bruts:', emballagesAvecPrix.map(e => ({ code: e.code, PrixSousDepot: e.PrixSousDepot })));
 
-      console.log('✅ Liste finale (sans doublons et sans PrixSousDepot = 0) :', this.dataListLiquides);
+      console.log('✅ Liste finale (sans doublons et sans PrixSousDepot = 0) :', this.filteredArticleList);
 
     } catch (err) {
       console.error('❌ Erreur GetArticleList', err);
@@ -480,6 +484,7 @@ export class ListEmballagesComponent {
       numeroBonLivraison: numeroBonLivraison || '',
       dateDebut: dateDebut || '',
       dateFin: dateFin || '',
+      statuts: ['EN_ATTENTE'],
     };
     console.log(data, 'data sendeds')
     this._spinner.show();
@@ -575,13 +580,23 @@ export class ListEmballagesComponent {
   //       this._spinner.hide();
   //     });
   // }
-  selectArticle() {
-    this.GetArticleList(1)
+  async selectArticle() {
+    await this.GetArticleList(1);
+    const codesAttendus = new Set(
+      (this.updateData?.articlesRecus ?? [])
+        .map((a: any) => {
+          const code = a.articleCommande?.emballage?.code ?? a.articleEntree?.emballage?.code ?? a.emballage?.code;
+          return code ? this.formatCode(code) : null;
+        })
+        .filter(Boolean)
+    );
+    this.filteredArticleList = this.dataListLiquides.filter((e: any) =>
+      Number(e.prixUnitaireEmballage) > 0 && !codesAttendus.has(e.code)
+    );
     this.isEditMode = false;
     this.isChoiceModalOpen = true;
     this.operation = 'create';
     this.cdr.detectChanges();
-    console.log(this.isChoiceModalOpen);
   }
 
   validateQuantite(data: any): void {
@@ -699,22 +714,28 @@ export class ListEmballagesComponent {
   }
 
   filterArticles(): void {
-    console.log(this.searchTerm);
-    console.log(this.dataListLiquides, 'dataListLiquides');
-    console.log(this.filteredArticleList, 'filteredArticleList');
+    const libellesDejaPresents = new Set((this.emballagesrecues ?? []).map((a: any) => a.libelle));
+    const codesAttendus = new Set(
+      (this.updateData?.articlesRecus ?? [])
+        .map((a: any) => {
+          const code = a.articleCommande?.emballage?.code ?? a.articleEntree?.emballage?.code ?? a.emballage?.code;
+          return code ? this.formatCode(code) : null;
+        })
+        .filter(Boolean)
+    );
+    const base = this.dataListLiquides.filter((a: any) =>
+      Number(a.prixUnitaireEmballage) > 0 &&
+      !libellesDejaPresents.has(a.libelle) &&
+      !codesAttendus.has(a.code)
+    );
     if (this.searchTerm) {
-      this.filteredArticleList = this.dataListLiquides.filter(
-        (article: any) =>
-          article.libelle
-            .toLowerCase()
-            .includes(this.searchTerm.toLowerCase()) ||
-          article.reference
-            .toLowerCase()
-            .includes(this.searchTerm.toLowerCase())
+      const term = this.searchTerm.toLowerCase();
+      this.filteredArticleList = base.filter((article: any) =>
+        (article.libelle || '').toLowerCase().includes(term) ||
+        (article.code || '').toLowerCase().includes(term)
       );
-      console.log(this.filteredArticleList);
     } else {
-      this.filteredArticleList = [...this.dataListLiquides];
+      this.filteredArticleList = base;
     }
   }
 

@@ -18,6 +18,7 @@ export class ReglePaletteComponent implements OnInit {
 
   regleList: any[] = [];
   groupeList: any[] = [];
+  fournisseurList: any[] = [];
   totalPages = 0;
   currentPage = 1;
   isModalOpen = false;
@@ -42,14 +43,22 @@ export class ReglePaletteComponent implements OnInit {
       format: [null, [Validators.required, Validators.min(1)]],
       casiers: [null, [Validators.required, Validators.min(1)]],
       type: [null, Validators.required],
+      fournisseurId: [null],
     });
     this.GetList(1);
     this.LoadGroupes();
+    this.LoadFournisseurs();
   }
 
   LoadGroupes() {
     this._articleService.GetGroupeArticleList({ paginate: false, page: 1, limit: 100 }).then((res: any) => {
       this.groupeList = res.data;
+    });
+  }
+
+  LoadFournisseurs() {
+    this._coreService.GetFournisseurList().then((res: any) => {
+      this.fournisseurList = res.data;
     });
   }
 
@@ -84,7 +93,7 @@ export class ReglePaletteComponent implements OnInit {
     this.regleId = data.id;
     this.isModalOpen = true;
     this.operation = 'edit';
-    this.regleForm.patchValue({ format: data.format, casiers: data.casiers, type: data.type });
+    this.regleForm.patchValue({ format: data.format, casiers: data.casiers, type: data.type, fournisseurId: data.fournisseur?.id ?? null });
   }
 
   OnCloseModal() {

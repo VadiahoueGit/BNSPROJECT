@@ -1,10 +1,10 @@
-<div class="bui-back mb-4" (click)="goBack()">
-  <div class="bui-back-icon"><i class="fas fa-chevron-left"></i></div>
-  <h4 class="fw-bold mb-0">Ventes chines</h4>
+<div class="vtc-back-row" (click)="goBack()">
+  <div class="vtc-back-icon"><i class="fas fa-chevron-left"></i></div>
+  <h4 class="vtc-back-title">Ventes chines</h4>
 </div>
 
-<div class="cc-tabs mb-3">
-  <button class="cc-tab-btn" [class.active]="activeTab === 'ventechine'" (click)="activeElement('ventechine')">Vente chine</button>
+<div class="vtc-tabs mb-3">
+  <button class="vtc-tab-btn" [class.active]="activeTab === 'ventechine'" (click)="activeElement('ventechine')">Vente chine</button>
 </div>
 
 <div *ngIf="activeTab === 'ventechine'">
